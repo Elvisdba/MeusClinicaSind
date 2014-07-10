@@ -37,8 +37,10 @@ public class ChamadaPaginaBean implements Serializable {
     private int tipoPagina = 0;
     private final int SEGURANCA = 1;
     private final int CADASTRO = 2;
-    private final int FICHA_TECNICA = 3;
-    private final int FINANCEIRO = 4;
+    private final int ADMINISTRATIVO = 3;
+    private final int FICHA_TECNICA = 4;
+    private final int COORDENACAO = 5;
+    private final int FINANCEIRO = 6;
 
     private boolean renderPesquisa = true;
     private List<Rotina> listRotina = new ArrayList<Rotina>();
@@ -190,8 +192,10 @@ public class ChamadaPaginaBean implements Serializable {
     public void atualizaAcessos(String url) {
         RotinaDao db = new RotinaDao();
         Rotina rotina = db.pesquisaAcesso(url);
+        if (rotina == null) {
+            return;
+        }
         Usuario usuario = new Usuario();
-
         if (Sessions.exists("sessaoUsuario")) {
             usuario = (Usuario) Sessions.getObject("sessaoUsuario");
         }
@@ -280,9 +284,19 @@ public class ChamadaPaginaBean implements Serializable {
         return metodoGenerico(0, "menuPrincipal");
     }
 
-    public synchronized String menuFichaTecnica() {
+    public synchronized String menuAdministrativo() {
+        Sessions.put("idModulo", ADMINISTRATIVO);
+        return metodoGenerico(0, "menuAdministrativo");
+    }
+
+    public synchronized String menuEquipeTecnica() {
         Sessions.put("idModulo", FICHA_TECNICA);
-        return metodoGenerico(0, "menuFichaTecnica");
+        return metodoGenerico(0, "menuEquipeTecnica");
+    }
+
+    public synchronized String menuCoordenacao() {
+        Sessions.put("idModulo", COORDENACAO);
+        return metodoGenerico(0, "menuCoordenacao");
     }
 
     public synchronized String menuFinanceiro() {
@@ -350,7 +364,7 @@ public class ChamadaPaginaBean implements Serializable {
             }
         }
         RotinaDao rotinaDB = new RotinaDao();
-        Rotina r = rotinaDB.pesquisaRotinaPorPagina(strURLNome);
+        Rotina r = rotinaDB.pesquisaRotinaPorPagina(strURLNome, true);
         String nomePagina = " Menu ";
         if (r.getId() != -1) {
             if (!r.getRotina().equals("")) {

@@ -2,7 +2,11 @@ package br.com.rtools.seguranca.controleUsuario;
 
 import br.com.rtools.pessoa.Pessoa;
 import br.com.rtools.seguranca.*;
+import br.com.rtools.seguranca.dao.PermissaoDao;
+import br.com.rtools.seguranca.dao.PermissaoDepartamentoDao;
 import br.com.rtools.seguranca.dao.PermissaoUsuarioDao;
+import br.com.rtools.seguranca.dao.RotinaDao;
+import br.com.rtools.seguranca.dao.UsuarioAcessoDao;
 import br.com.rtools.seguranca.dao.UsuarioDao;
 import br.com.rtools.utilitarios.Dao;
 import br.com.rtools.utilitarios.Sessions;
@@ -153,7 +157,8 @@ public class ControleAcessoBean implements Serializable {
 
     public boolean verificarPermissaoUsuario() {
         boolean retorno = false;
-        PermissaoUsuarioDao db = new PermissaoUsuarioDao();
+        PermissaoDao permissaoDao = new PermissaoDao();
+        Dao dao = new Dao();
         Usuario u = (Usuario) Sessions.getObject("sessaoUsuario");
         if (!urlDestino.equals("/ClinicaIntegrada/menuPrincipal.jsf") && (u.getId() != 1 && !u.isAdministrador())) {
 
@@ -161,12 +166,13 @@ public class ControleAcessoBean implements Serializable {
             if (Sessions.exists("idModulo")) {
                 idModulo = Sessions.getInteger("idModulo");
                 if (idModulo != 0) {
-                    modulo = db.pesquisaCodigoModulo(idModulo);
+                    modulo = (Modulo) dao.find(new Modulo(), idModulo);
                 }
             }
 
             //PESQUISA DE ROTINAS-------------------------------------------------------------------------------------------
-            rotina = db.pesquisaRotinaPermissao(urlDestino);
+            RotinaDao rotinaDao = new RotinaDao();
+            rotina = rotinaDao.pesquisaRotinaPermissao(urlDestino);
 
             if (rotina == null) {
                 rotina = new Rotina();
@@ -175,7 +181,7 @@ public class ControleAcessoBean implements Serializable {
             if (Sessions.exists("chamadaPaginaSimples")) {
                 String[] lista = (String[]) Sessions.getStringVector("chamadaPaginaSimples");
                 Sessions.remove("chamadaPaginaSimples");
-                Rotina r = db.pesquisaRotinaPermissaoPorClasse(lista[0]);
+                Rotina r = rotinaDao.pesquisaRotinaPermissaoPorClasse(lista[0]);
                 if (r != null) {
                     rotina = new Rotina();
                     rotina = r;
@@ -188,7 +194,7 @@ public class ControleAcessoBean implements Serializable {
             }
 
             //PESQUISA DE EVENTOS-------------------------------------------------------------------------------------------
-            evento = db.pesquisaCodigoEvento(4);
+            evento = (Evento) dao.find(new Evento(), 4);
 
             if (evento == null) {
                 evento = new Evento();
@@ -199,15 +205,17 @@ public class ControleAcessoBean implements Serializable {
                 Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
                 Permissao permissao;
                 if (modulo.getId() != -1) {
-                    permissao = db.pesquisaPermissao(modulo.getId(), rotina.getId(), evento.getId());
+                    permissao = permissaoDao.pesquisaPermissao(modulo.getId(), rotina.getId(), evento.getId(), SessaoCliente.get().getId());
                 } else {
-                    permissao = db.pesquisaPermissao(9, rotina.getId(), evento.getId());
+                    permissao = permissaoDao.pesquisaPermissao(2, rotina.getId(), evento.getId(), SessaoCliente.get().getId());
                 }
 
-                if (permissao.getId() != -1) {
-                    List<PermissaoUsuario> permissaoUsuarios = db.listaPermissaoUsuario(user.getId());
+                if (permissao != null) {
+                    PermissaoUsuarioDao permissaoUsuarioDao = new PermissaoUsuarioDao();
+                    PermissaoDepartamentoDao permissaoDepartamentoDao = new PermissaoDepartamentoDao();
+                    List<PermissaoUsuario> permissaoUsuarios = permissaoUsuarioDao.listaPermissaoUsuario(user.getId());
                     for (int i = 0; i < permissaoUsuarios.size(); i++) {
-                        PermissaoDepartamento permissaoDepartamento = db.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId());
+                        PermissaoDepartamento permissaoDepartamento = permissaoDepartamentoDao.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId(), SessaoCliente.get().getId());
                         if (permissaoDepartamento.getId() == -1) {
                             retorno = false;
                         } else {
@@ -215,16 +223,16 @@ public class ControleAcessoBean implements Serializable {
                             break;
                         }
                     }
-                    //if (retorno) {
-                    UsuarioAcesso usuarioAcesso = db.pesquisaUsuarioAcesso(user.getId(), permissao.getId());
-                    if (usuarioAcesso.getId() != -1) {
+                    UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
+                    UsuarioAcesso usuarioAcesso = usuarioAcessoDao.pesquisaUsuarioAcesso(user.getId(), permissao.getId(), SessaoCliente.get().getId());
+                    if (usuarioAcesso != null) {
                         if (usuarioAcesso.isPermite()) {
                             retorno = true;
                         } else {
                             retorno = false;
                         }
                     }
-                    //}
+
                 } else {
                     retorno = false;
                 }
@@ -261,17 +269,17 @@ public class ControleAcessoBean implements Serializable {
         }
         Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
         boolean retorno = true;
+        PermissaoDao permissaoDao = new PermissaoDao();
         if (user != null) {
             int idEvento;
             if (user.getId() != 1 && !user.isAdministrador()) {
-                PermissaoUsuarioDao permissaoUsuarioDao = new PermissaoUsuarioDao();
                 Permissao permissao;
                 idModulo = modulo.getId();
                 if (id == -1) {
                     if (modulo.getId() != -1) {
                         idEvento = 1;
                     } else {
-                        idModulo = 9;
+                        idModulo = 2;
                         idEvento = 1;
                     }
 
@@ -279,16 +287,17 @@ public class ControleAcessoBean implements Serializable {
                     if (modulo.getId() != -1) {
                         idEvento = 3;
                     } else {
-                        idModulo = 9;
+                        idModulo = 2;
                         idEvento = 3;
                     }
                 }
-                permissao = permissaoUsuarioDao.pesquisaPermissao(idModulo, rotina.getId(), idEvento);
-                if (permissao.getId() != -1) {
+                permissao = permissaoDao.pesquisaPermissao(idModulo, rotina.getId(), idEvento, SessaoCliente.get().getId());
+                if (permissao != null) {
+                    PermissaoUsuarioDao permissaoUsuarioDao = new PermissaoUsuarioDao();
+                    PermissaoDepartamentoDao permissaoDepartamentoDao = new PermissaoDepartamentoDao();
                     List<PermissaoUsuario> permissaoUsuarios = permissaoUsuarioDao.listaPermissaoUsuario(user.getId());
-
                     for (int i = 0; i < permissaoUsuarios.size(); i++) {
-                        PermissaoDepartamento permissaoDepartamento = permissaoUsuarioDao.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId());
+                        PermissaoDepartamento permissaoDepartamento = permissaoDepartamentoDao.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId(), SessaoCliente.get().getId());
                         if (permissaoDepartamento.getId() == -1) {
                             retorno = true;
                         } else {
@@ -296,16 +305,16 @@ public class ControleAcessoBean implements Serializable {
                             break;
                         }
                     }
-//                    if (!retorno) {
-                    UsuarioAcesso usuarioAcesso = permissaoUsuarioDao.pesquisaUsuarioAcesso(user.getId(), permissao.getId());
-                    if (usuarioAcesso.getId() != -1) {
+                    UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
+                    UsuarioAcesso usuarioAcesso = usuarioAcessoDao.pesquisaUsuarioAcesso(user.getId(), permissao.getId(), SessaoCliente.get().getId());
+                    if (usuarioAcesso != null) {
                         if (usuarioAcesso.isPermite()) {
                             retorno = false;
                         } else {
                             retorno = true;
                         }
                     }
-//                    }
+
                 } else {
                     retorno = true;
                 }
@@ -342,17 +351,17 @@ public class ControleAcessoBean implements Serializable {
         Dao dao = new Dao();
         Modulo m = (Modulo) dao.find(new Modulo(), idMod);
         boolean retorno = false;
+        PermissaoDao permissaoDao = new PermissaoDao();
         if (user != null) {
             int idEvento;
             if (user.getId() != 1 && !user.isAdministrador()) {
-                PermissaoUsuarioDao db = new PermissaoUsuarioDao();
                 Permissao permissao;
                 idModulo = m.getId();
                 if (id == -1) {
                     if (m.getId() != -1) {
                         idEvento = 1;
                     } else {
-                        idModulo = 9;
+                        idModulo = 2;
                         idEvento = 1;
                     }
 
@@ -360,16 +369,17 @@ public class ControleAcessoBean implements Serializable {
                     if (m.getId() != -1) {
                         idEvento = 3;
                     } else {
-                        idModulo = 9;
+                        idModulo = 2;
                         idEvento = 3;
                     }
                 }
-                permissao = db.pesquisaPermissao(idModulo, rotina.getId(), idEvento);
-                if (permissao.getId() != -1) {
-                    List<PermissaoUsuario> permissaoUsuarios = db.listaPermissaoUsuario(user.getId());
-
+                permissao = permissaoDao.pesquisaPermissao(idModulo, rotina.getId(), idEvento, SessaoCliente.get().getId());
+                if (permissao != null) {
+                    PermissaoUsuarioDao permissaoUsuarioDao = new PermissaoUsuarioDao();
+                    List<PermissaoUsuario> permissaoUsuarios = permissaoUsuarioDao.listaPermissaoUsuario(user.getId());
+                    PermissaoDepartamentoDao permissaoDepartamentoDao = new PermissaoDepartamentoDao();
                     for (int i = 0; i < permissaoUsuarios.size(); i++) {
-                        PermissaoDepartamento permissaoDepartamento = db.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId());
+                        PermissaoDepartamento permissaoDepartamento = permissaoDepartamentoDao.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId(), SessaoCliente.get().getId());
                         if (permissaoDepartamento.getId() == -1) {
                             retorno = true;
                         } else {
@@ -377,8 +387,9 @@ public class ControleAcessoBean implements Serializable {
                             break;
                         }
                     }
-                    UsuarioAcesso usuarioAcesso = db.pesquisaUsuarioAcesso(user.getId(), permissao.getId());
-                    if (usuarioAcesso.getId() != -1) {
+                    UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
+                    UsuarioAcesso usuarioAcesso = usuarioAcessoDao.pesquisaUsuarioAcesso(user.getId(), permissao.getId(), SessaoCliente.get().getId());
+                    if (usuarioAcesso != null) {
                         if (usuarioAcesso.isPermite()) {
                             retorno = false;
                         } else {
@@ -402,23 +413,24 @@ public class ControleAcessoBean implements Serializable {
         boolean retorno = true;
         if (Sessions.exists("sessaoUsuario")) {
             Permissao permissao;
-            PermissaoUsuarioDao db = new PermissaoUsuarioDao();
             Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
 
             if (user.getId() == 1 || user.isAdministrador()) {
                 return false;
             }
-
+            PermissaoDao permissaoDao = new PermissaoDao();
             if (modulo.getId() != -1) {
-                permissao = db.pesquisaPermissao(modulo.getId(), rotina.getId(), 2);
+                permissao = permissaoDao.pesquisaPermissao(modulo.getId(), rotina.getId(), 2, SessaoCliente.get().getId());
             } else {
-                permissao = db.pesquisaPermissao(9, rotina.getId(), 2);
+                permissao = permissaoDao.pesquisaPermissao(2, rotina.getId(), 2, SessaoCliente.get().getId());
             }
 
-            if (permissao.getId() != -1) {
-                List<PermissaoUsuario> permissaoUsuarios = db.listaPermissaoUsuario(user.getId());
+            if (permissao != null) {
+                PermissaoUsuarioDao permissaoUsuarioDao = new PermissaoUsuarioDao();
+                List<PermissaoUsuario> permissaoUsuarios = permissaoUsuarioDao.listaPermissaoUsuario(user.getId());
+                PermissaoDepartamentoDao permissaoDepartamentoDao = new PermissaoDepartamentoDao();
                 for (int i = 0; i < permissaoUsuarios.size(); i++) {
-                    PermissaoDepartamento permissaoDepartamento = db.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId());
+                    PermissaoDepartamento permissaoDepartamento = permissaoDepartamentoDao.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId(), SessaoCliente.get().getId());
                     if (permissaoDepartamento.getId() == -1) {
                         retorno = true;
                     } else {
@@ -426,16 +438,15 @@ public class ControleAcessoBean implements Serializable {
                         break;
                     }
                 }
-//                if (!retorno) {
-                UsuarioAcesso usuarioAcesso = db.pesquisaUsuarioAcesso(user.getId(), permissao.getId());
-                if (usuarioAcesso.getId() != -1) {
+                UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
+                UsuarioAcesso usuarioAcesso = usuarioAcessoDao.pesquisaUsuarioAcesso(user.getId(), permissao.getId(), SessaoCliente.get().getId());
+                if (usuarioAcesso != null) {
                     if (usuarioAcesso.isPermite()) {
                         retorno = false;
                     } else {
                         retorno = true;
                     }
                 }
-//                }
             } else {
                 retorno = true;
             }
@@ -455,23 +466,23 @@ public class ControleAcessoBean implements Serializable {
         boolean retorno = false;
         if (Sessions.exists("sessaoUsuario")) {
             Permissao permissao;
-            PermissaoUsuarioDao db = new PermissaoUsuarioDao();
             Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
 
             if (user.getId() == 1 && user.isAdministrador()) {
                 return false;
             }
-
+            PermissaoDao permissaoDao = new PermissaoDao();
             if (m.getId() != -1) {
-                permissao = db.pesquisaPermissao(m.getId(), rotina.getId(), 2);
+                permissao = permissaoDao.pesquisaPermissao(m.getId(), rotina.getId(), 2, SessaoCliente.get().getId());
             } else {
-                permissao = db.pesquisaPermissao(9, rotina.getId(), 2);
+                permissao = permissaoDao.pesquisaPermissao(2, rotina.getId(), 2, SessaoCliente.get().getId());
             }
-
-            if (permissao.getId() != -1) {
-                List<PermissaoUsuario> permissaoUsuarios = db.listaPermissaoUsuario(user.getId());
+            if (permissao != null) {
+                PermissaoUsuarioDao permissaoUsuarioDao = new PermissaoUsuarioDao();
+                List<PermissaoUsuario> permissaoUsuarios = permissaoUsuarioDao.listaPermissaoUsuario(user.getId());
+                PermissaoDepartamentoDao permissaoDepartamentoDao = new PermissaoDepartamentoDao();
                 for (int i = 0; i < permissaoUsuarios.size(); i++) {
-                    PermissaoDepartamento permissaoDepartamento = db.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId());
+                    PermissaoDepartamento permissaoDepartamento = permissaoDepartamentoDao.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId(), SessaoCliente.get().getId());
                     if (permissaoDepartamento.getId() == -1) {
                         retorno = true;
                     } else {
@@ -479,8 +490,9 @@ public class ControleAcessoBean implements Serializable {
                         break;
                     }
                 }
-                UsuarioAcesso usuarioAcesso = db.pesquisaUsuarioAcesso(user.getId(), permissao.getId());
-                if (usuarioAcesso.getId() != -1) {
+                UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
+                UsuarioAcesso usuarioAcesso = usuarioAcessoDao.pesquisaUsuarioAcesso(user.getId(), permissao.getId(), SessaoCliente.get().getId());
+                if (usuarioAcesso != null) {
                     if (usuarioAcesso.isPermite()) {
                         retorno = false;
                     } else {
@@ -501,23 +513,23 @@ public class ControleAcessoBean implements Serializable {
         boolean retorno = false;
         if (Sessions.exists("sessaoUsuario")) {
             Permissao permissao;
-            PermissaoUsuarioDao db = new PermissaoUsuarioDao();
             Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
 
             if (user.getId() == 1 && user.isAdministrador()) {
                 return false;
             }
-
+            PermissaoDao permissaoDao = new PermissaoDao();
             if (modulo.getId() != -1) {
-                permissao = db.pesquisaPermissao(modulo.getId(), rotina.getId(), 3);
+                permissao = permissaoDao.pesquisaPermissao(modulo.getId(), rotina.getId(), 3, SessaoCliente.get().getId());
             } else {
-                permissao = db.pesquisaPermissao(9, rotina.getId(), 3);
+                permissao = permissaoDao.pesquisaPermissao(2, rotina.getId(), 3, SessaoCliente.get().getId());
             }
-
-            if (permissao.getId() != -1) {
-                List<PermissaoUsuario> permissaoUsuarios = db.listaPermissaoUsuario(user.getId());
+            if (permissao != null) {
+                PermissaoUsuarioDao permissaoUsuarioDao = new PermissaoUsuarioDao();
+                PermissaoDepartamentoDao permissaoDepartamentoDao = new PermissaoDepartamentoDao();
+                List<PermissaoUsuario> permissaoUsuarios = permissaoUsuarioDao.listaPermissaoUsuario(user.getId());
                 for (int i = 0; i < permissaoUsuarios.size(); i++) {
-                    PermissaoDepartamento permissaoDepartamento = db.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId());
+                    PermissaoDepartamento permissaoDepartamento = permissaoDepartamentoDao.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId(), SessaoCliente.get().getId());
                     if (permissaoDepartamento.getId() == -1) {
                         retorno = true;
                     } else {
@@ -526,8 +538,9 @@ public class ControleAcessoBean implements Serializable {
                     }
                 }
 //                if (!retorno) {
-                UsuarioAcesso usuarioAcesso = db.pesquisaUsuarioAcesso(user.getId(), permissao.getId());
-                if (usuarioAcesso.getId() != -1) {
+                UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
+                UsuarioAcesso usuarioAcesso = usuarioAcessoDao.pesquisaUsuarioAcesso(user.getId(), permissao.getId(), SessaoCliente.get().getId());
+                if (usuarioAcesso != null) {
                     if (usuarioAcesso.isPermite()) {
                         retorno = false;
                     } else {

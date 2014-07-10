@@ -10,23 +10,17 @@ import javax.persistence.Query;
 @SuppressWarnings("unchecked")
 public class PermissaoDao extends DB {
 
-    public Permissao pesquisaCodigo(int id) {
-        Permissao result = null;
+    public List pesquisaTodosAgrupados(int idCliente) {
         try {
-            Query qry = getEntityManager().createNamedQuery("Permissao.pesquisaID");
-            qry.setParameter("pid", id);
-            if (!qry.getResultList().isEmpty()) {
-                result = (Permissao) qry.getSingleResult();
-            }
-        } catch (Exception e) {
-        }
-        return result;
-    }
-
-    public List pesquisaTodos() {
-        try {
-            Query qry = getEntityManager().createQuery("SELECT Per FROM Permissao AS PER ORDER BY PER.modulo.descricao, PER.rotina.rotina");
-            List list = qry.getResultList();
+            Query query = getEntityManager().createQuery(
+                    "     SELECT P                                              "
+                    + "     FROM Permissao AS P                                 "
+                    + "    WHERE P.evento.id = 1                                "
+                    + "      AND P.cliente.id = :cliente                        "
+                    + " ORDER BY P.modulo.descricao ASC,                        "
+                    + "          P.rotina.rotina ASC                            ");
+            List list = query.getResultList();
+            query.setParameter("cliente", idCliente);
             if (!list.isEmpty()) {
                 return list;
             }
@@ -35,33 +29,19 @@ public class PermissaoDao extends DB {
         return new ArrayList();
     }
 
-    public List pesquisaTodosAgrupados() {
+    public List pesquisaTodosAgrupadosPorModulo(int idModulo, int idCliente) {
         try {
-            Query qry = getEntityManager().createQuery(
-                    "   SELECT per                        "
-                    + "     FROM Permissao per              "
-                    + "    WHERE per.evento.id = 1          "
-                    + " ORDER BY per.modulo.descricao ASC,  "
-                    + " per.rotina.rotina ASC               ");
-            List list = qry.getResultList();
-            if (!list.isEmpty()) {
-                return list;
-            }
-        } catch (Exception e) {
-        }
-        return new ArrayList();
-    }
-
-    public List pesquisaTodosAgrupadosPorModulo(int idModulo) {
-        try {
-            Query qry = getEntityManager().createQuery(
-                    "   SELECT per                        "
-                    + "     FROM Permissao per              "
-                    + "    WHERE per.evento.id = 1          "
-                    + "      AND per.modulo.id = " + idModulo
-                    + " ORDER BY per.modulo.descricao ASC,  "
-                    + " per.rotina.rotina ASC               ");
-            List list = qry.getResultList();
+            Query query = getEntityManager().createQuery(
+                    "     SELECT P                                              "
+                    + "     FROM Permissao AS P                                 "
+                    + "    WHERE P.evento.id = 1                                "
+                    + "      AND P.modulo.id  = :modulo                         "
+                    + "      AND P.cliente.id = :cliente                        "
+                    + " ORDER BY P.modulo.descricao ASC,                        "
+                    + "          P.rotina.rotina ASC                            ");
+            query.setParameter("modulo", idModulo);
+            query.setParameter("cliente", idCliente);
+            List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;
             }
@@ -71,46 +51,22 @@ public class PermissaoDao extends DB {
         return new ArrayList();
     }
 
-    public List pesquisaPermissaoModRot(int idModulo, int idRotina) {
+    public List pesquisaPermissaoModuloRotina(int idModulo, int idRotina, int idCliente) {
         try {
             Query qry = getEntityManager().createQuery(
-                    " SELECT per                       "
-                    + "   FROM Permissao per             "
-                    + "  WHERE per.modulo.id = :idModulo "
-                    + "    AND per.rotina.id = :idRotina ");
-            qry.setParameter("idModulo", idModulo);
-            qry.setParameter("idRotina", idRotina);
+                    "   SELECT P                                                "
+                    + "   FROM Permissao AS P                                   "
+                    + "  WHERE P.modulo.id  = :modulo                           "
+                    + "    AND P.rotina.id  = :rotina                           "
+                    + "    AND P.cliente.id = :cliente                          ");
+            qry.setParameter("modulo", idModulo);
+            qry.setParameter("rotina", idRotina);
+            qry.setParameter("cliente", idCliente);
             List list = qry.getResultList();
             if (!list.isEmpty()) {
                 return list;
             }
         } catch (Exception e) {
-        }
-        return new ArrayList();
-    }
-
-    public List listaModuloPermissaoAgrupado() {
-        try {
-            Query qry = getEntityManager().createQuery("SELECT per.modulo FROM Permissao per GROUP BY per.modulo ORDER BY per.modulo.descricao ASC ");
-            List list = qry.getResultList();
-            if (!list.isEmpty()) {
-                return list;
-            }
-        } catch (Exception e) {
-        }
-        return new ArrayList();
-    }
-
-    public List listaRotinaPermissaoAgrupado(int idModulo) {
-        try {
-            Query qry = getEntityManager().createQuery("SELECT per.rotina FROM Permissao per WHERE per.modulo.id = :idModulo AND per.rotina.ativo = true GROUP BY per.rotina ORDER BY per.rotina.rotina ASC");
-            qry.setParameter("idModulo", idModulo);
-            List list = qry.getResultList();
-            if (!list.isEmpty()) {
-                return list;
-            }
-        } catch (Exception e) {
-            return new ArrayList();
         }
         return new ArrayList();
     }
@@ -125,22 +81,23 @@ public class PermissaoDao extends DB {
                 return list;
             }
         } catch (Exception e) {
-            return new ArrayList();
         }
         return new ArrayList();
     }
 
-    public List pesquisaPermissaoModRotEve(int idModulo, int idRotina, int idEvento) {
+    public List pesquisaPermissaoModuloRotinaEventi(int idModulo, int idRotina, int idEvento, int idCliente) {
         try {
             Query qry = getEntityManager().createQuery(
-                    " SELECT per                       "
-                    + "   FROM Permissao per             "
-                    + "  WHERE per.modulo.id = :idModulo "
-                    + "    AND per.rotina.id = :idRotina "
-                    + "    AND per.evento.id = :idEvento ");
-            qry.setParameter("idModulo", idModulo);
-            qry.setParameter("idRotina", idRotina);
-            qry.setParameter("idEvento", idEvento);
+                    "   SELECT P                                                "
+                    + "   FROM Permissao AS P                                   "
+                    + "  WHERE P.modulo.id  = :modulo                           "
+                    + "    AND P.rotina.id  = :rotina                           "
+                    + "    AND P.evento.id  = :evento                           "
+                    + "    AND P.cliente.id = :cliente                          ");
+            qry.setParameter("modulo", idModulo);
+            qry.setParameter("rotina", idRotina);
+            qry.setParameter("evento", idEvento);
+            qry.setParameter("evento", idCliente);
             List list = qry.getResultList();
             if (!list.isEmpty()) {
                 return qry.getResultList();
@@ -150,83 +107,83 @@ public class PermissaoDao extends DB {
         return new ArrayList();
     }
 
-    public Permissao pesquisaPermissaoModuloRotinaEvento(int idModulo, int idRotina, int idEvento) {
-        Permissao permissao = new Permissao();
+    public Permissao pesquisaPermissaoModuloRotinaEvento(int idModulo, int idRotina, int idEvento, int idCliente) {
         try {
-            Query qry = getEntityManager().createQuery(
-                    " SELECT per                       "
-                    + "   FROM Permissao per             "
-                    + "  WHERE per.modulo.id = :idModulo "
-                    + "    AND per.rotina.id = :idRotina "
-                    + "    AND per.evento.id = :idEvento");
-            qry.setParameter("idModulo", idModulo);
-            qry.setParameter("idRotina", idRotina);
-            qry.setParameter("idEvento", idEvento);
-            if (!qry.getResultList().isEmpty()) {
-                permissao = (Permissao) qry.getSingleResult();
+            Query query = getEntityManager().createQuery(
+                    "   SELECT P                                                "
+                    + "   FROM Permissao AS P                                   "
+                    + "  WHERE P.modulo.id  = :modulo                           "
+                    + "    AND P.rotina.id  = :rotina                           "
+                    + "    AND P.evento.id  = :evento                           "
+                    + "    AND P.cliente.id = :cliente");
+            query.setParameter("modulo", idModulo);
+            query.setParameter("rotina", idRotina);
+            query.setParameter("evento", idEvento);
+            query.setParameter("cliente", idCliente);
+            List list = query.getResultList();
+            if (!list.isEmpty() && list.size() == 1) {
+                return (Permissao) query.getSingleResult();
             }
         } catch (Exception e) {
         }
-        return permissao;
+        return null;
     }
 
-    public UsuarioAcesso pesquisaUsuarioAcessoModuloRotinaEvento(int idUsuario, int idModulo, int idRotina, int idEvento) {
-        UsuarioAcesso usuarioAcesso = new UsuarioAcesso();
+    public List pesquisaPermissaDisponivel(String ids) {
+        String textQuery = "";
         try {
-            Query qry = getEntityManager().createQuery(
-                    " SELECT ua                                   "
-                    + "   FROM UsuarioAcesso ua                     "
-                    + "  WHERE ua.permissao.modulo.id = :idModulo   "
-                    + "    AND ua.permissao.rotina.id = :idRotina   "
-                    + "    AND ua.permissao.evento.id = :idEvento   "
-                    + "    AND ua.usuario.id = :idUsuario           ");
-            qry.setParameter("idModulo", idModulo);
-            qry.setParameter("idRotina", idRotina);
-            qry.setParameter("idEvento", idEvento);
-            qry.setParameter("idUsuario", idUsuario);
-            if (!qry.getResultList().isEmpty()) {
-                usuarioAcesso = (UsuarioAcesso) qry.getSingleResult();
+            if (ids.length() == 0) {
+                textQuery = "select p "
+                        + "  from Permissao p "
+                        + " order by p.modulo.descricao";
+            } else {
+                textQuery = "select p "
+                        + "  from Permissao p"
+                        + " where p.id not in (select pd.permissao.id "
+                        + "                      from PermissaoDepartamento pd"
+                        + "                     where pd.id in (" + ids + "))"
+                        + " order by p.modulo.descricao,"
+                        + "          p.rotina.rotina";
+            }
+
+            Query qry = getEntityManager().createQuery(textQuery);
+            return (qry.getResultList());
+        } catch (Exception e) {
+            return new ArrayList();
+        }
+    }
+
+    public Permissao pesquisaPermissao(int idModulo, int idRotina, int idEvento, int idCliente) {
+        try {
+            Query query = getEntityManager().createQuery(
+                    "   SELECT P                                                "
+                    + "   FROM Permissao AS P                                   "
+                    + "  WHERE P.modulo.id      = :modulo                       "
+                    + "    AND P.rotina.id      = :rotina                       "
+                    + "    AND P.rotina.ativo   = true                          "
+                    + "    AND P.evento.id      = :evento                       "
+                    + "    AND P.cliente.id     = :cliente                      ");
+            query.setParameter("modulo", idModulo);
+            query.setParameter("rotina", idRotina);
+            query.setParameter("evento", idEvento);
+            query.setParameter("cliente", idCliente);
+            List list = query.getResultList();
+            if (!list.isEmpty() && list.size() == 1) {
+                return (Permissao) query.getSingleResult();
             }
         } catch (Exception e) {
         }
-        return usuarioAcesso;
+        return null;
     }
 
-    public List<UsuarioAcesso> listaUsuarioAcesso(int idUsuario, int idModulo, int idRotina, int idEvento) {
-        String moduloString = "";
-        String rotinaString = "";
-        String eventoString = "";
-        if (idModulo > 0) {
-            moduloString = " AND ua.permissao.modulo.id = :idModulo ";
-        }
-        if (idRotina > 0) {
-            rotinaString = " AND ua.permissao.rotina.id = :idRotina ";
-        }
-        if (idEvento > 0) {
-            eventoString = " AND ua.permissao.evento.id = :idEvento ";
+    public List<Permissao> listaPermissaoDepartamentoDisponivel(int idDepartamento, int idNivel, String descricaoPesquisa, int idCliente) {
+        String queryFiltro = "";
+        if (!descricaoPesquisa.equals("")) {
+            queryFiltro = " AND UPPER(P.rotina.rotina) LIKE '%" + descricaoPesquisa.toUpperCase() + "%'";
         }
         try {
-            Query qry = getEntityManager().createQuery(
-                    "   SELECT ua                                     "
-                    + "     FROM UsuarioAcesso ua                       "
-                    + "    WHERE ua.usuario.id = :idUsuario             "
-                    + moduloString
-                    + rotinaString
-                    + eventoString
-                    + " ORDER BY ua.permissao.modulo.descricao ASC,         "
-                    + "          ua.permissao.rotina.rotina ASC,            "
-                    + "          ua.permissao.evento.descricao ASC");
-            qry.setParameter("idUsuario", idUsuario);
-            if (idModulo > 0) {
-                qry.setParameter("idModulo", idModulo);
-            }
-            if (idRotina > 0) {
-                qry.setParameter("idRotina", idRotina);
-            }
-            if (idEvento > 0) {
-                qry.setParameter("idEvento", idEvento);
-            }
-            List list = qry.getResultList();
+            Query query = getEntityManager().createQuery(" SELECT P FROM Permissao AS P WHERE P.cliente.id = " + idCliente + " AND P.id NOT IN ( SELECT PD.permissao.id FROM PermissaoDepartamento AS PD WHERE PD.departamento.id = " + idDepartamento + " AND PD.nivel.id = " + idNivel + " AND PD.cliente.id = " + idCliente + " ) " + queryFiltro + " ORDER BY P.modulo.descricao ASC, P.rotina.rotina ASC ");
+            List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;
             }
@@ -234,5 +191,6 @@ public class PermissaoDao extends DB {
             return new ArrayList();
         }
         return new ArrayList();
+
     }
 }

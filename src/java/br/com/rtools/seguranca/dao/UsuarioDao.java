@@ -8,12 +8,26 @@ import java.util.List;
 import javax.persistence.Query;
 
 @SuppressWarnings("unchecked")
-public class UsuarioDao extends DB  {
+public class UsuarioDao extends DB {
 
-    public List<Usuario> pesquisaTodosPorDescricao(String descricaoPesquisa) {
+    public List<Usuario> pesquisaTodosPorCliente(int idCliente) {
         try {
-            Query qry = getEntityManager().createQuery("SELECT usu FROM Usuario AS USU WHERE UPPER(USU.pessoa.nome) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' OR UPPER(USU.login) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' ORDER BY USU.pessoa.nome ASC ");
-            List list = qry.getResultList();
+            Query query = getEntityManager().createQuery("SELECT U FROM Usuario AS U WHERE U.cliente.id = :cliente  ORDER BY U.pessoa.nome ASC ");
+            query.setParameter("cliente", idCliente);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+        }
+        return new ArrayList();
+    }
+
+    public List<Usuario> pesquisaTodosPorDescricao(String descricaoPesquisa, int idCliente) {
+        try {
+            Query query = getEntityManager().createQuery("SELECT U FROM Usuario AS U WHERE U.cliente.id = :cliente AND (U.pessoa.nome) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' OR UPPER(U.login) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' ORDER BY U.pessoa.nome ASC ");
+            query.setParameter("cliente", idCliente);
+            List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;
             }

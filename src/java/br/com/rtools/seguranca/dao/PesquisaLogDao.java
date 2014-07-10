@@ -22,7 +22,7 @@ public class PesquisaLogDao extends DB {
         return new ArrayList();
     }
 
-    public List pesquisaLogs(String dataInicial, String dataFinal, String horaInicial, String horaFinal, int idUsuario, int idRotina, String idInEvento, String descricao) {
+    public List pesquisaLogs(String dataInicial, String dataFinal, String horaInicial, String horaFinal, int idUsuario, int idRotina, String idInEvento, String descricao, int idCliente) {
         List listWhere = new ArrayList();
         if (dataInicial != null) {
             listWhere.add(" L.dtData BETWEEN :dtInicial AND :dtFinal ");
@@ -40,6 +40,9 @@ public class PesquisaLogDao extends DB {
         }
         if (idInEvento != null) {
             listWhere.add(" L.evento.id IN( " + idInEvento + ") ");
+        }
+        if (idCliente != 0) {
+            listWhere.add(" L.cliente.id = " + idCliente);
         }
         if (!descricao.isEmpty()) {
             String desc = descricao.toLowerCase().toUpperCase();

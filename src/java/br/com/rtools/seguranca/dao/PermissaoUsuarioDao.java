@@ -5,254 +5,105 @@ import br.com.rtools.seguranca.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
-import oracle.toplink.essentials.exceptions.EJBQLException;
 
 @SuppressWarnings("unchecked")
 public class PermissaoUsuarioDao extends DB {
 
-    public List pesquisaListaPermissaoPorUsuario(int idUsuario) {
+    public List pesquisaListaPermissaoPorUsuario(int idUsuario, int idCliente) {
         try {
-            Query qry = getEntityManager().createQuery("select pu "
-                    + "  from PermissaoUsuario pu "
-                    + " where pu.usuario.id = :idUsuario "
-                    + " order by pu.departamento.descricao ");
-            qry.setParameter("idUsuario", idUsuario);
-            if (!qry.getResultList().isEmpty()) {
-                return (qry.getResultList());
+            Query query = getEntityManager().createQuery(""
+                    + "   SELECT PU                          "
+                    + "     FROM PermissaoUsuario AS PU      "
+                    + "    WHERE PU.usuario.id = :usuario    "
+                    + "      AND PU.cliente.id = :cliente    "
+                    + " ORDER BY PU.departamento.descricao   ");
+            query.setParameter("usuario", idUsuario);
+            query.setParameter("cliente", idCliente);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
             }
         } catch (Exception e) {
         }
         return new ArrayList();
     }
 
-    public PermissaoUsuario pesquisaPermissaoUsuario(int idUsuario, int idDepartamento, int idNivel) {
+    public PermissaoUsuario pesquisaPermissaoUsuario(int idUsuario, int idDepartamento, int idNivel, int idCliente) {
         try {
-            Query qry = getEntityManager().createQuery("select pu "
-                    + "  from PermissaoUsuario pu "
-                    + " where pu.usuario.id = :idUsuario "
-                    + "   and pu.departamento.id = :idDepartamento"
-                    + "   and pu.nivel.id = :idNivel");
-            qry.setParameter("idUsuario", idUsuario);
-            qry.setParameter("idDepartamento", idDepartamento);
-            qry.setParameter("idNivel", idNivel);
-            return (PermissaoUsuario) (qry.getSingleResult());
+            Query qry = getEntityManager().createQuery(
+                    "  SELECT PU                                                "
+                    + "  FROM PermissaoUsuario AS PU                            "
+                    + " WHERE PU.usuario.id         = :usuario                  "
+                    + "   AND PU.departamento.id    = :departamento             "
+                    + "   AND PU.cliente.id         = :cliente                  "
+                    + "   AND PU.nivel.id           = :nivel                    ");
+            qry.setParameter("usuario", idUsuario);
+            qry.setParameter("departamento", idDepartamento);
+            qry.setParameter("cliente", idCliente);
+            qry.setParameter("nivel", idNivel);
+            List list = qry.getResultList();
+            if (!list.isEmpty() && list.size() == 1) {
+                return (PermissaoUsuario) (qry.getSingleResult());
+            }
         } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public Rotina pesquisaRotinaPermissao(String dsPermissao) {
-        dsPermissao = "%" + dsPermissao + "%";
-        try {
-            Query qry = getEntityManager().createQuery("select ro "
-                    + "  from Rotina ro "
-                    + " where ro.pagina like '" + dsPermissao + "'");
-            return (Rotina) (qry.getSingleResult());
-        } catch (EJBQLException e) {
         }
         return null;
     }
 
-    public Rotina pesquisaRotinaPermissaoPorClasse(String dsClasse) {
+    public PermissaoUsuario pesquisaAcessoPermissao(int idUsuario, int idModulo, int idRotina, int idEvento, int idCliente) {
         try {
-            Query qry = getEntityManager().createQuery("select ro "
-                    + "  from Rotina ro "
-                    + " where ro.classe like '" + dsClasse + "'");
-            return (Rotina) (qry.getSingleResult());
-        } catch (EJBQLException e) {
+            Query query = getEntityManager().createQuery(
+                    " SELECT PU                                                 "
+                    + " FROM PermissaoUsuario       AS PU,                      "
+                    + "      PermissaoDepartamento  AS PD,                      "
+                    + "      Permissao              AS P                        "
+                    + "WHERE PU.departamento.id = PD.departamento.id            "
+                    + "  AND PU.nivel.id        = PD.nivel.id                   "
+                    + "  AND PD.permissao.id    = P.id                          "
+                    + "  AND PU.usuario.id      = :usuario                      "
+                    + "  AND P.modulo.id        = :modulo                       "
+                    + "  AND P.rotina.id        = :rotina                       "
+                    + "  AND P.evento.id        = :evento                       "
+                    + "  AND P.cliente.id       = :cliente                      ");
+            query.setParameter("usuario", idUsuario);
+            query.setParameter("modulo", idModulo);
+            query.setParameter("rotina", idRotina);
+            query.setParameter("evento", idEvento);
+            query.setParameter("cliente", idCliente);
+            List list = query.getResultList();
+            if (!list.isEmpty() && list.size() == 1) {
+                return (PermissaoUsuario) query.getSingleResult();
+            }
+        } catch (Exception e) {
         }
         return null;
     }
 
-    public PermissaoUsuario pesquisaAcessoPermissao(int idUsuario, int idModulo, int idRotina, int idEvento) {
+    public PermissaoUsuario pesquisaAcessoPermissaoSM(int idUsuario, int idRotina, int idEvento, int idCliente) {
         try {
-            Query qry = getEntityManager().createQuery("select pu "
-                    + "  from PermissaoUsuario pu, "
-                    + "       PermissaoDepartamento pd,"
-                    + "       Permissao p "
-                    + "where pu.departamento.id = pd.departamento.id "
-                    + "  and pu.nivel.id = pd.nivel.id "
-                    + "  and pd.permissao.id = p.id"
-                    + "  and pu.usuario.id = :idUsuario "
-                    + "  and p.modulo.id = :idModulo "
-                    + "  and p.rotina.id = :idRotina "
-                    + "  and p.evento.id = :idEvento");
-            qry.setParameter("idUsuario", idUsuario);
-            qry.setParameter("idModulo", idModulo);
-            qry.setParameter("idRotina", idRotina);
-            qry.setParameter("idEvento", idEvento);
-            return (PermissaoUsuario) (qry.getSingleResult());
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public PermissaoUsuario pesquisaAcessoPermissaoSM(int idUsuario, int idRotina, int idEvento) {
-        try {
-            Query qry = getEntityManager().createQuery("select pu "
-                    + "  from PermissaoUsuario pu, "
-                    + "       PermissaoDepartamento pd,"
-                    + "       Permissao p "
-                    + "where pu.departamento.id = pd.departamento.id "
-                    + "  and pu.nivel.id = pd.nivel.id "
-                    + "  and pd.permissao.id = p.id"
-                    + "  and pu.usuario.id = :idUsuario "
-                    + "  and p.rotina.id = :idRotina "
-                    + "  and p.evento.id = :idEvento");
-            qry.setParameter("idUsuario", idUsuario);
-            qry.setParameter("idRotina", idRotina);
-            qry.setParameter("idEvento", idEvento);
-            return (PermissaoUsuario) (qry.getSingleResult());
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public Evento pesquisaCodigoEvento(int id) {
-        Evento result = null;
-        try {
-            Query qry = getEntityManager().createNamedQuery("Evento.pesquisaID");
-            qry.setParameter("pid", id);
-            result = (Evento) qry.getSingleResult();
-        } catch (Exception e) {
-        }
-        return result;
-    }
-
-    public Modulo pesquisaCodigoModulo(int id) {
-        Modulo result = null;
-        try {
-            Query qry = getEntityManager().createNamedQuery("Modulo.pesquisaID");
-            qry.setParameter("pid", id);
-            result = (Modulo) qry.getSingleResult();
-        } catch (Exception e) {
-        }
-        return result;
-    }
-
-    public Departamento pesquisaCodigoDepartamento(int id) {
-        Departamento result = null;
-        try {
-            Query qry = getEntityManager().createNamedQuery("Departamento.pesquisaID");
-            qry.setParameter("pid", id);
-            result = (Departamento) qry.getSingleResult();
-        } catch (Exception e) {
-        }
-        return result;
-    }
-
-    public Nivel pesquisaCodigoNivel(int id) {
-        Nivel result = null;
-        try {
-            Query qry = getEntityManager().createNamedQuery("Nivel.pesquisaID");
-            qry.setParameter("pid", id);
-            result = (Nivel) qry.getSingleResult();
-        } catch (Exception e) {
-        }
-        return result;
-    }
-
-    public List pesquisaTodosDepOrdenado() {
-        try {
-            Query qry = getEntityManager().createQuery("select dep from Departamento dep order by dep.descricao");
-            return (qry.getResultList());
-        } catch (Exception e) {
-            return new ArrayList();
-        }
-    }
-
-    public List pesquisaTodosNiveis() {
-        try {
-            Query qry = getEntityManager().createQuery("select n from Nivel n");
-            return (qry.getResultList());
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public List pesquisaTodosModuloOrdenado() {
-        try {
-            Query qry = getEntityManager().createQuery("select m from Modulo m order by m.descricao asc");
-            return (qry.getResultList());
-        } catch (Exception e) {
-            return new ArrayList();
-        }
-    }
-
-    public List pesquisaTodosEventoOrdenado() {
-        try {
-            Query qry = getEntityManager().createQuery("select e from Evento e order by e.descricao asc");
-            return (qry.getResultList());
-        } catch (Exception e) {
-            return new ArrayList();
-        }
-    }
-
-    public UsuarioAcesso pesquisaUsuarioAcesso(int id_usuario, int id_permissao) {
-        UsuarioAcesso usuarioAcesso = new UsuarioAcesso();
-        try {
-            Query qry = getEntityManager().createQuery("SELECT ua FROM UsuarioAcesso ua WHERE ua.usuario.id = " + id_usuario + " AND ua.permissao.id = " + id_permissao);
-            if (!qry.getResultList().isEmpty()) {
-                return (UsuarioAcesso) qry.getSingleResult();
+            Query query = getEntityManager().createQuery(""
+                    + " SELECT PU                                               "
+                    + "  FROM PermissaoUsuario      AS PU,                      "
+                    + "       PermissaoDepartamento AS PD,                      "
+                    + "       Permissao             AS P                        "
+                    + " WHERE PU.departamento.id    = PD.departamento.id        "
+                    + "   AND PD.nivel.id           = PD.nivel.id               "
+                    + "   AND PD.permissao.id       = P.id                      "
+                    + "   AND PU.usuario.id         = :usuario                  "
+                    + "   AND P.rotina.id           = :rotina                   "
+                    + "   AND P.cliente.id          = :cliente                  "
+                    + "   AND P.evento.id           = :evento                   ");
+            query.setParameter("usuario", idUsuario);
+            query.setParameter("rotina", idRotina);
+            query.setParameter("evento", idEvento);
+            query.setParameter("cliente", idCliente);
+            List list = query.getResultList();
+            if (!list.isEmpty() && list.size() == 1) {
+                return (PermissaoUsuario) query.getSingleResult();
             }
         } catch (Exception e) {
         }
-        return usuarioAcesso;
-    }
-
-    public Permissao pesquisaPermissao(int id_modulo, int id_rotina, int id_evento) {
-        Permissao permissao = new Permissao();
-        try {
-            Query qry = getEntityManager().createQuery("    "
-                    + " SELECT p                            "
-                    + "   FROM Permissao p                  "
-                    + "  WHERE p.modulo.id = " + id_modulo
-                    + "    AND p.rotina.id = " + id_rotina
-                    + "    AND p.rotina.ativo = true        "
-                    + "    AND p.evento.id = " + id_evento);
-            if (!qry.getResultList().isEmpty()) {
-                return (Permissao) qry.getSingleResult();
-            }
-        } catch (Exception e) {
-        }
-        return permissao;
-    }
-
-    public PermissaoDepartamento pesquisaPermissaoDepartamento(int id_departamento, int id_nivel, int id_permissao) {
-        PermissaoDepartamento permissaoDepartamento = new PermissaoDepartamento();
-        try {
-            Query qry = getEntityManager().createQuery("select pd "
-                    + " from PermissaoDepartamento pd "
-                    + "where pd.departamento.id = " + id_departamento
-                    + "  and pd.nivel.id = " + id_nivel
-                    + "  and pd.permissao.id = " + id_permissao);
-            if (!qry.getResultList().isEmpty()) {
-                return (PermissaoDepartamento) qry.getSingleResult();
-            }
-        } catch (Exception e) {
-        }
-        return permissaoDepartamento;
-    }
-
-    public List<PermissaoDepartamento> pesquisaPDepartamento(int id_departamento, int id_nivel) {
-        try {
-            Query qry = getEntityManager().createQuery("select pd "
-                    + " from PermissaoDepartamento pd "
-                    + "where pd.departamento.id = " + id_departamento
-                    + "  and pd.nivel.id = " + id_nivel);
-            return qry.getResultList();
-        } catch (Exception e) {
-            return new ArrayList();
-        }
-    }
-
-    public List<UsuarioAcesso> pesquisaAcesso(int id_permissao) {
-        try {
-            Query qry = getEntityManager().createQuery("select ua from UsuarioAcesso ua where ua.permissao.id = " + id_permissao);
-            return qry.getResultList();
-        } catch (Exception e) {
-            return new ArrayList();
-        }
+        return null;
     }
 
     public List<PermissaoUsuario> pesquisaPermissaoUser(int id_depto, int id_nivel) {
@@ -265,28 +116,30 @@ public class PermissaoUsuarioDao extends DB {
     }
 
     public List<PermissaoUsuario> listaPermissaoUsuario(int idUsuario) {
-        List list = new ArrayList();
         try {
-            Query qry = getEntityManager().createQuery("select pu "
-                    + "  from PermissaoUsuario pu "
-                    + " where pu.usuario.id = :idUsuario "
-                    + " order by pu.departamento.descricao ");
-            qry.setParameter("idUsuario", idUsuario);
-            if (!qry.getResultList().isEmpty()) {
-                return qry.getResultList();
+            Query query = getEntityManager().createQuery(
+                    "     SELECT PU                                             "
+                    + "     FROM PermissaoUsuario AS PU                         "
+                    + "    WHERE PU.usuario.id = :usuario                       "
+                    + " ORDER BY PU.departamento.descricao                      ");
+            query.setParameter("usuario", idUsuario);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
             }
         } catch (Exception e) {
         }
-        return list;
+        return new ArrayList();
     }
 
     public boolean existePermissaoUsuario(PermissaoUsuario permissaoUsuario) {
         try {
-            Query qry = getEntityManager().createQuery(" SELECT PU FROM PermissaoUsuario AS PU WHERE PU.usuario.id = :idUsuario AND PU.departamento.id = :idDepartamento AND PU.nivel.id = :idNivel");
-            qry.setParameter("idUsuario", permissaoUsuario.getUsuario().getId());
-            qry.setParameter("idDepartamento", permissaoUsuario.getDepartamento().getId());
-            qry.setParameter("idNivel", permissaoUsuario.getNivel().getId());
-            if (!qry.getResultList().isEmpty()) {
+            Query query = getEntityManager().createQuery(" SELECT PU FROM PermissaoUsuario AS PU WHERE PU.usuario.id = :usuario AND PU.departamento.id = :departamento AND PU.nivel.id = :nivel AND PU.cliente.id = :cliente");
+            query.setParameter("usuario", permissaoUsuario.getUsuario().getId());
+            query.setParameter("departamento", permissaoUsuario.getDepartamento().getId());
+            query.setParameter("nivel", permissaoUsuario.getNivel().getId());
+            query.setParameter("cliente", permissaoUsuario.getCliente().getId());
+            if (!query.getResultList().isEmpty()) {
                 return true;
             }
         } catch (Exception e) {
