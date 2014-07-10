@@ -32,10 +32,10 @@
                             <p:column></p:column>
                             <p:selectOneMenu value="#{permissaoBean.idModulo}">
                                 <p:ajax event="change" update="id_painel_permissao tbl"/>
-                                <f:selectItems value="#{permissaoBean.listaModulos}"/>
+                                <f:selectItems value="#{permissaoBean.listModulos}"/>
                             </p:selectOneMenu>
                             <p:selectOneMenu value="#{permissaoBean.idRotina}">
-                                <f:selectItems value="#{permissaoBean.listaRotinas}"/>
+                                <f:selectItems value="#{permissaoBean.listRotinas}"/>
                             </p:selectOneMenu>
                             <p:commandButton icon="ui-icon-plus" value="Adicionar" action="#{permissaoBean.addPermissao}" disabled="#{controleAcessoBean.botaoSalvar}" update="id_painel_permissao, tbl" />
                             <p:column></p:column>
@@ -44,7 +44,7 @@
                         </h:panelGrid>
                     </p:panel>
                     <p:panel id="tbl" styleClass="margin-top-max">
-                        <p:dataTable var="permissao" value="#{permissaoBean.listaPermissoes}" emptyMessage="Nenhum registro encontrado" scrollHeight="400" scrollable="true">
+                        <p:dataTable var="permissao" value="#{permissaoBean.listPermissoes}" emptyMessage="Nenhum registro encontrado" scrollHeight="400" scrollable="true">
                             <f:facet name="header">Permissões adicionadas</f:facet>
                             <p:column headerText="Módulo">
                                 <p:outputLabel value="#{permissao.modulo.descricao}"/>

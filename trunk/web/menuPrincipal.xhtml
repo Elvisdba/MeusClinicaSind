@@ -28,9 +28,9 @@
                         <p:panel style="border: 0px; width: 1024px; margin: 0 auto">
                             <p:menubar>  
                                 <p:submenu label="Departamento" icon="ui-icon-document" style="margin-right: 15px">
-                                    <p:menuitem value="Administração"                action="#{chamadaPaginaBean.pagina('menuAdministrativo')}" />
-                                    <p:menuitem value="Coordenação"             action="#{chamadaPaginaBean.pagina('menuCoordenacao')}" />
-                                    <p:menuitem value="Equipe Técnica"          action="#{chamadaPaginaBean.pagina('menuEquipeTecnica')}" />                                    
+                                    <p:menuitem value="Administração"                action="#{chamadaPaginaBean.menuAdministrativo()}" />
+                                    <p:menuitem value="Coordenação"             action="#{chamadaPaginaBean.menuCoordenacao()}" />
+                                    <p:menuitem value="Equipe Técnica"          action="#{chamadaPaginaBean.menuFichaTecnica()}" />                                    
                                 </p:submenu>
                                 <p:submenu label="Segurança" icon="ui-icon-document" style="margin-right: 15px">
                                     <p:menuitem value="Registro Empresarial" action="#{chamadaPaginaBean.registroEmpresarial}" actionListener="#{registroEmpresarialBean.limparModulo()}"/>

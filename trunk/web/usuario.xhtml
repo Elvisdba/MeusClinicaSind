@@ -120,15 +120,15 @@
                                             <p:outputLabel value="Nível" />
                                             <h:column />
                                             <p:selectOneMenu value="#{usuarioBean.idDepartamento}" id="idSelDepto">
-                                                <f:selectItems value="#{usuarioBean.listaDepartamentos}"/>
+                                                <f:selectItems value="#{usuarioBean.listDepartamentos}"/>
                                             </p:selectOneMenu>
                                             <p:selectOneMenu value="#{usuarioBean.idNivel}" id="idSelNivel">
-                                                <f:selectItems value="#{usuarioBean.listaNiveis}"/>
+                                                <f:selectItems value="#{usuarioBean.listNiveis}"/>
                                             </p:selectOneMenu>
                                             <p:commandButton icon="ui-icon-plus" action="#{usuarioBean.addUsuarioPermissao}" update="tbl,idSelDepto,idSelNivel" styleClass="no-margin" title="Adicionar novo departamento a esse usuário" disabled="#{controleAcessoBean.botaoSalvar}" />
                                         </h:panelGrid>                                                    
                                         <h:panelGrid id="tbl">
-                                            <p:dataTable value="#{usuarioBean.listaPermissaoUsuario}" var="permissaoUsuario" scrollable="true" scrollHeight="250" emptyMessage="Nenhum registro encontrado!">
+                                            <p:dataTable value="#{usuarioBean.listPermissaoUsuario}" var="permissaoUsuario" scrollable="true" scrollHeight="250" emptyMessage="Nenhum registro encontrado!">
                                                 <p:column headerText="Departamento">
                                                     <p:outputLabel value="#{permissaoUsuario.departamento.descricao}" />
                                                 </p:column>
@@ -158,15 +158,15 @@
                                             <h:column></h:column>
                                             <p:selectOneMenu value="#{usuarioBean.idModulo}" id="idModulo">
                                                 <p:ajax event="change" listener="#{usuarioBean.limparListaUsuarioAcesso}" update="idRenderTabela tblUsuarioAcesso" />
-                                                <f:selectItems value="#{usuarioBean.listaModulos}" />
+                                                <f:selectItems value="#{usuarioBean.listModulos}" />
                                             </p:selectOneMenu>
                                             <p:selectOneMenu value="#{usuarioBean.idRotina}" id="idRotina">
                                                 <p:ajax event="change" listener="#{usuarioBean.limparListaUsuarioAcessox}" update="idRenderTabela tblUsuarioAcesso" />
-                                                <f:selectItems value="#{usuarioBean.listaRotinas}"/>
+                                                <f:selectItems value="#{usuarioBean.listRotinas}"/>
                                             </p:selectOneMenu>
                                             <p:selectOneMenu value="#{usuarioBean.idEvento}" id="idEvento">
                                                 <p:ajax event="change" listener="#{usuarioBean.limparListaUsuarioAcessox}" update="idRenderTabela tblUsuarioAcesso" />
-                                                <f:selectItems value="#{usuarioBean.listaEventos}"/>
+                                                <f:selectItems value="#{usuarioBean.listEventos}"/>
                                             </p:selectOneMenu>
                                             <p:commandButton icon="ui-icon-plus" action="#{usuarioBean.addUsuarioAcesso()}" update="idRenderTabela tblUsuarioAcesso" styleClass="no-margin" title="Adicionar permissão personalizada" rendered="#{usuarioBean.usuario.pessoa.id != -1}" disabled="#{controleAcessoBean.botaoSalvar}" />
                                             <h:column>
@@ -187,7 +187,7 @@
                                             <h:column></h:column>
                                         </h:panelGrid>
                                         <h:panelGrid id="tblUsuarioAcesso" styleClass="margin-top-max">
-                                            <p:dataTable value="#{usuarioBean.listaUsuarioAcesso}" var="usuarioAcesso" emptyMessage="Nenhum registro encontrado!" scrollable="true" scrollHeight="200">
+                                            <p:dataTable value="#{usuarioBean.listUsuarioAcesso}" var="usuarioAcesso" emptyMessage="Nenhum registro encontrado!" scrollable="true" scrollHeight="200">
                                                 <p:column headerText="Módulo">
                                                     <p:outputLabel value="#{usuarioAcesso.permissao.modulo.descricao}" />
                                                 </p:column>
