@@ -34,12 +34,12 @@
                                         <h:outputLabel value="Departamento: " />
                                         <p:selectOneMenu value="#{permissaoBean.idDepartamento}">
                                             <p:ajax event="change" listener="#{permissaoBean.pesquisaPermissoesDepartamento}" update="tbl, tbl2"/>
-                                            <f:selectItems value="#{permissaoBean.listaDepartamentos}"/>
+                                            <f:selectItems value="#{permissaoBean.listDepartamentos}"/>
                                         </p:selectOneMenu>
                                         <h:outputLabel value="Nível:" style="margin-left: 25px;"/>
                                         <p:selectOneMenu value="#{permissaoBean.idNivel}">
                                             <p:ajax event="change" listener="#{permissaoBean.pesquisaPermissoesDepartamento}" update="tbl, tbl2"/>
-                                            <f:selectItems value="#{permissaoBean.listaNiveis}"/>
+                                            <f:selectItems value="#{permissaoBean.listNiveis}"/>
                                         </p:selectOneMenu>
                                     </h:panelGrid>
                                     <hr />
