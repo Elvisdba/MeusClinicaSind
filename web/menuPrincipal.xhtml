@@ -1,0 +1,141 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Clínica Integrada - Menu Principal</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" charset="UTF-8"/>
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/Imagens/favicon.ico"/>  
+        <style type="text/css">
+            .ui-widget-content .ui-inputfield{ padding: 8px!important;} 
+            .ui-button { padding: 3px!important; }
+            .ui-selectonemenu-label .ui-inputfield{}
+        </style>
+    </h:head>
+    <h:body>
+        <!-- INICIA DIV wrap e main -->
+        <div id="wrapx">
+            <div id="mainx">
+                <!-- INICIA DIV wrap e main -->  
+                <f:subview id="header">
+                    <ui:include src="templatePrime.xhtml"/>
+                </f:subview>
+                <f:view>
+                    <h:form id="formMenuPrincipal">
+                        <p:panel style="border: 0px; width: 1024px; margin: 0 auto">
+                            <p:menubar>  
+                                <p:submenu label="Departamento" icon="ui-icon-document" style="margin-right: 15px">
+                                    <p:menuitem value="Administração"                action="#{chamadaPaginaBean.pagina('menuAdministrativo')}" />
+                                    <p:menuitem value="Coordenação"             action="#{chamadaPaginaBean.pagina('menuCoordenacao')}" />
+                                    <p:menuitem value="Equipe Técnica"          action="#{chamadaPaginaBean.pagina('menuEquipeTecnica')}" />                                    
+                                </p:submenu>
+                                <p:submenu label="Segurança" icon="ui-icon-document" style="margin-right: 15px">
+                                    <p:menuitem value="Registro Empresarial" action="#{chamadaPaginaBean.registroEmpresarial}" actionListener="#{registroEmpresarialBean.limparModulo()}"/>
+                                    <p:menuitem value="Usuários" action="#{chamadaPaginaBean.pagina('usuario')}" />  
+                                    <p:submenu label="Permissão" icon="ui-icon-contact">  
+                                        <p:menuitem value="Perm. Departamento"      action="#{chamadaPaginaBean.permissaoDepartamento}" />
+                                        <p:menuitem value="Módulo/Rotina"           action="#{chamadaPaginaBean.permissao}" />
+                                        <p:menuitem value="Cadastro Simples"        action="#{chamadaPaginaBean.simples}" />
+                                        <p:menuitem value="Rotina"                  action="#{chamadaPaginaBean.rotina}" />
+                                        <p:menuitem value="Níveis"                  action="#{chamadaPaginaBean.nivel}" />
+                                        <p:menuitem value="Filial Departamento"     action="#{chamadaPaginaBean.pagina('filialDepartamento')}" />
+                                    </p:submenu>  
+                                    <p:separator />  
+                                    <p:menuitem value="Pesquisar Logs"              action="#{chamadaPaginaBean.pagina('pesquisaLog')}" title="Registro de atividades"  />
+                                        <p:submenu label="Sistema">
+                                            <p:menuitem value="Filial"     action="#{chamadaPaginaBean.pagina('filial')}" />
+                                            <c:if test="#{controleUsuarioBean.clienteString.equals('ClinicaIntegrada')}">
+                                                <p:menuitem value="Cliente"       action="#{chamadaPaginaBean.pagina('cliente')}" />
+                                            </c:if>
+                                        </p:submenu>
+                                    <p:menuitem value="Sair do Sistema" action="#{usuarioBean.sairSistema}" /> 
+                                </p:submenu>                                 
+                                <p:submenu label="Ferramentas" icon="ui-icon-document" style="margin-right: 15px">  
+                                    <p:submenu label="Pessoa" icon="ui-icon-contact">
+                                        <p:menuitem value="Física"                action="#{chamadaPaginaBean.pagina('pessoaFisica', 'fisicaBean')}"/>
+                                        <p:menuitem value="Juridica"              action="#{chamadaPaginaBean.pagina('pessoaJuridica', 'juridicaBean')}"/>
+                                        <p:menuitem value="Cnae"                  action="#{chamadaPaginaBean.pagina('cnae')}"/>
+                                        <p:menuitem value="Profissão"             action="#{chamadaPaginaBean.pagina('profissao')}"/>
+                                        <p:menuitem value="Enviar E-Mails"        action="#{chamadaPaginaBean.pagina('email')}"/>
+                                        <p:submenu label="Suporte">
+                                            <p:menuitem value="Nacionalidade"         action="#{chamadaPaginaBean.paginaSimples('Nacionalidade', 'Nacionalidade')}"/>
+                                        </p:submenu>
+                                    </p:submenu>                                       
+                                    <p:submenu label="Endereço" icon="ui-icon-contact" style="margin-right: 15px">
+                                        <p:menuitem value="Endereço"      action="#{chamadaPaginaBean.endereco}"/>
+                                        <p:menuitem value="Bairro"        action="#{chamadaPaginaBean.bairro}"/>
+                                        <p:menuitem value="Cidade"        action="#{chamadaPaginaBean.cidade}"/>
+                                        <p:menuitem value="Logradouro"    action="#{chamadaPaginaBean.logradouro}"/>
+                                        <p:menuitem value="Descrição"     action="#{chamadaPaginaBean.descricaoEndereco}"/>
+                                        <p:menuitem value="Tipo Endereço" action="#{chamadaPaginaBean.tipoEndereco}"/>
+                                    </p:submenu>
+                                    <p:submenu label="Agenda" icon="ui-icon-document">  
+                                        <p:menuitem value="Agenda Telefônica"            action="#{chamadaPaginaBean.pagina('agendaTelefone')}" actionListener="#{agendaTelefoneBean.putType('agendaTelefone')}" title="Cadastro"/>
+                                        <p:menuitem value="Grupo Agenda"                 action="#{chamadaPaginaBean.grupoAgenda}"/>
+                                        <p:menuitem value="Grupo Usuário"     action="#{chamadaPaginaBean.pagina('agendaGrupoUsuario')}" />
+                                    </p:submenu>
+                                    <p:menuitem icon="ui-icon ui-icon-mail-closed" value="Email" action="#{chamadaPaginaBean.pagina('email')}" />
+                                </p:submenu>
+                                <p:menuitem value="Relatórios" />
+                            </p:menubar> 
+                        </p:panel>
+                        <p:panel style="border: 0px; width: 1024px; height: 550px; margin: 0 auto">
+                            <p:panel style="float: left; text-align: center; background: #f6f6f6; clear: both; position: absolute; margin-top: 50px">
+                                <center>
+                                    <h:panelGrid>
+                                        <h:outputText style="font-weight: bold" value="Agenda Telefônica" />
+                                    </h:panelGrid>
+                                </center>
+                                <p:commandLink title="Pesquisa Agenda Telefônica" style="clear: both" >
+                                    <h:graphicImage value="/Imagens/-icone-agenda-telefone.jpg" width="120" /><br />
+                                </p:commandLink>
+                                <c:if test="#{agendaNotificaoBean.listAniversariantes.size() > 0}">
+                                    <p:commandLink onclick="PF('dlg_agenda_contato').show();">
+                                        Aniversariantes do mês
+                                        <h:graphicImage value="/Imagens/icon-birthday.png" width="16" /><br />
+                                    </p:commandLink>
+                                </c:if>
+                            </p:panel>
+                            <p:dialog widgetVar="dlg_agenda_contato" modal="true" footer="Felicite esta pessoa" width="600" height="400" resizable="false">
+                                <f:facet name="header">
+                                    <h:panelGrid columns="2">
+                                        <h:graphicImage value="/Imagens/icon-birthday.png" width="16" />
+                                        <h:column>Aniversariantes</h:column>
+                                    </h:panelGrid>
+                                </f:facet>
+                                <p:dataTable var="agendaContato" value="#{agendaNotificaoBean.listAniversariantes}" paginator="true" rows="15">
+                                    <p:column headerText="Principal" width="80">
+                                        #{agendaContato.agenda.nome}
+                                    </p:column>
+                                    <p:column headerText="Data" width="80">
+                                        <h:outputLabel value="#{agendaContato.nascimentoString}" />
+                                    </p:column>
+                                    <p:column headerText="Aniversariante">
+                                        #{agendaContato.contato}
+                                    </p:column>
+                                    <p:column headerText="Depto">
+                                        #{agendaContato.departamento}
+                                    </p:column>
+                                    <p:column headerText="Email">
+                                        <p:outputLabel value="#{agendaContato.email1}" title="#{agendaContato.email2}" />
+                                    </p:column>
+                                </p:dataTable>                                
+                            </p:dialog>
+                        </p:panel>
+                    </h:form>
+                </f:view>
+
+                <!-- FINALIZA div wrap main -->
+            </div>
+        </div>
+        <!-- FINALIZA div wrap main -->
+        <div id="footerx">
+            <f:subview id="footer">
+                <ui:include src="templateFooter.xhtml"/>
+            </f:subview>
+        </div>
+    </h:body>
+</html>

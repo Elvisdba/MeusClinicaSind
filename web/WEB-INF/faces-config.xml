@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<faces-config version="2.2"
+              xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">   
+        
+    <navigation-rule>
+        
+        <navigation-case>
+            <from-outcome>index</from-outcome>
+            <to-view-id>/index.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>        
+        
+        <navigation-case>
+            <from-outcome>indexLogin</from-outcome>
+            <to-view-id>/indexLogin.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>indexLoginExpirou</from-outcome>
+            <to-view-id>/indexLoginExpirou.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>menuPrincipal</from-outcome>
+            <to-view-id>/menuPrincipal.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>pessoaJuridica</from-outcome>
+            <to-view-id>/pessoaJuridica.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>pessoaFisica</from-outcome>
+            <to-view-id>/pessoaFisica.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>pesquisaEndereco</from-outcome>
+            <to-view-id>/pesquisaEndereco.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>endereco</from-outcome>
+            <to-view-id>/endereco.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>simples</from-outcome>
+            <to-view-id>/simples.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>cidade</from-outcome>
+            <to-view-id>/cidade.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>pesquisaPessoaFisica</from-outcome>
+            <to-view-id>/pesquisaPessoaFisica.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>cnae</from-outcome>
+            <to-view-id>/cnae.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>pesquisaCnae</from-outcome>
+            <to-view-id>/pesquisaCnae.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>pesquisaPessoaJuridica</from-outcome>
+            <to-view-id>/pesquisaPessoaJuridica.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>        
+       
+        <navigation-case>
+            <from-outcome>usuario</from-outcome>
+            <to-view-id>/usuario.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>        
+       
+        <navigation-case>
+            <from-outcome>pesquisaUsuario</from-outcome>
+            <to-view-id>/pesquisaUsuario.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>        
+       
+        <navigation-case>
+            <from-outcome>cliente</from-outcome>
+            <to-view-id>/cliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>        
+       
+        <navigation-case>
+            <from-outcome>pesquisaCliente</from-outcome>
+            <to-view-id>/pesquisaCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>        
+        
+        <navigation-case>
+            <from-outcome>menuCoordenacao</from-outcome>
+            <to-view-id>/menuCoordenacao.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>        
+        
+        <navigation-case>
+            <from-outcome>menuEquipeTecnica</from-outcome>
+            <to-view-id>/menuEquipeTecnica.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>        
+        
+        <navigation-case>
+            <from-outcome>menuAdministrativo</from-outcome>
+            <to-view-id>/menuAdministrativo.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>        
+        
+        <navigation-case>
+            <from-outcome>acessoNegado</from-outcome>
+            <to-view-id>/acessoNegado.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>        
+        
+        <navigation-case>
+            <from-outcome>permissao</from-outcome>
+            <to-view-id>/permissao.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>permissaoDepartamento</from-outcome>
+            <to-view-id>/permissaoDepartamento.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>rotina</from-outcome>
+            <to-view-id>/rotina.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+       
+        <!-- 
+        <navigation-case>
+            <from-outcome>#{navigationRules.param}</from-outcome>
+            <to-view-id>/#{navigationRules.param}</to-view-id>
+            <redirect/>
+        </navigation-case> -->        
+        
+    </navigation-rule>
+    
+    <!-- <lifecycle>
+        <phase-listener>br.com.rtools.filters.AuthorizationListener</phase-listener>
+    </lifecycle> -->
+    
+</faces-config>
