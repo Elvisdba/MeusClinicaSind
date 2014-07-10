@@ -3,6 +3,7 @@ package br.com.rtools.seguranca.beans;
 import br.com.rtools.seguranca.Log;
 import br.com.rtools.seguranca.Rotina;
 import br.com.rtools.seguranca.Usuario;
+import br.com.rtools.seguranca.controleUsuario.SessaoCliente;
 import br.com.rtools.seguranca.dao.PesquisaLogDao;
 import br.com.rtools.utilitarios.DataHoje;
 import br.com.rtools.utilitarios.Sessions;
@@ -312,7 +313,7 @@ public class PesquisaLogBean implements Serializable {
 
             }
             PesquisaLogDao pldb = new PesquisaLogDao();
-            listLogs = (List<Log>) pldb.pesquisaLogs(dtInicial, dtFinal, hrInicial, hrFinal, idU, idR, idInEventos, descPesquisa);
+            listLogs = (List<Log>) pldb.pesquisaLogs(dtInicial, dtFinal, hrInicial, hrFinal, idU, idR, idInEventos, descPesquisa, SessaoCliente.get().getId());
         }
         return listLogs;
     }

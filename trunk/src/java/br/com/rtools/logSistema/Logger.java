@@ -276,7 +276,7 @@ public class Logger extends salvaLogs {
             HttpServletRequest paginaRequerida = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
             String nomePagina = this.converteURL(paginaRequerida.getRequestURI());
             RotinaDao rotinaDao = new RotinaDao();
-            Rotina rotina = rotinaDao.pesquisaRotinaPorPagina(nomePagina);
+            Rotina rotina = rotinaDao.pesquisaRotinaPorPagina(nomePagina, true);
             try {
                 if (rotina.getId() != -1) {
                     return rotina;

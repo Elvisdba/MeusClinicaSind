@@ -17,8 +17,12 @@ import br.com.rtools.seguranca.Rotina;
 import br.com.rtools.seguranca.Usuario;
 import br.com.rtools.seguranca.UsuarioAcesso;
 import br.com.rtools.seguranca.controleUsuario.SessaoCliente;
+import br.com.rtools.seguranca.dao.ModuloDao;
 import br.com.rtools.seguranca.dao.PermissaoDao;
+import br.com.rtools.seguranca.dao.PermissaoDepartamentoDao;
 import br.com.rtools.seguranca.dao.PermissaoUsuarioDao;
+import br.com.rtools.seguranca.dao.RotinaDao;
+import br.com.rtools.seguranca.dao.UsuarioAcessoDao;
 import br.com.rtools.seguranca.dao.UsuarioDao;
 import br.com.rtools.utilitarios.Dao;
 import br.com.rtools.utilitarios.DaoInterface;
@@ -42,14 +46,14 @@ import javax.servlet.http.HttpSession;
 public class UsuarioBean implements Serializable {
 
     private Usuario usuario;
-    private List<PermissaoUsuario> listaPermissaoUsuario;
-    private List<Usuario> listaUsuario;
-    private List<UsuarioAcesso> listaUsuarioAcesso;
-    private List<SelectItem> listaModulos;
-    private List<SelectItem> listaRotinas;
-    private List<SelectItem> listaEventos;
-    private List<SelectItem> listaDepartamentos;
-    private List<SelectItem> listaNiveis;
+    private List<PermissaoUsuario> listPermissaoUsuario;
+    private List<Usuario> listUsuario;
+    private List<UsuarioAcesso> listUsuarioAcesso;
+    private List<SelectItem> listModulos;
+    private List<SelectItem> listRotinas;
+    private List<SelectItem> listEventos;
+    private List<SelectItem> listDepartamentos;
+    private List<SelectItem> listNiveis;
     private String confirmaSenha;
     private String descricaoPesquisa;
     private String mensagem;
@@ -77,14 +81,14 @@ public class UsuarioBean implements Serializable {
         if (((Usuario) Sessions.getObject("sessaoUsuario")).getId() == 1) {
             usuarioMaster = true;
         }
-        listaPermissaoUsuario = new ArrayList();
-        listaUsuario = new ArrayList();
-        listaUsuarioAcesso = new ArrayList();
-        listaModulos = new ArrayList<SelectItem>();
-        listaRotinas = new ArrayList<SelectItem>();
-        listaEventos = new ArrayList<SelectItem>();
-        listaDepartamentos = new ArrayList<SelectItem>();
-        listaNiveis = new ArrayList<SelectItem>();
+        listPermissaoUsuario = new ArrayList();
+        listUsuario = new ArrayList();
+        listUsuarioAcesso = new ArrayList();
+        listModulos = new ArrayList<SelectItem>();
+        listRotinas = new ArrayList<SelectItem>();
+        listEventos = new ArrayList<SelectItem>();
+        listDepartamentos = new ArrayList<SelectItem>();
+        listNiveis = new ArrayList<SelectItem>();
         confirmaSenha = "";
         descricaoPesquisa = "";
         mensagem = "";
@@ -193,9 +197,10 @@ public class UsuarioBean implements Serializable {
         }
         PermissaoUsuario pu = new PermissaoUsuario();
         DaoInterface di = new Dao();
-        pu.setDepartamento((Departamento) di.find(new Departamento(), Integer.valueOf(listaDepartamentos.get(idDepartamento).getDescription())));
-        pu.setNivel((Nivel) di.find(new Nivel(), Integer.valueOf(listaNiveis.get(idNivel).getDescription())));
+        pu.setDepartamento((Departamento) di.find(new Departamento(), Integer.valueOf(listDepartamentos.get(idDepartamento).getDescription())));
+        pu.setNivel((Nivel) di.find(new Nivel(), Integer.valueOf(listNiveis.get(idNivel).getDescription())));
         pu.setUsuario(usuario);
+        pu.setCliente(SessaoCliente.get());
         PermissaoUsuarioDao permissaoUsuarioDB = new PermissaoUsuarioDao();
         if (permissaoUsuarioDB.existePermissaoUsuario(pu)) {
             Messages.warn("Sistema", "Permissão já existe");
@@ -236,14 +241,23 @@ public class UsuarioBean implements Serializable {
     }
 
     public boolean removePermissoes(DaoInterface di) {
-        PermissaoUsuarioDao db = new PermissaoUsuarioDao();
-        for (int i = 0; i < listaPermissaoUsuario.size(); i++) {
-            PermissaoUsuario perUsuario = listaPermissaoUsuario.get(i);
-            perUsuario = db.pesquisaPermissaoUsuario(perUsuario.getUsuario().getId(), perUsuario.getDepartamento().getId(), perUsuario.getNivel().getId());
-
-            List<PermissaoDepartamento> lista = db.pesquisaPDepartamento(perUsuario.getDepartamento().getId(), perUsuario.getNivel().getId());
+        PermissaoUsuarioDao permissaoUsuarioDao = new PermissaoUsuarioDao();
+        PermissaoDepartamentoDao permissaoDepartamentoDao = new PermissaoDepartamentoDao();
+        UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
+        for (int i = 0; i < listPermissaoUsuario.size(); i++) {
+            PermissaoUsuario perUsuario = listPermissaoUsuario.get(i);
+            perUsuario = permissaoUsuarioDao.pesquisaPermissaoUsuario(perUsuario.getUsuario().getId(), perUsuario.getDepartamento().getId(), perUsuario.getNivel().getId(), SessaoCliente.get().getId());
+            if (perUsuario == null) {
+                di.rollback();
+                return false;
+            }
+            List<PermissaoDepartamento> lista = permissaoDepartamentoDao.pesquisaPermissaoDepartamento(perUsuario.getDepartamento().getId(), perUsuario.getNivel().getId(), SessaoCliente.get().getId());
             for (int w = 0; w < lista.size(); w++) {
-                UsuarioAcesso ua = db.pesquisaUsuarioAcesso(perUsuario.getUsuario().getId(), lista.get(w).getPermissao().getId());
+                UsuarioAcesso ua = usuarioAcessoDao.pesquisaUsuarioAcesso(perUsuario.getUsuario().getId(), lista.get(w).getPermissao().getId(), SessaoCliente.get().getId());
+                if (ua == null) {
+                    di.rollback();
+                    return false;
+                }
                 if (!di.delete(ua)) {
                     di.rollback();
                     return false;
@@ -289,61 +303,60 @@ public class UsuarioBean implements Serializable {
         return (String) Sessions.getString("urlRetorno");
     }
 
-    public List<Usuario> getListaUsuario() {
-        if (listaUsuario.isEmpty()) {
+    public List<Usuario> getListUsuario() {
+        if (listUsuario.isEmpty()) {
+            UsuarioDao usuarioDao = new UsuarioDao();
             if (descricaoPesquisa.isEmpty()) {
-                DaoInterface di = new Dao();
-                listaUsuario = di.list(new Usuario(), true);
+                listUsuario = usuarioDao.pesquisaTodosPorCliente(SessaoCliente.get().getId());
             } else {
-                UsuarioDao db = new UsuarioDao();
-                listaUsuario = db.pesquisaTodosPorDescricao(descricaoPesquisa);
+                listUsuario = usuarioDao.pesquisaTodosPorDescricao(descricaoPesquisa, SessaoCliente.get().getId());
             }
             List<Usuario> list = new ArrayList<Usuario>();
             if (filtrarUsuarioAtivo) {
-                for (int i = 0; i < listaUsuario.size(); i++) {
-                    if (listaUsuario.get(i).getAtivo()) {
-                        list.add(listaUsuario.get(i));
+                for (int i = 0; i < listUsuario.size(); i++) {
+                    if (listUsuario.get(i).getAtivo()) {
+                        list.add(listUsuario.get(i));
                     }
                 }
-                listaUsuario.clear();
-                listaUsuario = list;
+                listUsuario.clear();
+                listUsuario = list;
             }
         }
-        return listaUsuario;
+        return listUsuario;
     }
 
     public void limparListaUsuario() {
-        listaUsuario.clear();
+        listUsuario.clear();
     }
 
-    public List<SelectItem> getListaNiveis() {
-        if (listaNiveis.isEmpty()) {
+    public List<SelectItem> getListNiveis() {
+        if (listNiveis.isEmpty()) {
             DaoInterface di = new Dao();
             List niveis = di.list(new Nivel(), true);
             if (!niveis.isEmpty()) {
                 for (int i = 0; i < niveis.size(); i++) {
-                    listaNiveis.add(new SelectItem(i,
+                    listNiveis.add(new SelectItem(i,
                             ((Nivel) niveis.get(i)).getDescricao(),
                             Integer.toString(((Nivel) niveis.get(i)).getId()))
                     );
                 }
             }
         }
-        return listaNiveis;
+        return listNiveis;
     }
 
-    public List<SelectItem> getListaDepartamentos() {
-        if (listaDepartamentos.isEmpty()) {
+    public List<SelectItem> getListDepartamentos() {
+        if (listDepartamentos.isEmpty()) {
             DaoInterface di = new Dao();
             List departamentos = di.list(new Departamento(), true);
             for (int i = 0; i < departamentos.size(); i++) {
-                listaDepartamentos.add(new SelectItem(i,
+                listDepartamentos.add(new SelectItem(i,
                         ((Departamento) departamentos.get(i)).getDescricao(),
                         Integer.toString(((Departamento) departamentos.get(i)).getId()))
                 );
             }
         }
-        return listaDepartamentos;
+        return listDepartamentos;
     }
 
     public void sairSistema() throws IOException {
@@ -501,16 +514,16 @@ public class UsuarioBean implements Serializable {
         this.confirmaSenha = confirmaSenha;
     }
 
-    public List<PermissaoUsuario> getListaPermissaoUsuario() {
+    public List<PermissaoUsuario> getListPermissaoUsuario() {
         PermissaoUsuarioDao db = new PermissaoUsuarioDao();
         if (usuario.getId() != -1 && !adicionado) {
-            listaPermissaoUsuario = db.pesquisaListaPermissaoPorUsuario(usuario.getId());
+            listPermissaoUsuario = db.pesquisaListaPermissaoPorUsuario(usuario.getId(), SessaoCliente.get().getId());
         }
-        return listaPermissaoUsuario;
+        return listPermissaoUsuario;
     }
 
-    public void setListaPermissaoUsuario(List<PermissaoUsuario> listaPermissaoUsuario) {
-        this.listaPermissaoUsuario = listaPermissaoUsuario;
+    public void setListPermissaoUsuario(List<PermissaoUsuario> listaPermissaoUsuario) {
+        this.listPermissaoUsuario = listaPermissaoUsuario;
     }
 
     public int getIdModulo() {
@@ -537,76 +550,79 @@ public class UsuarioBean implements Serializable {
         this.idEvento = idEvento;
     }
 
-    public List<SelectItem> getListaModulos() {
-        if (listaModulos.isEmpty()) {
-            PermissaoDao db = new PermissaoDao();
-            List<Modulo> modulos = db.listaModuloPermissaoAgrupado();
+    public List<SelectItem> getListModulos() {
+        if (listModulos.isEmpty()) {
+            ModuloDao moduloDao = new ModuloDao();
+            List<Modulo> modulos = moduloDao.listaModuloPermissaoAgrupado(SessaoCliente.get().getId());
             for (int i = 0; i < modulos.size(); i++) {
-                listaModulos.add(new SelectItem(i,
+                listModulos.add(new SelectItem(i,
                         modulos.get(i).getDescricao(),
                         Integer.toString(modulos.get(i).getId())));
             }
-            listaRotinas.clear();
+            listRotinas.clear();
         }
-        return listaModulos;
+        return listModulos;
     }
 
-    public void setListaModulos(List<SelectItem> listaModulos) {
-        this.listaModulos = listaModulos;
+    public void setListModulos(List<SelectItem> listModulos) {
+        this.listModulos = listModulos;
     }
 
-    public List<SelectItem> getListaRotinas() {
-        if (listaRotinas.isEmpty() && !listaModulos.isEmpty()) {
-            int idM = Integer.parseInt(listaModulos.get(idModulo).getDescription());
-            PermissaoDao db = new PermissaoDao();
-            List<Rotina> rotinas = db.listaRotinaPermissaoAgrupado(idM);
+    public List<SelectItem> getListRotinas() {
+        if (listRotinas.isEmpty() && !listModulos.isEmpty()) {
+            int idM = Integer.parseInt(listModulos.get(idModulo).getDescription());
+            RotinaDao rotinaDao = new RotinaDao();
+            List<Rotina> rotinas = rotinaDao.listaRotinaPermissaoAgrupado(idM, SessaoCliente.get().getId());
             idRotina = 0;
             for (int i = 0; i < rotinas.size(); i++) {
-                listaRotinas.add(
+                listRotinas.add(
                         new SelectItem(
                                 i,
                                 rotinas.get(i).getRotina(),
                                 Integer.toString(rotinas.get(i).getId())));
             }
-            listaEventos.clear();
+            listEventos.clear();
         }
-        return listaRotinas;
+        return listRotinas;
     }
 
-    public void setListaRotinas(List<SelectItem> listaRotinas) {
-        this.listaRotinas = listaRotinas;
+    public void setListRotinas(List<SelectItem> listRotinas) {
+        this.listRotinas = listRotinas;
     }
 
-    public List<SelectItem> getListaEventos() {
-        if (listaEventos.isEmpty() && !listaRotinas.isEmpty() && !listaModulos.isEmpty()) {
+    public List<SelectItem> getListEventos() {
+        if (listEventos.isEmpty() && !listRotinas.isEmpty() && !listModulos.isEmpty()) {
             PermissaoDao db = new PermissaoDao();
-            int idM = Integer.parseInt(listaModulos.get(idModulo).getDescription());
-            int idR = Integer.parseInt(listaRotinas.get(idRotina).getDescription());
+            int idM = Integer.parseInt(listModulos.get(idModulo).getDescription());
+            int idR = Integer.parseInt(listRotinas.get(idRotina).getDescription());
             List<Evento> eventos = db.listaEventoPermissaoAgrupado(idM, idR);
-            listaEventos.clear();
+            listEventos.clear();
             for (int i = 0; i < eventos.size(); i++) {
-                listaEventos.add(new SelectItem(i, eventos.get(i).getDescricao(), Integer.toString(eventos.get(i).getId())));
+                listEventos.add(new SelectItem(i, eventos.get(i).getDescricao(), Integer.toString(eventos.get(i).getId())));
             }
         }
-        return listaEventos;
+        return listEventos;
     }
 
-    public void setListaEventos(List<SelectItem> listaEventos) {
-        this.listaEventos = listaEventos;
+    public void setListEventos(List<SelectItem> listEventos) {
+        this.listEventos = listEventos;
     }
 
     public void addUsuarioAcesso() {
-        PermissaoDao db = new PermissaoDao();
-        int idM = Integer.parseInt(listaModulos.get(idModulo).getDescription());
-        int idR = Integer.parseInt(listaRotinas.get(idRotina).getDescription());
-        int idE = Integer.parseInt(listaEventos.get(idEvento).getDescription());
+        UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
+        PermissaoDao permissaoDao = new PermissaoDao();
+        int idM = Integer.parseInt(listModulos.get(idModulo).getDescription());
+        int idR = Integer.parseInt(listRotinas.get(idRotina).getDescription());
+        int idE = Integer.parseInt(listEventos.get(idEvento).getDescription());
+        int idC = SessaoCliente.get().getId();
         if (usuario.getId() != -1) {
-            if (((UsuarioAcesso) (db.pesquisaUsuarioAcessoModuloRotinaEvento(usuario.getId(), idM, idR, idE))).getId() == -1) {
-                Permissao permissao = db.pesquisaPermissaoModuloRotinaEvento(idM, idR, idE);
+            if (((UsuarioAcesso) (usuarioAcessoDao.pesquisaUsuarioAcessoModuloRotinaEvento(usuario.getId(), idM, idR, idE, idC))) == null) {
+                Permissao permissao = permissaoDao.pesquisaPermissaoModuloRotinaEvento(idM, idR, idE, idC);
                 UsuarioAcesso usuarioAcesso = new UsuarioAcesso();
                 DaoInterface di = new Dao();
                 usuarioAcesso.setUsuario(usuario);
                 usuarioAcesso.setPermissao(permissao);
+                usuarioAcesso.setCliente(SessaoCliente.get());
                 di.openTransaction();
                 usuarioAcesso.setPermite(true);
                 if (di.save(usuarioAcesso)) {
@@ -622,46 +638,46 @@ public class UsuarioBean implements Serializable {
                 Messages.warn("Sistema", "Permissão já existe!");
             }
         }
-        listaUsuarioAcesso.clear();
+        listUsuarioAcesso.clear();
     }
 
-    public List<UsuarioAcesso> getListaUsuarioAcesso() {
-        listaUsuarioAcesso.clear();
+    public List<UsuarioAcesso> getListUsuarioAcesso() {
+        listUsuarioAcesso.clear();
         if (usuario.getId() != -1) {
-            PermissaoDao db = new PermissaoDao();
+            UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
             int idM = 0;
             int idR = 0;
             int idE = 0;
             if (filtrarPorModulo) {
-                idM = Integer.parseInt(listaModulos.get(idModulo).getDescription());
+                idM = Integer.parseInt(listModulos.get(idModulo).getDescription());
             }
             if (filtrarPorRotina) {
-                idR = Integer.parseInt(listaRotinas.get(idRotina).getDescription());
+                idR = Integer.parseInt(listRotinas.get(idRotina).getDescription());
             }
             if (filtrarPorEvento) {
-                idE = Integer.parseInt(listaEventos.get(idEvento).getDescription());
+                idE = Integer.parseInt(listEventos.get(idEvento).getDescription());
             }
-            listaUsuarioAcesso = db.listaUsuarioAcesso(usuario.getId(), idM, idR, idE);
+            listUsuarioAcesso = usuarioAcessoDao.listaUsuarioAcesso(usuario.getId(), idM, idR, idE, SessaoCliente.get().getId());
             if (filtrarPorModulo || filtrarPorRotina || filtrarPorEvento) {
             }
         }
-        return listaUsuarioAcesso;
+        return listUsuarioAcesso;
+    }
+
+    public void setListUsuarioAcesso(List<UsuarioAcesso> listUsuarioAcesso) {
+        this.listUsuarioAcesso = listUsuarioAcesso;
     }
 
     public void limparListaUsuarioAcesso() {
         limparListaUsuarioAcessox();
-        listaModulos.clear();
-        getListaModulos();
-        getListaRotinas();
-        getListaEventos();
+        listModulos.clear();
+        getListModulos();
+        getListRotinas();
+        getListEventos();
     }
 
     public void limparListaUsuarioAcessox() {
-        listaUsuarioAcesso.clear();
-    }
-
-    public void setListaUsuarioAcesso(List<UsuarioAcesso> listaUsuarioAcesso) {
-        this.listaUsuarioAcesso = listaUsuarioAcesso;
+        listUsuarioAcesso.clear();
     }
 
     public void updateUsuarioAcesso(UsuarioAcesso ua) {
@@ -681,7 +697,7 @@ public class UsuarioBean implements Serializable {
             logger.update(beforeUpdate, "Usuário Acesso - ID: " + ua.getId() + " - Usuário (" + ua.getUsuario().getId() + ") " + ua.getUsuario().getLogin() + " - Permissão (" + ua.getPermissao().getId() + ") [Módulo: " + ua.getPermissao().getModulo().getDescricao() + " - Rotina: " + ua.getPermissao().getRotina().getRotina() + " - Evento: " + ua.getPermissao().getEvento().getDescricao() + "] - Permite:" + ua.isPermite());
             di.commit();
             Messages.info("Sucesso", "Permissão de acesso atualizada");
-            listaUsuarioAcesso.clear();
+            listUsuarioAcesso.clear();
         } else {
             Messages.warn("Erro", "Falha ao atualizar essa permisão!");
             di.rollback();
@@ -698,7 +714,7 @@ public class UsuarioBean implements Serializable {
             di.commit();
             Logger logger = new Logger();
             logger.delete("Usuário Acesso - ID: " + ua.getId() + " - Usuário (" + ua.getUsuario().getId() + ") " + ua.getUsuario().getLogin() + " - Permissão (" + ua.getPermissao().getId() + ") [Módulo: " + ua.getPermissao().getModulo().getDescricao() + " - Rotina: " + ua.getPermissao().getRotina().getRotina() + " - Evento: " + ua.getPermissao().getEvento().getDescricao() + "]");
-            listaUsuarioAcesso.clear();
+            listUsuarioAcesso.clear();
             Messages.info("Sucesso", "Permissão removida");
         } else {
             di.rollback();
