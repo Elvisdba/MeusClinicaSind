@@ -82,7 +82,7 @@ public class PermissaoUsuarioDao extends DB {
     public PermissaoUsuario pesquisaAcessoPermissaoSM(int idUsuario, int idRotina, int idEvento, int idCliente) {
         try {
             Query query = getEntityManager().createQuery(""
-                    + " SELECT PU                                               "
+                    + "SELECT PU                                                "
                     + "  FROM PermissaoUsuario      AS PU,                      "
                     + "       PermissaoDepartamento AS PD,                      "
                     + "       Permissao             AS P                        "
@@ -104,15 +104,6 @@ public class PermissaoUsuarioDao extends DB {
         } catch (Exception e) {
         }
         return null;
-    }
-
-    public List<PermissaoUsuario> pesquisaPermissaoUser(int id_depto, int id_nivel) {
-        try {
-            Query qry = getEntityManager().createQuery("select pu from PermissaoUsuario pu where pu.departamento.id = " + id_depto + " and pu.nivel.id = " + id_nivel);
-            return qry.getResultList();
-        } catch (Exception e) {
-            return new ArrayList();
-        }
     }
 
     public List<PermissaoUsuario> listaPermissaoUsuario(int idUsuario) {
