@@ -55,6 +55,9 @@ public class Fisica implements Serializable {
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_FOTO")
     private Date dtFoto;
+    @JoinColumn(name = "ID_TIPO_CADASTRO", referencedColumnName = "ID", nullable = true)
+    @OneToOne
+    private TipoCadastro tipoCadastro;
 
     public Fisica() {
         this.id = -1;
@@ -76,11 +79,12 @@ public class Fisica implements Serializable {
         this.setAposentadoria("");
         this.setRecadastro(DataHoje.data());
         this.setDataFoto("");
+        tipoCadastro = new TipoCadastro();
     }
 
     public Fisica(int id, Pessoa pessoa, String rg, String carteira, String serie, String sexo, Date dtNascimento, String nacionalidade,
             String naturalidade, String orgaoEmissaoRG, String ufEmissaoRG, String estadoCivil, String pai, String mae, String nit,
-            String pis, String aposentadoria, String recadastro, String dataFoto) {
+            String pis, String aposentadoria, String recadastro, String dataFoto, TipoCadastro tipoCadastro) {
         this.id = id;
         this.pessoa = pessoa;
         this.rg = rg;
@@ -100,6 +104,7 @@ public class Fisica implements Serializable {
         this.setAposentadoria(aposentadoria);
         this.setRecadastro(recadastro);
         this.setDataFoto(dataFoto);
+        this.tipoCadastro = tipoCadastro;
     }
 
     public int getId() {
@@ -295,5 +300,19 @@ public class Fisica implements Serializable {
     public void selectedNascimento(SelectEvent event) {
         SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
         this.dtNascimento = DataHoje.converte(format.format(event.getObject()));
+    }
+
+    /**
+     * @return the tipoCadastro
+     */
+    public TipoCadastro getTipoCadastro() {
+        return tipoCadastro;
+    }
+
+    /**
+     * @param tipoCadastro the tipoCadastro to set
+     */
+    public void setTipoCadastro(TipoCadastro tipoCadastro) {
+        this.tipoCadastro = tipoCadastro;
     }
 }

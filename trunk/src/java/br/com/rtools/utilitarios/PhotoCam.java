@@ -30,8 +30,7 @@ public class PhotoCam {
             caminho = "temp/" + caminhoTemporario;
             Diretorio.criar(caminho);
         }
-        ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-        String newFileName = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/" + caminho +"/"+ photo +".png");
+        String newFileName = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/" + caminho + "/" + photo + ".png");
         File f = new File(newFileName);
 
         if (f.exists()) {

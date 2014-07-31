@@ -1,11 +1,12 @@
 package br.com.rtools.seguranca.beans;
 
 import br.com.rtools.agenda.GrupoAgenda;
-import br.com.rtools.pessoa.Nacionalidade;
 import br.com.rtools.endereco.Bairro;
 import br.com.rtools.endereco.DescricaoEndereco;
 import br.com.rtools.endereco.Logradouro;
 import br.com.rtools.logSistema.Logger;
+import br.com.rtools.pessoa.Nacionalidade;
+import br.com.rtools.pessoa.TipoCadastro;
 import br.com.rtools.pessoa.TipoDocumento;
 import br.com.rtools.pessoa.TipoEndereco;
 import br.com.rtools.seguranca.*;
@@ -31,7 +32,7 @@ public class SimplesBean implements Serializable {
     private Rotina rotina;
     private Object objeto;
     private List<SelectItem> listaRotinaCombo;
-    private List listImports = new ArrayList();
+    private final List listImports = new ArrayList();
     private List<Rotina> listaRotina;
     private List lista;
     private String nomeRotina;
@@ -45,8 +46,8 @@ public class SimplesBean implements Serializable {
     public SimplesBean() {
         rotina = new Rotina();
         idRotina = 0;
-        listaRotinaCombo = new ArrayList<SelectItem>();
-        listaRotina = new ArrayList<Rotina>();
+        listaRotinaCombo = new ArrayList<>();
+        listaRotina = new ArrayList<>();
         nomeRotina = "";
         pesquisaLista = "";
         mensagem = "";
@@ -252,153 +253,219 @@ public class SimplesBean implements Serializable {
 //                 return null;
 //            }
 //        }
-
-        if (tipo.equals("Bairro")) {
-            objeto = (Bairro) new Bairro(id, descricao);
-        } else if (tipo.equals("Logradouro")) {
-            objeto = (Logradouro) new Logradouro(id, descricao);
-        } else if (tipo.equals("DescricaoEndereco")) {
-            objeto = (DescricaoEndereco) new DescricaoEndereco(id, descricao);
-        } else if (tipo.equals("TipoEndereco")) {
-            objeto = (TipoEndereco) new TipoEndereco(id, descricao);
-        } else if (tipo.equals("TipoDocumento")) {
-            objeto = (TipoDocumento) new TipoDocumento(id, descricao);
-        } else if (tipo.equals("GrupoAgenda")) {
-            objeto = (GrupoAgenda) new GrupoAgenda(id, descricao);
-        } else if (tipo.equals("Evento")) {
-            objeto = (Evento) new Evento(id, descricao);
-        } else if (tipo.equals("Modulo")) {
-            objeto = (Modulo) new Modulo(id, descricao);
-        } else if (tipo.equals("Departamento")) {
-            objeto = (Departamento) new Departamento(id, descricao);
-        } else if (tipo.equals("Nivel")) {
-            objeto = (Nivel) new Nivel(id, descricao);
-        } else if (tipo.equals("Nacionalidade")) {
-            objeto = (Nacionalidade) new Nacionalidade(id, descricao);
-        } else if (tipo.equals("Cor")) {
-            objeto = (Cor) new Cor(id, descricao);
+        switch (tipo) {
+            case "Bairro":
+                objeto = (Bairro) new Bairro(id, descricao);
+                break;
+            case "Logradouro":
+                objeto = (Logradouro) new Logradouro(id, descricao);
+                break;
+            case "DescricaoEndereco":
+                objeto = (DescricaoEndereco) new DescricaoEndereco(id, descricao);
+                break;
+            case "TipoEndereco":
+                objeto = (TipoEndereco) new TipoEndereco(id, descricao);
+                break;
+            case "TipoDocumento":
+                objeto = (TipoDocumento) new TipoDocumento(id, descricao);
+                break;
+            case "GrupoAgenda":
+                objeto = (GrupoAgenda) new GrupoAgenda(id, descricao);
+                break;
+            case "Evento":
+                objeto = (Evento) new Evento(id, descricao);
+                break;
+            case "Modulo":
+                objeto = (Modulo) new Modulo(id, descricao);
+                break;
+            case "Departamento":
+                objeto = (Departamento) new Departamento(id, descricao);
+                break;
+            case "Nivel":
+                objeto = (Nivel) new Nivel(id, descricao);
+                break;
+            case "Nacionalidade":
+                objeto = (Nacionalidade) new Nacionalidade(id, descricao);
+                break;
+            case "Cor":
+                objeto = (Cor) new Cor(id, descricao);
+                break;
+            case "TipoCadastro":
+                objeto = (TipoCadastro) new TipoCadastro(id, descricao);
+                break;
         }
     }
 
     public void atualizaObjeto(String tipo) {
-        if (tipo.equals("Bairro")) {
-            ((Bairro) objeto).setDescricao(descricao);
-        } else if (tipo.equals("Logradouro")) {
-            ((Logradouro) objeto).setDescricao(descricao);
-        } else if (tipo.equals("DescricaoEndereco")) {
-            ((DescricaoEndereco) objeto).setDescricao(descricao);
-        } else if (tipo.equals("TipoEndereco")) {
-            ((TipoEndereco) objeto).setDescricao(descricao);
-        } else if (tipo.equals("TipoDocumento")) {
-            ((TipoDocumento) objeto).setDescricao(descricao);
-        } else if (tipo.equals("GrupoAgenda")) {
-            ((GrupoAgenda) objeto).setDescricao(descricao);
-        } else if (tipo.equals("Evento")) {
-            ((Evento) objeto).setDescricao(descricao);
-        } else if (tipo.equals("Modulo")) {
-            ((Modulo) objeto).setDescricao(descricao);
-        } else if (tipo.equals("Departamento")) {
-            ((Departamento) objeto).setDescricao(descricao);
-        } else if (tipo.equals("Nivel")) {
-            ((Nivel) objeto).setDescricao(descricao);
-        } else if (tipo.equals("Cor")) {
-            ((Cor) objeto).setDescricao(descricao);
-        } else if (tipo.equals("Nacionalidade")) {
-            ((Nacionalidade) objeto).setDescricao(descricao);
+        switch (tipo) {
+            case "Bairro":
+                ((Bairro) objeto).setDescricao(descricao);
+                break;
+            case "Logradouro":
+                ((Logradouro) objeto).setDescricao(descricao);
+                break;
+            case "DescricaoEndereco":
+                ((DescricaoEndereco) objeto).setDescricao(descricao);
+                break;
+            case "TipoEndereco":
+                ((TipoEndereco) objeto).setDescricao(descricao);
+                break;
+            case "TipoDocumento":
+                ((TipoDocumento) objeto).setDescricao(descricao);
+                break;
+            case "GrupoAgenda":
+                ((GrupoAgenda) objeto).setDescricao(descricao);
+                break;
+            case "Evento":
+                ((Evento) objeto).setDescricao(descricao);
+                break;
+            case "Modulo":
+                ((Modulo) objeto).setDescricao(descricao);
+                break;
+            case "Departamento":
+                ((Departamento) objeto).setDescricao(descricao);
+                break;
+            case "Nivel":
+                ((Nivel) objeto).setDescricao(descricao);
+                break;
+            case "Cor":
+                ((Cor) objeto).setDescricao(descricao);
+                break;
+            case "Nacionalidade":
+                ((Nacionalidade) objeto).setDescricao(descricao);
+                break;
+            case "TipoCadastro":
+                ((TipoCadastro) objeto).setDescricao(descricao);
+                break;
         }
     }
 
     public void editaObjeto(Object obj) {
-        if (obj.getClass().getSimpleName().equals("Bairro")) {
-            descricao = ((Bairro) obj).getDescricao();
-            id = ((Bairro) objeto).getId();
-        } else if (obj.getClass().getSimpleName().equals("Logradouro")) {
-            descricao = ((Logradouro) obj).getDescricao();
-            id = ((Logradouro) objeto).getId();
-        } else if (obj.getClass().getSimpleName().equals("DescricaoEndereco")) {
-            descricao = ((DescricaoEndereco) obj).getDescricao();
-            id = ((DescricaoEndereco) objeto).getId();
-        } else if (obj.getClass().getSimpleName().equals("TipoEndereco")) {
-            descricao = ((TipoEndereco) obj).getDescricao();
-            id = ((TipoEndereco) objeto).getId();
-        } else if (obj.getClass().getSimpleName().equals("TipoDocumento")) {
-            descricao = ((TipoDocumento) obj).getDescricao();
-            id = ((TipoDocumento) objeto).getId();
-        } else if (obj.getClass().getSimpleName().equals("GrupoAgenda")) {
-            descricao = ((GrupoAgenda) obj).getDescricao();
-            id = ((GrupoAgenda) objeto).getId();
-        } else if (obj.getClass().getSimpleName().equals("Evento")) {
-            descricao = ((Evento) obj).getDescricao();
-            id = ((Evento) objeto).getId();
-        } else if (obj.getClass().getSimpleName().equals("Modulo")) {
-            descricao = ((Modulo) obj).getDescricao();
-            id = ((Modulo) objeto).getId();
-        } else if (obj.getClass().getSimpleName().equals("Departamento")) {
-            descricao = ((Departamento) obj).getDescricao();
-            id = ((Departamento) objeto).getId();
-        } else if (obj.getClass().getSimpleName().equals("Nivel")) {
-            descricao = ((Nivel) obj).getDescricao();
-            id = ((Nivel) objeto).getId();
-        } else if (obj.getClass().getSimpleName().equals("Cor")) {
-            descricao = ((Cor) obj).getDescricao();
-            id = ((Cor) objeto).getId();
-        } else if (obj.getClass().getSimpleName().equals("Nacionalidade")) {
-            descricao = ((Nacionalidade) obj).getDescricao();
-            id = ((Nacionalidade) objeto).getId();
+        switch (obj.getClass().getSimpleName()) {
+            case "Bairro":
+                descricao = ((Bairro) obj).getDescricao();
+                id = ((Bairro) objeto).getId();
+                break;
+            case "Logradouro":
+                descricao = ((Logradouro) obj).getDescricao();
+                id = ((Logradouro) objeto).getId();
+                break;
+            case "DescricaoEndereco":
+                descricao = ((DescricaoEndereco) obj).getDescricao();
+                id = ((DescricaoEndereco) objeto).getId();
+                break;
+            case "TipoEndereco":
+                descricao = ((TipoEndereco) obj).getDescricao();
+                id = ((TipoEndereco) objeto).getId();
+                break;
+            case "TipoDocumento":
+                descricao = ((TipoDocumento) obj).getDescricao();
+                id = ((TipoDocumento) objeto).getId();
+                break;
+            case "GrupoAgenda":
+                descricao = ((GrupoAgenda) obj).getDescricao();
+                id = ((GrupoAgenda) objeto).getId();
+                break;
+            case "Evento":
+                descricao = ((Evento) obj).getDescricao();
+                id = ((Evento) objeto).getId();
+                break;
+            case "Modulo":
+                descricao = ((Modulo) obj).getDescricao();
+                id = ((Modulo) objeto).getId();
+                break;
+            case "Departamento":
+                descricao = ((Departamento) obj).getDescricao();
+                id = ((Departamento) objeto).getId();
+                break;
+            case "Nivel":
+                descricao = ((Nivel) obj).getDescricao();
+                id = ((Nivel) objeto).getId();
+                break;
+            case "Cor":
+                descricao = ((Cor) obj).getDescricao();
+                id = ((Cor) objeto).getId();
+                break;
+            case "Nacionalidade":
+                descricao = ((Nacionalidade) obj).getDescricao();
+                id = ((Nacionalidade) objeto).getId();
+                break;
+            case "TipoCadastro":
+                descricao = ((TipoCadastro) obj).getDescricao();
+                id = ((TipoCadastro) objeto).getId();
+                break;
         }
         Dao dao = new Dao();
         objeto = dao.rebind(objeto);
     }
 
     public boolean comparaObjeto(Object obj) {
-        if (obj.getClass().getSimpleName().equals("Bairro")) {
-            if (((Bairro) obj).getDescricao().contains(pesquisaLista)) {
-                return true;
-            }
-        } else if (obj.getClass().getSimpleName().equals("Logradouro")) {
-            if (((Logradouro) obj).getDescricao().contains(pesquisaLista)) {
-                return true;
-            }
-        } else if (obj.getClass().getSimpleName().equals("DescricaoEndereco")) {
-            if (((DescricaoEndereco) obj).getDescricao().contains(pesquisaLista)) {
-                return true;
-            }
-        } else if (obj.getClass().getSimpleName().equals("TipoEndereco")) {
-            if (((TipoEndereco) obj).getDescricao().contains(pesquisaLista)) {
-                return true;
-            }
-        } else if (obj.getClass().getSimpleName().equals("TipoDocumento")) {
-            if (((TipoDocumento) obj).getDescricao().contains(pesquisaLista)) {
-                return true;
-            }
-        } else if (obj.getClass().getSimpleName().equals("GrupoAgenda")) {
-            if (((GrupoAgenda) obj).getDescricao().contains(pesquisaLista)) {
-                return true;
-            }
-        } else if (obj.getClass().getSimpleName().equals("Evento")) {
-            if (((Evento) obj).getDescricao().contains(pesquisaLista)) {
-                return true;
-            }
-        } else if (obj.getClass().getSimpleName().equals("Modulo")) {
-            if (((Modulo) obj).getDescricao().contains(pesquisaLista)) {
-                return true;
-            }
-        } else if (obj.getClass().getSimpleName().equals("Departamento")) {
-            if (((Departamento) obj).getDescricao().contains(pesquisaLista)) {
-                return true;
-            }
-        } else if (obj.getClass().getSimpleName().equals("Nivel")) {
-            if (((Nivel) obj).getDescricao().contains(pesquisaLista)) {
-                return true;
-            }
-        } else if (obj.getClass().getSimpleName().equals("Cor")) {
-            if (((Cor) obj).getDescricao().contains(pesquisaLista)) {
-                return true;
-            }
-        } else if (obj.getClass().getSimpleName().equals("Nacionalidade")) {
-            if (((Nacionalidade) obj).getDescricao().contains(pesquisaLista)) {
-                return true;
-            }
+        switch (obj.getClass().getSimpleName()) {
+            case "Bairro":
+                if (((Bairro) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "Logradouro":
+                if (((Logradouro) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "DescricaoEndereco":
+                if (((DescricaoEndereco) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "TipoEndereco":
+                if (((TipoEndereco) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "TipoDocumento":
+                if (((TipoDocumento) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "GrupoAgenda":
+                if (((GrupoAgenda) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "Evento":
+                if (((Evento) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "Modulo":
+                if (((Modulo) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "Departamento":
+                if (((Departamento) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "Nivel":
+                if (((Nivel) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "Cor":
+                if (((Cor) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "Nacionalidade":
+                if (((Nacionalidade) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "TipoCadastro":
+                if (((TipoCadastro) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
         }
         return false;
     }

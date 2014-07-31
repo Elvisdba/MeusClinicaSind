@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.model.SelectItem;
@@ -25,7 +26,7 @@ import org.primefaces.event.TabChangeEvent;
 @ManagedBean
 @SessionScoped
 public class JuridicaBean implements Serializable {
-    
+
     private Juridica juridica;
     private JuridicaReceita juridicaReceita;
     private PessoaEndereco pessoaEndereco;
@@ -72,7 +73,7 @@ public class JuridicaBean implements Serializable {
     private int idIndex;
     private int idIndexCnae;
     private int idIndexEndereco;
-    
+
     @PostConstruct
     public void init() {
         juridica = new Juridica();
@@ -113,7 +114,8 @@ public class JuridicaBean implements Serializable {
         listPorte = new ArrayList<SelectItem>();
         atualiza = "";
     }
-    
+
+    @PreDestroy
     public void destroy() {
         Sessions.remove("juridicaBean");
         Sessions.remove("juridicaPesquisa");
@@ -122,11 +124,11 @@ public class JuridicaBean implements Serializable {
         Sessions.remove("enderecoComp");
         Sessions.remove("cnaePesquisa");
     }
-    
+
     public void clear() {
         Sessions.remove("juridicaBean");
     }
-    
+
     public void clear(String type) {
         if (type.equals("contabilidade")) {
             juridica = new Juridica();
@@ -149,18 +151,18 @@ public class JuridicaBean implements Serializable {
             Sessions.remove("enderecoComp");
         }
     }
-    
+
     public void pesquisaCnpj() {
         if (juridica.getId() != -1) {
             return;
         }
-        
+
         if (juridica.getPessoa().getDocumento().isEmpty()) {
             return;
         }
-        
+
         String documento = AnaliseString.extrairNumeros(juridica.getPessoa().getDocumento());
-        
+
         if (!validaTipoDocumento(2, documento)) {
             msgDocumento = "Documento inválido!";
             Messages.warn("Erro", "Documento Inválido!");
@@ -174,9 +176,9 @@ public class JuridicaBean implements Serializable {
                 return;
             }
         }
-        
+
         JuridicaReceitaDao juridicaReceitaDao = new JuridicaReceitaDao();
-        
+
         juridicaReceita = juridicaReceitaDao.pesquisaJuridicaReceitaPorDocumento(documento);
         if (juridicaReceita == null) {
             juridicaReceita = new JuridicaReceita();
@@ -195,24 +197,24 @@ public class JuridicaBean implements Serializable {
                 Messages.warn("Erro", "Consulta temporárimente indisponível!");
                 return;
             }
-            
+
             knu.ReceitaCNPJ resultado = knu.knu.receitaCNPJ(documento);
-            
+
             if (resultado.getCod_erro() != 0) {
                 Messages.warn("Erro", resultado.getDesc_erro());
                 return;
             }
-            
+
             if (resultado.getNome_empresarial().isEmpty()) {
                 Messages.warn("Erro", "Erro ao pesquisar na Receita!");
                 return;
             }
-            
+
             if (resultado.getSituacao_cadastral().equals("BAIXADA")) {
                 Messages.warn("Erro", "Erro ao pesquisar na Receita!");
                 return;
             }
-            
+
             juridicaReceita.setNome(resultado.getNome_empresarial());
             juridicaReceita.setFantasia(resultado.getNome_empresarial());
             juridicaReceita.setDocumento(documento);
@@ -224,24 +226,24 @@ public class JuridicaBean implements Serializable {
             juridicaReceita.setCnae(resultado.getAtividade_principal());
             juridicaReceita.setPessoa(null);
             juridicaReceita.setStatus(resultado.getSituacao_cadastral());
-            
+
             dao.openTransaction();
-            
+
             if (!dao.save(juridicaReceita)) {
                 Messages.warn("Erro", "Erro ao Salvar pesquisa!");
                 dao.rollback();
                 return;
             }
-            
+
             dao.commit();
-            
+
             juridica.getPessoa().setNome(juridicaReceita.getNome());
             juridica.setFantasia(juridicaReceita.getNome());
-            
+
             String result[] = juridicaReceita.getCnae().split(" ");
-            
+
             List<Cnae> listac = cnaeDao.pesquisaCnae(result[0], "cnae", "I");
-            
+
             if (listac.isEmpty()) {
                 Messages.warn("Erro", "Erro ao pesquisar CNAE");
                 return;
@@ -249,15 +251,15 @@ public class JuridicaBean implements Serializable {
             //retornaCnaeReceita(listac.get(0));
 
             PessoaEnderecoDao pessoaEnderecoDao = new PessoaEnderecoDao();
-            
+
             String cep = juridicaReceita.getCep();
             cep = cep.replace(".", "").replace("-", "");
-            
+
             String descricao[] = AnaliseString.removerAcentos(resultado.getLogradouro()).split(" ");
             String bairros[] = AnaliseString.removerAcentos(resultado.getBairro()).split(" ");
-            
+
             endereco = pessoaEnderecoDao.enderecoReceita(cep, descricao, bairros);
-            
+
             if (endereco != null) {
                 List<TipoEndereco> tipoEnderecos = (List<TipoEndereco>) dao.find("TipoEndereco", new int[]{2, 3, 4, 5});
                 for (int i = 0; i < tipoEnderecos.size(); i++) {
@@ -267,7 +269,7 @@ public class JuridicaBean implements Serializable {
                     pessoaEndereco.setNumero(juridicaReceita.getNumero());
                     pessoaEndereco.setComplemento(juridicaReceita.getComplemento());
                     listEnd.add(pessoaEndereco);
-                    
+
                     pessoaEndereco = new PessoaEndereco();
                 }
             } else {
@@ -277,11 +279,11 @@ public class JuridicaBean implements Serializable {
         } else {
             juridica.getPessoa().setNome(juridicaReceita.getNome());
             juridica.setFantasia(juridicaReceita.getNome());
-            
+
             String result[] = juridicaReceita.getCnae().split(" ");
-            
+
             List<Cnae> listac = cnaeDao.pesquisaCnae(result[0], "cnae", "I");
-            
+
             if (listac.isEmpty()) {
                 Messages.warn("Erro", "Erro ao pesquisar CNAE");
                 return;
@@ -291,17 +293,17 @@ public class JuridicaBean implements Serializable {
             if (juridicaReceita.getStatus().equals("BAIXADA")) {
                 Messages.warn("Erro", "Esta empresa esta INATIVA na receita!");
             }
-            
+
             PessoaEnderecoDao pessoaEnderecoDao = new PessoaEnderecoDao();
-            
+
             String cep = juridicaReceita.getCep();
             cep = cep.replace(".", "").replace("-", "");
-            
+
             String descricao[] = AnaliseString.removerAcentos(juridicaReceita.getDescricaoEndereco()).split(" ");
             String bairros[] = AnaliseString.removerAcentos(juridicaReceita.getBairro()).split(" ");
-            
+
             endereco = pessoaEnderecoDao.enderecoReceita(cep, descricao, bairros);
-            
+
             if (endereco != null) {
                 List<TipoEndereco> tipoEnderecos = (List<TipoEndereco>) dao.find("TipoEndereco", new int[]{2, 3, 4, 5});
                 for (int i = 0; i < tipoEnderecos.size(); i++) {
@@ -311,7 +313,7 @@ public class JuridicaBean implements Serializable {
                     pessoaEndereco.setNumero(juridicaReceita.getNumero());
                     pessoaEndereco.setComplemento(juridicaReceita.getComplemento());
                     listEnd.add(pessoaEndereco);
-                    
+
                     pessoaEndereco = new PessoaEndereco();
                 }
             } else {
@@ -374,7 +376,7 @@ public class JuridicaBean implements Serializable {
     public void accordion(TabChangeEvent event) {
         indicaTab = ((TabView) event.getComponent()).getActiveIndex();
     }
-    
+
     public void pesquisaDocumento() {
         JuridicaDao juridicaDao = new JuridicaDao();
         if (!juridica.getPessoa().getDocumento().isEmpty()) {
@@ -385,26 +387,26 @@ public class JuridicaBean implements Serializable {
             }
         }
     }
-    
+
     public String getInadimplente() {
         if (juridica.getId() != -1) {
             JuridicaDao juridicaDao = new JuridicaDao();
             int[] in = juridicaDao.listaInadimplencia(juridica.getPessoa().getId());
-            
+
             if (in[0] > 0 && in[1] > 0) {
                 return "Esta empresa está inadimplente em " + in[0] + " mes(es) e com " + in[1] + " movimento(s) em atraso.";
             }
         }
         return "";
     }
-    
+
     public String getEnderecoCobranca() {
         PessoaEndereco ende = null;
         String strCompl;
         if (!listEnd.isEmpty()) {
             ende = (PessoaEndereco) listEnd.get(0);
         }
-        
+
         if (ende != null) {
             if (ende.getComplemento() == null || ende.getComplemento().isEmpty()) {
                 strCompl = " ";
@@ -423,16 +425,16 @@ public class JuridicaBean implements Serializable {
         }
         return enderecoCobranca;
     }
-    
+
     public void setEnderecoCobranca(String enderecoCobranca) {
         this.enderecoCobranca = enderecoCobranca;
     }
-    
+
     public String getDtAtivacao() {
         String dt = "";
         return dt;
     }
-    
+
     public String save() {
         Dao dao = new Dao();
         JuridicaDao juridicaDao = new JuridicaDao();
@@ -443,13 +445,13 @@ public class JuridicaBean implements Serializable {
         }
         juridica.setPorte((Porte) dao.find(new Porte(), Integer.parseInt(getListPorte().get(idPorte).getDescription())));
         dao.openTransaction();
+        juridica.getPessoa().setTipoDocumento((TipoDocumento) dao.find(new TipoDocumento(), Integer.parseInt(((SelectItem) getListTipoDocumento().get(idTipoDocumento)).getDescription())));
         if (juridica.getId() == -1) {
-            juridica.getPessoa().setTipoDocumento((TipoDocumento) dao.find(new TipoDocumento(), Integer.parseInt(((SelectItem) getListTipoDocumento().get(idTipoDocumento)).getDescription())));
             if (juridica.getPessoa().getNome().isEmpty()) {
                 Messages.error("Erro", "O campo nome não pode ser nulo!");
                 return null;
             }
-            
+
             if (Integer.parseInt(((SelectItem) getListTipoDocumento().get(idTipoDocumento)).getDescription()) == 4) {
                 pessoa.setDocumento("0");
             } else {
@@ -461,17 +463,17 @@ public class JuridicaBean implements Serializable {
                     }
                 }
             }
-            
+
             if (!validaTipoDocumento(Integer.parseInt(getListTipoDocumento().get(idTipoDocumento).getDescription()), juridica.getPessoa().getDocumento())) {
                 Messages.error("Erro", "Documento Invalido!");
                 return null;
             }
-            
+
             if (listEnd.isEmpty()) {
                 Messages.error("Erro", "Cadastro não pode ser salvo sem Endereço!");
                 return null;
             }
-            
+
             if (juridica.getPessoa().getId() == -1) {
                 pessoa.setCliente(SessaoCliente.get());
                 dao.save(pessoa);
@@ -479,12 +481,12 @@ public class JuridicaBean implements Serializable {
                 if (juridica.getCnae().getId() == -1) {
                     juridica.setCnae(null);
                 }
-                
+
                 if (juridicaReceita.getId() != -1) {
                     juridicaReceita.setPessoa(pessoa);
                     dao.update(juridicaReceita);
                 }
-                
+
                 gerarLoginSenhaPessoa(juridica.getPessoa(), dao);
                 if (dao.save(juridica)) {
                     Messages.info("Sucesso", "Cadastro salvo!");
@@ -503,7 +505,7 @@ public class JuridicaBean implements Serializable {
                 Messages.error("Erro", "O campo nome não pode ser nulo!");
                 return null;
             }
-            
+
             if (Integer.parseInt(((SelectItem) getListTipoDocumento().get(idTipoDocumento)).getDescription()) == 4) {
                 juridica.getPessoa().setDocumento("0");
             } else {
@@ -528,11 +530,11 @@ public class JuridicaBean implements Serializable {
             String beforeUpdate = "ID: " + jur.getId() + " - Pessoa: (" + jur.getPessoa().getId() + ") " + jur.getPessoa().getNome() + " - Abertura: " + jur.getAbertura() + " - Fechamento: " + jur.getAbertura() + " - I.E.: " + jur.getInscricaoEstadual() + " - Insc. Mun.: " + jur.getInscricaoMunicipal() + " - Responsável: " + jur.getResponsavel();
             dao.update(juridica.getPessoa());
             if (dao.update(juridica)) {
-                
+
                 if (juridica.getContabilidade() != null && juridica.getContabilidade().getId() != -1) {
                     dao.update(juridica.getContabilidade());
                 }
-                
+
                 Messages.info("Sucesso", "Cadastro atualizado com Sucesso!");
                 dao.commit();
                 Logger novoLog = new Logger();
@@ -544,10 +546,10 @@ public class JuridicaBean implements Serializable {
             }
         }
         savePessoaEndereco();
-        
+
         return null;
     }
-    
+
     public String novo() {
 //        juridica = new Juridica();
 //        contabilidade = new Juridica();
@@ -575,7 +577,7 @@ public class JuridicaBean implements Serializable {
         Sessions.put("juridicaBean", new JuridicaBean());
         return "pessoaJuridica";
     }
-    
+
     public void novoGenerico() {
         juridica = new Juridica();
         pessoaEndereco = new PessoaEndereco();
@@ -596,7 +598,7 @@ public class JuridicaBean implements Serializable {
         Sessions.remove("enderecoNum");
         Sessions.remove("enderecoComp");
     }
-    
+
     public String delete() {
         Dao dao = new Dao();
         PessoaEnderecoDao pessoaEnderecoDao = new PessoaEnderecoDao();
@@ -622,11 +624,11 @@ public class JuridicaBean implements Serializable {
             dao.rollback();
             return null;
         }
-        
+
         JuridicaReceitaDao juridicaReceitaDao = new JuridicaReceitaDao();
         String documento = AnaliseString.extrairNumeros(juridica.getPessoa().getDocumento());
         JuridicaReceita jr = juridicaReceitaDao.pesquisaJuridicaReceitaPorDocumento(documento);
-        
+
         if (jr.getId() != -1) {
             if (!dao.delete(jr)) {
                 Messages.error("Erro", "Erro ao excluir Pesquisa da Receita!");
@@ -648,7 +650,7 @@ public class JuridicaBean implements Serializable {
         novoGenerico();
         return null;
     }
-    
+
     public String edit(Juridica j) {
         juridica = j;
         String url = (String) Sessions.getString("urlRetorno");
@@ -663,7 +665,7 @@ public class JuridicaBean implements Serializable {
                 }
             }
         }
-        
+
         if (!getListPorte().isEmpty()) {
             for (int o = 0; o < listPorte.size(); o++) {
                 if (Integer.parseInt(listPorte.get(o).getDescription()) == juridica.getPorte().getId()) {
@@ -671,7 +673,7 @@ public class JuridicaBean implements Serializable {
                 }
             }
         }
-        
+
         if (url != null) {
             Sessions.put("juridicaPesquisa", juridica);
             if (juridica.getContabilidade() == null) {
@@ -689,7 +691,7 @@ public class JuridicaBean implements Serializable {
         }
         return "pessoaJuridica";
     }
-    
+
     public void addPessoaEndereco() {
         Dao dao = new Dao();
         PessoaEnderecoDao pessoaEnderecoDao = new PessoaEnderecoDao();
@@ -719,7 +721,7 @@ public class JuridicaBean implements Serializable {
                 num = (String) Sessions.getString("enderecoNum");
                 comp = (String) Sessions.getString("enderecoComp");
                 if (!listEnd.isEmpty() && pessoaEndereco.getTipoEndereco().getId() == 2) {
-                    
+
                     if (pessoaEndereco.getId() != -1) {
                         // PessoaEndereco pessoaEndeAnt = new PessoaEndereco();
 
@@ -750,14 +752,27 @@ public class JuridicaBean implements Serializable {
                         }
                     }
                 } else {
-                    pessoaEndereco.setEndereco(endereco);
-                    pessoaEndereco.setPessoa(juridica.getPessoa());
-                    pessoaEndereco.setNumero(num);
-                    pessoaEndereco.setComplemento(comp);
-                    
-                    ((PessoaEndereco) listEnd.get(idIndexEndereco)).setEndereco(endereco);
-                    ((PessoaEndereco) listEnd.get(idIndexEndereco)).setComplemento(pessoaEndereco.getComplemento());
-                    ((PessoaEndereco) listEnd.get(idIndexEndereco)).setNumero(pessoaEndereco.getNumero());
+                    if (!listEnd.isEmpty()) {
+                        pessoaEndereco.setEndereco(endereco);
+                        pessoaEndereco.setPessoa(juridica.getPessoa());
+                        pessoaEndereco.setNumero(num);
+                        pessoaEndereco.setComplemento(comp);
+                        ((PessoaEndereco) listEnd.get(idIndexEndereco)).setEndereco(endereco);
+                        ((PessoaEndereco) listEnd.get(idIndexEndereco)).setComplemento(pessoaEndereco.getComplemento());
+                        ((PessoaEndereco) listEnd.get(idIndexEndereco)).setNumero(pessoaEndereco.getNumero());
+                    } else {
+                        int j = 0;
+                        while (j < tipoEnderecos.size()) {
+                            pessoaEndereco.setEndereco(endereco);
+                            pessoaEndereco.setTipoEndereco((TipoEndereco) tipoEnderecos.get(j));
+                            pessoaEndereco.setPessoa(juridica.getPessoa());
+                            pessoaEndereco.setNumero(num);
+                            pessoaEndereco.setComplemento(comp);
+                            listEnd.add(pessoaEndereco);
+                            j++;
+                            pessoaEndereco = new PessoaEndereco();
+                        }
+                    }
                 }
                 alterarEnd = false;
             }
@@ -769,7 +784,7 @@ public class JuridicaBean implements Serializable {
         Sessions.remove("enderecoNum");
         Sessions.remove("enderecoComp");
     }
-    
+
     public boolean comparaEndereco(PessoaEndereco pessoaEnde1, PessoaEndereco pessoaEnde2) {
         boolean compara;
         if (pessoaEnde1 != null && pessoaEnde2 != null) {
@@ -789,7 +804,7 @@ public class JuridicaBean implements Serializable {
         }
         return compara;
     }
-    
+
     public List<PessoaEndereco> getListEnderecos() {
         String strCompl;
         if (!getPesquisaPessoaEnderecoPorPessoa().isEmpty() && alterarEnd && listEnd.isEmpty()) {
@@ -806,13 +821,13 @@ public class JuridicaBean implements Serializable {
         }
         return listEnd;
     }
-    
+
     public List getPesquisaPessoaEnderecoPorPessoa() {
         PessoaEnderecoDao pessoaEnderecoDao = new PessoaEnderecoDao();
         return pessoaEnderecoDao.pesquisaPessoaEnderecoPorPessoa(juridica.getPessoa().getId());
     }
-    
-    public String getRetornarObjetoDaGrid(PessoaEndereco linha, int index) {
+
+    public void editPessoaEndereco(PessoaEndereco linha, int index) {
         pessoaEndereco = linha;
         idIndexEndereco = index;
         Sessions.put("enderecoPesquisa", pessoaEndereco.getEndereco());
@@ -824,9 +839,8 @@ public class JuridicaBean implements Serializable {
         renderEndereco = "false";
         renderNovoEndereco = "true";
         alterarEnd = true;
-        return "pessoaJuridica";
     }
-    
+
     public void showPessoaEndereco() {
         if (listEnd.isEmpty()) {
             renderEndereco = "false";
@@ -838,54 +852,54 @@ public class JuridicaBean implements Serializable {
             renderNovoEndereco = "false";
         }
     }
-    
+
     public void savePessoaEndereco() {
         //VERIFICAR ENDERECO CONTABILIDADE
         verificarEndContabilidade();
         if (juridica.getId() != -1) {
             Dao dao = new Dao();
-//            if (getPesquisaPessoaEnderecoPorPessoa().isEmpty()) {
-//                for (int i = 0; i < listEnd.size(); i++) {
-//                    pessoaEndereco = (PessoaEndereco) listEnd.get(i);
-//                    dao.openTransaction();
-//                    if (dao.save(pessoaEndereco)) {
-//                        dao.commit();
-//                    } else {
-//                        dao.rollback();
-//                        msgConfirma = "Erro ao Salvar Endereço!";
-//
-//                    }
-//                    pessoaEndereco = new PessoaEndereco();
-//                }
-//            } else {
-//                if (endComercial) {
-//                    for (int o = 0; o < listEnd.size(); o++) {
-//                        dao.openTransaction();
-//                        if (dao.update((PessoaEndereco) listEnd.get(o))) {
-//                            dao.commit();
-//                        } else {
-//                            dao.rollback();
-//                        }
-//                    }
-//                    endComercial = false;
-//                } else {
-//                    if (pessoaEndereco.getTipoEndereco().getId() == 3) {
-//                    }
-//                    for (int o = 0; o < listEnd.size(); o++) {
-//                        dao.openTransaction();
-//                        if (dao.update((PessoaEndereco) listEnd.get(o))) {
-//                            dao.commit();
-//                        } else {
-//                            dao.rollback();
-//                        }
-//                    }
-//                }
-//
-//            }
+            if (getPesquisaPessoaEnderecoPorPessoa().isEmpty()) {
+                for (int i = 0; i < listEnd.size(); i++) {
+                    pessoaEndereco = (PessoaEndereco) listEnd.get(i);
+                    dao.openTransaction();
+                    if (dao.save(pessoaEndereco)) {
+                        dao.commit();
+                    } else {
+                        dao.rollback();
+                        Messages.warn("Erro", "Ao inserir endereço!");
+
+                    }
+                    pessoaEndereco = new PessoaEndereco();
+                }
+            } else {
+                if (endComercial) {
+                    for (int o = 0; o < listEnd.size(); o++) {
+                        dao.openTransaction();
+                        if (dao.update((PessoaEndereco) listEnd.get(o))) {
+                            dao.commit();
+                        } else {
+                            dao.rollback();
+                        }
+                    }
+                    endComercial = false;
+                } else {
+                    if (pessoaEndereco.getTipoEndereco().getId() == 3) {
+                    }
+                    for (int o = 0; o < listEnd.size(); o++) {
+                        dao.openTransaction();
+                        if (dao.update((PessoaEndereco) listEnd.get(o))) {
+                            dao.commit();
+                        } else {
+                            dao.rollback();
+                        }
+                    }
+                }
+
+            }
             pessoaEndereco = new PessoaEndereco();
         }
     }
-    
+
     public void verificarEndContabilidade() {
         PessoaEnderecoDao pessoaEnderecoDao = new PessoaEnderecoDao();
         if (juridica.getId() != -1) {
@@ -916,12 +930,12 @@ public class JuridicaBean implements Serializable {
             }
         }
     }
-    
+
     public String voltarEndereco() {
         indicaTab = 0;
         return "pessoaJuridica";
     }
-    
+
     public boolean getHabilitar() {
         if (juridica.getPessoa().getId() == -1) {
             return true;
@@ -929,7 +943,7 @@ public class JuridicaBean implements Serializable {
             return false;
         }
     }
-    
+
     public String removePessoaEndereco() {
         if (pessoaEndereco.getId() != -1) {
             Dao dao = new Dao();
@@ -943,17 +957,17 @@ public class JuridicaBean implements Serializable {
         setEnderecoCompleto("");
         return "pessoaJuridica";
     }
-    
+
     public void acaoPesquisaInicial() {
         comoPesquisa = "I";
         listJuridica.clear();
     }
-    
+
     public void acaoPesquisaParcial() {
         comoPesquisa = "P";
         listJuridica.clear();
     }
-    
+
     public String getMask() {
         int i = Integer.parseInt(getListTipoDocumento().get(idTipoDocumento).getDescription());
         // 1 cpf, 2 cnpj, 3 cei, 4 nenhum
@@ -972,7 +986,7 @@ public class JuridicaBean implements Serializable {
         }
         return mask;
     }
-    
+
     public List<SelectItem> getListTipoDocumento() {
         if (listTipoDocumento.isEmpty()) {
             Dao dao = new Dao();
@@ -983,11 +997,11 @@ public class JuridicaBean implements Serializable {
         }
         return listTipoDocumento;
     }
-    
+
     public void setListTipoDocumento(List<SelectItem> listTipoDocumento) {
         this.listTipoDocumento = listTipoDocumento;
     }
-    
+
     public String getRetornarEnderecoAmbos() {
         if (Sessions.exists("enderecoPesquisa")) {
             log = ((Endereco) Sessions.getObject("enderecoPesquisa")).getLogradouro().getDescricao();
@@ -998,7 +1012,7 @@ public class JuridicaBean implements Serializable {
         }
         return enderecoCompleto;
     }
-    
+
     public String btnExcluirContabilidadePertencente() {
         if (juridica.getId() != -1) {
             //chkEndContabilidade = false;
@@ -1011,17 +1025,17 @@ public class JuridicaBean implements Serializable {
         }
         return "pessoaJuridica";
     }
-    
+
     public String pesquisarPessoaJuridicaGeracaoCadastrar() {
         Sessions.put("urlRetorno", "processamentoIndividual");
         return "pessoaJuridica";
     }
-    
+
     public boolean validaTipoDocumento(int idDoc, String docS) {
         // 1 cpf, 2 cnpj, 3 cei, 4 nenhum
         //String documento = "";
         String documento = docS.replace(".", "").replace("/", "").replace("-", "");
-        
+
         boolean ye = false;
         if (idDoc == 1) {
             ye = ValidDocuments.isValidoCPF(documento);
@@ -1036,10 +1050,10 @@ public class JuridicaBean implements Serializable {
         if (idDoc == 4) {
             ye = true;
         }
-        
+
         return ye;
     }
-    
+
     public String linkDaReceita() {
         if (juridica != null) {
             int i = 0;
@@ -1064,7 +1078,7 @@ public class JuridicaBean implements Serializable {
         }
         return null;
     }
-    
+
     public void enviarEmail() {
 //        Dao salvarAcumuladoDB = new Dao();
 //        EnvioEmailsDB dbE = new EnvioEmailsDBToplink();
@@ -1078,7 +1092,7 @@ public class JuridicaBean implements Serializable {
 //            Messages.warn("Erro", "Pesquisar uma Empresa para envio!");
 //        }
     }
-    
+
     public String enviarEmailParaTodos() {
 //        Dao salvarAcumuladoDB = new Dao();
 //        JuridicaDao juridicaDB = new JuridicaDao();
@@ -1087,7 +1101,7 @@ public class JuridicaBean implements Serializable {
 //        msgConfirma = EnviarEmail.EnviarEmailAutomatico(reg, juridicas);
         return null;
     }
-    
+
     public boolean isRenEnviarEmail() {
         if (juridica.getId() == 1) {
             return false;
@@ -1095,7 +1109,7 @@ public class JuridicaBean implements Serializable {
             return true;
         }
     }
-    
+
     public void gerarLoginSenhaPessoa(Pessoa pessoa, Dao dao) {
         String login = "", senha = "", nome = "";
         senha = senha + DataHoje.hora().replace(":", "");
@@ -1116,7 +1130,7 @@ public class JuridicaBean implements Serializable {
         pessoa.setSenha(senha);
         dao.update(pessoa);
     }
-    
+
     public void atualizaEnvioEmails() {
         if (juridica.getId() != -1) {
 //            envioEmails = new EnvioEmails();
@@ -1129,7 +1143,7 @@ public class JuridicaBean implements Serializable {
             listEn = new ArrayList();
         }
     }
-    
+
     public Juridica getJuridica() {
         if (juridica.getFantasia().isEmpty() || juridica.getFantasia() == null) {
             juridica.setFantasia(juridica.getPessoa().getNome());
@@ -1139,35 +1153,35 @@ public class JuridicaBean implements Serializable {
         }
         return juridica;
     }
-    
+
     public void setJuridica(Juridica juridica) {
         this.juridica = juridica;
     }
-    
+
     public boolean getMarcar() {
         return marcar;
     }
-    
+
     public void setMarcar(boolean marcar) {
         this.marcar = marcar;
     }
-    
+
     public int getIdTipoDocumento() {
         return idTipoDocumento;
     }
-    
+
     public void setIdTipoDocumento(int idTipoDocumento) {
         this.idTipoDocumento = idTipoDocumento;
     }
-    
+
     public String getCnaeContribuinte() {
         return cnaeContribuinte;
     }
-    
+
     public void setCnaeContribuinte(String cnaeContribuinte) {
         this.cnaeContribuinte = cnaeContribuinte;
     }
-    
+
     public String getStrSimpleEndereco() {
         if (juridica.getId() == -1) {
             strSimpleEndereco = "Adicionar Endereço";
@@ -1176,11 +1190,11 @@ public class JuridicaBean implements Serializable {
         }
         return strSimpleEndereco;
     }
-    
+
     public void setStrSimpleEndereco(String strSimpleEndereco) {
         this.strSimpleEndereco = strSimpleEndereco;
     }
-    
+
     public String getAtualiza() {
         if (atualiza.isEmpty()) {
             atualiza = "Agora ";
@@ -1189,11 +1203,11 @@ public class JuridicaBean implements Serializable {
         }
         return atualiza;
     }
-    
+
     public void setAtualiza(String atualiza) {
         this.atualiza = atualiza;
     }
-    
+
     public List<Juridica> getListJuridica() {
         if (listJuridica.isEmpty()) {
             JuridicaDao juridicaDao = new JuridicaDao();
@@ -1201,7 +1215,7 @@ public class JuridicaBean implements Serializable {
         }
         return listJuridica;
     }
-    
+
     public List<SelectItem> getListPorte() {
         if (listPorte.isEmpty()) {
             List<Porte> select = new Dao().list(new Porte());
@@ -1211,306 +1225,306 @@ public class JuridicaBean implements Serializable {
         }
         return listPorte;
     }
-    
+
     public void setListPorte(List<SelectItem> listPorte) {
         this.listPorte = listPorte;
     }
-    
+
     public String limparCampoPesquisa() {
         setDescPesquisa("");
         return null;
     }
-    
+
     public void clearCnae() {
         if (juridica.getId() != -1) {
             juridica.setCnae(null);
         }
     }
-    
+
     public String getMascaraPesquisaJuridica() {
         return Mask.getMascaraPesquisa(porPesquisa, true);
     }
-    
+
     public JuridicaReceita getJuridicaReceita() {
         return juridicaReceita;
     }
-    
+
     public void setJuridicaReceita(JuridicaReceita juridicaReceita) {
         this.juridicaReceita = juridicaReceita;
     }
-    
+
     public PessoaEndereco getPessoaEndereco() {
         return pessoaEndereco;
     }
-    
+
     public void setPessoaEndereco(PessoaEndereco pessoaEndereco) {
         this.pessoaEndereco = pessoaEndereco;
     }
-    
+
     public Endereco getEndereco() {
         return endereco;
     }
-    
+
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
     }
-    
+
     public String getEnderecoCompleto() {
         return enderecoCompleto;
     }
-    
+
     public void setEnderecoCompleto(String enderecoCompleto) {
         this.enderecoCompleto = enderecoCompleto;
     }
-    
+
     public String getEnderecoDeletado() {
         return enderecoDeletado;
     }
-    
+
     public void setEnderecoDeletado(String enderecoDeletado) {
         this.enderecoDeletado = enderecoDeletado;
     }
-    
+
     public String getDescPesquisa() {
         return descPesquisa;
     }
-    
+
     public void setDescPesquisa(String descPesquisa) {
         this.descPesquisa = descPesquisa;
     }
-    
+
     public String getPorPesquisa() {
         return porPesquisa;
     }
-    
+
     public void setPorPesquisa(String porPesquisa) {
         this.porPesquisa = porPesquisa;
     }
-    
+
     public String getComoPesquisa() {
         return comoPesquisa;
     }
-    
+
     public void setComoPesquisa(String comoPesquisa) {
         this.comoPesquisa = comoPesquisa;
     }
-    
+
     public String getDescPesquisaCnae() {
         return descPesquisaCnae;
     }
-    
+
     public void setDescPesquisaCnae(String descPesquisaCnae) {
         this.descPesquisaCnae = descPesquisaCnae;
     }
-    
+
     public String getPorPesquisaCnae() {
         return porPesquisaCnae;
     }
-    
+
     public void setPorPesquisaCnae(String porPesquisaCnae) {
         this.porPesquisaCnae = porPesquisaCnae;
     }
-    
+
     public String getComoPesquisaCnae() {
         return comoPesquisaCnae;
     }
-    
+
     public void setComoPesquisaCnae(String comoPesquisaCnae) {
         this.comoPesquisaCnae = comoPesquisaCnae;
     }
-    
+
     public String getMsgDocumento() {
         return msgDocumento;
     }
-    
+
     public void setMsgDocumento(String msgDocumento) {
         this.msgDocumento = msgDocumento;
     }
-    
+
     public String getMaskCnae() {
         return maskCnae;
     }
-    
+
     public void setMaskCnae(String maskCnae) {
         this.maskCnae = maskCnae;
     }
-    
+
     public void setMask(String mask) {
         this.mask = mask;
     }
-    
+
     public String getLog() {
         return log;
     }
-    
+
     public void setLog(String log) {
         this.log = log;
     }
-    
+
     public String getDesc() {
         return desc;
     }
-    
+
     public void setDesc(String desc) {
         this.desc = desc;
     }
-    
+
     public String getCid() {
         return cid;
     }
-    
+
     public void setCid(String cid) {
         this.cid = cid;
     }
-    
+
     public String getUf() {
         return uf;
     }
-    
+
     public void setUf(String uf) {
         this.uf = uf;
     }
-    
+
     public String getRenderNovoEndereco() {
         return renderNovoEndereco;
     }
-    
+
     public void setRendeNovoEndereco(String renderNovoEndereco) {
         this.renderNovoEndereco = renderNovoEndereco;
     }
-    
+
     public String getRenderEndereco() {
         return renderEndereco;
     }
-    
+
     public void setRenderEndereco(String renderEndereco) {
         this.renderEndereco = renderEndereco;
     }
-    
+
     public String getHiddePessoaEndereco() {
         return hiddePessoaEndereco;
     }
-    
+
     public void setHiddePessoaEndereco(String hiddePessoaEndereco) {
         this.hiddePessoaEndereco = hiddePessoaEndereco;
     }
-    
+
     public String getRenderChkEndereco() {
         return renderChkEndereco;
     }
-    
+
     public void setRendeChkEndereco(String renderChkEndereco) {
         this.renderChkEndereco = renderChkEndereco;
     }
-    
+
     public String getColorContri() {
         return colorContri;
     }
-    
+
     public void setColorContri(String colorContri) {
         this.colorContri = colorContri;
     }
-    
+
     public String getNumDocumento() {
         return numDocumento;
     }
-    
+
     public void setNumDocumento(String numDocumento) {
         this.numDocumento = numDocumento;
     }
-    
+
     public int getIndicaTab() {
         return indicaTab;
     }
-    
+
     public void setIndicaTab(int indicaTab) {
         this.indicaTab = indicaTab;
     }
-    
+
     public int getIdPorte() {
         return idPorte;
     }
-    
+
     public void setIdPorte(int idPorte) {
         this.idPorte = idPorte;
     }
-    
+
     public int getIdIndex() {
         return idIndex;
     }
-    
+
     public void setIdIndex(int idIndex) {
         this.idIndex = idIndex;
     }
-    
+
     public int getIdIndexCnae() {
         return idIndexCnae;
     }
-    
+
     public void setIdIndexCnae(int idIndexCnae) {
         this.idIndexCnae = idIndexCnae;
     }
-    
+
     public int getIdIndexEndereco() {
         return idIndexEndereco;
     }
-    
+
     public void setIdIndexEndereco(int idIndexEndereco) {
         this.idIndexEndereco = idIndexEndereco;
     }
-    
+
     public boolean isMarcar() {
         return marcar;
     }
-    
+
     public boolean isAlterarEnd() {
         return alterarEnd;
     }
-    
+
     public void setAlterarEnd(boolean alterarEnd) {
         this.alterarEnd = alterarEnd;
     }
-    
+
     public boolean isEndComercial() {
         return endComercial;
     }
-    
+
     public void setEndComercial(boolean endComercial) {
         this.endComercial = endComercial;
     }
-    
+
     public boolean isCarregaEnvios() {
         return carregaEnvios;
     }
-    
+
     public void setCarregaEnvios(boolean carregaEnvios) {
         this.carregaEnvios = carregaEnvios;
     }
-    
+
     public boolean isRenderAtivoInativo() {
         return renderAtivoInativo;
     }
-    
+
     public void setRenderAtivoInativo(boolean renderAtivoInativo) {
         this.renderAtivoInativo = renderAtivoInativo;
     }
-    
+
     public List getListEnd() {
         return listEnd;
     }
-    
+
     public void setListEnd(List listEnd) {
         this.listEnd = listEnd;
     }
-    
+
     public List getListEn() {
         return listEn;
     }
-    
+
     public void setListEn(List listEn) {
         this.listEn = listEn;
     }
-    
+
     public void setListJuridica(List<Juridica> listJuridica) {
         this.listJuridica = listJuridica;
     }
