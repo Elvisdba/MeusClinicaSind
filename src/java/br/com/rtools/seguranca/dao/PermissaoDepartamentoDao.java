@@ -99,7 +99,7 @@ public class PermissaoDepartamentoDao extends DB {
     public List<PermissaoDepartamento> pesquisaPermissaoDepartamento(int idDepartamento, int idNivel, int idCliente) {
         try {
             Query query = getEntityManager().createQuery(
-                    " SELECT PD                                                 "
+                    "  SELECT PD                                                "
                     + "  FROM PermissaoDepartamento AS PD                       "
                     + " WHERE PD.departamento.id = :departamento                "
                     + "   AND PD.nivel.id        = :nivel                       "
