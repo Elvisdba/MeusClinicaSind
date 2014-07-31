@@ -155,6 +155,18 @@
             <to-view-id>/rotina.jsf</to-view-id>
             <redirect/>
         </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>profissao</from-outcome>
+            <to-view-id>/profissao.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>parentesco</from-outcome>
+            <to-view-id>/parentesco.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
        
         <!-- 
         <navigation-case>
