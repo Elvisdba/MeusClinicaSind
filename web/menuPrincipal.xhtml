@@ -30,7 +30,7 @@
                                 <p:submenu label="Departamento" icon="ui-icon-document" style="margin-right: 15px">
                                     <p:menuitem value="Administração"                action="#{chamadaPaginaBean.menuAdministrativo()}" />
                                     <p:menuitem value="Coordenação"             action="#{chamadaPaginaBean.menuCoordenacao()}" />
-                                    <p:menuitem value="Equipe Técnica"          action="#{chamadaPaginaBean.menuFichaTecnica()}" />                                    
+                                    <p:menuitem value="Equipe Técnica"          action="#{chamadaPaginaBean.menuEquipeTecnica()}" />                                    
                                 </p:submenu>
                                 <p:submenu label="Segurança" icon="ui-icon-document" style="margin-right: 15px">
                                     <p:menuitem value="Registro Empresarial" action="#{chamadaPaginaBean.registroEmpresarial}" actionListener="#{registroEmpresarialBean.limparModulo()}"/>
@@ -45,12 +45,12 @@
                                     </p:submenu>  
                                     <p:separator />  
                                     <p:menuitem value="Pesquisar Logs"              action="#{chamadaPaginaBean.pagina('pesquisaLog')}" title="Registro de atividades"  />
-                                        <p:submenu label="Sistema">
-                                            <p:menuitem value="Filial"     action="#{chamadaPaginaBean.pagina('filial')}" />
-                                            <c:if test="#{controleUsuarioBean.clienteString.equals('ClinicaIntegrada')}">
-                                                <p:menuitem value="Cliente"       action="#{chamadaPaginaBean.pagina('cliente')}" />
-                                            </c:if>
-                                        </p:submenu>
+                                    <p:submenu label="Sistema">
+                                        <p:menuitem value="Filial"     action="#{chamadaPaginaBean.pagina('filial')}" />
+                                        <c:if test="#{controleUsuarioBean.clienteString.equals('ClinicaIntegrada')}">
+                                            <p:menuitem value="Cliente"       action="#{chamadaPaginaBean.pagina('cliente')}" />
+                                        </c:if>
+                                    </p:submenu>
                                     <p:menuitem value="Sair do Sistema" action="#{usuarioBean.sairSistema}" /> 
                                 </p:submenu>                                 
                                 <p:submenu label="Ferramentas" icon="ui-icon-document" style="margin-right: 15px">  
@@ -59,9 +59,11 @@
                                         <p:menuitem value="Juridica"              action="#{chamadaPaginaBean.pagina('pessoaJuridica', 'juridicaBean')}"/>
                                         <p:menuitem value="Cnae"                  action="#{chamadaPaginaBean.pagina('cnae')}"/>
                                         <p:menuitem value="Profissão"             action="#{chamadaPaginaBean.pagina('profissao')}"/>
-                                        <p:menuitem value="Enviar E-Mails"        action="#{chamadaPaginaBean.pagina('email')}"/>
+                                        <p:menuitem value="Filial"                action="#{chamadaPaginaBean.pagina('filial')}"/>
                                         <p:submenu label="Suporte">
                                             <p:menuitem value="Nacionalidade"         action="#{chamadaPaginaBean.paginaSimples('Nacionalidade', 'Nacionalidade')}"/>
+                                            <p:menuitem value="Tipo de Cadastro"      action="#{chamadaPaginaBean.paginaSimples('TipoCadastro', 'Tipo de Cadastro Pessoa')}"/>
+                                            <p:menuitem value="Parentesco"            action="#{chamadaPaginaBean.pagina('parentesco')}"/>
                                         </p:submenu>
                                     </p:submenu>                                       
                                     <p:submenu label="Endereço" icon="ui-icon-contact" style="margin-right: 15px">
