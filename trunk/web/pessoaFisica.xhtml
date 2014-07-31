@@ -30,6 +30,7 @@
                 <f:view>
                     <p:panel styleClass="wrapper no-border">
                         <h:form id="form_pessoa_fisica">
+                            <h:outputScript name="script_primefaces.js" library="js" />
                             <p:outputLabel value="Cadastro Física" styleClass="fonteHeader"/>
                             <c:set scope="request" var="object" value="${fisicaBean.fisica}"/>
 
@@ -37,7 +38,6 @@
                                 <p:tabView id="i_tabview_fisica" activeIndex="#{fisicaBean.indexPessoaFisica}" style="width: 990px">
                                     <p:ajax event="tabChange" listener="#{fisicaBean.accordion}" /> 
                                     <p:tab title="Cadastro Pessoal">                            
-                                        <h:outputScript name="script_primefaces.js" library="js" />
                                         <h:outputScript name="tradutor_primefaces.js" library="js" />
                                         <p:messages id="id_valida_documento" autoUpdate="true" showSummary="true" showDetail="true" />
 
@@ -45,12 +45,23 @@
                                             <p:column>
                                                 <p:panel styleClass="fundoCinza">
                                                     <h:panelGrid columns="4">
+                                                        <p:column rendered="false">
+                                                            <p:outputLabel value="Tipo Cadastro" /><br />
+                                                            <p:selectOneMenu value="#{fisicaBean.idTipoCadastro}" style="margin-right: 30px">
+                                                                <p:ajax event="change" update="@this"/>
+                                                                <f:selectItem itemValue="" itemLabel="Selecionar"/>
+                                                                <f:selectItems value="#{fisicaBean.listTipoCadastro}"/>
+                                                            </p:selectOneMenu>                                                            
+                                                        </p:column>
+                                                    </h:panelGrid>
+                                                    <h:panelGrid columns="4">
                                                         <p:column>
                                                             <p:outputLabel value="Cadastrado"/><br />
                                                             <p:calendar size="8" value="#{fisicaBean.fisica.pessoa.criacao}" pattern="dd/MM/yyyy" navigator="true" yearRange="c-1:c+1" readonlyInput="true">
                                                                 <p:ajax event="dateSelect" listener="#{fisicaBean.fisica.pessoa.selectedCriacao}" />
                                                             </p:calendar>
                                                         </p:column>
+
 
                                                         <p:column>
                                                             <p:outputLabel value="CPF" /><br />
@@ -110,14 +121,14 @@
 
                                                     <p:column>
                                                         <p:outputLabel value="Telefone" /><br />
-                                                        <p:inputMask mask="(99) 9999-9999" size="13" maxlength="10" value="#{fisicaBean.fisica.pessoa.telefone1}" style="margin-right: 30px">
+                                                        <p:inputText size="15" maxlength="10" styleClass="telefoneFix" onfocus="phoneMaskHandler(event)" onblur="phoneMaskHandler(event)" value="#{fisicaBean.fisica.pessoa.telefone1}" style="margin-right: 30px">
                                                             <p:ajax event="blur" update="@this" />
-                                                        </p:inputMask>
+                                                        </p:inputText>
                                                     </p:column>
 
                                                     <p:column>
                                                         <p:outputLabel value="Celular" /><br />
-                                                        <p:inputText size="14" maxlength="10" value="#{fisicaBean.fisica.pessoa.telefone3}" styleClass="ddd_telefone">
+                                                        <p:inputText size="14" maxlength="15" value="#{fisicaBean.fisica.pessoa.telefone3}" styleClass="telefoneFix" onfocus="phoneMaskHandler(event)" onblur="phoneMaskHandler(event)">
                                                             <p:ajax event="blur" update="@this" />
                                                         </p:inputText>
                                                     </p:column>                                            
@@ -198,7 +209,7 @@
 
                                                     <p:column>
                                                         <p:outputLabel value="Naturalidade" /><br />                                                
-                                                        <p:commandButton  icon="ui-icon-search" value="#{fisicaBean.cidadeNaturalidade}"  title="Pesquisar outra Naturalidade" disabled="#{fisicaBean.disabledNaturalidade}" style="margin-right: 10px"/>
+                                                        <p:commandButton  icon="ui-icon-search" value="#{fisicaBean.cidadeNaturalidade}" title="Pesquisar outra Naturalidade"  action="#{chamadaPaginaBean.pagina('cidade')}" disabled="#{fisicaBean.disabledNaturalidade}" style="margin-right: 10px"/>
                                                         <!-- <p:inputText  readonly="# {fisicaBean.readyOnlineNaturalidade}" size="70" title="Digite sua naturalidade"/> -->
                                                     </p:column>
 
@@ -216,10 +227,13 @@
 
                                                     <p:column>
                                                         <p:outputLabel value="Profissão"/><br />
-                                                        <p:selectOneMenu value="#{fisicaBean.idProfissao}" style="width: 345px;">
-                                                            <p:ajax event="change" update="@this"/>
-                                                            <f:selectItems value="#{fisicaBean.listProfissoes}"/>
-                                                        </p:selectOneMenu>
+                                                        <h:panelGrid columns="2">
+                                                            <p:selectOneMenu value="#{fisicaBean.idProfissao}" style="width: 280px!important;">
+                                                                <p:ajax event="change" update="@this"/>
+                                                                <f:selectItems value="#{fisicaBean.listProfissoes}"/>
+                                                            </p:selectOneMenu>
+                                                            <p:commandButton icon="ui-icon-plus" action="#{chamadaPaginaBean.pagina('profissao')}" title="Cadastrar nova profissão"/>
+                                                        </h:panelGrid>
                                                     </p:column>
                                                 </h:panelGrid>
                                             </p:column>
@@ -263,14 +277,16 @@
                                     <p:tab title="Local de Trabalho" id="i_panel_profissao">
                                         <h:panelGrid columns="2">
                                             <h:column>
-                                                <p:commandButton icon="ui-icon-search" title="Pesquisar Empresa" immediate="true" id="i_pesquisar_empresa"/>
+                                                <p:commandButton icon="ui-icon-search" title="Pesquisar Empresa" immediate="true" id="i_pesquisar_empresa" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaJuridica') }"/>
                                             </h:column>
                                             <h:column>
                                                 <h:panelGrid columns="4">
                                                     <p:outputLabel value="PESQUISAR EMPRESA " rendered="#{fisicaBean.pessoaEmpresa.juridica.pessoa.id == -1}" style="border-bottom: 1px dashed gray; color: gray;" for="i_pesquisar_empresa"/>
                                                     <p:outputLabel value="CNPJ: #{fisicaBean.pessoaEmpresa.juridica.pessoa.documento} - #{fisicaBean.pessoaEmpresa.juridica.pessoa.nome}"  rendered="#{fisicaBean.pessoaEmpresa.juridica.pessoa.id != -1}" for="i_pesquisar_empresa"  style="font-weight: bold"/>
                                                     <p:commandButton icon="ui-icon-trash" action="#{fisicaBean.removeJuridicaPesquisada}" rendered="#{fisicaBean.renderJuridicaPesquisa}" />
-                                                    <p:commandButton icon="ui-icon-contact" update=":form_pessoa_fisica:i_pessoa_juridica_card" action="#{pessoaCardBean.cardJuridica(fisicaBean.pessoaEmpresa.juridica.pessoa.id)}" oncomplete="PF('dlg_pessoa_juridica_card').show()" title="Ver detalhes" rendered="#{fisicaBean.pessoaEmpresa.juridica.pessoa.id != -1}"/>
+                                                    <h:column rendered="false">
+                                                        <p:commandButton icon="ui-icon-contact" update=":form_pessoa_fisica:i_pessoa_juridica_card" action="#{pessoaCardBean.cardJuridica(fisicaBean.pessoaEmpresa.juridica.pessoa.id)}" oncomplete="PF('dlg_pessoa_juridica_card').show()" title="Ver detalhes" rendered="#{fisicaBean.pessoaEmpresa.juridica.pessoa.id != -1}"/>
+                                                    </h:column>
                                                 </h:panelGrid>
                                             </h:column>
                                             <p:outputLabel value="Nome Fantasia: "/>
@@ -278,7 +294,7 @@
                                         </h:panelGrid>
 
                                         <h:panelGrid columns="2" style="margin-top: 10px">
-                                            <h:column>                                        
+                                            <h:column>
                                                 <p:outputLabel value="Data Admissão" /><br />
                                                 <p:inputMask size="10" value="#{fisicaBean.pessoaEmpresa.admissao}" mask="99/99/9999" style="margin-right: 20px; text-align: center"/>
                                             </h:column>
@@ -517,7 +533,7 @@
 
                                             <p:column>
                                                 <br />
-                                                <p:commandButton value="Cadastrar Novo" icon="ui-icon-plus" title="Cadastrar nova profissão"/>
+                                                <p:commandButton value="Cadastrar Novo" icon="ui-icon-plus" action="#{chamadaPaginaBean.pagina('profissao')}" title="Cadastrar nova profissão" />
                                             </p:column>
                                         </h:panelGrid>
 

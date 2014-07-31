@@ -6,7 +6,7 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <h:head>
-        <title>Sindical - Pessoa Jurídica</title>
+        <title>Clinica Integrada - Pessoa Jurídica</title>
         <meta http-equiv="X-UA-Compatible" content="IE=9" />
         <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/Imagens/favicon.ico"/>  
         <style type="text/css">
@@ -32,7 +32,6 @@
         </script>
     </h:head>
     <h:body>
-        <h:outputScript name="script_primefaces.js" library="js" />
         <!-- INICIA DIV wrap e main -->
         <div id="wrapx">
             <div id="mainx">
@@ -44,6 +43,7 @@
                     <p:panel styleClass="wrapper" style="border: 0px;">
                         <h:outputText value="Pessoa Jurídica" styleClass="fonteHeader" />
                         <h:form id="form_pessoa_juridica">
+                            <h:outputScript name="script_primefaces.js" library="js" />
                             <p:growl id="i_msg" autoUpdate="true" showDetail="true"/>
                             <c:set scope="request" var="object" value="${juridicaBean.juridica}"/> 
                             <h:panelGrid id="i_panel_pessoa_fisica" style="clear: both">
@@ -244,7 +244,7 @@
                                 </p:column>
 
                                 <p:column>
-                                    <p:commandLink value="Alterar Endereço" action="#{juridicaBean.showPessoaEndereco}" update="i_novo_endereco" rendered="#{juridicaBean.hiddePessoaEndereco}" style="float: right"/>
+                                    <p:commandLink value="Alterar Endereço" action="#{juridicaBean.showPessoaEndereco}" update=":form_pessoa_juridica:" rendered="#{juridicaBean.hiddePessoaEndereco}" style="float: right"/>
                                 </p:column>
                             </h:panelGrid>
 
@@ -282,7 +282,7 @@
                             <h:panelGrid id="idPGEndereco" rendered="#{juridicaBean.renderEndereco}" style="width:100%; text-align: right">
                                 <p:dataTable id="i_tbl_endereco" value="#{juridicaBean.listEnderecos}" var="linha" rowIndexVar="index">
                                     <p:column headerText="Tipo">
-                                        <p:commandLink action="#{juridicaBean.retornarObjetoDaGrid(linha, index)}" value="#{linha.tipoEndereco.descricao}" update="">
+                                        <p:commandLink action="#{juridicaBean.editPessoaEndereco(linha, index)}" value="#{linha.tipoEndereco.descricao}" update=":form_pessoa_juridica:">
 
                                         </p:commandLink>
                                     </p:column>
