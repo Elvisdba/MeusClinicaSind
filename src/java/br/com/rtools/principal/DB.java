@@ -70,7 +70,7 @@ public class DB {
             cliente.setSenha("r#@tools");
         } else {
             clienteString = "ClinicaIntegrada";
-            cliente.setHost("localhost");
+            cliente.setHost("192.168.1.60");
             cliente.setSenha("989899");
 //            } else {
 //                if (cliente.equals("ServidoresRP")) {

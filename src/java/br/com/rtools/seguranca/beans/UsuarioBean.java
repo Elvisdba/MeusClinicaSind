@@ -17,6 +17,7 @@ import br.com.rtools.seguranca.Rotina;
 import br.com.rtools.seguranca.Usuario;
 import br.com.rtools.seguranca.UsuarioAcesso;
 import br.com.rtools.seguranca.controleUsuario.SessaoCliente;
+import br.com.rtools.seguranca.dao.EventoDao;
 import br.com.rtools.seguranca.dao.ModuloDao;
 import br.com.rtools.seguranca.dao.PermissaoDao;
 import br.com.rtools.seguranca.dao.PermissaoDepartamentoDao;
@@ -592,10 +593,10 @@ public class UsuarioBean implements Serializable {
 
     public List<SelectItem> getListEventos() {
         if (listEventos.isEmpty() && !listRotinas.isEmpty() && !listModulos.isEmpty()) {
-            PermissaoDao db = new PermissaoDao();
+            EventoDao eventoDao = new EventoDao();
             int idM = Integer.parseInt(listModulos.get(idModulo).getDescription());
             int idR = Integer.parseInt(listRotinas.get(idRotina).getDescription());
-            List<Evento> eventos = db.listaEventoPermissaoAgrupado(idM, idR);
+            List<Evento> eventos = eventoDao.listaEventoPermissaoAgrupado(idM, idR, SessaoCliente.get().getId());
             listEventos.clear();
             for (int i = 0; i < eventos.size(); i++) {
                 listEventos.add(new SelectItem(i, eventos.get(i).getDescricao(), Integer.toString(eventos.get(i).getId())));

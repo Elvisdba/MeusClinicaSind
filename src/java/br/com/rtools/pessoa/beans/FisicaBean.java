@@ -76,8 +76,10 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
     private List<PessoaEndereco> listPessoaEndereco;
     private List<PessoaEmpresa> listPessoaEmpresa;
     private List<SelectItem> listProfissoes;
+    private List<SelectItem> listTipoCadastro;
     private int idPais;
     private int idProfissao;
+    private int idTipoCadastro;
     private int idIndexEndereco;
     private int idIndexFisica;
     private int idIndexPessoaEmp;
@@ -131,8 +133,10 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         listPessoaEmpresa = new ArrayList<>();
         listPessoaEndereco = new ArrayList<>();
         listProfissoes = new ArrayList<>();
+        listTipoCadastro = new ArrayList<>();
         idPais = 11;
         idProfissao = 0;
+        idTipoCadastro = 0;
         idIndexEndereco = 0;
         idIndexFisica = 0;
         idIndexPessoaEmp = 0;
@@ -200,6 +204,8 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
                 return;
             }
         }
+        //fisica.setTipoCadastro((TipoCadastro) dao.find(new TipoCadastro(), Integer.parseInt(getListTipoCadastro().get(getIdTipoCadastro()).getDescription())));
+        fisica.setTipoCadastro(null); 
         if ((fisica.getPessoa().getId() == -1) && (fisica.getId() == -1)) {
             fisica.getPessoa().setTipoDocumento((TipoDocumento) dao.find(new TipoDocumento(), 1));
             if (!db.pesquisaFisicaPorNomeNascimentoRG(fisica.getPessoa().getNome(), fisica.getDtNascimento(), fisica.getRg()).isEmpty()) {
@@ -480,6 +486,14 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
                 }
             }
         }
+        if(fisica.getTipoCadastro() != null) {
+            for (int i = 0; i < listTipoCadastro.size(); i++) { 
+                if (Integer.valueOf(listTipoCadastro.get(i).getDescription()) == fisica.getTipoCadastro().getId()) {
+                    idTipoCadastro = i;
+                    break;
+                }
+            }
+        }
 
         showImagemFisica();
         Sessions.put("linkClicado", true);
@@ -507,7 +521,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         if (!fisica.getPessoa().getDocumento().isEmpty() && !fisica.getPessoa().getDocumento().equals("___.___.___-__") && fisica.getId() == -1) {
             if (!ValidDocuments.isValidoCPF(AnaliseString.extrairNumeros(fisica.getPessoa().getDocumento()))) {
                 Messages.warn("Validação", "Documento (CPF) inválido! " + fisica.getPessoa().getDocumento());
-                PF.update("form:pessoa_fisica:i_tabview_fisica:id_valida_documento: " + fisica.getPessoa().getDocumento());
+                PF.update("form_pessoa_fisica:i_tabview_fisica:id_valida_documento: " + fisica.getPessoa().getDocumento());
                 fisica.getPessoa().setDocumento("");
                 return;
             }
@@ -515,7 +529,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
             List lista = db.pesquisaFisicaPorDocumento(fisica.getPessoa().getDocumento());
             if (!lista.isEmpty()) {
                 String x = editarFisicaParametro((Fisica) lista.get(0));
-                RequestContext.getCurrentInstance().update("form_pessoa_fisica:i_panel_pessoa_fisica");
+                PF.update("form_pessoa_fisica:i_panel_pessoa_fisica");
                 showImagemFisica();
             }
         }
@@ -531,6 +545,9 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         comoPesquisa = "";
         alterarEnd = true;
         pessoaEmpresa = (PessoaEmpresa) peDao.pesquisaPessoaEmpresaPorFisica(fisica.getId());
+        if(pessoaEmpresa == null) {
+            pessoaEmpresa = new PessoaEmpresa();
+        }
         if (pessoaEmpresa.getId() != -1) {
             profissao = pessoaEmpresa.getFuncao();
             Sessions.put("juridicaPesquisa", pessoaEmpresa.getJuridica());
@@ -770,14 +787,30 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
     }
 
     public List<SelectItem> getListProfissoes() {
-        if (listProfissoes.isEmpty()) {
+        listProfissoes.clear();
+        //if (listProfissoes.isEmpty()) {
+        Dao dao = new Dao();
+        List<Profissao> lista = (List<Profissao>) dao.list(new Profissao(), true);
+        for (int i = 0; i < lista.size(); i++) {
+            listProfissoes.add(new SelectItem(i, lista.get(i).getProfissao(), "" + lista.get(i).getId()));
+        }
+        //}
+        return listProfissoes;
+    }
+
+    public List<SelectItem> getListTipoCadastro() {
+        if (listTipoCadastro.isEmpty()) {
             Dao dao = new Dao();
-            List<Profissao> lista = (List<Profissao>) dao.list(new Profissao(), true);
+            List<TipoCadastro> lista = (List<TipoCadastro>) dao.list(new TipoCadastro(), true);
             for (int i = 0; i < lista.size(); i++) {
-                listProfissoes.add(new SelectItem(i, lista.get(i).getProfissao(), "" + lista.get(i).getId()));
+                listTipoCadastro.add(new SelectItem(i, lista.get(i).getDescricao(), "" + lista.get(i).getId()));
             }
         }
-        return listProfissoes;
+        return listTipoCadastro;
+    }
+
+    public void setListTipoCadastro(List<SelectItem> listTipoCadastro) {
+        this.listTipoCadastro = listTipoCadastro;
     }
 
     public String getCidadeNaturalidade() {
@@ -1473,5 +1506,19 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
 
     public void setChkDependente(boolean chkDependente) {
         this.chkDependente = chkDependente;
+    }
+
+    /**
+     * @return the idTipoCadastro
+     */
+    public int getIdTipoCadastro() {
+        return idTipoCadastro;
+    }
+
+    /**
+     * @param idTipoCadastro the idTipoCadastro to set
+     */
+    public void setIdTipoCadastro(int idTipoCadastro) {
+        this.idTipoCadastro = idTipoCadastro;
     }
 }

@@ -56,8 +56,9 @@ public class CnaeBean {
 
     public void delete() {
         Dao dao = new Dao();
-        if (cnae.getId() == -1) {
+        if (cnae.getId() != -1) {
             if (dao.delete(cnae, true)) {
+                cnae = new Cnae();
                 Messages.info("Sucesso", "Registro removido");
             } else {
                 Messages.warn("Erro", "Ao remover registro");
