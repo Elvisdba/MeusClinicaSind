@@ -4,33 +4,34 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "SEG_REGISTRO")
+@Table(name = "seg_registro")
 public class Registro implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @JoinColumn(name = "ID_CLIENTE", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
     @ManyToOne(fetch = FetchType.EAGER)
     private Cliente cliente;
-    @Column(name = "SIS_DS_EMAIL", length = 50)
+    @Column(name = "sis_ds_email", length = 50)
     private String sisEmail;
-    @Column(name = "SIS_DS_SENHA", length = 20)
+    @Column(name = "sis_ds_senha", length = 20)
     private String sisSenha;
-    @Column(name = "SIS_DS_SMTP", length = 50)
+    @Column(name = "sis_ds_smtp", length = 50)
     private String sisSmtp;
-    @Column(name = "SIS_DS_URL_PATH", length = 50)
+    @Column(name = "sis_ds_url_path", length = 50)
     private String sisUrlPath;
-    @Column(name = "SIS_IS_ENVIAR_EMAIL_ANEXO")
+    @Column(name = "sis_is_enviar_email_anexo")
     private boolean enviarEmailAnexo;
-    @Column(name = "SIS_EMAIL_RESPOSTA", length = 50)
+    @Column(name = "sis_email_resposta", length = 50)
     private String sisEmailResposta;
-    @Column(name = "SIS_EMAIL_PORTA")
+    @Column(name = "sis_email_porta")
     private int sisEmailPorta;
-    @JoinColumn(name = "ID_EMAIL_PROTOCOLO", referencedColumnName = "ID")
+    @JoinColumn(name = "id_email_protocolo", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     private SisEmailProtocolo sisEmailProtocolo;
-    @Column(name = "SIS_IS_EMAIL_MARKETING", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "sis_is_email_marketing", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean sisEmailMarketing;
 
     public Registro() {

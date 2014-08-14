@@ -4,24 +4,25 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "SEG_PERMISSAO",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"ID_CLIENTE", "ID_MODULO", "ID_ROTINA", "ID_EVENTO"})
+@Table(name = "seg_permissao",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"id_cliente", "id_modulo", "id_rotina", "id_evento"})
 )
 public class Permissao implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @JoinColumn(name = "ID_CLIENTE", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Cliente cliente;
-    @JoinColumn(name = "ID_MODULO", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_modulo", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Modulo modulo;
-    @JoinColumn(name = "ID_ROTINA", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_rotina", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Rotina rotina;
-    @JoinColumn(name = "ID_EVENTO", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_evento", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Evento evento;
 

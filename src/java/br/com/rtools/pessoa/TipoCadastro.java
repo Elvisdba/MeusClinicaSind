@@ -6,7 +6,7 @@ import java.util.Objects;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "PES_TIPO_CADASTRO")
+@Table(name = "pes_tipo_cadastro")
 @NamedQueries({
     @NamedQuery(name = "TipoCadastro.findAll", query = "SELECT TDOC FROM TipoCadastro AS TDOC ORDER BY TDOC.descricao ASC "),
     @NamedQuery(name = "TipoCadastro.findName", query = "SELECT TDOC FROM TipoCadastro AS TDOC WHERE UPPER(TDOC.descricao) LIKE :pdescricao ORDER BY TDOC.descricao ASC ")
@@ -15,8 +15,9 @@ public class TipoCadastro implements BaseEntity, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @Column(name = "DS_DESCRICAO", length = 50, nullable = false, unique = true)
+    @Column(name = "ds_descricao", length = 50, nullable = false, unique = true)
     private String descricao;
 
     public TipoCadastro() {

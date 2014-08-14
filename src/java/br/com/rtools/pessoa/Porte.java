@@ -5,13 +5,14 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "PES_PORTE")
+@Table(name = "pes_porte")
 public class Porte implements BaseEntity, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @Column(name = "DS_DESCRICAO", length = 50, nullable = false, unique = true)
+    @Column(name = "ds_descricao", length = 50, nullable = false, unique = true)
     private String descricao;
 
     public Porte() {
@@ -24,6 +25,7 @@ public class Porte implements BaseEntity, Serializable {
         this.descricao = descricao;
     }
 
+    @Override
     public int getId() {
         return id;
     }

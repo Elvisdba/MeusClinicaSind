@@ -4,8 +4,8 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "PES_CNAE",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"DS_CNAE", "DS_NUMERO"})
+@Table(name = "pes_cnae",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"ds_cnae", "ds_numero"})
 )
 @NamedQueries({
     @NamedQuery(name = "Cnae.findAll", query = "SELECT CN FROM Cnae AS CN ORDER BY CN.cnae ASC, CN.numero ASC"),
@@ -15,10 +15,11 @@ public class Cnae implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @Column(name = "DS_CNAE", length = 1000, nullable = false)
+    @Column(name = "ds_cnae", length = 1000, nullable = false)
     private String cnae;
-    @Column(name = "DS_NUMERO", length = 50, nullable = false)
+    @Column(name = "ds_numero", length = 50, nullable = false)
     private String numero;
 
     public Cnae() {

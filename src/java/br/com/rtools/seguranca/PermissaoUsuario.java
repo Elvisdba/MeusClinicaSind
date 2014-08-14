@@ -4,24 +4,25 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "SEG_PERMISSAO_USUARIO",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"ID_CLIENTE", "ID_USUARIO", "ID_NIVEL", "ID_DEPARTAMENTO"})
+@Table(name = "seg_permissao_usuario",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"id_cliente", "id_usuario", "id_nivel", "id_departamento"})
 )
 public class PermissaoUsuario implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @JoinColumn(name = "ID_CLIENTE", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
     @OneToOne(fetch = FetchType.EAGER)
     private Cliente cliente;
-    @JoinColumn(name = "ID_USUARIO", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id", nullable = false)
     @OneToOne
     private Usuario usuario;
-    @JoinColumn(name = "ID_NIVEL", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_nivel", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Nivel nivel;
-    @JoinColumn(name = "ID_DEPARTAMENTO", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_departamento", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Departamento departamento;
 

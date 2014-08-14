@@ -8,32 +8,33 @@ import javax.persistence.*;
 import org.primefaces.event.SelectEvent;
 
 @Entity
-@Table(name = "PES_PESSOA_EMPRESA",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"ID_FISICA", "ID_JURIDICA", "ID_FUNCAO", "DT_ADMISSAO", "DT_DEMISSAO"})
+@Table(name = "pes_pessoa_empresa",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"id_fisica", "id_juridica", "id_funcao", "dt_admissao", "dt_demissao"})
 )
 public class PessoaEmpresa implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @JoinColumn(name = "ID_FISICA", referencedColumnName = "ID", nullable = true)
+    @JoinColumn(name = "id_fisica", referencedColumnName = "id", nullable = true)
     @ManyToOne(fetch = FetchType.EAGER)
     private Fisica fisica;
-    @JoinColumn(name = "ID_JURIDICA", referencedColumnName = "ID", nullable = true)
+    @JoinColumn(name = "id_juridica", referencedColumnName = "id", nullable = true)
     @ManyToOne(fetch = FetchType.EAGER)
     private Juridica juridica;
-    @JoinColumn(name = "ID_FUNCAO", referencedColumnName = "ID", nullable = true)
+    @JoinColumn(name = "id_funcao", referencedColumnName = "id", nullable = true)
     @ManyToOne(fetch = FetchType.EAGER)
     private Profissao funcao;
     @Temporal(TemporalType.DATE)
-    @Column(name = "DT_ADMISSAO")
+    @Column(name = "dt_admissao")
     private Date dtAdmissao;
     @Temporal(TemporalType.DATE)
-    @Column(name = "DT_DEMISSAO")
+    @Column(name = "dt_demissao")
     private Date dtDemissao;
-    @Column(name = "DS_SETOR", length = 30, nullable = false)
+    @Column(name = "ds_setor", length = 30, nullable = false)
     private String setor;
-    @Column(name = "AVISO_TRABALHADO", nullable = true)
+    @Column(name = "aviso_trabalhado", nullable = true)
     private boolean avisoTrabalhado;
 
     public PessoaEmpresa() {

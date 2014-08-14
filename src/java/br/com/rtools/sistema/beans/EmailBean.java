@@ -57,6 +57,7 @@ public class EmailBean implements Serializable {
     private String html;
     private String assunto;
     private String emailString;
+    private String urlRetorno;
     private Date[] date;
     /**
      * <ul>
@@ -79,18 +80,18 @@ public class EmailBean implements Serializable {
         email = new Email();
         selectedEmail = null;
         listSelectItem = new ArrayList[]{
-            new ArrayList<SelectItem>(),
-            new ArrayList<SelectItem>()
+            new ArrayList<>(),
+            new ArrayList<>()
         };
         emailPessoa = new EmailPessoa();
         index = new Integer[]{0, 0};
-        emails = new ArrayList<Email>();
-        addEmailPessoas = new ArrayList<EmailPessoa>();
-        listEmailPessoas = new ArrayList<EmailPessoa>();
-        showEmailPessoas = new ArrayList<EmailPessoa>();
+        emails = new ArrayList<>();
+        addEmailPessoas = new ArrayList<>();
+        listEmailPessoas = new ArrayList<>();
+        showEmailPessoas = new ArrayList<>();
         emailArquivo = new EmailArquivo();
-        emailArquivos = new ArrayList<EmailArquivo>();
-        files = new ArrayList<File>();
+        emailArquivos = new ArrayList<>();
+        files = new ArrayList<>();
         openModal = false;
         html = "";
         assunto = "";
@@ -104,6 +105,7 @@ public class EmailBean implements Serializable {
         filterRascunho = false;
         orderBy = "";
         descricaoPesquisa = "";
+        urlRetorno = "";
     }
 
     @PreDestroy
@@ -119,13 +121,13 @@ public class EmailBean implements Serializable {
         if (tcase == 0) {
             emailPessoa = new EmailPessoa();
             index = new Integer[]{0, 0};
-            emails = new ArrayList<Email>();
-            addEmailPessoas = new ArrayList<EmailPessoa>();
-            listEmailPessoas = new ArrayList<EmailPessoa>();
-            showEmailPessoas = new ArrayList<EmailPessoa>();
+            emails = new ArrayList<>();
+            addEmailPessoas = new ArrayList<>();
+            listEmailPessoas = new ArrayList<>();
+            showEmailPessoas = new ArrayList<>();
             emailArquivo = new EmailArquivo();
-            emailArquivos = new ArrayList<EmailArquivo>();
-            files = new ArrayList<File>();
+            emailArquivos = new ArrayList<>();
+            files = new ArrayList<>();
             openModal = false;
             html = "";
             assunto = "";
@@ -141,7 +143,7 @@ public class EmailBean implements Serializable {
         } else if (tcase == 1) {
             date[0] = null;
             date[1] = null;
-            listEmailPessoas = new ArrayList<EmailPessoa>();
+            listEmailPessoas = new ArrayList<>();
         }
     }
 
@@ -184,7 +186,7 @@ public class EmailBean implements Serializable {
             di.save(email, true);
             for (int i = 0; i < addEmailPessoas.size(); i++) {
                 addEmailPessoas.get(i).setEmail(email);
-                if(addEmailPessoas.get(i).getId() == -1) {
+                if (addEmailPessoas.get(i).getId() == -1) {
                     addEmailPessoas.get(i).setPessoa(null);
                 }
                 di.save(addEmailPessoas.get(i), true);
@@ -212,8 +214,8 @@ public class EmailBean implements Serializable {
             return;
         }
         email.setRascunho(true);
-        if(email.getUsuario().getId() == -1) {
-            email.setUsuario((Usuario) Sessions.getObject("sessaoUsuario"));            
+        if (email.getUsuario().getId() == -1) {
+            email.setUsuario((Usuario) Sessions.getObject("sessaoUsuario"));
         }
         email.setRotina((Rotina) di.find(new Rotina(), 112));
         email.setEmailPrioridade((EmailPrioridade) di.find(new EmailPrioridade(), Integer.parseInt(getListEmailPrioridades().get(index[1]).getDescription())));
@@ -278,7 +280,7 @@ public class EmailBean implements Serializable {
     }
 
     public void removeEmail(int rowKey) {
-        if(addEmailPessoas.size() == 1) {
+        if (addEmailPessoas.size() == 1) {
             Messages.warn("Erro", "Não é possível remover todos destinatários!");
             return;
         }
@@ -310,7 +312,7 @@ public class EmailBean implements Serializable {
                 listSelectItem[0].add(new SelectItem(i, list.get(i).getRotina(), "" + list.get(i).getId()));
             }
             if (listSelectItem[0].isEmpty()) {
-                listSelectItem[0] = new ArrayList<SelectItem>();
+                listSelectItem[0] = new ArrayList<>();
             }
         }
         return listSelectItem[0];
@@ -324,7 +326,7 @@ public class EmailBean implements Serializable {
                 listSelectItem[1].add(new SelectItem(i, list.get(i).getDescricao(), "" + list.get(i).getId()));
             }
             if (listSelectItem[1].isEmpty()) {
-                listSelectItem[1] = new ArrayList<SelectItem>();
+                listSelectItem[1] = new ArrayList<>();
             }
         }
         return listSelectItem[1];
@@ -581,5 +583,13 @@ public class EmailBean implements Serializable {
     public void selectedDataFinal(SelectEvent event) {
         SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
         this.date[1] = DataHoje.converte(format.format(event.getObject()));
+    }
+
+    public void setUrlRetorno(String urlRetorno) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public String getUrlRetorno() {
+        return urlRetorno;
     }
 }

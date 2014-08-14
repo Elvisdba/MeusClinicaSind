@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "SEG_NIVEL")
+@Table(name = "seg_nivel")
 @NamedQueries({
     @NamedQuery(name = "Nivel.findAll", query = "SELECT NIV FROM Nivel NIV ORDER BY NIV.descricao ASC "),
     @NamedQuery(name = "Nivel.findName", query = "SELECT NIV FROM Nivel NIV WHERE UPPER(NIV.descricao) LIKE :pdescricao ORDER BY NIV.descricao ASC ")
@@ -14,8 +14,9 @@ public class Nivel implements BaseEntity, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @Column(name = "DS_DESCRICAO", length = 50, nullable = false, unique = true)
+    @Column(name = "ds_descricao", length = 50, nullable = false, unique = true)
     private String descricao;
 
     public Nivel() {
