@@ -16,7 +16,7 @@
             <div id="mainx">
                 <!-- INICIA DIV wrap e main -->  
                 <f:subview id="header">
-                    <ui:include src="templatePrime.xhtml"/>
+                    <ui:include src="templates/templatePrime.xhtml"/>
                 </f:subview>
 
                 <f:view>
@@ -26,19 +26,19 @@
                                 <p:submenu label="Cadastro" icon="ui-icon-document" style="margin-right: 15px">  
                                     <p:submenu label="Física">
                                         <p:menuitem value="Manutenção"          action="#{chamadaPaginaBean.pagina('pessoaFisica')}" />
-                                        <p:menuitem value="Parentesco"          action="#{chamadaPaginaBean.pagina('parentesco')}"  />
+                                        <p:menuitem value="Parentesco"          action="#{chamadaPaginaBean.paginaSimples('GrauParentesco', 'Grau Parentesco')}"  />
                                     </p:submenu>
                                     <p:menuitem value="Jurídica"                action="#{chamadaPaginaBean.pagina('pessoaJuridica')}" />
-                                    <p:menuitem value="Função Profissional"     action="#{chamadaPaginaBean.pagina('funcaoProfissal')}" />
+                                    <p:menuitem value="Função Profissional"     action="#{chamadaPaginaBean.pagina('tipoDocumentoProfissao')}" />
                                     <p:submenu label="Veículos">
-                                        <p:menuitem value="Manutenção"          action="#{chamadaPaginaBean.pagina('veiculo')}" />                                    
-                                        <p:menuitem value="Combustível"         action="#{chamadaPaginaBean.pagina('combustivel')}"  />
+                                        <p:menuitem value="Manutenção"          action="#{chamadaPaginaBean.paginaSimples('Veiculo', 'Veículo')}" />                                    
+                                        <p:menuitem value="Combustível"         action="#{chamadaPaginaBean.paginaSimples('Combustivel', 'Combustível')}"  />
                                     </p:submenu>
                                     <p:submenu label="Evento">
                                         <p:menuitem value="Manutenção"          action="#{chamadaPaginaBean.pagina('evento')}" />                                        
-                                        <p:menuitem value="Grupo Evento"        action="#{chamadaPaginaBean.pagina('grupoEvento')}"  />
+                                        <p:menuitem value="Grupo Evento"        action="#{chamadaPaginaBean.paginaSimples('GrupoEvento', 'Grupo Evento')}"  />
                                     </p:submenu>
-                                    <p:menuitem value="Função Escala"           action="#{chamadaPaginaBean.pagina('funcaoEscala')}" />
+                                    <p:menuitem value="Função Escala"           action="#{chamadaPaginaBean.paginaSimples('FuncaoEscala', 'Função Escala')}" />
                                     <p:menuitem value="Grade"                   action="#{chamadaPaginaBean.pagina('grade')}" />
                                 </p:submenu>
                                 <p:submenu label="Movimento" icon="ui-icon-document" style="margin-right: 15px">
@@ -65,7 +65,7 @@
         <!-- FINALIZA div wrap main -->
         <div id="footerx">
             <f:subview id="footer">
-                <ui:include src="templateFooter.xhtml"/>
+                <ui:include src="templates/templateFooter.xhtml"/>
             </f:subview>
         </div>
     </h:body>

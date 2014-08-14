@@ -25,7 +25,7 @@
             <div id="mainx">
                 <!-- INICIA DIV wrap e main -->          
                 <f:subview id="header">
-                    <ui:include src="templatePrime.xhtml"/>
+                    <ui:include src="templates/templatePrime.xhtml"/>
                 </f:subview>
                 <f:view>
                     <p:panel styleClass="wrapper no-border">
@@ -33,11 +33,10 @@
                             <h:outputScript name="script_primefaces.js" library="js" />
                             <p:outputLabel value="Cadastro Física" styleClass="fonteHeader"/>
                             <c:set scope="request" var="object" value="${fisicaBean.fisica}"/>
-
                             <h:panelGrid id="i_panel_pessoa_fisica" style="clear: both">
                                 <p:tabView id="i_tabview_fisica" activeIndex="#{fisicaBean.indexPessoaFisica}" style="width: 990px">
                                     <p:ajax event="tabChange" listener="#{fisicaBean.accordion}" /> 
-                                    <p:tab title="Cadastro Pessoal">                            
+                                    <p:tab title="Cadastro Pessoal">
                                         <h:outputScript name="tradutor_primefaces.js" library="js" />
                                         <p:messages id="id_valida_documento" autoUpdate="true" showSummary="true" showDetail="true" />
 
@@ -272,6 +271,52 @@
                                                 </h:column>
                                             </h:panelGrid>                        
                                         </p:dialog>
+                                    </p:tab>
+
+                                    <p:tab title="Dependentes" id="i_panel_dependente">
+                                        <p:messages id="id_valida_dependentes" autoUpdate="true" showSummary="true" showDetail="true" />
+                                        <div class="clear"></div>
+                                        <h:panelGrid columns="2" styleClass="margin-top-max">
+                                            <p:outputLabel value="Nome:" />
+                                            <p:inputText value="#{fisicaBean.dependente.nome}" />
+                                            <p:outputLabel value="Nascimento:" />
+                                            <p:calendar size="8" value="#{fisicaBean.dependente.nascimento}" pattern="dd/MM/yyyy" yearRange="c-120:c-0" navigator="true" mask="99/99/9999" converterMessage="Data de nascimento inválida - Formato 01/01/1900">
+                                                <p:ajax event="dateSelect" update="@this"  listener="#{fisicaBean.dependente.selectedNascimento}" />
+                                                <p:ajax event="change" update="@this"  />
+                                            </p:calendar>                                            
+                                            <p:outputLabel value="Grau parentesco:" />
+                                            <p:selectOneMenu value="#{fisicaBean.idGrauParentesco}" style="width: 280px!important;">
+                                                <p:ajax event="change" update="@this"/>
+                                                <f:selectItem itemValue="" itemLabel="Selecionar" itemDisabled="true"/>
+                                                <f:selectItems value="#{fisicaBean.listGrauParentesco}"/>
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Sexo:" />
+                                            <p:selectOneMenu value="#{fisicaBean.dependente.sexo}" style="width: 280px!important;">
+                                                <p:ajax event="change" update="@this"/>
+                                                <f:selectItem itemValue="F" itemLabel="Feminino"/>
+                                                <f:selectItem itemValue="M" itemLabel="Másculino"/>
+                                            </p:selectOneMenu>
+                                        </h:panelGrid>
+                                        <h:panelGrid columns="2">
+                                            <p:commandButton value="Adicionar" disabled="#{controleAcessoBean.botaoSalvar}"  action="#{fisicaBean.addDependente}" update=":form_pessoa_fisica:"/>
+                                            <p:commandButton value="Novo" action="#{fisicaBean.clearDependente}" update=":form_pessoa_fisica:"/>
+                                            <p:commandButton value="Remover" disabled="#{controleAcessoBean.botaoExcluir}" action="#{fisicaBean.removeDependente}" rendered="#{fisicaBean.dependente.id != -1}" update=":form_pessoa_fisica:"/>
+                                        </h:panelGrid>
+                                        <p:dataTable value="#{fisicaBean.listDependente}" var="dependente" scrollHeight="200" scrollable="true" emptyMessage="Nenhum registro encontrado!" styleClass="margin-top-max" rowIndexVar="index">
+                                            <p:column headerText="Nome">
+                                                #{dependente.nome}
+                                            </p:column>
+                                            <p:column headerText="Nascimento">
+                                                #{dependente.nascimentoString}
+                                            </p:column>
+                                            <p:column headerText="Parentesco">
+                                                #{dependente.grauParentesco.descricao} 
+                                            </p:column>
+                                            <p:column width="30">
+                                                <p:commandButton icon="ui-icon-trash" disabled="#{controleAcessoBean.botaoExcluir}" action="#{fisicaBean.removeDependente(index)}" update=":form_pessoa_fisica:"/>
+                                            </p:column>
+                                        </p:dataTable>
+
                                     </p:tab>
 
                                     <p:tab title="Local de Trabalho" id="i_panel_profissao">
@@ -603,7 +648,7 @@
 
         <div id="footerx">
             <f:subview id="footer">
-                <ui:include src="templateFooter.xhtml"/>
+                <ui:include src="templates/templateFooter.xhtml"/>
             </f:subview>
         </div>                   
     </h:body>

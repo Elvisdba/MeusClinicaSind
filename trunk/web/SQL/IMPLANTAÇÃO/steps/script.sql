@@ -27,15 +27,22 @@ INSERT INTO pes_pessoa(
             '', '', '', '', 'ADMIN', current_date, 
             '', 1);
 
+-- pes_porte 
+-- Criate: 2013-08-07
+-- Last edition: 2013-08-07 - by: Bruno Vieira
+
+INSERT INTO pes_porte (id, ds_descricao) SELECT 1, 'ME' WHERE NOT EXISTS ( SELECT id FROM pes_porte WHERE id = 1);
+INSERT INTO pes_porte (id, ds_descricao) SELECT 2, 'EPP' WHERE NOT EXISTS ( SELECT id FROM pes_porte WHERE id = 2);
+SELECT setval('pes_porte_id_seq', max(id)) FROM pes_porte;
 
 
 -- PES_JURIDICA
 
 INSERT INTO pes_juridica(
-            id, id_cliente, dt_abertura, dt_fechamento, ds_inscricao_estadual, is_email_escritorio, 
+            id, dt_abertura, dt_fechamento, ds_inscricao_estadual, is_email_escritorio, 
             ds_contato, ds_inscricao_municipal, ds_fantasia, ds_responsavel, 
             id_cnae, id_contabilidade, id_porte, id_pessoa, is_cobranca_escritorio)
-    VALUES (1, 1, null, null, '', false, 
+    VALUES (1, null, null, '', false, 
             '', '', '', '', 
             null, null, 1, 1, false);
 
