@@ -4,24 +4,25 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "SEG_USUARIO_ACESSO",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"ID_CLIENTE", "ID_USUARIO", "ID_PERMISSAO"})
+@Table(name = "seg_usuario_acesso",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"id_cliente", "id_usuario", "id_permissao"})
 )
 public class UsuarioAcesso implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @JoinColumn(name = "ID_CLIENTE", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
     @OneToOne(fetch = FetchType.EAGER)
     private Cliente cliente;
-    @JoinColumn(name = "ID_USUARIO", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Usuario usuario;
-    @JoinColumn(name = "ID_PERMISSAO", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_permissao", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Permissao permissao;
-    @Column(name = "IS_PERMITE", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "is_permite", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean permite;
 
     public UsuarioAcesso() {

@@ -4,25 +4,26 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "SEG_ROTINA",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"DS_ROTINA", "DS_NOME_PAGINA"})
+@Table(name = "seg_rotina",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"ds_rotina", "ds_nome_pagina"})
 )
 @NamedQueries({
     @NamedQuery(name = "Rotina.findAll", query = "SELECT ROT FROM Rotina AS ROT ORDER BY ROT.rotina ASC, ROT.pagina ASC "),
-    @NamedQuery(name = "Rotina.findByRotina", query = "SELECT ROT FROM Rotina AS ROT WHERE ROT.rotina LIKE :p1 ORDER BY ROT.rotina ASC, ROT.pagina ASC ")
+    @NamedQuery(name = "Rotina.findByRotina", query = "SELECT ROT FROM Rotina AS ROT WHERE UPPER(ROT.rotina) LIKE :p1 ORDER BY ROT.rotina ASC, ROT.pagina ASC ")
 })
 public class Rotina implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @Column(name = "DS_ROTINA", length = 50, nullable = false)
+    @Column(name = "ds_rotina", length = 50, nullable = false)
     private String rotina;
-    @Column(name = "DS_NOME_PAGINA", length = 100, nullable = false)
+    @Column(name = "ds_nome_pagina", length = 100, nullable = false)
     private String pagina;
-    @Column(name = "DS_CLASSE", length = 100)
+    @Column(name = "ds_classe", length = 100)
     private String classe;
-    @Column(name = "IS_ATIVO", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "is_ativo", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean ativo;
 
     public Rotina() {

@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "PES_RACA")
+@Table(name = "pes_raca")
 @NamedQueries({
     @NamedQuery(name = "Raca.findAll", query = "SELECT R FROM Raca AS R ORDER BY R.descricao ASC "),
     @NamedQuery(name = "Raca.findName", query = "SELECT R FROM Raca AS R WHERE UPPER(R.descricao) LIKE :pdescricao ORDER BY R.descricao ASC ")
@@ -14,8 +14,9 @@ public class Raca implements BaseEntity, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @Column(name = "DS_DESCRICAO", length = 50, nullable = false, unique = true)
+    @Column(name = "ds_descricao", length = 50, nullable = false, unique = true)
     private String descricao;
 
     public Raca() {

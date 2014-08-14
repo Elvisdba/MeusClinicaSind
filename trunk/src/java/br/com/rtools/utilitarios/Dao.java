@@ -1,6 +1,7 @@
 package br.com.rtools.utilitarios;
 
 import br.com.rtools.principal.DB;
+import br.com.rtools.seguranca.controleUsuario.SessaoCliente;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -754,6 +755,38 @@ public class Dao extends DB implements DaoInterface {
     public List findByDescription(String className, String description, String tipoPesquisa) {
         try {
             Query query = getEntityManager().createNamedQuery(className + ".findName");
+            switch (tipoPesquisa) {
+                case "i":
+                    query.setParameter("pdescricao", "" + description.toUpperCase() + "%");
+                    break;
+                case "p":
+                    query.setParameter("pdescricao", "%" + description.toUpperCase() + "%");
+                    break;
+                case "all":
+                    query.setParameter("pdescricao", "%" + description.toUpperCase() + "%");
+                    query.setParameter("pdescricao", "" + description.toUpperCase() + "%");
+                    break;
+                default:
+                    query.setParameter("pdescricao", description.toUpperCase());
+                    break;
+            }
+            if (description.length() <= 1) {
+                query.setMaxResults(1000);
+            }
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+            return new ArrayList();
+        }
+        return new ArrayList();
+    }
+
+    public List findByDescriptionByCliente(String className, String description, String tipoPesquisa) {
+        try {
+            Query query = getEntityManager().createNamedQuery(className + ".findName");
+            query.setParameter("pcliente", SessaoCliente.get().getId());
             switch (tipoPesquisa) {
                 case "i":
                     query.setParameter("pdescricao", "" + description.toUpperCase() + "%");

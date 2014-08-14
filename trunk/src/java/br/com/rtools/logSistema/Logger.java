@@ -21,7 +21,7 @@ public class Logger extends salvaLogs {
 
     private boolean transaction = false;
     private boolean cadastroSimples = false;
-    private final List<Log> listLogs = new ArrayList<Log>();
+    private final List<Log> listLogs = new ArrayList<>();
 
     // LOG ARQUIVOS    
     public String novo(String acao, String obs) {

@@ -4,18 +4,19 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "PES_PESSOA_PROFISSAO",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"ID_FISICA", "ID_PROFISSAO"})
+@Table(name = "pes_pessoa_profissao",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"id_fisica", "id_profissao"})
 )
 public class PessoaProfissao implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @JoinColumn(name = "ID_FISICA", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_fisica", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Fisica fisica;
-    @JoinColumn(name = "ID_PROFISSAO", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_profissao", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Profissao profissao;
 

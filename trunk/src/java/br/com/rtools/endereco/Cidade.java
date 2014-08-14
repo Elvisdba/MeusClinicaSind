@@ -12,8 +12,8 @@ import javax.persistence.*;
  * @author rtools
  */
 @Entity
-@Table(name = "END_CIDADE",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"DS_CIDADE", "DS_UF"})
+@Table(name = "end_cidade",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"ds_cidade", "ds_uf"})
 )
 @NamedQueries({
     @NamedQuery(name = "Cidade.pesquisaID", query = "SELECT CID FROM Cidade AS CID WHERE CID.id = :pid"),
@@ -24,10 +24,11 @@ public class Cidade implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @Column(name = "DS_CIDADE", length = 50, nullable = false)
+    @Column(name = "ds_cidade", length = 50, nullable = false)
     private String cidade;
-    @Column(name = "DS_UF", length = 2, nullable = false)
+    @Column(name = "ds_uf", length = 2, nullable = false)
     private String uf;
 
     public Cidade() {

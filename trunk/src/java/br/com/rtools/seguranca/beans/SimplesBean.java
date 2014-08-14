@@ -1,16 +1,24 @@
 package br.com.rtools.seguranca.beans;
 
+import br.com.rtools.administrativo.TipoDesligamento;
+import br.com.rtools.administrativo.TipoInternacao;
 import br.com.rtools.agenda.GrupoAgenda;
+import br.com.rtools.coordenacao.FuncaoEscala;
+import br.com.rtools.coordenacao.GrupoEvento;
 import br.com.rtools.endereco.Bairro;
 import br.com.rtools.endereco.DescricaoEndereco;
 import br.com.rtools.endereco.Logradouro;
 import br.com.rtools.logSistema.Logger;
+import br.com.rtools.pessoa.GrauParentesco;
 import br.com.rtools.pessoa.Nacionalidade;
+import br.com.rtools.pessoa.TipoAtendimento;
 import br.com.rtools.pessoa.TipoCadastro;
 import br.com.rtools.pessoa.TipoDocumento;
 import br.com.rtools.pessoa.TipoEndereco;
 import br.com.rtools.seguranca.*;
+import br.com.rtools.seguranca.controleUsuario.SessaoCliente;
 import br.com.rtools.seguranca.dao.RotinaDao;
+import br.com.rtools.sistema.Combustivel;
 import br.com.rtools.sistema.Cor;
 import br.com.rtools.utilitarios.Dao;
 import br.com.rtools.utilitarios.DaoInterface;
@@ -39,6 +47,7 @@ public class SimplesBean implements Serializable {
     private String pesquisaLista;
     private String mensagem;
     private String descricao;
+    private Cliente cliente;
     private String[] sessoes;
     private int id;
     private int idRotina;
@@ -56,6 +65,7 @@ public class SimplesBean implements Serializable {
         lista = new ArrayList();
         objeto = null;
         id = -1;
+        cliente = new Cliente();
     }
 
     public List<SelectItem> getListaRotinaCombo() {
@@ -82,22 +92,38 @@ public class SimplesBean implements Serializable {
                 return;
             }
             if (id == -1) {
+                cliente = SessaoCliente.get();
                 converteObjeto(sessoes[0]);
                 if (dao.existDescriptionInField(objeto.getClass().getSimpleName(), "descricao", descricao)) {
                     Messages.warn("Validação", "Descrição já existe " + nomeRotina + " !");
                     return;
 
                 }
-                if (dao.save(objeto, true)) {
-                    editaObjeto(objeto);
-                    log.save("ID: " + id + " - DESCRICAO: " + descricao);
-                    Messages.info("Sucesso", "Registro inserido");
-                    descricao = "";
-                    objeto = null;
-                    lista.clear();
-                    id = -1;
+                int t = objeto.getClass().getDeclaredFields().length; 
+                if (t == 2) {
+                    if (dao.save(objeto, true)) {
+                        editaObjeto(objeto);
+                        log.save("ID: " + id + " - DESCRICAO: " + descricao);
+                        Messages.info("Sucesso", "Registro inserido");
+                        descricao = "";
+                        objeto = null;
+                        lista.clear();
+                        id = -1;
+                    } else {
+                        Messages.warn("Erro", "Ao inserir registro " + nomeRotina + " ");
+                    }
                 } else {
-                    Messages.warn("Erro", "Ao inserir registro " + nomeRotina + " ");
+                    if (dao.save(objeto, true)) {
+                        editaObjeto(objeto);
+                        log.save("ID: " + id + " - Cliente: " + cliente.getId() + " - DESCRICAO: " + descricao);
+                        Messages.info("Sucesso", "Registro inserido");
+                        descricao = "";
+                        objeto = null;
+                        lista.clear();
+                        id = -1;
+                    } else {
+                        Messages.warn("Erro", "Ao inserir registro " + nomeRotina + " ");
+                    }
                 }
             } else {
                 Object o = dao.find(objeto);
@@ -113,6 +139,7 @@ public class SimplesBean implements Serializable {
         } else {
             Messages.warn("Erro", "Não há tipo de cadastro definido!");
         }
+        cliente = new Cliente();
     }
 
     public String edit(Object o) {
@@ -151,6 +178,7 @@ public class SimplesBean implements Serializable {
         id = -1;
         objeto = null;
         descricao = "";
+        cliente = new Cliente();
     }
 
     public String limpar() {
@@ -233,6 +261,10 @@ public class SimplesBean implements Serializable {
     }
 
     public void converteObjeto(String tipo) {
+        objeto = convertToObject(tipo);
+    }
+
+    public Object convertToObject(String tipo) {
 //        for (int i = 0; i < getListImports().size(); i++) {
 //           try {
 //                String o = getListImports().get(i).toString()+"."+sessoes[0];
@@ -253,47 +285,72 @@ public class SimplesBean implements Serializable {
 //                 return null;
 //            }
 //        }
+        Object o = null;
         switch (tipo) {
             case "Bairro":
-                objeto = (Bairro) new Bairro(id, descricao);
+                o = (Bairro) new Bairro(id, descricao);
                 break;
             case "Logradouro":
-                objeto = (Logradouro) new Logradouro(id, descricao);
+                o = (Logradouro) new Logradouro(id, descricao);
                 break;
             case "DescricaoEndereco":
-                objeto = (DescricaoEndereco) new DescricaoEndereco(id, descricao);
+                o = (DescricaoEndereco) new DescricaoEndereco(id, descricao);
                 break;
             case "TipoEndereco":
-                objeto = (TipoEndereco) new TipoEndereco(id, descricao);
+                o = (TipoEndereco) new TipoEndereco(id, descricao);
                 break;
             case "TipoDocumento":
-                objeto = (TipoDocumento) new TipoDocumento(id, descricao);
+                o = (TipoDocumento) new TipoDocumento(id, descricao);
                 break;
             case "GrupoAgenda":
-                objeto = (GrupoAgenda) new GrupoAgenda(id, descricao);
+                o = (GrupoAgenda) new GrupoAgenda(id, descricao);
                 break;
             case "Evento":
-                objeto = (Evento) new Evento(id, descricao);
+                o = (Evento) new Evento(id, descricao);
                 break;
             case "Modulo":
-                objeto = (Modulo) new Modulo(id, descricao);
+                o = (Modulo) new Modulo(id, descricao);
                 break;
             case "Departamento":
-                objeto = (Departamento) new Departamento(id, descricao);
+                o = (Departamento) new Departamento(id, descricao);
                 break;
             case "Nivel":
-                objeto = (Nivel) new Nivel(id, descricao);
+                o = (Nivel) new Nivel(id, descricao);
                 break;
             case "Nacionalidade":
-                objeto = (Nacionalidade) new Nacionalidade(id, descricao);
+                o = (Nacionalidade) new Nacionalidade(id, descricao);
                 break;
             case "Cor":
-                objeto = (Cor) new Cor(id, descricao);
+                o = (Cor) new Cor(id, descricao);
                 break;
             case "TipoCadastro":
-                objeto = (TipoCadastro) new TipoCadastro(id, descricao);
+                o = (TipoCadastro) new TipoCadastro(id, descricao);
+                break;
+            case "GrauParentesco":
+                o = (GrauParentesco) new GrauParentesco(id, descricao);
+                break;
+            case "Combustivel":
+                o = (Combustivel) new Combustivel(id, descricao);
+                break;
+            case "TipoDesligamento":
+                o = (TipoDesligamento) new TipoDesligamento(id, descricao);
+                break;
+            case "TipoInternacao":
+                o = (TipoInternacao) new TipoInternacao(id, descricao);
+                break;
+
+            // SIMPLES COM ID CLIENTE
+            case "TipoAtendimento":
+                o = (TipoAtendimento) new TipoAtendimento(id, cliente, descricao);
+                break;
+            case "FuncaoEscala":
+                o = (FuncaoEscala) new FuncaoEscala(id, cliente, descricao);
+                break;
+            case "GrupoEvento":
+                o = (GrupoEvento) new GrupoEvento(id, cliente, descricao);
                 break;
         }
+        return o;
     }
 
     public void atualizaObjeto(String tipo) {
@@ -336,6 +393,27 @@ public class SimplesBean implements Serializable {
                 break;
             case "TipoCadastro":
                 ((TipoCadastro) objeto).setDescricao(descricao);
+                break;
+            case "GrauParentesco":
+                ((GrauParentesco) objeto).setDescricao(descricao);
+                break;
+            case "Combustivel":
+                ((Combustivel) objeto).setDescricao(descricao);
+                break;
+            case "TipoDesligamento":
+                ((TipoDesligamento) objeto).setDescricao(descricao);
+                break;
+            case "TipoInternacao":
+                ((TipoInternacao) objeto).setDescricao(descricao);
+                break;
+            case "TipoAtendimento":
+                ((TipoAtendimento) objeto).setDescricao(descricao);
+                break;
+            case "FuncaoEscala":
+                ((FuncaoEscala) objeto).setDescricao(descricao);
+                break;
+            case "GrupoEvento":
+                ((GrupoEvento) objeto).setDescricao(descricao);
                 break;
         }
     }
@@ -393,6 +471,39 @@ public class SimplesBean implements Serializable {
             case "TipoCadastro":
                 descricao = ((TipoCadastro) obj).getDescricao();
                 id = ((TipoCadastro) objeto).getId();
+                break;
+            case "GrauParentesco":
+                descricao = ((GrauParentesco) obj).getDescricao();
+                id = ((GrauParentesco) objeto).getId();
+                break;
+            case "Combustivel":
+                descricao = ((Combustivel) obj).getDescricao();
+                id = ((Combustivel) objeto).getId();
+                break;
+            case "TipoDesligamento":
+                descricao = ((TipoDesligamento) obj).getDescricao();
+                id = ((TipoDesligamento) objeto).getId();
+                break;
+            case "TipoInternacao":
+                descricao = ((TipoInternacao) obj).getDescricao();
+                id = ((TipoInternacao) objeto).getId();
+                break;
+
+            // SIMPLES COM GRUPO EVENTO    
+            case "TipoAtendimento":
+                descricao = ((TipoAtendimento) obj).getDescricao();
+                id = ((TipoAtendimento) objeto).getId();
+                cliente = ((TipoAtendimento) objeto).getCliente();
+                break;
+            case "FuncaoEscala":
+                descricao = ((FuncaoEscala) obj).getDescricao();
+                id = ((FuncaoEscala) objeto).getId();
+                cliente = ((FuncaoEscala) objeto).getCliente();
+                break;
+            case "GrupoEvento":
+                descricao = ((GrupoEvento) obj).getDescricao();
+                id = ((GrupoEvento) objeto).getId();
+                cliente = ((GrupoEvento) objeto).getCliente();
                 break;
         }
         Dao dao = new Dao();
@@ -466,6 +577,41 @@ public class SimplesBean implements Serializable {
                     return true;
                 }
                 break;
+            case "GrauParentesco":
+                if (((GrauParentesco) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "Combustivel":
+                if (((GrauParentesco) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "TipoDesligamento":
+                if (((TipoDesligamento) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "TipoInternacao":
+                if (((TipoInternacao) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "TipoAtendimento":
+                if (((TipoAtendimento) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "FuncaoEscala":
+                if (((FuncaoEscala) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "GrupoEvento":
+                if (((GrupoEvento) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
         }
         return false;
     }
@@ -478,7 +624,16 @@ public class SimplesBean implements Serializable {
         if (sessoes != null) {
             Dao dao = new Dao();
             if (!pesquisaLista.isEmpty()) {
-                lista = dao.findByDescription(sessoes[0], pesquisaLista, "p");
+                Object o = (Object) convertToObject(sessoes[0]);
+                if (o == null) {
+                    return new ArrayList();
+                }
+                int t = o.getClass().getDeclaredFields().length; 
+                if (t == 2) { 
+                    lista = dao.findByDescription(sessoes[0], pesquisaLista, "p");
+                } else {
+                    lista = dao.findByDescriptionByCliente(sessoes[0], pesquisaLista, "p");
+                }
             }
         }
         return lista;

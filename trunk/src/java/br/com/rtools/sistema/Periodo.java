@@ -5,8 +5,8 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "SIS_PERIODO",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"DS_DESCRICAO", "NR_DIAS"})
+@Table(name = "sis_periodo",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"ds_descricao", "nr_dias"})
 )
 @NamedQueries({
     @NamedQuery(name = "Periodo.findAll", query = "SELECT P FROM Periodo AS P ORDER BY P.dias ASC")
@@ -15,10 +15,11 @@ public class Periodo implements BaseEntity, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @Column(name = "DS_DESCRICAO", length = 20, unique = true)
+    @Column(name = "ds_descricao", length = 20, unique = true)
     private String descricao;
-    @Column(name = "NR_DIAS")
+    @Column(name = "nr_dias")
     private int dias;
 
     public Periodo() {

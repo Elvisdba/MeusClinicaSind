@@ -6,28 +6,31 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "SIS_EMAIL_PESSOA")
+@Table(name = "sis_email_pessoa")
 @NamedQuery(name = "EmailPessoa.findByEmail", query = "SELECT EP FROM EmailPessoa AS EP WHERE EP.email.id = :p1 ")
 public class EmailPessoa implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @JoinColumn(name = "ID_EMAIL", referencedColumnName = "ID")
+    @JoinColumn(name = "id_email", referencedColumnName = "ID")
     @ManyToOne
     private Email email;
-    @JoinColumn(name = "ID_PESSOA", referencedColumnName = "ID")
+    @JoinColumn(name = "id_pessoa", referencedColumnName = "ID")
     @ManyToOne
     private Pessoa pessoa;
-    @Column(name = "DS_DESTINATARIO", nullable = true)
+    @Column(name = "ds_destinatario", nullable = true)
     private String destinatario;
-    @Column(name = "DS_CC", nullable = true)
+    @Column(name = "ds_cc", nullable = true)
     private String cc;
-    @Column(name = "DS_CO", nullable = true)
+    @Column(name = "ds_co", nullable = true)
     private String bcc;
     @Temporal(TemporalType.DATE)
-    @Column(name = "DT_RECEBIMENTO", nullable = true)
+    @Column(name = "dt_recebimento", nullable = true)
     private Date recebimento;
+    @Column(name = "ds_hora_saida", length = 5)
+    private String horaSaida;
 
     public EmailPessoa() {
         this.id = -1;
@@ -37,9 +40,10 @@ public class EmailPessoa implements Serializable {
         this.cc = "";
         this.bcc = "";
         this.recebimento = null;
+        this.horaSaida = "";
     }
 
-    public EmailPessoa(int id, Email email, Pessoa pessoa, String destinatario, String cc, String bcc, Date recebimento) {
+    public EmailPessoa(int id, Email email, Pessoa pessoa, String destinatario, String cc, String bcc, Date recebimento, String horaSaida) {
         this.id = id;
         this.email = email;
         this.pessoa = pessoa;
@@ -47,6 +51,7 @@ public class EmailPessoa implements Serializable {
         this.cc = cc;
         this.bcc = bcc;
         this.recebimento = recebimento;
+        this.horaSaida = horaSaida;
     }
 
     public int getId() {
@@ -103,5 +108,13 @@ public class EmailPessoa implements Serializable {
 
     public void setRecebimento(Date recebimento) {
         this.recebimento = recebimento;
+    }
+
+    public String getHoraSaida() {
+        return horaSaida;
+    }
+
+    public void setHoraSaida(String horaSaida) {
+        this.horaSaida = horaSaida;
     }
 }

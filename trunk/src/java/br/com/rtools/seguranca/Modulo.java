@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "SEG_MODULO")
+@Table(name = "seg_modulo")
 @NamedQueries({
     @NamedQuery(name = "Modulo.findAll", query = "SELECT MODU FROM Modulo AS MODU ORDER BY MODU.descricao ASC"),
     @NamedQuery(name = "Modulo.findName", query = "SELECT MODU FROM Modulo AS MODU WHERE UPPER(MODU.descricao) LIKE :pdescricao ORDER BY MODU.descricao ASC ")
@@ -14,8 +14,9 @@ public class Modulo implements BaseEntity, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @Column(name = "DS_DESCRICAO", length = 50, nullable = false, unique = true)
+    @Column(name = "ds_descricao", length = 50, nullable = false, unique = true)
     private String descricao;
 
     public Modulo() {
@@ -28,6 +29,7 @@ public class Modulo implements BaseEntity, Serializable {
         this.descricao = descricao;
     }
 
+    @Override
     public int getId() {
         return id;
     }

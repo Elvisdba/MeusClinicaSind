@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "SEG_USUARIO")
+@Table(name = "seg_usuario")
 @NamedQueries({
     @NamedQuery(name = "Usuario.findAll", query = "SELECT U FROM Usuario U ORDER BY U.pessoa.nome ASC, U.login ASC ")
 })
@@ -13,22 +13,23 @@ public class Usuario implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     private int id;
-    @JoinColumn(name = "ID_CLIENTE", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
     @OneToOne(fetch = FetchType.EAGER)
     private Cliente cliente;
-    @JoinColumn(name = "ID_PESSOA", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_pessoa", referencedColumnName = "id", nullable = false)
     @OneToOne(fetch = FetchType.EAGER)
     private Pessoa pessoa;
-    @Column(name = "DS_LOGIN", length = 30, nullable = false, unique = true)
+    @Column(name = "ds_login", length = 30, nullable = false, unique = true)
     private String login;
-    @Column(name = "DS_SENHA", length = 6, nullable = false)
+    @Column(name = "ds_senha", length = 6, nullable = false)
     private String senha;
-    @Column(name = "IS_ATIVO", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "is_ativo", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean ativo;
-    @Column(name = "DS_EMAIL", length = 255)
+    @Column(name = "ds_email", length = 255)
     private String email;
-    @Column(name = "IS_ADMINISTRADOR", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "is_administrador", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean administrador;
 
     public Usuario() {

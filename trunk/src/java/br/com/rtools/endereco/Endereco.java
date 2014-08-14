@@ -5,32 +5,33 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "END_ENDERECO",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"ID_CLIENTE", "", "ID_CIDADE", "ID_BAIRRO", "ID_LOGRADOURO", "ID_DESCRICAO_ENDERECO"})
+@Table(name = "end_endereco",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"id_cliente", "", "id_cidade", "id_bairro", "id_logradouro", "id_descricao_endereco"})
 )
 public class Endereco implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @JoinColumn(name = "ID_CLIENTE", referencedColumnName = "ID", nullable = true)
+    @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = true)
     @ManyToOne
     private Cliente cliente;
-    @JoinColumn(name = "ID_CIDADE", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_cidade", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Cidade cidade;
-    @JoinColumn(name = "ID_BAIRRO", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_bairro", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Bairro bairro;
-    @JoinColumn(name = "ID_LOGRADOURO", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_logradouro", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Logradouro logradouro;
-    @JoinColumn(name = "ID_DESCRICAO_ENDERECO", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_descricao_endereco", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private DescricaoEndereco descricaoEndereco;
-    @Column(name = "DS_CEP", length = 9, nullable = false)
+    @Column(name = "ds_cep", length = 9, nullable = false)
     private String cep;
-    @Column(name = "DS_FAIXA", length = 100, nullable = true)
+    @Column(name = "ds_faixa", length = 100, nullable = true)
     private String faixa;
 
     public Endereco() {

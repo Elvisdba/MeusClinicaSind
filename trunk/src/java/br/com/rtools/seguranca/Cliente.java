@@ -1,37 +1,37 @@
 package br.com.rtools.seguranca;
 
-
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "SEG_CLIENTE")
+@Table(name = "seg_cliente")
 public class Cliente implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @Column(name = "DS_NOME_CLIENTE", length = 300)
+    @Column(name = "ds_nome_cliente", length = 300)
     private String nomeCliente;
-    @Column(name = "DS_PERSISTENCE", length = 200)
+    @Column(name = "ds_persistence", length = 200)
     private String persistence;
-    @Column(name = "DS_CAMINHO_SISTEMA", length = 200)
+    @Column(name = "ds_caminho_sistema", length = 200)
     private String caminhoSistema;
-    @Column(name = "DS_IDENTIFICA", length = 100, unique = true)
+    @Column(name = "ds_identifica", length = 100, unique = true)
     private String identifica;
-    @Column(name = "ID_JURIDICA")
+    @Column(name = "id_juridica")
     private int idJuridica;
-    @Column(name = "NR_ACESSO")
+    @Column(name = "nr_acesso")
     private int acessos;
-    @Column(name = "DT_CADASTRO")
+    @Column(name = "dt_cadastro")
     @Temporal(TemporalType.DATE)
     private Date cadastro;
-    @Column(name = "IS_ATIVO")
+    @Column(name = "is_ativo")
     private boolean ativo;
-    @Column(name = "DS_HOST", length = 300)
+    @Column(name = "ds_host", length = 300)
     private String host;
-    @Column(name = "DS_SENHA", length = 300)
+    @Column(name = "ds_senha", length = 300)
     private String senha;
 
     public Cliente() {

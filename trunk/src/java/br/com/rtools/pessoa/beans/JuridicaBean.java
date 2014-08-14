@@ -446,9 +446,13 @@ public class JuridicaBean implements Serializable {
         juridica.setPorte((Porte) dao.find(new Porte(), Integer.parseInt(getListPorte().get(idPorte).getDescription())));
         dao.openTransaction();
         juridica.getPessoa().setTipoDocumento((TipoDocumento) dao.find(new TipoDocumento(), Integer.parseInt(((SelectItem) getListTipoDocumento().get(idTipoDocumento)).getDescription())));
+        if (pessoa.getTipoDocumento().getId() != 4 && pessoa.getDocumento().isEmpty()) {
+            Messages.warn("Validação", "Informar o número do documento!");
+            return null;
+        }
         if (juridica.getId() == -1) {
             if (juridica.getPessoa().getNome().isEmpty()) {
-                Messages.error("Erro", "O campo nome não pode ser nulo!");
+                Messages.warn("Validação", "O campo nome não pode ser nulo!");
                 return null;
             }
 
@@ -458,19 +462,19 @@ public class JuridicaBean implements Serializable {
                 listDocumento = juridicaDao.pesquisaJuridicaPorDocumento(juridica.getPessoa().getDocumento());
                 for (int i = 0; i < listDocumento.size(); i++) {
                     if (!listDocumento.isEmpty()) {
-                        Messages.error("Erro", "Empresa já existente no Sistema!");
+                        Messages.warn("Validação", "Empresa já existente no Sistema!");
                         return null;
                     }
                 }
             }
 
             if (!validaTipoDocumento(Integer.parseInt(getListTipoDocumento().get(idTipoDocumento).getDescription()), juridica.getPessoa().getDocumento())) {
-                Messages.error("Erro", "Documento Invalido!");
+                Messages.warn("Validação", "Documento Invalido!");
                 return null;
             }
 
             if (listEnd.isEmpty()) {
-                Messages.error("Erro", "Cadastro não pode ser salvo sem Endereço!");
+                Messages.warn("Validação", "Cadastro não pode ser salvo sem Endereço!");
                 return null;
             }
 
@@ -502,7 +506,7 @@ public class JuridicaBean implements Serializable {
             }
         } else {
             if (juridica.getPessoa().getNome().isEmpty()) {
-                Messages.error("Erro", "O campo nome não pode ser nulo!");
+                Messages.warn("Validação", "O campo nome não pode ser nulo!");
                 return null;
             }
 
@@ -512,14 +516,14 @@ public class JuridicaBean implements Serializable {
                 listDocumento = juridicaDao.pesquisaJuridicaPorDocumento(juridica.getPessoa().getDocumento());
                 for (int i = 0; i < listDocumento.size(); i++) {
                     if (!listDocumento.isEmpty() && ((Juridica) listDocumento.get(i)).getId() != juridica.getId()) {
-                        Messages.error("Erro", "Empresa já existente no Sistema!");
+                        Messages.warn("Validação", "Empresa já existente no Sistema!");
                         return null;
                     }
                 }
                 juridica.getPessoa().setTipoDocumento((TipoDocumento) dao.find(new TipoDocumento(), Integer.parseInt(((SelectItem) getListTipoDocumento().get(idTipoDocumento)).getDescription())));
             }
             if (!validaTipoDocumento(Integer.parseInt(getListTipoDocumento().get(idTipoDocumento).getDescription()), juridica.getPessoa().getDocumento())) {
-                Messages.error("Erro", "Documento Invalido!");
+                Messages.warn("Validação", "Documento Invalido!");
                 return null;
             }
             addPessoaEndereco();
@@ -603,7 +607,7 @@ public class JuridicaBean implements Serializable {
         Dao dao = new Dao();
         PessoaEnderecoDao pessoaEnderecoDao = new PessoaEnderecoDao();
         if (juridica.getId() == -1) {
-            Messages.error("Erro", "Pesquise uma empresa para ser excluída!");
+            Messages.warn("Validação", "Pesquise uma empresa para ser excluída!");
             return null;
         }
         List<PessoaEndereco> listEndereco = pessoaEnderecoDao.pesquisaPessoaEnderecoPorPessoa(juridica.getPessoa().getId());
@@ -629,7 +633,7 @@ public class JuridicaBean implements Serializable {
         String documento = AnaliseString.extrairNumeros(juridica.getPessoa().getDocumento());
         JuridicaReceita jr = juridicaReceitaDao.pesquisaJuridicaReceitaPorDocumento(documento);
 
-        if (jr.getId() != -1) {
+        if (jr != null) {
             if (!dao.delete(jr)) {
                 Messages.error("Erro", "Erro ao excluir Pesquisa da Receita!");
                 dao.rollback();

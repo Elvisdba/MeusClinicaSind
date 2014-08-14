@@ -123,7 +123,7 @@ public class RotinaBean implements Serializable {
             if (descricaoPesquisa.equals("")) {
                 listRotina = dao.list(new Rotina(), true);
             } else {
-                listRotina = dao.listQuery(new Rotina(), "findByRotina", new Object[]{"'%" + descricaoPesquisa + "%'"});
+                listRotina = dao.listQuery(new Rotina(), "findByRotina", new Object[]{"%" + descricaoPesquisa.toUpperCase() + "%"});
             }
         }
         return listRotina;

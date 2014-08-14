@@ -42,6 +42,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
     private Fisica fisica;
     private Usuario usuario;
     private Endereco enderecox;
+    private Dependente dependente;
     private PessoaEndereco pessoaEndereco;
     private PessoaEmpresa pessoaEmpresa;
     private PessoaProfissao pessoaProfissao;
@@ -75,8 +76,10 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
     private List<Fisica> listPessoaFisica;
     private List<PessoaEndereco> listPessoaEndereco;
     private List<PessoaEmpresa> listPessoaEmpresa;
+    private List<Dependente> listDependente;
     private List<SelectItem> listProfissoes;
     private List<SelectItem> listTipoCadastro;
+    private List<SelectItem> listGrauParentesco;
     private int idPais;
     private int idProfissao;
     private int idTipoCadastro;
@@ -85,6 +88,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
     private int idIndexPessoaEmp;
     private int indexPessoaFisica;
     private int index_endereco;
+    private int idGrauParentesco;
     private boolean alterarEnd;
     private boolean endResidencial;
     private boolean fotoTemp;
@@ -102,6 +106,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         pessoaEndereco = new PessoaEndereco();
         pessoaProfissao = new PessoaProfissao();
         pessoaEmpresa = new PessoaEmpresa();
+        setDependente(new Dependente());
         file = null;
         indicaTab = "pessoal";
         enderecoCompleto = "";
@@ -128,12 +133,14 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         fileContent = "";
         imagensTipo = new String[]{"jpg", "jpeg", "png", "gif"};
         itens = new ArrayList();
+        listDependente = new ArrayList<>();
         listPessoa = new ArrayList<>();
         listPessoaFisica = new ArrayList<>();
         listPessoaEmpresa = new ArrayList<>();
         listPessoaEndereco = new ArrayList<>();
         listProfissoes = new ArrayList<>();
         listTipoCadastro = new ArrayList<>();
+        listGrauParentesco = new ArrayList<>();
         idPais = 11;
         idProfissao = 0;
         idTipoCadastro = 0;
@@ -142,6 +149,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         idIndexPessoaEmp = 0;
         indexPessoaFisica = 0;
         index_endereco = 0;
+        idGrauParentesco = 0;
         alterarEnd = false;
         endResidencial = false;
         fotoTemp = false;
@@ -150,6 +158,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         disabledNaturalidade = false;
         visibleEditarEndereco = false;
         chkDependente = false;
+
     }
 
     @PreDestroy
@@ -205,7 +214,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
             }
         }
         //fisica.setTipoCadastro((TipoCadastro) dao.find(new TipoCadastro(), Integer.parseInt(getListTipoCadastro().get(getIdTipoCadastro()).getDescription())));
-        fisica.setTipoCadastro(null); 
+        fisica.setTipoCadastro(null);
         if ((fisica.getPessoa().getId() == -1) && (fisica.getId() == -1)) {
             fisica.getPessoa().setTipoDocumento((TipoDocumento) dao.find(new TipoDocumento(), 1));
             if (!db.pesquisaFisicaPorNomeNascimentoRG(fisica.getPessoa().getNome(), fisica.getDtNascimento(), fisica.getRg()).isEmpty()) {
@@ -306,9 +315,21 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         savePessoaEndereco();
         savePessoaEmpresa();
         savePessoaProfissao();
+        saveDependentes();
         limparCamposData();
         if (sucesso) {
             salvarImagem();
+        }
+    }
+
+    public void saveDependentes() {
+        if (fisica.getId() != -1 && !listDependente.isEmpty() && listDependente.get(0).getPessoa().getId() == -1) {
+            Dao dao = new Dao();
+            for (Dependente d : listDependente) {
+                d.setPessoa(fisica.getPessoa());
+                dao.save(d, true);
+            }
+            listDependente.clear();
         }
     }
 
@@ -428,6 +449,19 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
                 Messages.warn("Erro", "Física não pode ser excluída!");
                 return;
             }
+            for (int i = 0; i < listDependente.size(); i++) {
+                if (listDependente.get(i).getId() == -1) {
+                    listDependente.remove(i);
+                } else {
+                    if (!dao.delete(listDependente.get(i))) {
+                        Messages.warn("Erro", "Ao remover dependente!");
+                        dao.rollback();
+                        return;
+                    }
+                }
+
+                break;
+            }
             if (!dao.delete(fisica.getPessoa())) {
                 dao.rollback();
                 Messages.warn("Erro", "Cadastro Pessoa não pode ser excluída!");
@@ -438,6 +472,8 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
             Logger logger = new Logger();
             logger.delete("ID: " + fisica.getId() + " - Pessoa: " + fisica.getPessoa().getId() + " - Nascimento: " + fisica.getNascimento() + " - Nome: " + fisica.getPessoa().getNome() + " - CPF: " + fisica.getPessoa().getDocumento() + " - RG: " + fisica.getRg());
             clear();
+            clearDependente();
+            listDependente.clear();
             Messages.info("Sucesso", "Registro excluído");
         } else {
             Messages.warn("Validação", "Pesquise uma pessoa física para ser excluída!");
@@ -486,8 +522,8 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
                 }
             }
         }
-        if(fisica.getTipoCadastro() != null) {
-            for (int i = 0; i < listTipoCadastro.size(); i++) { 
+        if (fisica.getTipoCadastro() != null) {
+            for (int i = 0; i < listTipoCadastro.size(); i++) {
                 if (Integer.valueOf(listTipoCadastro.get(i).getDescription()) == fisica.getTipoCadastro().getId()) {
                     idTipoCadastro = i;
                     break;
@@ -545,7 +581,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         comoPesquisa = "";
         alterarEnd = true;
         pessoaEmpresa = (PessoaEmpresa) peDao.pesquisaPessoaEmpresaPorFisica(fisica.getId());
-        if(pessoaEmpresa == null) {
+        if (pessoaEmpresa == null) {
             pessoaEmpresa = new PessoaEmpresa();
         }
         if (pessoaEmpresa.getId() != -1) {
@@ -933,30 +969,6 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         }
     }
 
-//    public void salvarImagem() {
-//        FacesContext context = FacesContext.getCurrentInstance();
-//        if (fisica.getId() != -1) {
-//            String caminho = ((ServletContext) context.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/Fotos/" + String.valueOf(fisica.getPessoa().getId()) + ".jpg");
-//            String caminho2 = ((ServletContext) context.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/Fotos/fotoTemp.jpg");
-//            try {
-//                File fl = new File(caminho);
-//                File item = new File(caminho2);
-//                FileInputStream in = new FileInputStream(item);
-//                FileOutputStream out = new FileOutputStream(fl.getPath());
-//
-//                byte[] buf = new byte[(int) item.length()];
-//                int count;
-//                while ((count = in.read(buf)) >= 0) {
-//                    out.write(buf, 0, count);
-//                }
-//                in.close();
-//                out.flush();
-//                out.close();
-//            } catch (IOException e) {
-//                System.out.println(e);
-//            }
-//        }
-//    }
     public void excluirImagemSozinha() {
         FacesContext context = FacesContext.getCurrentInstance();
         String caminho = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/Fotos/fotoTemp.jpg");
@@ -1508,17 +1520,115 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         this.chkDependente = chkDependente;
     }
 
-    /**
-     * @return the idTipoCadastro
-     */
     public int getIdTipoCadastro() {
         return idTipoCadastro;
     }
 
-    /**
-     * @param idTipoCadastro the idTipoCadastro to set
-     */
     public void setIdTipoCadastro(int idTipoCadastro) {
         this.idTipoCadastro = idTipoCadastro;
     }
+
+    public Dependente getDependente() {
+        return dependente;
+    }
+
+    public void setDependente(Dependente dependente) {
+        this.dependente = dependente;
+    }
+
+    public List<SelectItem> getListGrauParentesco() {
+        if (listGrauParentesco.isEmpty()) {
+            Dao dao = new Dao();
+            List<GrauParentesco> list = dao.list(new GrauParentesco(), true);
+            for (int i = 0; i < list.size(); i++) {
+                listGrauParentesco.add(new SelectItem(i, list.get(i).getDescricao(), "" + list.get(i).getId()));
+            }
+        }
+        return listGrauParentesco;
+    }
+
+    public void setListGrauParentesco(List<SelectItem> listGrauParentesco) {
+        this.listGrauParentesco = listGrauParentesco;
+    }
+
+    public int getIdGrauParentesco() {
+        return idGrauParentesco;
+    }
+
+    public void setIdGrauParentesco(int idGrauParentesco) {
+        this.idGrauParentesco = idGrauParentesco;
+    }
+
+    public void clearDependente() {
+        dependente = new Dependente();
+        idGrauParentesco = 0;
+        listGrauParentesco.clear();
+    }
+
+    public void addDependente() {
+        if (dependente.getNome().isEmpty()) {
+            Messages.warn("Validaçao", "Informa nome!");
+            return;
+        }
+        Dao dao = new Dao();
+        dependente.setGrauParentesco((GrauParentesco) dao.find(new GrauParentesco(), Integer.parseInt(listGrauParentesco.get(idGrauParentesco).getDescription())));
+        if (fisica.getId() == -1) {
+            listDependente.add(dependente);
+            clearDependente();
+        } else {
+            if (dependente.getId() == -1) {
+                dependente.setPessoa(fisica.getPessoa());
+                if (dao.save(dependente, true)) {
+                    Messages.info("Sucesso", "Dependente adicionado");
+                    clearDependente();
+                    listDependente.clear();
+                } else {
+                    Messages.warn("Erro", "Ao adicionar dependente!");
+                }
+            } else {
+                if (dao.update(dependente, true)) {
+                    Messages.info("Sucesso", "Dependente atualizado");
+                    clearDependente();
+                    listDependente.clear();
+                } else {
+                    Messages.warn("Erro", "Ao adicionar dependente!");
+                }
+            }
+        }
+    }
+
+    public void removeDependente(int index) {
+        for (int i = 0; i < listDependente.size(); i++) {
+            if (i == index) {
+                if (listDependente.get(i).getId() == -1) {
+                    listDependente.remove(i);
+                } else {
+                    Dao dao = new Dao();
+                    if (dao.delete(listDependente.get(index), true)) {
+                        Messages.info("Sucesso", "Dependente removido");
+                        clearDependente();
+                    } else {
+                        Messages.warn("Erro", "Ao remover dependente!");
+                    }
+                }
+                listDependente.clear();
+                break;
+            }
+        }
+    }
+
+    public List<Dependente> getListDependente() {
+        if (fisica.getId() != -1) {
+            if (listDependente.isEmpty()) {
+                DependenteDao dependenteDao = new DependenteDao();
+                listDependente = dependenteDao.pesquisaDependentesPorPessoa(fisica.getPessoa().getId());
+            }
+        }
+        return listDependente;
+    }
+
+    public void setListDependente(List<Dependente> listDependente) {
+        this.listDependente = listDependente;
+    }
+
 }

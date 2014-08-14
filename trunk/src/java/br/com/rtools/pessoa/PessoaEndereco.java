@@ -1,31 +1,31 @@
 package br.com.rtools.pessoa;
 
 import br.com.rtools.endereco.Endereco;
-import br.com.rtools.seguranca.Cliente;
 import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "PES_PESSOA_ENDERECO",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"ID_ENDERECO", "ID_TIPO_ENDERECO", "ID_PESSOA"})
+@Table(name = "pes_pessoa_endereco",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"id_endereco", "id_tipo_endereco", "id_pessoa"})
 )
 public class PessoaEndereco implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @JoinColumn(name = "ID_ENDERECO", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_endereco", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Endereco endereco;
-    @JoinColumn(name = "ID_TIPO_ENDERECO", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_tipo_endereco", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private TipoEndereco tipoEndereco;
-    @JoinColumn(name = "ID_PESSOA", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_pessoa", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Pessoa pessoa;
-    @Column(name = "DS_NUMERO", length = 30, nullable = false)
+    @Column(name = "ds_numero", length = 30, nullable = false)
     private String numero;
-    @Column(name = "DS_COMPLEMENTO", length = 50, nullable = true)
+    @Column(name = "ds_complemento", length = 50, nullable = true)
     private String complemento;
 
     public PessoaEndereco() {

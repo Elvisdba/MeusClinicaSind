@@ -6,25 +6,26 @@ import br.com.rtools.utilitarios.Sessions;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "SEG_MAC_FILIAL",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"ID_DEPARTAMENTO", "ID_FILIAL", "DS_MAC", "NR_MESA"})
+@Table(name = "seg_mac_filial",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"id_departamento", "id_filial", "ds_mac", "nr_mesa"})
 )
 public class MacFilial implements java.io.Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    @JoinColumn(name = "ID_DEPARTAMENTO", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_departamento", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Departamento departamento;
-    @JoinColumn(name = "ID_FILIAL", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "id_filial", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Filial filial;
-    @Column(name = "DS_MAC", nullable = false)
+    @Column(name = "ds_mac", nullable = false)
     private String mac;
-    @Column(name = "NR_MESA")
+    @Column(name = "nr_mesa")
     private int mesa;
-    @JoinColumn(name = "ID_CAIXA", referencedColumnName = "ID")
+    @JoinColumn(name = "id_caixa", referencedColumnName = "id")
     @ManyToOne
     private Caixa caixa;
 
