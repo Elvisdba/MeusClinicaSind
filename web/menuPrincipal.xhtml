@@ -21,7 +21,7 @@
             <div id="mainx">
                 <!-- INICIA DIV wrap e main -->  
                 <f:subview id="header">
-                    <ui:include src="templatePrime.xhtml"/>
+                    <ui:include src="templates/templatePrime.xhtml"/>
                 </f:subview>
                 <f:view>
                     <h:form id="formMenuPrincipal">
@@ -67,9 +67,9 @@
                                         </p:submenu>
                                     </p:submenu>                                       
                                     <p:submenu label="Endereço" icon="ui-icon-contact" style="margin-right: 15px">
-                                        <p:menuitem value="Endereço"      action="#{chamadaPaginaBean.endereco}"/>
+                                        <p:menuitem value="Endereço"      action="#{chamadaPaginaBean.pagina('endereco')}"/>
                                         <p:menuitem value="Bairro"        action="#{chamadaPaginaBean.bairro}"/>
-                                        <p:menuitem value="Cidade"        action="#{chamadaPaginaBean.cidade}"/>
+                                        <p:menuitem value="Cidade"        action="#{chamadaPaginaBean.pagina('cidade')}"/>
                                         <p:menuitem value="Logradouro"    action="#{chamadaPaginaBean.logradouro}"/>
                                         <p:menuitem value="Descrição"     action="#{chamadaPaginaBean.descricaoEndereco}"/>
                                         <p:menuitem value="Tipo Endereço" action="#{chamadaPaginaBean.tipoEndereco}"/>
@@ -136,7 +136,7 @@
         <!-- FINALIZA div wrap main -->
         <div id="footerx">
             <f:subview id="footer">
-                <ui:include src="templateFooter.xhtml"/>
+                <ui:include src="templates/templateFooter.xhtml"/>
             </f:subview>
         </div>
     </h:body>

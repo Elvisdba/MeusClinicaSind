@@ -163,8 +163,26 @@
         </navigation-case>
         
         <navigation-case>
-            <from-outcome>parentesco</from-outcome>
-            <to-view-id>/parentesco.jsf</to-view-id>
+            <from-outcome>grauParentesco</from-outcome>
+            <to-view-id>/grauParentesco.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>funcaoEquipe</from-outcome>
+            <to-view-id>/funcaoEquipe.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>equipe</from-outcome>
+            <to-view-id>/equipe.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>tipoDocumentoProfissao</from-outcome>
+            <to-view-id>/tipoDocumentoProfissao.jsf</to-view-id>
             <redirect/>
         </navigation-case>
        

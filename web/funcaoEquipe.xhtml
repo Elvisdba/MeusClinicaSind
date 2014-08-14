@@ -1,0 +1,113 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Função Equipe</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/Imagens/favicon.ico"/>  
+        <style type="text/css">
+            .ui-widget-content .ui-inputfield{ padding: 8px!important; } 
+            .ui-button { padding: 3px!important; }
+            .ui-selectonemenu {padding-right: 25px!important;}
+        </style>
+
+        <script type="text/javascript">
+
+        </script>
+    </h:head>
+    <h:body>
+        <!-- INICIA DIV wrap e main -->
+        <div id="wrapx">
+            <div id="mainx">
+                <!-- INICIA DIV wrap e main -->  
+                <f:subview id="header">
+                    <ui:include src="templates/templatePrime.xhtml"/>
+                </f:subview>
+                <f:view>
+                    <p:panel styleClass="wrapper" style="border: 0px;">
+                        <h:outputText value="Função Equipe" styleClass="fonteHeader" />
+                        <div class="clear"></div>
+                        <h:form id="form_fe">
+                            <c:set scope="request" var="object" value="${funcaoEquipeBean.funcaoEquipe}"/>
+                            <p:panel>
+                                <h:panelGrid columns="2">
+                                    <p:outputLabel value="Tipo Atendimento:" />
+                                    <h:selectOneMenu value="#{funcaoEquipeBean.idTipoAtendimento}">
+                                        <p:ajax event="change" update="@this" />
+                                        <f:selectItem itemValue="" itemLabel="Selecionar" itemDisabled="true" />
+                                        <f:selectItems value="#{funcaoEquipeBean.listTipoAtendimento}" />
+                                    </h:selectOneMenu>
+                                    <p:outputLabel value="Tipo Documento Profissão:" />
+                                    <h:selectOneMenu value="#{funcaoEquipeBean.idTipoDocumentoProfissao}">
+                                        <p:ajax event="change" update="@this" />
+                                        <f:selectItem itemValue="" itemLabel="Selecionar" itemDisabled="true" />
+                                        <f:selectItems value="#{funcaoEquipeBean.listTipoDocumentoProfissao}" />
+                                    </h:selectOneMenu>
+                                    <p:outputLabel value="Profissão:" />
+                                    <h:selectOneMenu value="#{funcaoEquipeBean.idProfissao}">
+                                        <p:ajax event="change" update="@this" />
+                                        <f:selectItem itemValue="" itemLabel="Selecionar" itemDisabled="true" />
+                                        <f:selectItems value="#{funcaoEquipeBean.listProfissao}" />
+                                    </h:selectOneMenu>
+                                </h:panelGrid>
+                            </p:panel>
+                            <h:panelGrid columns="4" styleClass="margin-top-max">
+                                <p:commandButton value="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.botaoSalvar}"/>
+                                <p:commandButton value="Novo" action="#{funcaoEquipeBean.clear}" update=":form_fe:" />
+                                <h:column rendered="#{funcaoEquipeBean.funcaoEquipe.id != -1}">
+                                    <p:commandButton value="Excluir" onclick="PF('dlg_delete').show()" disabled="#{controleAcessoBean.botaoExcluir}" />
+                                </h:column>
+                            </h:panelGrid>
+                            <p:panel header="Funções" styleClass="margin-top-max">
+                                <p:dataTable value="#{funcaoEquipeBean.listFuncaoEquipe}" var="funcaoEquipe" scrollable="true" scrollHeight="300" emptyMessage="Nenhum registro encontrado!">
+                                    <p:column width="30">
+                                        <p:commandButton icon="ui-icon-link" action="#{funcaoEquipeBean.edit(funcaoEquipe)}" update=":form_fe:" />
+                                    </p:column>
+                                    <p:column headerText="Tipo Atendimento">
+                                        <p:outputLabel value="#{funcaoEquipe.tipoAtendimento.descricao}" />
+                                    </p:column>
+                                    <p:column headerText="Tipo Documento">
+                                        <p:outputLabel value="#{funcaoEquipe.tipoDocumentoProfissao.descricao}" />
+                                    </p:column>
+                                    <p:column headerText="Profissão">
+                                        <p:outputLabel value="#{funcaoEquipe.profissao.profissao}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panel>
+                            <p:dialog id="i_dlg_save" widgetVar="dlg_save" modal="true" header="Deseja salvar/atualizar este registro?" width="400" resizable="false">
+                                <h:panelGrid columns="2">
+                                    <p:commandButton value="Sim" title="Salvar" action="#{funcaoEquipeBean.save}" update=":form_fe:"  oncomplete="PF('dlg_save').hide(); PF('dlg_message').show();" />
+                                    <p:commandButton value="Não" title="Cancelar" oncomplete="PF('dlg_save').hide();"/>
+                                </h:panelGrid>
+                            </p:dialog>
+                            <p:dialog id="i_dlg_delete" widgetVar="dlg_delete" modal="true" header="Deseja excluir este registro?" width="400" resizable="false">
+                                <h:panelGrid columns="2">
+                                    <p:commandButton value="Sim" title="Excluir" action="#{funcaoEquipeBean.delete}" update=":form_fe:" oncomplete="PF('dlg_delete').hide(); PF('dlg_message').show();" />
+                                    <p:commandButton value="Não" title="Cancelar" oncomplete="PF('dlg_delete').hide();"/>
+                                </h:panelGrid>
+                            </p:dialog>
+                            <p:dialog widgetVar="dlg_message" modal="true" header="Mensagem"  width="400" resizable="false">
+                                <p:messages autoUpdate="true" showDetail="true" showSummary="true" id="i_message"/>
+                                <f:facet name="footer">
+                                    <p:commandButton value="Ok" title="Ok" onclick="PF('dlg_message).hide();" />
+                                </f:facet>
+                            </p:dialog>                            
+                        </h:form>
+                    </p:panel>
+                </f:view>
+                <!-- FINALIZA div wrap main -->
+            </div>
+        </div>
+        <!-- FINALIZA div wrap main -->
+
+        <div id="footerx">
+            <f:subview id="footer">
+                <ui:include src="templates/templateFooter.xhtml"/>
+            </f:subview>
+        </div>                
+    </h:body>
+</ui:composition>

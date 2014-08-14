@@ -37,7 +37,7 @@
             <div id="mainx">
                 <!-- INICIA DIV wrap e main -->  
                 <f:subview id="header">
-                    <ui:include src="templatePrime.xhtml"/>
+                    <ui:include src="templates/templatePrime.xhtml"/>
                 </f:subview>
                 <f:view>
                     <p:panel styleClass="wrapper" style="border: 0px;">
@@ -97,7 +97,7 @@
 
                                                 <p:column>
                                                     <br />
-                                                    <p:inputMask id="i_documento" size="18" value="#{juridicaBean.juridica.pessoa.documento}" mask="#{juridicaBean.mask}">
+                                                    <p:inputMask id="i_documento" size="18" value="#{juridicaBean.juridica.pessoa.documento}" mask="#{juridicaBean.mask}" disabled="#{juridicaBean.idTipoDocumento == 3}">
                                                         <p:ajax event="change" listener="#{juridicaBean.pesquisaDocumento}"/>
                                                     </p:inputMask>
                                                 </p:column>
@@ -365,7 +365,7 @@
 
         <div id="footerx">
             <f:subview id="footer">
-                <ui:include src="templateFooter.xhtml"/>
+                <ui:include src="templates/templateFooter.xhtml"/>
             </f:subview>
         </div>                
     </h:body>
