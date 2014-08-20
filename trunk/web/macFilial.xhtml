@@ -6,7 +6,7 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <h:head>
-        <title>Sindical - Mac Filial</title>
+        <title>Registro Computador</title>
         <meta http-equiv="X-UA-Compatible" content="IE=9" />
         <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/Imagens/favicon.ico"/>  
         <style type="text/css">
@@ -29,7 +29,7 @@
                     <p:panel styleClass="wrapper" style="border: 0px;">
                         <h:form id="formMacFilial1">
                             <c:set scope="request" var="object" value="${macFilialBean.macFilial}"/>
-                            <h:outputText value="Mac Filial" styleClass="fonteHeader" />
+                            <h:outputText value="Registro Computador" styleClass="fonteHeader" />
 
                             <p:panel styleClass="fundoCinza" style="clear: both">
                                 <h:panelGrid style="width: 100%" columns="2">
@@ -91,31 +91,31 @@
                         <h:form id="formMacFilial2">
                             <p:growl id="i_msg_f2" showDetail="true" />  
                             <h:panelGrid id="tbl" style="width:100%; border: 0px; clear: both" columns="1">
-                                <p:dataTable value="#{macFilialBean.listaMacs}" var="linha" emptyMessage="Nenhum Mac Filial encontrado">
+                                <p:dataTable value="#{macFilialBean.listaMacs}" var="macFilial" emptyMessage="Nenhum Mac Filial encontrado">
 
                                     <p:column headerText="Excluir" style="text-align: center">
-                                        <p:commandButton icon="ui-icon-trash" action="#{macFilialBean.delete(linha)}" disabled="#{controleAcessoBean.botaoExcluir}" update=":formMacFilial2:i_msg_f2 :formMacFilial2:tbl" />
+                                        <p:commandButton icon="ui-icon-trash" action="#{macFilialBean.delete(macFilial)}" disabled="#{controleAcessoBean.botaoExcluir}" update=":formMacFilial2:i_msg_f2 :formMacFilial2:tbl" />
                                     </p:column>
 
                                     <p:column headerText="Filial">
-                                        <h:outputLabel value="#{linha.filial.filial.pessoa.nome}"/>
+                                        <h:outputLabel value="#{macFilial.filial.filial.pessoa.nome}"/>
                                     </p:column>
 
                                     <p:column headerText="Departamento">
-                                        <h:outputLabel value="#{linha.departamento.descricao}"/>
+                                        <h:outputLabel value="#{macFilial.departamento.descricao}"/>
                                     </p:column>
 
                                     <p:column headerText="Registro">
-                                        <h:outputLabel value="#{linha.mac}" />
+                                        <h:outputLabel value="#{macFilial.mac}" />
                                     </p:column>
 
                                     <p:column headerText="Nr Mesa">
-                                        <h:outputLabel value="#{linha.mesa}" />
+                                        <h:outputLabel value="#{macFilial.mesa}" />
                                     </p:column>
 
                                     <p:column headerText="Caixa">
-                                        <h:outputLabel value="#{linha.caixa.caixa} - #{linha.caixa.descricao}" rendered="#{linha.caixa != null}"/>
-                                        <h:outputLabel value="NENHUM CAIXA" rendered="#{linha.caixa == null}"/>
+                                        <h:outputLabel value="#{macFilial.caixa.caixa} - #{macFilial.caixa.descricao}" rendered="#{macFilial.caixa != null}"/>
+                                        <h:outputLabel value="NENHUM CAIXA" rendered="#{macFilial.caixa == null}"/>
                                     </p:column>
                                 </p:dataTable>   
                             </h:panelGrid>

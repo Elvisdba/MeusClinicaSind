@@ -1,18 +1,15 @@
 package br.com.rtools.pessoa;
 
-import br.com.rtools.seguranca.Cliente;
 import br.com.rtools.utilitarios.BaseEntity;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "pes_tipo_atendimento",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"id_cliente", "ds_descricao"})
-)
+@Table(name = "pes_tipo_atendimento")
 @NamedQueries({
-    @NamedQuery(name = "TipoAtendimento.findAll", query = "SELECT TA FROM TipoAtendimento AS TA WHERE TA.cliente.id = :p1 ORDER BY TA.descricao ASC "),
-    @NamedQuery(name = "TipoAtendimento.findName", query = "SELECT TA FROM TipoAtendimento TA WHERE UPPER(TA.descricao) LIKE :pdescricao AND TA.cliente.id = :pcliente ORDER BY TA.descricao ASC ")
+    @NamedQuery(name = "TipoAtendimento.findAll", query = "SELECT TA FROM TipoAtendimento AS TA ORDER BY TA.descricao ASC "),
+    @NamedQuery(name = "TipoAtendimento.findName", query = "SELECT TA FROM TipoAtendimento TA WHERE UPPER(TA.descricao) LIKE :pdescricao ORDER BY TA.descricao ASC ")
 })
 public class TipoAtendimento implements BaseEntity, Serializable {
 
@@ -20,21 +17,16 @@ public class TipoAtendimento implements BaseEntity, Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @JoinColumn(name = "id_cliente", referencedColumnName = "ID", nullable = false)
-    @OneToOne(fetch = FetchType.EAGER)
-    private Cliente cliente;
-    @Column(name = "ds_descricao", length = 50, nullable = false)
+    @Column(name = "ds_descricao", length = 50, nullable = false, unique = true)
     private String descricao;
 
     public TipoAtendimento() {
         this.id = -1;
-        this.cliente = new Cliente();
         this.descricao = "";
     }
 
-    public TipoAtendimento(int id, Cliente cliente, String descricao) {
+    public TipoAtendimento(int id, String descricao) {
         this.id = id;
-        this.cliente = cliente;
         this.descricao = descricao;
     }
 
@@ -45,14 +37,6 @@ public class TipoAtendimento implements BaseEntity, Serializable {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
     }
 
     public String getDescricao() {
@@ -66,9 +50,8 @@ public class TipoAtendimento implements BaseEntity, Serializable {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 17 * hash + this.id;
-        hash = 17 * hash + Objects.hashCode(this.cliente);
-        hash = 17 * hash + Objects.hashCode(this.descricao);
+        hash = 43 * hash + this.id;
+        hash = 43 * hash + Objects.hashCode(this.descricao);
         return hash;
     }
 
@@ -84,9 +67,6 @@ public class TipoAtendimento implements BaseEntity, Serializable {
         if (this.id != other.id) {
             return false;
         }
-        if (!Objects.equals(this.cliente, other.cliente)) {
-            return false;
-        }
         if (!Objects.equals(this.descricao, other.descricao)) {
             return false;
         }
@@ -95,7 +75,7 @@ public class TipoAtendimento implements BaseEntity, Serializable {
 
     @Override
     public String toString() {
-        return "TipoAtendimento{" + "id=" + id + ", cliente=" + cliente + ", descricao=" + descricao + '}';
+        return "TipoAtendimento{" + "id=" + id + ", descricao=" + descricao + '}';
     }
 
 }

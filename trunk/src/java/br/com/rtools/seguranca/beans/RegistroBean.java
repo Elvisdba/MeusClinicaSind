@@ -1,17 +1,21 @@
 package br.com.rtools.seguranca.beans;
 
+import br.com.rtools.pessoa.Juridica;
 import br.com.rtools.pessoa.Pessoa;
+import br.com.rtools.seguranca.Cliente;
 import br.com.rtools.seguranca.Registro;
 import br.com.rtools.seguranca.Rotina;
 import br.com.rtools.seguranca.SisEmailProtocolo;
 import br.com.rtools.seguranca.Usuario;
+import br.com.rtools.seguranca.controleUsuario.SessaoCliente;
+import br.com.rtools.seguranca.dao.RegistroDao;
 import br.com.rtools.sistema.Email;
 import br.com.rtools.sistema.EmailPessoa;
-import br.com.rtools.utilitarios.Mail;
 import br.com.rtools.utilitarios.AnaliseString;
 import br.com.rtools.utilitarios.Dao;
 import br.com.rtools.utilitarios.DaoInterface;
 import br.com.rtools.utilitarios.DataHoje;
+import br.com.rtools.utilitarios.Mail;
 import br.com.rtools.utilitarios.Messages;
 import br.com.rtools.utilitarios.Sessions;
 import java.io.Serializable;
@@ -31,7 +35,7 @@ import org.primefaces.event.TabChangeEvent;
 @ManagedBean
 @SessionScoped
 @SuppressWarnings("unchecked")
-public class RegistroEmpresarialBean implements Serializable {
+public class RegistroBean implements Serializable {
 
     private Registro registro;
     private String senha;
@@ -51,12 +55,35 @@ public class RegistroEmpresarialBean implements Serializable {
         emailTeste = "";
         codigoModulo = 0;
         idSisEmailProtocolo = 0;
-        listaDataVencimento = new ArrayList<SelectItem>();
+        listaDataVencimento = new ArrayList<>();
+        if (registro != null) {
+            if (registro.getId() == -1) {
+                RegistroDao registroDao = new RegistroDao();
+                registro = (Registro) registroDao.pesquisaRegistroPorCliente(SessaoCliente.get().getId());
+                if (registro == null) {
+                    registro = new Registro();
+                    Dao dao = new Dao();
+                    Cliente cliente = (Cliente) SessaoCliente.get();
+                    registro.setCliente(cliente);
+                    registro.setFilial((Juridica) dao.find(new Juridica(), SessaoCliente.get().getIdJuridica()));
+                    registro.setSisEmailProtocolo((SisEmailProtocolo) dao.find(new SisEmailProtocolo(), 1));
+                    dao.save(registro, true);
+                }
+                senha = registro.getSisSenha();
+                List<SelectItem> list = getListaSisEmailProtocolo();
+                for (int i = 0; i < list.size(); i++) {
+                    if (registro.getSisEmailProtocolo().getId() == Integer.parseInt(list.get(i).getDescription())) {
+                        idSisEmailProtocolo = i;
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     @PreDestroy
     public void destroy() {
-        Sessions.remove("registroEmpresarialBean");
+        Sessions.remove("registroBean");
     }
 
     public void save() {
@@ -69,14 +96,17 @@ public class RegistroEmpresarialBean implements Serializable {
                 registro.setSisSenha(senha);
             }
         }
-        DaoInterface di = new Dao();
-        di.openTransaction();
-        registro.setSisEmailProtocolo((SisEmailProtocolo) di.find(new SisEmailProtocolo(), Integer.parseInt(getListaSisEmailProtocolo().get(idSisEmailProtocolo).getDescription())));
-        if (di.update(registro)) {
-            di.commit();
+        Dao dao = new Dao();
+        dao.openTransaction();
+        registro.setSisEmailProtocolo((SisEmailProtocolo) dao.find(new SisEmailProtocolo(), Integer.parseInt(getListaSisEmailProtocolo().get(idSisEmailProtocolo).getDescription())));
+        if (registro.getFilial() == null || registro.getFilial().getId() == -1) {
+            registro.setFilial((Juridica) dao.find(new Juridica(), SessaoCliente.get().getIdJuridica()));
+        }
+        if (dao.update(registro)) {
+            dao.commit();
             Messages.info("Sucesso", "Registro atualizado");
         } else {
-            di.rollback();
+            dao.rollback();
             Messages.warn("Erro", "Ao atualizar registro!");
         }
     }
@@ -115,20 +145,6 @@ public class RegistroEmpresarialBean implements Serializable {
     }
 
     public Registro getRegistro() {
-        if (registro != null) {
-            if (registro.getId() == -1) {
-                Dao dao = new Dao();
-                registro = (Registro) dao.find(new Registro(), 1);
-                senha = registro.getSisSenha();
-                List<SelectItem> list = getListaSisEmailProtocolo();
-                for (int i = 0; i < list.size(); i++) {
-                    if (registro.getSisEmailProtocolo().getId() == Integer.parseInt(list.get(i).getDescription())) {
-                        idSisEmailProtocolo = i;
-                        break;
-                    }
-                }
-            }
-        }
         return registro;
     }
 
@@ -257,10 +273,11 @@ public class RegistroEmpresarialBean implements Serializable {
                         "Email teste.",
                         "",
                         false,
-                        false
+                        false,
+                        null
                 )
         );
-        List<EmailPessoa> emailPessoas = new ArrayList<EmailPessoa>();
+        List<EmailPessoa> emailPessoas = new ArrayList<>();
         EmailPessoa emailPessoa = new EmailPessoa();
         emailPessoa.setDestinatario(emailTeste);
         emailPessoa.setPessoa(null);
@@ -273,15 +290,6 @@ public class RegistroEmpresarialBean implements Serializable {
         } else {
             Messages.info("Sucesso", "Email enviado com sucesso!");
         }
-//        SalvarAcumuladoDB sadb = new SalvarAcumuladoDBToplink();
-//        Juridica juridica = (Juridica) sadb.find(new Juridica(), 1);
-//        juridica.getPessoa().setEmail1(emailTeste);
-//        String msgEmail = EnviarEmail.EnviarEmailTeste(emailTeste);
-//        if (msgEmail.isEmpty()) {
-//            Messages.warn("Validação", "Erro ao enviar mensagem!");
-//            return;
-//        }
-        //GenericaMensagem.info("Sucesso", msgEmail);
     }
 
     public String getEmailTeste() {

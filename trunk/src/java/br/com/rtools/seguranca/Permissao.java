@@ -24,22 +24,22 @@ public class Permissao implements Serializable {
     private Rotina rotina;
     @JoinColumn(name = "id_evento", referencedColumnName = "id", nullable = false)
     @ManyToOne
-    private Evento evento;
+    private SegEvento segEvento;
 
     public Permissao() {
         this.id = -1;
         this.cliente = new Cliente();
         this.modulo = new Modulo();
         this.rotina = new Rotina();
-        this.evento = new Evento();
+        this.segEvento = new SegEvento();
     }
 
-    public Permissao(int id, Cliente cliente, Modulo modulo, Rotina rotina, Evento evento) {
+    public Permissao(int id, Cliente cliente, Modulo modulo, Rotina rotina, SegEvento segEvento) {
         this.id = id;
         this.cliente = cliente;
         this.modulo = modulo;
         this.rotina = rotina;
-        this.evento = evento;
+        this.segEvento = segEvento;
     }
 
     public int getId() {
@@ -66,12 +66,12 @@ public class Permissao implements Serializable {
         this.rotina = rotina;
     }
 
-    public Evento getEvento() {
-        return evento;
+    public SegEvento getSegEvento() {
+        return segEvento;
     }
 
-    public void setEvento(Evento evento) {
-        this.evento = evento;
+    public void setSegEvento(SegEvento segEvento) {
+        this.segEvento = segEvento;
     }
 
     public Cliente getCliente() {

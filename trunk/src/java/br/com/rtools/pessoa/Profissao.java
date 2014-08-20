@@ -16,8 +16,8 @@ public class Profissao implements BaseEntity, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-
     @Column(name = "ds_profissao", length = 200, nullable = false)
     private String profissao;
     @Column(name = "ds_cbo", length = 10, nullable = true)

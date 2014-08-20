@@ -3,18 +3,23 @@ package br.com.rtools.agenda;
 import br.com.rtools.endereco.Endereco;
 import br.com.rtools.pessoa.Pessoa;
 import br.com.rtools.pessoa.TipoEndereco;
+import br.com.rtools.seguranca.Cliente;
 import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "age_agenda")
-@NamedQuery(name = "Agenda.pesquisaID", query = "SELECT a FROM Agenda a WHERE a.id=:pid")
+@Table(name = "age_agenda",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"id_cliente", "id_grupo_agenda", "ds_nome"})
+)
 public class Agenda implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
+    @JoinColumn(name = "id_cliente", referencedColumnName = "id")
+    @ManyToOne
+    private Cliente cliente;
     @JoinColumn(name = "id_pessoa", referencedColumnName = "id")
     @ManyToOne
     private Pessoa pessoa;
@@ -42,6 +47,7 @@ public class Agenda implements Serializable {
 
     public Agenda() {
         this.id = -1;
+        this.cliente = new Cliente();
         this.pessoa = new Pessoa();
         this.grupoAgenda = new GrupoAgenda();
         this.nome = "";
@@ -54,8 +60,9 @@ public class Agenda implements Serializable {
         this.endereco = new Endereco();
     }
 
-    public Agenda(int id, Pessoa pessoa, GrupoAgenda grupoAgenda, String nome, String email1, String email2, String observacao, String complemento, String numero, TipoEndereco tipoEndereco, Endereco endereco) {
+    public Agenda(int id, Cliente cliente, Pessoa pessoa, GrupoAgenda grupoAgenda, String nome, String email1, String email2, String observacao, String complemento, String numero, TipoEndereco tipoEndereco, Endereco endereco) {
         this.id = id;
+        this.cliente = cliente;
         this.pessoa = pessoa;
         this.grupoAgenda = grupoAgenda;
         this.nome = nome;
@@ -154,5 +161,13 @@ public class Agenda implements Serializable {
 
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 }

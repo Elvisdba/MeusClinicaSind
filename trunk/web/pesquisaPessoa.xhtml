@@ -21,14 +21,14 @@
                     <div class="clear"></div>
                     <p:panel id="i_panel_pesquisa" styleClass="fundoCinza">
                         <h:panelGrid columns="4">
-                            <p:inputMask value="#{pessoaBean.descPesquisa}" size="50" mask="#{pessoaBean.mascaraPesquisa}"/>
+                            <p:inputMask value="#{pessoaBean.descPesquisa}" size="50" mask="#{pessoaBean.mascaraPesquisa}" autocomplete="false"/>
                             <p:selectOneMenu value="#{pessoaBean.porPesquisa}">
                                 <p:ajax event="change" update="i_panel_pesquisa" />
-                                <f:selectItem itemValue="nome" itemLabel="Nome"/>
+                                <f:selectItem itemValue="ds_nome" itemLabel="Nome"/>
                                 <f:selectItem itemValue="cei"      itemLabel="CEI"/>
                                 <f:selectItem itemValue="cnpj"      itemLabel="CNPJ"/>
                                 <f:selectItem itemValue="cpf"      itemLabel="CPF"/>
-                                <f:selectItem itemValue="telefone1" itemLabel="Telefone"/>
+                                <f:selectItem itemValue="ds_telefone1" itemLabel="Telefone"/>
                             </p:selectOneMenu>                        
                             <p:commandButton value="Inicial" action="#{pessoaBean.acaoPesquisaInicial}" update=":formGridPesquisaPessoa:i_panel_grid" />
                             <p:commandButton value="Parcial" action="#{pessoaBean.acaoPesquisaParcial}" update=":formGridPesquisaPessoa:i_panel_grid" />
@@ -41,8 +41,8 @@
                 <h:form id="formGridPesquisaPessoa">
                     <h:panelGrid id="i_panel_grid" style="width: 100%">
                         <p:dataTable value="#{pessoaBean.listaPessoa}" var="pessoa" id="tbl" emptyMessage="Nenhuma registro encontrado" scrollHeight="400" scrollable="true">
-                            <p:column headerText="ID" styleClass="text-center" width="50">
-                                <p:commandLink action="#{pessoaBean.editar(pessoa)}" value="#{pessoa.id}"/>
+                            <p:column headerText="ID" styleClass="text-center" width="30">
+                                <p:commandButton icon="ui-icon-link" action="#{pessoaBean.editar(pessoa)}" title="Editar registro nº#{pessoa.id}"/>
                             </p:column>
                             <p:column headerText="Nome">
                                 <p:commandLink action="#{pessoaBean.editar(pessoa)}" value="#{pessoa.nome}"/>

@@ -37,7 +37,9 @@
                             <p:panel styleClass="fundoCinza margin-top-max">
                                 <h:panelGrid columns="8">
                                     <p:outputLabel value="Descrição: " />
-                                    <p:inputText value="#{tipoDocumentoProfissaoBean.tipoDocumentoProfissao.descricao}" />
+                                    <p:inputText value="#{tipoDocumentoProfissaoBean.tipoDocumentoProfissao.descricao}" converter="#{toUpperCase}">
+                                        <f:ajax render="@this" event="blur" />
+                                    </p:inputText>
                                     <p:outputLabel value="Profissão: " />
                                     <h:selectOneMenu value="#{tipoDocumentoProfissaoBean.idProfissao}">
                                         <p:ajax event="change" update="@this" />
@@ -66,6 +68,9 @@
                                     </p:column>
                                     <p:column headerText="Profissão">
                                         <p:outputLabel value="#{tipoDocumentoProfissao.profissao.profissao}" />
+                                    </p:column>
+                                    <p:column headerText="Máscara">
+                                        <p:outputLabel value="#{tipoDocumentoProfissao.mascara}" />
                                     </p:column>
                                     <p:column width="30">
                                         <p:commandButton icon="ui-icon-trash" action="#{tipoDocumentoProfissaoBean.delete(tipoDocumentoProfissao)}" update=":form_tdp:" />

@@ -1,7 +1,7 @@
 package br.com.rtools.logSistema;
 
 import br.com.rtools.seguranca.Cliente;
-import br.com.rtools.seguranca.Evento;
+import br.com.rtools.seguranca.SegEvento;
 import br.com.rtools.seguranca.Log;
 import br.com.rtools.seguranca.Rotina;
 import br.com.rtools.seguranca.Usuario;
@@ -119,9 +119,9 @@ public class Logger extends salvaLogs {
      */
     public void save(String infoLive) {
         if (transaction) {
-            listLogs.add(new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), infoLive, "", getEvento(1)));
+            listLogs.add(new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), infoLive, "", getSegEvento(1)));
         } else {
-            Log log = new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), infoLive, "", getEvento(1));
+            Log log = new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), infoLive, "", getSegEvento(1));
             execute(log);
         }
     }
@@ -140,9 +140,9 @@ public class Logger extends salvaLogs {
      */
     public void save(Object object, boolean isObject) {
         if (transaction) {
-            listLogs.add(new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), object.toString(), "", getEvento(1)));
+            listLogs.add(new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), object.toString(), "", getSegEvento(1)));
         } else {
-            Log log = new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), object.toString(), "", getEvento(1));
+            Log log = new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), object.toString(), "", getSegEvento(1));
             execute(log);
         }
     }
@@ -162,9 +162,9 @@ public class Logger extends salvaLogs {
     public void update(String beforeUpdate, String afterUpdate) {
         if (!beforeUpdate.equals(afterUpdate)) {
             if (transaction) {
-                listLogs.add(new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), beforeUpdate, afterUpdate, getEvento(3)));
+                listLogs.add(new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), beforeUpdate, afterUpdate, getSegEvento(3)));
             } else {
-                Log log = new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), beforeUpdate, afterUpdate, getEvento(3));
+                Log log = new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), beforeUpdate, afterUpdate, getSegEvento(3));
                 execute(log);
             }
         }
@@ -185,9 +185,9 @@ public class Logger extends salvaLogs {
      */
     public void update(Object beforeUpdate, Object afterUpdate, boolean isObject) {
         if (transaction) {
-            listLogs.add(new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), beforeUpdate.toString(), afterUpdate.toString(), getEvento(3)));
+            listLogs.add(new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), beforeUpdate.toString(), afterUpdate.toString(), getSegEvento(3)));
         } else {
-            Log log = new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), beforeUpdate.toString(), afterUpdate.toString(), getEvento(3));
+            Log log = new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), beforeUpdate.toString(), afterUpdate.toString(), getSegEvento(3));
             execute(log);
         }
     }
@@ -205,9 +205,9 @@ public class Logger extends salvaLogs {
      */
     public void delete(String infoLive) {
         if (transaction) {
-            listLogs.add(new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), infoLive, null, getEvento(2)));
+            listLogs.add(new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), infoLive, null, getSegEvento(2)));
         } else {
-            Log log = new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), infoLive, null, getEvento(2));
+            Log log = new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), infoLive, null, getSegEvento(2));
             execute(log);
         }
     }
@@ -226,9 +226,9 @@ public class Logger extends salvaLogs {
      */
     public void delete(Object object, boolean isObject) {
         if (transaction) {
-            listLogs.add(new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), object.toString(), null, getEvento(2)));
+            listLogs.add(new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), object.toString(), null, getSegEvento(2)));
         } else {
-            Log log = new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), object.toString(), null, getEvento(2));
+            Log log = new Log(-1, getCliente(), new Date(), DataHoje.livre(new Date(), "HH:mm"), getUsuario(), getRotina(), object.toString(), null, getSegEvento(2));
             execute(log);
         }
     }
@@ -305,10 +305,10 @@ public class Logger extends salvaLogs {
      *
      * @return Evento
      */
-    public Evento getEvento(Integer idEvento) {
+    public SegEvento getSegEvento(Integer idEvento) {
         try {
             DaoInterface di = new Dao();
-            return (Evento) di.find(new Evento(), idEvento);
+            return (SegEvento) di.find(new SegEvento(), idEvento);
         } catch (Exception e) {
         }
         return null;

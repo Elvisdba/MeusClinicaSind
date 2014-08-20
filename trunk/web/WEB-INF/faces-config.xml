@@ -185,7 +185,86 @@
             <to-view-id>/tipoDocumentoProfissao.jsf</to-view-id>
             <redirect/>
         </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>combustivel</from-outcome>
+            <to-view-id>/combustivel.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
        
+        <navigation-case>
+            <from-outcome>pesquisaEquipe</from-outcome>
+            <to-view-id>/pesquisaEquipe.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>veiculo</from-outcome>
+            <to-view-id>/veiculo.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>evento</from-outcome>
+            <to-view-id>/evento.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>menuCoordenacao</from-outcome>
+            <to-view-id>/menuCoordenacao.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>agendaTelefone</from-outcome>
+            <to-view-id>/agendaTelefone.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>agendaGrupoUsuario</from-outcome>
+            <to-view-id>/agendaGrupoUsuario.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>pesquisaPessoa</from-outcome>
+            <to-view-id>/pesquisaPessoa.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>pesquisaAgendaTelefone</from-outcome>
+            <to-view-id>/pesquisaAgendaTelefone.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>filial</from-outcome>
+            <to-view-id>/filial.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>macFilial</from-outcome>
+            <to-view-id>/macFilial.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>email</from-outcome>
+            <to-view-id>/email.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        
+        <navigation-case>
+            <from-outcome>registro</from-outcome>
+            <to-view-id>/registro.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
         <!-- 
         <navigation-case>
             <from-outcome>#{navigationRules.param}</from-outcome>

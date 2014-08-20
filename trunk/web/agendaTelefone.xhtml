@@ -92,13 +92,13 @@
                                             <p:inputText id="idNome" value="#{agendaTelefoneBean.agenda.nome}"  maxlength="100" size="35" converter="#{toUpperCase}">
                                                 <p:ajax event="change" update="idNome" /> 
                                             </p:inputText>
-                                            <p:commandButton id="idPesquisaPessoa" icon="ui-icon-search"  action="#{chamadaPaginaBean.pesquisaPessoa}" immediate="true"/>
+                                            <p:commandButton id="idPesquisaPessoa" icon="ui-icon-search"  action="#{chamadaPaginaBean.pesquisa('pesquisaPessoa')}" immediate="true"/>
                                             <h:column>
                                                 <p:outputLabel value="#{agendaTelefoneBean.pessoa.nome}" styleClass="fontePadraoNegrito"/>                            
                                                 <p:outputLabel for="idPesquisaPessoa" value=" IMPORTAR PESSOA (Não Obrigatório)"  rendered="#{agendaTelefoneBean.pessoa.id == -1}" style="border-bottom: 2px #ffffff dashed;"/>
                                                 <p:commandButton icon="ui-icon-close" action="#{agendaTelefoneBean.remove('pessoa')}" title="Remover esta pessoa" rendered="#{agendaTelefoneBean.pessoa.id != -1}" styleClass="margin-left-max"/>
                                             </h:column>                            
-                                            <p:commandButton id="idPesquisaEndereco" icon="ui-icon-search" title="Pesquisar Endereço"  action="#{chamadaPaginaBean.pesquisaEndereco}" immediate="true"/>
+                                            <p:commandButton id="idPesquisaEndereco" icon="ui-icon-search" title="Pesquisar Endereço"  action="#{chamadaPaginaBean.pesquisa('pesquisaEndereco')}" immediate="true"/>
                                             <p:outputLabel for="idPesquisaEndereco" value="Pesquisar endereço" style="border-bottom: 2px #ffffff dashed;"/>
                                             <p:outputLabel value="Tipo Endereço: "  />
                                             <p:selectOneMenu id="idTpEnd" value="#{agendaTelefoneBean.indice[0]}" disabled="#{agendaTelefoneBean.endereco.id == -1}" >
@@ -223,7 +223,7 @@
                                             <p:ajax event="blur" update="@this" />
                                         </p:inputText>                                            
                                         <p:outputLabel value="Aniversário" />
-                                        <p:calendar pattern="dd/MM/yyyy" value="#{agendaTelefoneBean.agendaContato.nascimento}" onclick="$(this).mask('99/99/9999');" placeholder="01/01/2000" navigator="true" lang="pt-br">
+                                        <p:calendar mask="99/99/9999" pattern="dd/MM/yyyy" value="#{agendaTelefoneBean.agendaContato.nascimento}" onclick="$(this).mask('99/99/9999');" placeholder="01/01/2000" navigator="true" lang="pt-br">
                                             <p:ajax event="dateSelect" update="@this" listener="#{agendaTelefoneBean.agendaContato.selecionaDataNascimento}" />
                                             <p:ajax event="change" update="@this" />
                                         </p:calendar>
@@ -297,7 +297,7 @@
                     <p:dialog id="id_panel_mensagem" widgetVar="dgl_panel_mensagem" modal="true" header="Mensagem" width="300">
                         <center>
                             <h:panelGrid id="out_mensagem">
-                                <p:outputLabel value="#{agendaTelefoneBean.message}" />                            
+                                <p:outputLabel value="#{agendaTelefoneBean.messages}" />                            
                             </h:panelGrid> 
                             <p:commandButton value="Ok" title="Ok" onclick="PF('dgl_panel_mensagem').hide();" />
                         </center>

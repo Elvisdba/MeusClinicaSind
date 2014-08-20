@@ -7,11 +7,13 @@ import br.com.rtools.pessoa.FilialCidade;
 import br.com.rtools.pessoa.Juridica;
 import br.com.rtools.pessoa.dao.FilialCidadeDao;
 import br.com.rtools.pessoa.dao.FilialDao;
+import br.com.rtools.seguranca.controleUsuario.SessaoCliente;
 import br.com.rtools.utilitarios.Dao;
 import br.com.rtools.utilitarios.DaoInterface;
 import br.com.rtools.utilitarios.DataObject;
 import br.com.rtools.utilitarios.Messages;
 import br.com.rtools.utilitarios.Sessions;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -22,7 +24,7 @@ import javax.faces.model.SelectItem;
 
 @ManagedBean
 @SessionScoped
-public class FilialBean {
+public class FilialBean implements Serializable {
 
     private Filial filial;
     private List<Filial> listaFilial;
@@ -33,6 +35,7 @@ public class FilialBean {
     private List<SelectItem> result;
 
     @PostConstruct
+    @SuppressWarnings("empty-statement")
     public void init() {
         filial = new Filial();
         listaFilial = new ArrayList();;
@@ -40,7 +43,7 @@ public class FilialBean {
         idFilial = 0;
         listaCidade = new ArrayList();
         adicionarLista = false;
-        result = new ArrayList<SelectItem>();
+        result = new ArrayList<>();
     }
 
     @PreDestroy
@@ -78,7 +81,7 @@ public class FilialBean {
         di.openTransaction();
 
         if (filial.getId() == -1) {
-            filial.setMatriz((Juridica) di.find(new Juridica(), 1));
+            filial.setMatriz((Juridica) di.find(new Juridica(), SessaoCliente.get().getIdJuridica()));
             if (di.save(filial)) {
                 novoLog.save(
                         "ID: " + filial.getId()

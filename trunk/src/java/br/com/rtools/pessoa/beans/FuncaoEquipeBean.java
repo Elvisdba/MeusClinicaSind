@@ -6,11 +6,11 @@ import br.com.rtools.pessoa.Profissao;
 import br.com.rtools.pessoa.TipoAtendimento;
 import br.com.rtools.pessoa.TipoDocumentoProfissao;
 import br.com.rtools.pessoa.dao.FuncaoEquipeDao;
-import br.com.rtools.pessoa.dao.TipoAtendimentoDao;
 import br.com.rtools.seguranca.controleUsuario.SessaoCliente;
 import br.com.rtools.utilitarios.Dao;
 import br.com.rtools.utilitarios.Messages;
 import br.com.rtools.utilitarios.Sessions;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -21,7 +21,7 @@ import javax.faces.model.SelectItem;
 
 @ManagedBean
 @SessionScoped
-public class FuncaoEquipeBean {
+public class FuncaoEquipeBean implements Serializable {
 
     private FuncaoEquipe funcaoEquipe;
     private List<FuncaoEquipe> listFuncaoEquipe;
@@ -40,7 +40,7 @@ public class FuncaoEquipeBean {
         listTipoAtendimento = new ArrayList<>();
         listTipoDocumentoProfissao = new ArrayList<>();
         listProfissao = new ArrayList<>();
-        idTipoAtendimento = 0;
+        idTipoAtendimento = -1;
         idTipoFuncaEquipe = 0;
         idTipoDocumentoProfissao = 0;
         idProfissao = 0;
@@ -63,19 +63,27 @@ public class FuncaoEquipeBean {
             return;
         }
         funcaoEquipe.setTipoDocumentoProfissao((TipoDocumentoProfissao) dao.find(new TipoDocumentoProfissao(), Integer.parseInt(listTipoDocumentoProfissao.get(idTipoDocumentoProfissao).getDescription())));
-        if (listTipoAtendimento.isEmpty()) {
-            Messages.warn("Validação", "Cadastrar tipo de atendimento!");
-            return;
-        }
-        funcaoEquipe.setTipoAtendimento((TipoAtendimento) dao.find(new TipoAtendimento(), Integer.parseInt(listTipoAtendimento.get(idTipoAtendimento).getDescription())));
         if (listProfissao.isEmpty()) {
             Messages.warn("Validação", "Cadastrar tipo de atendimento!");
             return;
         }
         funcaoEquipe.setProfissao((Profissao) dao.find(new Profissao(), Integer.parseInt(listProfissao.get(idProfissao).getDescription())));
+        if (idTipoAtendimento == 0) {
+            funcaoEquipe.setTipoAtendimento(null);
+        } else {
+            if (listTipoAtendimento.isEmpty()) {
+                Messages.warn("Validação", "Cadastrar tipo de atendimento!");
+                return;
+            }
+            funcaoEquipe.setTipoAtendimento((TipoAtendimento) dao.find(new TipoAtendimento(), Integer.parseInt(listTipoAtendimento.get(idTipoAtendimento).getDescription())));
+        }
         Logger logger = new Logger();
         FuncaoEquipeDao funcaoEquipeDao = new FuncaoEquipeDao();
-        if (funcaoEquipeDao.existeFuncaoEquipe(funcaoEquipe.getTipoAtendimento().getId(), funcaoEquipe.getTipoDocumentoProfissao().getId(), funcaoEquipe.getProfissao().getId(), SessaoCliente.get().getId())) {
+        int idTa = 0;
+        if (funcaoEquipe.getTipoAtendimento() != null && funcaoEquipe.getTipoAtendimento().getId() != -1) {
+            idTa = funcaoEquipe.getTipoAtendimento().getId();
+        }
+        if (funcaoEquipeDao.existeFuncaoEquipePorProfissaoCliente(funcaoEquipe.getProfissao().getId(), SessaoCliente.get().getId())) {
             Messages.warn("Validação", "Função equipe já cadastrada!");
             return;
         }
@@ -87,7 +95,6 @@ public class FuncaoEquipeBean {
                         " ID: " + funcaoEquipe.getId()
                         + " - Profissão: [" + funcaoEquipe.getProfissao().getId() + "]" + funcaoEquipe.getProfissao().getProfissao()
                         + " - Tipo Documento: [" + funcaoEquipe.getTipoDocumentoProfissao().getId() + "]" + funcaoEquipe.getTipoDocumentoProfissao().getDescricao()
-                        + " - Tipo Atendimento: [" + funcaoEquipe.getTipoAtendimento().getId() + "]" + funcaoEquipe.getTipoAtendimento().getDescricao()
                 );
                 clear();
             } else {
@@ -98,15 +105,13 @@ public class FuncaoEquipeBean {
             String beforeUpdate = ""
                     + " ID: " + fe.getId()
                     + " - Profissão: [" + fe.getProfissao().getId() + "]" + fe.getProfissao().getProfissao()
-                    + " - Tipo Documento: [" + fe.getTipoDocumentoProfissao().getId() + "]" + fe.getTipoDocumentoProfissao().getDescricao()
-                    + " - Tipo Atendimento: [" + fe.getTipoAtendimento().getId() + "]" + fe.getTipoAtendimento().getDescricao();
+                    + " - Tipo Documento: [" + fe.getTipoDocumentoProfissao().getId() + "]" + fe.getTipoDocumentoProfissao().getDescricao();
             if (dao.update(funcaoEquipe, true)) {
                 Messages.info("Sucesso", "Registro atualizado");
                 logger.update(beforeUpdate,
                         " ID: " + funcaoEquipe.getId()
                         + " - Profissão: [" + funcaoEquipe.getProfissao().getId() + "]" + funcaoEquipe.getProfissao().getProfissao()
                         + " - Tipo Documento: [" + funcaoEquipe.getTipoDocumentoProfissao().getId() + "]" + funcaoEquipe.getTipoDocumentoProfissao().getDescricao()
-                        + " - Tipo Atendimento: [" + funcaoEquipe.getTipoAtendimento().getId() + "]" + funcaoEquipe.getTipoAtendimento().getDescricao()
                 );
                 clear();
             } else {
@@ -120,14 +125,13 @@ public class FuncaoEquipeBean {
         Logger logger = new Logger();
         if (funcaoEquipe.getId() != -1) {
             if (dao.delete(funcaoEquipe, true)) {
-                Messages.info("Sucesso", "Registro removido");
                 logger.delete(
                         " ID: " + funcaoEquipe.getId()
                         + " - Profissão: [" + funcaoEquipe.getProfissao().getId() + "]" + funcaoEquipe.getProfissao().getProfissao()
                         + " - Tipo Documento: [" + funcaoEquipe.getTipoDocumentoProfissao().getId() + "]" + funcaoEquipe.getTipoDocumentoProfissao().getDescricao()
-                        + " - Tipo Atendimento: [" + funcaoEquipe.getTipoAtendimento().getId() + "]" + funcaoEquipe.getTipoAtendimento().getDescricao()
                 );
                 clear();
+                Messages.info("Sucesso", "Registro removido");
             } else {
                 Messages.warn("Erro", "Erro ao remover registro!");
             }
@@ -135,25 +139,34 @@ public class FuncaoEquipeBean {
 
     }
 
+    public void delete(FuncaoEquipe fe) {
+        funcaoEquipe = fe;
+        delete();
+    }
+
     public void edit(FuncaoEquipe fe) {
         funcaoEquipe = fe;
+        for (int i = 0; i < listProfissao.size(); i++) {
+            if (funcaoEquipe.getProfissao().getId() == Integer.parseInt(listProfissao.get(i).getDescription())) {
+                idProfissao = i;
+                break;
+            }
+        }
         for (int i = 0; i < listTipoDocumentoProfissao.size(); i++) {
             if (funcaoEquipe.getTipoDocumentoProfissao().getId() == Integer.parseInt(listTipoDocumentoProfissao.get(i).getDescription())) {
                 idTipoDocumentoProfissao = i;
                 break;
             }
         }
-        for (int i = 0; i < listTipoAtendimento.size(); i++) {
-            if (funcaoEquipe.getTipoAtendimento().getId() == Integer.parseInt(listTipoAtendimento.get(i).getDescription())) {
-                idTipoAtendimento = i;
-                break;
+        if (funcaoEquipe.getTipoAtendimento() != null) {
+            for (int i = 0; i < listTipoAtendimento.size(); i++) {
+                if (funcaoEquipe.getTipoAtendimento().getId() == Integer.parseInt(listTipoAtendimento.get(i).getDescription())) {
+                    idTipoAtendimento = i;
+                    break;
+                }
             }
-        }
-        for (int i = 0; i < listProfissao.size(); i++) {
-            if (funcaoEquipe.getProfissao().getId() == Integer.parseInt(listProfissao.get(i).getDescription())) {
-                idProfissao = i;
-                break;
-            }
+        } else {
+            idTipoAtendimento = 0;
         }
     }
 
@@ -167,8 +180,11 @@ public class FuncaoEquipeBean {
 
     public List<FuncaoEquipe> getListFuncaoEquipe() {
         if (listFuncaoEquipe.isEmpty()) {
-            FuncaoEquipeDao funcaoEquipeDao = new FuncaoEquipeDao();
-            listFuncaoEquipe = funcaoEquipeDao.pesquisaTodasFuncaoEquipePorCliente(SessaoCliente.get().getId());
+            if (!listProfissao.isEmpty()) {
+                FuncaoEquipeDao funcaoEquipeDao = new FuncaoEquipeDao();
+                //listFuncaoEquipe = funcaoEquipeDao.pesquisaFuncaoEquipePorProfissaoCliente(Integer.parseInt(listProfissao.get(idProfissao).getDescription()), SessaoCliente.get().getId());
+                listFuncaoEquipe = funcaoEquipeDao.pesquisaTodasFuncaoEquipePorCliente(SessaoCliente.get().getId());
+            }
         }
         return listFuncaoEquipe;
     }
@@ -179,10 +195,12 @@ public class FuncaoEquipeBean {
 
     public List<SelectItem> getListTipoAtendimento() {
         if (listTipoAtendimento.isEmpty()) {
-            TipoAtendimentoDao tipoAtendimentoDao = new TipoAtendimentoDao();
-            List<TipoAtendimento> list = (List<TipoAtendimento>) tipoAtendimentoDao.pesquisaTodasTipoAtendimentoPorCliente(SessaoCliente.get().getId());
-            for (int i = 0; i < list.size(); i++) {
-                listTipoAtendimento.add(new SelectItem(i, list.get(i).getDescricao(), "" + list.get(i).getId()));
+            Dao dao = new Dao();
+            int i = 0;
+            listTipoAtendimento.add(new SelectItem(i, "NENHUM", "" + -1));
+            List<TipoAtendimento> list = (List<TipoAtendimento>) dao.list(new TipoAtendimento(), true);
+            for (i = 0; i < list.size(); i++) {
+                listTipoAtendimento.add(new SelectItem(i + 1, list.get(i).getDescricao(), "" + list.get(i).getId()));
             }
         }
         return listTipoAtendimento;

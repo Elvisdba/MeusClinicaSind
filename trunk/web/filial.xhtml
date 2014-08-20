@@ -1,9 +1,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:c="http://java.sun.com/jsp/jstl/core"
-      xmlns:p="http://primefaces.org/ui">
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
     
     <h:head>
         <title>Filial</title>
@@ -29,7 +29,7 @@
                     <p:panel styleClass="fundoCinza" style="clear: both">
                         <h:panelGrid id="i_panel_novo" style="width: 100%" columns="1">
                             <h:column>
-                                <p:commandButton value="Adicionar uma Filial" rendered="#{filialBean.filial.filial.pessoa.id == -1}" action="#{chamadaPaginaBean.pesquisaPessoaJuridica}"/>
+                                <p:commandButton value="Adicionar uma Filial" rendered="#{filialBean.filial.filial.pessoa.id == -1}" action="#{chamadaPaginaBean.pagina('pesquisaPessoaJuridica')}"/>
                                 <h:outputText value="#{filialBean.filial.filial.pessoa.documento} - #{filialBean.filial.filial.pessoa.nome}" styleClass="fontePadraoNegrito" rendered="#{filialBean.filial.filial.pessoa.id != -1}"/>
                                 <p:commandButton value="Salvar" action="#{filialBean.btnAddFilial}" rendered="#{filialBean.filial.filial.pessoa.id != -1}" title="Adicionar esta empresa como Filial" style="margin-left: 20px" update=":form_filial:"/>
                             </h:column>
@@ -37,7 +37,7 @@
                     </p:panel>
                     
                     <h:panelGrid id="i_panel_grid" style="float: left; margin-top: 15px; width: 100%" columns="1">
-                        <p:dataTable value="#{filialBean.listaFilialSemMatriz}" var="filial" id="tbl">                                    
+                        <p:dataTable value="#{filialBean.listaFilialSemMatriz}" var="filial" id="tbl" emptyMessage="Nenhum registro encontrado">
                             <p:column styleClass="text-center" width="25">
                                 <p:commandButton icon="ui-icon-trash" action="#{filialBean.delete(filial)}" update=":form_filial:"/>
                             </p:column>
@@ -49,7 +49,7 @@
                     </h:panelGrid>   
                     
                     <h:panelGrid style="float: left; margin-top: 15px; width: 100%" columns="1" id="i_panel">
-                        <p:dataTable value="#{filialBean.listaCidade}" var="filialCidade" id="tbl2">
+                        <p:dataTable value="#{filialBean.listaCidade}" var="filialCidade" id="tbl2" emptyMessage="Nenhum registro encontrado">
                             <p:column headerText="Cidade/UF">
                                 <h:outputText value="#{filialCidade.argumento0.cidade}"/>
                             </p:column>

@@ -113,7 +113,7 @@
                                     <h:column>
                                         <h:panelGrid columns="3">
                                             <p:outputLabel value="Descrição:" styleClass="bold"/>
-                                            <p:inputText size="50" value="#{pesquisaLogBean.descPesquisa}" />
+                                            <p:inputText size="50" value="#{pesquisaLogBean.descPesquisa}" autocomplete="false"/>
                                             <p:commandButton icon="ui-icon-close" action="#{pesquisaLogBean.close('descricao')}" title="Remover filtro"/>
                                         </h:panelGrid>
                                     </h:column>

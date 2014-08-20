@@ -26,8 +26,8 @@
                                 <p:submenu label="Cadastro" icon="ui-icon-document" style="margin-right: 15px">  
                                     <p:menuitem value="Manutenção"          action="#{chamadaPaginaBean.pagina('equipe')}" />                                        
                                     <p:menuitem value="Função"              action="#{chamadaPaginaBean.pagina('funcaoEquipe')}" />
-                                    <p:menuitem value="Registro Profissional"   action="#{chamadaPaginaBean.pagina('tipoDocumentoProfissao')}" />
-                                    <p:menuitem value="Tipo de Atendimento"     action="#{chamadaPaginaBean.paginaSimples('TipoAtendimento', 'Tipo Atendimento')}" />
+                                    <p:menuitem value="Registro Profissional"   action="#{chamadaPaginaBean.pagina('tipoDocumentoProfissao')}" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}"/>
+                                    <p:menuitem value="Tipo de Atendimento"     action="#{chamadaPaginaBean.paginaSimples('TipoAtendimento', 'Tipo Atendimento')}" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}"/>
                                 </p:submenu>
                                 <p:submenu label="Movimento" icon="ui-icon-document" style="margin-right: 15px">
                                     <p:menuitem value="Evolução"            action="#{chamadaPaginaBean.pagina('evolucao')}" />

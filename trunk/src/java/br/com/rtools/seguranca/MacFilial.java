@@ -9,6 +9,7 @@ import javax.persistence.*;
 @Table(name = "seg_mac_filial",
         uniqueConstraints = @UniqueConstraint(columnNames = {"id_departamento", "id_filial", "ds_mac", "nr_mesa"})
 )
+@NamedQuery(name = "MacFilial.findAll", query = "SELECT MF FROM MacFilial AS MF WHERE MF.filial.matriz.pessoa.cliente.id = :p1 ORDER BY MF.filial.filial.pessoa.nome ASC, MF.departamento.descricao ASC, MF.mesa ASC ")
 public class MacFilial implements java.io.Serializable {
 
     @Id

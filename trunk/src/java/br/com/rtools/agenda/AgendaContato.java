@@ -18,7 +18,7 @@ public class AgendaContato implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
+    @Column(name = "id")
     private Integer id;
     @JoinColumn(name = "id_agenda", referencedColumnName = "id")
     @ManyToOne

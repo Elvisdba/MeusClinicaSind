@@ -1,6 +1,7 @@
 package br.com.rtools.sistema;
 
 import br.com.rtools.seguranca.Cliente;
+import br.com.rtools.utilitarios.Moeda;
 import java.io.Serializable;
 import javax.persistence.*;
 
@@ -24,8 +25,8 @@ public class Veiculo implements Serializable {
     private String descricao;
     @Column(name = "ds_placa", length = 50, nullable = false)
     private String placa;
-    @Column(name = "is_ativo", columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean ativo;
+    @Column(name = "nr_km_litro")
+    private float kmLitro;
 
     public Veiculo() {
         this.id = -1;
@@ -33,16 +34,16 @@ public class Veiculo implements Serializable {
         this.combustivel = new Combustivel();
         this.descricao = "";
         this.placa = "";
-        this.ativo = false;
+        this.kmLitro = 0;
     }
 
-    public Veiculo(int id, Cliente cliente, Combustivel combustivel, String descricao, String placa, boolean ativo) {
+    public Veiculo(int id, Cliente cliente, Combustivel combustivel, String descricao, String placa, float kmLitro) {
         this.id = id;
         this.cliente = cliente;
         this.combustivel = combustivel;
         this.descricao = descricao;
         this.placa = placa;
-        this.ativo = ativo;
+        this.kmLitro = kmLitro;
     }
 
     public int getId() {
@@ -85,12 +86,20 @@ public class Veiculo implements Serializable {
         this.placa = placa;
     }
 
-    public boolean isAtivo() {
-        return ativo;
+    public float getKmLitro() {
+        return kmLitro;
     }
 
-    public void setAtivo(boolean ativo) {
-        this.ativo = ativo;
+    public void setKmLitro(float kmLitro) {
+        this.kmLitro = kmLitro;
+    }
+
+    public String getKmLitroString() {
+        return Moeda.converteR$Float(kmLitro);
+    }
+
+    public void setKmLitroString(String kmLitroString) {
+        this.kmLitro = Moeda.converteUS$(kmLitroString);
     }
 
 }

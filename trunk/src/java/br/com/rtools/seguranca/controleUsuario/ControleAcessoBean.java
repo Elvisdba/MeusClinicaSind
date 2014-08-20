@@ -36,7 +36,7 @@ public class ControleAcessoBean implements Serializable {
     private int tipo = -1;
     private Modulo modulo = new Modulo();
     private Rotina rotina = new Rotina();
-    private Evento evento = new Evento();
+    private SegEvento evento = new SegEvento();
     private int idIndexPermissao = -1;
     private boolean bloqueiaMenu = false;
 
@@ -194,10 +194,10 @@ public class ControleAcessoBean implements Serializable {
             }
 
             //PESQUISA DE EVENTOS-------------------------------------------------------------------------------------------
-            evento = (Evento) dao.find(new Evento(), 4);
+            evento = (SegEvento) dao.find(new SegEvento(), 4);
 
             if (evento == null) {
-                evento = new Evento();
+                evento = new SegEvento();
             }
 
             // PESQUISA DE PERMISSAO-------------------------------------------------------------------------------------------            

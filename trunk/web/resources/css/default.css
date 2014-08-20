@@ -238,5 +238,5 @@ body {
    font-size: 12px !important;  
  }
  
-select {height: 25px!important; -moz-border-radius: 4px!important; -webkit-border-radius: 4px!important; border-radius: 4px!important;}
+select {height: 33px!important; -moz-border-radius: 4px!important; -webkit-border-radius: 4px!important; border-radius: 4px!important; border-color: #cccccc}
 select option { margin: 1px 0!important; padding: 5px!important; text-align: left!important; white-space: nowrap!important;}

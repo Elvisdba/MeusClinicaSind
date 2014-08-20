@@ -6,10 +6,10 @@ import javax.persistence.*;
 @Entity
 @Table(name = "seg_evento")
 @NamedQueries({
-    @NamedQuery(name = "Evento.findAll", query = "SELECT EVE FROM Evento AS EVE ORDER BY EVE.descricao ASC "),
-    @NamedQuery(name = "Evento.findName", query = "SELECT EVE FROM Evento AS EVE WHERE UPPER(EVE.descricao) LIKE :pdescricao ORDER BY EVE.descricao ASC ")
+    @NamedQuery(name = "Evento.findAll", query = "SELECT EVE FROM SegEvento AS EVE ORDER BY EVE.descricao ASC "),
+    @NamedQuery(name = "Evento.findName", query = "SELECT EVE FROM SegEvento AS EVE WHERE UPPER(EVE.descricao) LIKE :pdescricao ORDER BY EVE.descricao ASC ")
 })
-public class Evento implements Serializable {
+public class SegEvento implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,12 +18,12 @@ public class Evento implements Serializable {
     @Column(name = "ds_descricao", length = 50, nullable = false, unique = true)
     private String descricao;
 
-    public Evento() {
+    public SegEvento() {
         this.id = -1;
         this.descricao = "";
     }
 
-    public Evento(int id, String descricao) {
+    public SegEvento(int id, String descricao) {
         this.id = id;
         this.descricao = descricao;
     }

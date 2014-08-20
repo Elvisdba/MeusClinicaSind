@@ -14,10 +14,6 @@
             .ui-button { padding: 3px!important; }
             .ui-selectonemenu {padding-right: 25px!important;}
         </style>
-
-        <script type="text/javascript">
-
-        </script>
     </h:head>
     <h:body>
         <!-- INICIA DIV wrap e main -->
@@ -31,38 +27,52 @@
                     <p:panel styleClass="wrapper" style="border: 0px;">
                         <h:outputText value="Equipe" styleClass="fonteHeader" />
                         <div class="clear"></div>
-                        <h:form id="form_fe">
-                            <c:set scope="request" var="object" value="${funcaoEquipeBean.funcaoEquipe}"/>
+                        <h:form id="form_e">
+                            <c:set scope="request" var="object" value="${equipeBean.equipe}"/>
                             <p:panel>
                                 <h:panelGrid columns="2">
-                                    <p:commandButton value="#{chamadaPaginaBean.pesquisa('pesquisaPessoaFisica')}" />                                    
                                     <p:outputLabel value="Cadastro:" />
-                                    <p:calendar value="#{equipeBean.equipe.cadastro}" mask="99/99/9999">
+                                    <p:calendar value="#{equipeBean.equipe.cadastro}" mask="99/99/9999" pattern="dd/MM/yyyy" disabled="true" size="8">
                                         <p:ajax event="dateSelect" listener="#{equipeBean.equipe.selectedCadastro}" />
                                     </p:calendar>
-                                    <h:selectOneMenu value="#{equipeBean.idFuncaoEquipe}">
-                                        <p:ajax event="change" update="@this" />
+                                    <p:commandButton action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaFisica')}" icon="ui-icon-search" value="Pesquisar Pessoa: "/>
+                                    <h:column>
+                                        <p:outputLabel value="Pesquisar pessoa" style="border-bottom: 1px dashed #ECF3FE" rendered="#{equipeBean.equipe.pessoa.id == -1}" />
+                                        <p:commandLink value="#{equipeBean.equipe.pessoa.nome}" rendered="#{equipeBean.equipe.pessoa.id != -1}" title="Ver detalhes" onclick="PF('dlg_pessoa_card').show()" update="i_pessoa_card" action="#{pessoaCardBean.cardPessoa(equipeBean.equipe.pessoa.id)}"/>
+                                    </h:column>
+                                    <p:outputLabel value="Função" />
+                                    <h:selectOneMenu value="#{equipeBean.idFuncaoEquipe}" id="i_fe">
+                                        <p:ajax event="change" update="@this :form_e:" />
                                         <f:selectItem itemValue="" itemLabel="Selecionar" itemDisabled="true" />
                                         <f:selectItems value="#{equipeBean.listFuncaoEquipe}" />
                                     </h:selectOneMenu>
+                                    <p:outputLabel value="Tipo Documento:" />
+                                    <p:inputText value="#{equipeBean.tipoDocumentoProfissao}" readonly="true"/>
+                                    <p:outputLabel value="Documento:" />
+                                    <p:inputMask mask="#{equipeBean.mask}" value="#{equipeBean.equipe.documento}" id="i_mask"/>
+                                    <p:outputLabel value="Tipo Atendimento:" />
+                                    <p:inputText value="#{equipeBean.tipoAtendimento}" readonly="true"/>
+                                    <p:column />
+                                    <p:selectBooleanCheckbox value="#{equipeBean.equipe.ativo}" itemLabel="Habilitado"/>
                                 </h:panelGrid>
                             </p:panel>
                             <h:panelGrid columns="4" styleClass="margin-top-max">
                                 <p:commandButton value="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.botaoSalvar}"/>
-                                <p:commandButton value="Novo" action="#{funcaoEquipeBean.clear}" update=":form_fe:" />
-                                <h:column rendered="#{funcaoEquipeBean.funcaoEquipe.id != -1}">
+                                <p:commandButton value="Novo" action="#{equipeBean.clear}" update=":form_e:" />
+                                <h:column rendered="#{equipeBean.equipe.id != -1}">
                                     <p:commandButton value="Excluir" onclick="PF('dlg_delete').show()" disabled="#{controleAcessoBean.botaoExcluir}" />
                                 </h:column>
+                                <p:commandButton value="Pesquisar" action="#{chamadaPaginaBean.pesquisa('pesquisaEquipe')}"/>
                             </h:panelGrid>
                             <p:dialog id="i_dlg_save" widgetVar="dlg_save" modal="true" header="Deseja salvar/atualizar este registro?" width="400" resizable="false">
                                 <h:panelGrid columns="2">
-                                    <p:commandButton value="Sim" title="Salvar" action="#{equipeBean.save}" update=":form_fe:"  oncomplete="PF('dlg_save').hide(); PF('dlg_message').show();" />
+                                    <p:commandButton value="Sim" title="Salvar" action="#{equipeBean.save}" update=":form_e:"  oncomplete="PF('dlg_save').hide(); PF('dlg_message').show();" />
                                     <p:commandButton value="Não" title="Cancelar" oncomplete="PF('dlg_save').hide();"/>
                                 </h:panelGrid>
                             </p:dialog>
                             <p:dialog id="i_dlg_delete" widgetVar="dlg_delete" modal="true" header="Deseja excluir este registro?" width="400" resizable="false">
                                 <h:panelGrid columns="2">
-                                    <p:commandButton value="Sim" title="Excluir" action="#{equipeBean.delete}" update=":form_fe:" oncomplete="PF('dlg_delete').hide(); PF('dlg_message').show();" />
+                                    <p:commandButton value="Sim" title="Excluir" action="#{equipeBean.delete}" update=":form_e:" oncomplete="PF('dlg_delete').hide(); PF('dlg_message').show();" />
                                     <p:commandButton value="Não" title="Cancelar" oncomplete="PF('dlg_delete').hide();"/>
                                 </h:panelGrid>
                             </p:dialog>
@@ -71,7 +81,15 @@
                                 <f:facet name="footer">
                                     <p:commandButton value="Ok" title="Ok" onclick="PF('dlg_message).hide();" />
                                 </f:facet>
-                            </p:dialog>                            
+                            </p:dialog>
+                            <p:dialog widgetVar="dlg_pessoa_card" modal="true" resizable="false" height="400" width="400" header="Detalhes">
+                                <p:ajax event="close" listener="#{pessoaCardBean.close}"/>  
+                                <p:panel id="i_pessoa_card">
+                                    <ui:include src="templates/templatePessoaCard.xhtml">
+                                        <ui:param name="idPessoa" value="#{equipeBean.equipe.pessoa.id}" />
+                                    </ui:include>      
+                                </p:panel>
+                            </p:dialog>                             
                         </h:form>
                     </p:panel>
                 </f:view>

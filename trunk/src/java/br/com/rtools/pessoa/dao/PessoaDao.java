@@ -2,6 +2,7 @@ package br.com.rtools.pessoa.dao;
 
 import br.com.rtools.pessoa.Pessoa;
 import br.com.rtools.principal.DB;
+import br.com.rtools.utilitarios.AnaliseString;
 import br.com.rtools.utilitarios.Dao;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,12 +10,12 @@ import javax.persistence.Query;
 
 public class PessoaDao extends DB {
 
-    public List pesquisarPessoa(String descricao, String por, String como) {
+    public List pesquisarPessoa(String descricao, String por, String como, int cliente) {
         if (descricao.isEmpty()) {
             return new ArrayList();
         }
         if (por.equals("cnpj") || por.equals("cpf") || por.equals("cei")) {
-            por = "documento";
+            por = "ds_documento";
         }
         descricao = descricao.toLowerCase().toUpperCase();
         switch (como) {
@@ -26,19 +27,19 @@ public class PessoaDao extends DB {
                 break;
         }
         try {
-            String queryString = "SELECT P FROM Pessoa AS P WHERE UPPER(P." + por + ") LIKE :descricao ORDER BY P.nome";
-            Query qry = getEntityManager().createQuery(queryString);
-            qry.setParameter("descricao", descricao);
+            String queryString = "SELECT p.* FROM pes_pessoa AS p WHERE UPPER(TRANSLATE(p." + por + ")) LIKE '"+AnaliseString.removerAcentos(descricao)+"' AND p.id_cliente = "+cliente+" ORDER BY p.ds_nome";
+            Query qry = getEntityManager().createNativeQuery(queryString, Pessoa.class);
             List list = qry.getResultList();
             if (!list.isEmpty()) {
                 return list;
             }
         } catch (Exception e) {
+            return new ArrayList();
         }
         return new ArrayList();
     }
 
-    public Pessoa pesquisaPessoaPorDocumento(String documento) {
+    public Pessoa pesquisaPessoaPorDocumento(String documento, int cliente) {
         Dao dao = new Dao();
         try {
             Query query = getEntityManager().createNativeQuery(
@@ -46,7 +47,9 @@ public class PessoaDao extends DB {
                     + "        FROM pes_pessoa AS PES                                                                   "
                     + "  INNER JOIN pes_fisica AS FIS ON FIS.id_pessoa = PES.id                                         "
                     + "       WHERE PES.ds_documento = '" + documento + "'                                              "
-                    + "          OR TRANSLATE(UPER(FIS.ds_rg),'./-', '') = TRANSLATE(UPER('" + documento + "'),'./-','')");
+                    + "          OR TRANSLATE(UPER(FIS.ds_rg),'./-', '') = TRANSLATE(UPER('" + documento + "'),'./-','')"
+                    + "         AND p.id_cliente = " + cliente
+            );
             query.setFirstResult(0);
             List list = query.getResultList();
             if (!list.isEmpty()) {
@@ -57,9 +60,10 @@ public class PessoaDao extends DB {
         return null;
     }
 
-    public List pesquisaPessoasSemLogin() {
+    public List pesquisaPessoasSemLogin(int cliente) {
         try {
-            Query qry = getEntityManager().createQuery("SELECT PES FROM Pessoa AS PES WHERE PES.login IS NULL AND PES.id > 0 ORDER BY PES.nome");
+            Query qry = getEntityManager().createQuery("SELECT PES FROM Pessoa AS PES WHERE PES.login IS NULL AND PES.id > 0 AND PES.cliente.id = :cliente ORDER BY PES.nome");
+            qry.setParameter("cliente", cliente);
             return (qry.getResultList());
         } catch (Exception e) {
             return null;

@@ -21,7 +21,7 @@ public class FilialDao extends DB {
 
         } catch (Exception e) {
         }
-        return null;
+        return new ArrayList();
     }
 
     public Registro pesquisaRegistroPorCliente(int idCliente) {

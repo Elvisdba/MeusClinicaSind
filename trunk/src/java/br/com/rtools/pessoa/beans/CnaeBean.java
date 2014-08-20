@@ -5,6 +5,7 @@ import br.com.rtools.pessoa.dao.CnaeDao;
 import br.com.rtools.utilitarios.Dao;
 import br.com.rtools.utilitarios.Messages;
 import br.com.rtools.utilitarios.Sessions;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -14,7 +15,7 @@ import javax.faces.bean.SessionScoped;
 
 @ManagedBean
 @SessionScoped
-public class CnaeBean {
+public class CnaeBean implements Serializable {
 
     private Cnae cnae;
     private List<Cnae> listCnaes;

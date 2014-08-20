@@ -33,7 +33,7 @@ public class Log implements Serializable {
     private String conteudoAlterado;
     @JoinColumn(name = "id_evento", referencedColumnName = "id", nullable = true)
     @ManyToOne
-    private Evento evento;
+    private SegEvento segEvento;
 
     public Log() {
         this.id = -1;
@@ -44,10 +44,10 @@ public class Log implements Serializable {
         this.rotina = new Rotina();
         this.conteudoOriginal = "";
         this.conteudoAlterado = "";
-        this.evento = new Evento();
+        this.segEvento = new SegEvento();
     }
 
-    public Log(Integer id, Cliente cliente, Date dtData, String hora, Usuario usuario, Rotina rotina, String conteudoOriginal, String conteudoAlterado, Evento evento) {
+    public Log(Integer id, Cliente cliente, Date dtData, String hora, Usuario usuario, Rotina rotina, String conteudoOriginal, String conteudoAlterado, SegEvento segEvento) {
         this.id = id;
         this.dtData = dtData;
         this.cliente = cliente;
@@ -56,7 +56,7 @@ public class Log implements Serializable {
         this.rotina = rotina;
         this.conteudoOriginal = conteudoOriginal;
         this.conteudoAlterado = conteudoAlterado;
-        this.evento = evento;
+        this.segEvento = segEvento;
     }
 
     public Integer getId() {
@@ -129,12 +129,12 @@ public class Log implements Serializable {
         this.conteudoAlterado = conteudoAlterado;
     }
 
-    public Evento getEvento() {
-        return evento;
+    public SegEvento getSegEvento() {
+        return segEvento;
     }
 
-    public void setEvento(Evento evento) {
-        this.evento = evento;
+    public void setSegEvento(SegEvento segEvento) {
+        this.segEvento = segEvento;
     }
 
     public Cliente getCliente() {

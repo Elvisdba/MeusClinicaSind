@@ -4,6 +4,7 @@ import br.com.rtools.pessoa.Pessoa;
 import br.com.rtools.seguranca.Registro;
 import br.com.rtools.seguranca.Rotina;
 import br.com.rtools.seguranca.Usuario;
+import br.com.rtools.seguranca.controleUsuario.SessaoCliente;
 import br.com.rtools.sistema.Email;
 import br.com.rtools.sistema.EmailArquivo;
 import br.com.rtools.sistema.EmailPessoa;
@@ -182,6 +183,7 @@ public class EmailBean implements Serializable {
         email.setUsuario((Usuario) Sessions.getObject("sessaoUsuario"));
         email.setRotina((Rotina) di.find(new Rotina(), 112));
         email.setEmailPrioridade((EmailPrioridade) di.find(new EmailPrioridade(), Integer.parseInt(getListEmailPrioridades().get(index[1]).getDescription())));
+        email.setCliente(SessaoCliente.get());
         if (email.getId() == -1) {
             di.save(email, true);
             for (int i = 0; i < addEmailPessoas.size(); i++) {

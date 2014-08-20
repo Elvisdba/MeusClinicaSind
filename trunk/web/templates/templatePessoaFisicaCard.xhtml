@@ -33,11 +33,6 @@
             <h:outputLabel value="Email:"  />
             <h:commandLink value="#{pessoaCardBean.fisica.pessoa.email1}" action="#{pessoaCardBean.enviaEmail(pessoaCardBean.fisica.pessoa.id)}" />
         </h:panelGrid>
-        <c:if test="#{!sociosCardBean.setIdPessoa(pessoaCardBean.fisica.pessoa.id)}"></c:if>
-        <c:if test="#{!sociosCardBean.setIdPessoa(pessoaCardBean.pessoa.id)}"></c:if>
-        <p:panel header="Associado" style="background: #ccffcc;" styleClass="no-border margin-top-max" rendered="#{sociosCardBean.socios.id != -1}">
-            <ui:include src="templateSociosCard.xhtml" />
-        </p:panel>
         <p:panel styleClass="margin-top-max" header="Endereço" rendered="#{pessoaCardBean.pessoaEndereco.id != -1}">
             <h:outputLabel value="#{pessoaCardBean.pessoaEndereco.endereco.enderecoToString} - Nº. #{pessoaCardBean.pessoaEndereco.numero} - #{pessoaCardBean.pessoaEndereco.complemento}" />
         </p:panel>         

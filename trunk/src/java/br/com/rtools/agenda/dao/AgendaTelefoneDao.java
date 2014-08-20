@@ -4,6 +4,7 @@ import br.com.rtools.agenda.Agenda;
 import br.com.rtools.agenda.AgendaContato;
 import br.com.rtools.agenda.AgendaFavorito;
 import br.com.rtools.agenda.AgendaTelefone;
+import br.com.rtools.agenda.GrupoAgenda;
 import br.com.rtools.principal.DB;
 import java.util.ArrayList;
 import java.util.List;
@@ -109,25 +110,27 @@ public class AgendaTelefoneDao extends DB {
         return list;
     }
 
-    public List pesquisaAgendaTelefone(String ddd, String descricaoPesquisa, String porPesquisa, String comoPesquisa, int idGrupoAgenda, boolean isFavoritos, int idUsuario) {
+    public List pesquisaAgendaTelefone(String ddd, String descricaoPesquisa, String porPesquisa, String comoPesquisa, int idGrupoAgenda, boolean isFavoritos, int idUsuario, int cliente) {
         List list = new ArrayList();
+        Object object = null;
         try {
             String idGAs = "";
-            String idGAsAgenda = "";
-            String idGAsAgendaAnd = "";
-            String idGAsAgendaT = "";
-            String idGAsAgendaTAnd = "";
+            String idGAsAgendaT = " AGET.agenda.cliente.id = " + cliente + " AND ";
+            String idGAsAgendaAnd = " AGE.cliente.id = " + cliente + " AND ";
+            String idGAsAgendaTAnd = " AGET.agenda.cliente.id = " + cliente + " AND ";
             if (idUsuario != 0) {
                 String queryString = ""
                         + " SELECT id FROM age_grupo_agenda                             "
-                        + "  WHERE id IN (SELECT id_grupo_agenda                        "
+                        + "  WHERE id_cliente = " + cliente + "                             "
+                        + "    AND id IN (SELECT id_grupo_agenda                   "
                         + "                 FROM age_grupo_usuario                      "
-                        + "                WHERE id_usuario = " + idUsuario + ")            "
+                        + "                WHERE id_usuario = " + idUsuario + ")           "
                         + "  UNION SELECT id                                            "
                         + "          FROM age_grupo_agenda                              "
                         + "         WHERE id NOT IN (SELECT id_grupo_agenda             "
                         + "                            FROM age_grupo_usuario           "
-                        + "                           WHERE id_usuario != " + idUsuario + ")";
+                        + "                           WHERE id_usuario != " + idUsuario
+                        + "                             AND id_cliente =  " + cliente + " )";
                 Query queryNativeGA = getEntityManager().createNativeQuery(queryString);
                 List listNativeGA = queryNativeGA.getResultList();
                 for (int i = 0; i < listNativeGA.size(); i++) {
@@ -138,93 +141,107 @@ public class AgendaTelefoneDao extends DB {
                     }
                 }
                 if (!listNativeGA.isEmpty()) {
-                    idGAsAgenda = " ";
-                    idGAsAgendaT = " AGET.agenda.grupoAgenda.id IN (" + idGAs + ") ";
-                    idGAsAgendaAnd = " AGE.grupoAgenda.id IN (" + idGAs + ") AND ";
-                    idGAsAgendaTAnd = " AGET.agenda.grupoAgenda.id IN (" + idGAs + ") AND ";
+                    idGAsAgendaT += " AGET.agenda.grupoAgenda.id IN (" + idGAs + ") ";
+                    idGAsAgendaAnd += " AGE.grupoAgenda.id IN (" + idGAs + ") AND ";
+                    idGAsAgendaTAnd += " AGET.agenda.grupoAgenda.id IN (" + idGAs + ") AND ";
                 }
             }
             String queryFiltroGrupoAgendaA = "";
             String queryFiltroGrupoAgendaB = "";
             String query = " SELECT AGET FROM AgendaTelefone AS AGET WHERE " + idGAsAgendaT + " ORDER BY AGET.agenda.id DESC ";
             if (idGrupoAgenda > 0) {
+                object = new AgendaTelefone();
                 query = " SELECT AGET FROM AgendaTelefone AS AGET WHERE " + idGAsAgendaTAnd + " AGET.agenda.grupoAgenda.id = " + idGrupoAgenda + " ORDER BY AGET.agenda.id DESC ";
                 queryFiltroGrupoAgendaA = " AND AGET.agenda.grupoAgenda.id = " + idGrupoAgenda + " ";
             }
             if (!isFavoritos) {
-                if (porPesquisa.equals("pessoa")) {
-                    if (comoPesquisa.equals("Inicial")) {
-                        query = " SELECT AGET FROM AgendaTelefone AS AGET WHERE " + idGAsAgendaTAnd + " UPPER(AGET.agenda.pessoa.nome) LIKE '" + descricaoPesquisa.toUpperCase() + "%' " + queryFiltroGrupoAgendaA + " ORDER BY AGET.agenda.nome ASC ";
-                    } else {
-                        query = " SELECT AGET FROM AgendaTelefone AS AGET WHERE " + idGAsAgendaTAnd + " UPPER(AGET.agenda.pessoa.nome) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' " + queryFiltroGrupoAgendaA + " ORDER BY AGET.agenda.nome ASC ";
-                    }
-                } else if (porPesquisa.equals("nome")) {
-                    if (comoPesquisa.equals("Inicial")) {
-                        query = " SELECT AGET FROM AgendaTelefone AS AGET WHERE " + idGAsAgendaTAnd + " UPPER(AGET.agenda.nome) LIKE '" + descricaoPesquisa.toUpperCase() + "%' " + queryFiltroGrupoAgendaA + " ORDER BY AGET.agenda.nome ASC ";
-                    } else {
-                        query = " SELECT AGET FROM AgendaTelefone AS AGET WHERE " + idGAsAgendaTAnd + " UPPER(AGET.agenda.nome) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' " + queryFiltroGrupoAgendaA + " ORDER BY AGET.agenda.nome ASC ";
-                    }
-                } else if (porPesquisa.equals("contato")) {
-                    if (comoPesquisa.equals("Inicial")) {
-                        query = " SELECT AGET FROM AgendaTelefone AS AGET WHERE " + idGAsAgendaTAnd + " UPPER(AGET.contato) LIKE '" + descricaoPesquisa.toUpperCase() + "%' " + queryFiltroGrupoAgendaB + " ORDER BY AGET.contato ASC ";
-                    } else {
-                        query = " SELECT AGET FROM AgendaTelefone AS AGET WHERE " + idGAsAgendaTAnd + " UPPER(AGET.contato) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' " + queryFiltroGrupoAgendaB + "  ORDER BY AGET.contato ASC  ";
-                    }
-                } else if (porPesquisa.equals("telefone")) {
-                    String dddString = "";
-                    if (!ddd.equals("")) {
-                        dddString = " AGET.ddd = '" + ddd + "' AND ";
-                    }
-                    query = " SELECT AGET FROM AgendaTelefone AS AGET WHERE " + idGAsAgendaTAnd + " " + dddString + " AGET.telefone = '" + descricaoPesquisa.toUpperCase() + "'" + queryFiltroGrupoAgendaB;
-                } else if (porPesquisa.equals("endereco")) {
-                    String queryEndereco = ""
-                            + "     SELECT age.id FROM age_agenda age"
-                            + " INNER JOIN endereco_vw ende ON ende.id = age.id_endereco                                                                                                         "
-                            + "WHERE UPPER(ende.logradouro || ' ' || ende.endereco || ', ' || bairro || ', ' || cidade || ', ' || uf)    LIKE UPPER('%" + descricaoPesquisa.toUpperCase() + "%') "
-                            + "   OR UPPER(ende.logradouro || ' ' || ende.endereco || ', ' || cidade || ', ' || uf)                      LIKE UPPER('%" + descricaoPesquisa.toUpperCase() + "%') "
-                            + "   OR UPPER(ende.logradouro || ' ' || ende.endereco || ', ' || cidade )                                   LIKE UPPER('%" + descricaoPesquisa.toUpperCase() + "%') "
-                            + "   OR UPPER(ende.logradouro || ' ' || ende.endereco)                                                      LIKE UPPER('%" + descricaoPesquisa.toUpperCase() + "%') "
-                            + "   OR UPPER(ende.endereco)                                                                                LIKE UPPER('%" + descricaoPesquisa.toUpperCase() + "%') "
-                            + "   OR UPPER(ende.cidade)                                                                                  LIKE UPPER('%" + descricaoPesquisa.toUpperCase() + "%') "
-                            + "   OR UPPER(ende.cep)                                                                                     = '" + descricaoPesquisa.toUpperCase() + "'";
-                    Query qryEndereco = getEntityManager().createNativeQuery(queryEndereco);
-                    List listEndereco = qryEndereco.getResultList();
-                    String listaId = "";
-                    if (!listEndereco.isEmpty()) {
-                        for (int i = 0; i < listEndereco.size(); i++) {
-                            if (i == 0) {
-                                listaId = ((Integer) ((List) listEndereco.get(i)).get(0)).toString();
-                            } else {
-                                listaId += ", " + ((Integer) ((List) listEndereco.get(i)).get(0)).toString();
-                            }
+                switch (porPesquisa) {
+                    case "pessoa":
+                        object = new AgendaTelefone();
+                        if (comoPesquisa.equals("Inicial")) {
+                            query = " SELECT AGET FROM AgendaTelefone AS AGET WHERE " + idGAsAgendaTAnd + " UPPER(AGET.agenda.pessoa.nome) LIKE '" + descricaoPesquisa.toUpperCase() + "%' " + queryFiltroGrupoAgendaA + " ORDER BY AGET.agenda.nome ASC ";
+                        } else {
+                            query = " SELECT AGET FROM AgendaTelefone AS AGET WHERE " + idGAsAgendaTAnd + " UPPER(AGET.agenda.pessoa.nome) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' " + queryFiltroGrupoAgendaA + " ORDER BY AGET.agenda.nome ASC ";
                         }
-                        query = " SELECT AGET FROM AgendaTelefone AS AGET WHERE " + idGAsAgendaTAnd + " AGET.agenda.id IN(" + listaId + ")";
-                    }
+                        break;
+                    case "nome":
+                        object = new AgendaTelefone();
+                        if (comoPesquisa.equals("Inicial")) {
+                            query = " SELECT AGET FROM AgendaTelefone AS AGET WHERE " + idGAsAgendaTAnd + " UPPER(AGET.agenda.nome) LIKE '" + descricaoPesquisa.toUpperCase() + "%' " + queryFiltroGrupoAgendaA + " ORDER BY AGET.agenda.nome ASC ";
+                        } else {
+                            query = " SELECT AGET FROM AgendaTelefone AS AGET WHERE " + idGAsAgendaTAnd + " UPPER(AGET.agenda.nome) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' " + queryFiltroGrupoAgendaA + " ORDER BY AGET.agenda.nome ASC ";
+                        }
+                        break;
+                    case "contato":
+                        object = new AgendaTelefone();
+                        if (comoPesquisa.equals("Inicial")) {
+                            query = " SELECT AGET FROM AgendaTelefone AS AGET WHERE " + idGAsAgendaTAnd + " UPPER(AGET.contato) LIKE '" + descricaoPesquisa.toUpperCase() + "%' " + queryFiltroGrupoAgendaB + " ORDER BY AGET.contato ASC ";
+                        } else {
+                            query = " SELECT AGET FROM AgendaTelefone AS AGET WHERE " + idGAsAgendaTAnd + " UPPER(AGET.contato) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' " + queryFiltroGrupoAgendaB + "  ORDER BY AGET.contato ASC  ";
+                        }
+                        break;
+                    case "telefone":
+                        object = new AgendaTelefone();
+                        String dddString = "";
+                        if (!ddd.equals("")) {
+                            dddString = " AGET.ddd = '" + ddd + "' AND ";
+                        }
+                        query = " SELECT AGET FROM AgendaTelefone AS AGET WHERE " + idGAsAgendaTAnd + " " + dddString + " AGET.telefone = '" + descricaoPesquisa.toUpperCase() + "'" + queryFiltroGrupoAgendaB;
+                        break;
+                    case "endereco":
+                        String queryEndereco = ""
+                                + "     SELECT age.id FROM age_agenda age "
+                                + " INNER JOIN endereco_vw ende ON ende.id = age.id_endereco                                                                                                         "
+                                + "            age.id_cliente = " + cliente
+                                + "WHERE UPPER(ende.logradouro || ' ' || ende.endereco || ', ' || bairro || ', ' || cidade || ', ' || uf)    LIKE UPPER('%" + descricaoPesquisa.toUpperCase() + "%') "
+                                + "   OR UPPER(ende.logradouro || ' ' || ende.endereco || ', ' || cidade || ', ' || uf)                      LIKE UPPER('%" + descricaoPesquisa.toUpperCase() + "%') "
+                                + "   OR UPPER(ende.logradouro || ' ' || ende.endereco || ', ' || cidade )                                   LIKE UPPER('%" + descricaoPesquisa.toUpperCase() + "%') "
+                                + "   OR UPPER(ende.logradouro || ' ' || ende.endereco)                                                      LIKE UPPER('%" + descricaoPesquisa.toUpperCase() + "%') "
+                                + "   OR UPPER(ende.endereco)                                                                                LIKE UPPER('%" + descricaoPesquisa.toUpperCase() + "%') "
+                                + "   OR UPPER(ende.cidade)                                                                                  LIKE UPPER('%" + descricaoPesquisa.toUpperCase() + "%') "
+                                + "   OR UPPER(ende.cep)                                                                                     = '" + descricaoPesquisa.toUpperCase() + "'";
+                        Query qryEndereco = getEntityManager().createNativeQuery(queryEndereco);
+                        List listEndereco = qryEndereco.getResultList();
+                        String listaId = "";
+                        if (!listEndereco.isEmpty()) {
+                            for (int i = 0; i < listEndereco.size(); i++) {
+                                if (i == 0) {
+                                    listaId = ((Integer) ((List) listEndereco.get(i)).get(0)).toString();
+                                } else {
+                                    listaId += ", " + ((Integer) ((List) listEndereco.get(i)).get(0)).toString();
+                                }
+                            }
+                            query = " SELECT AGET FROM AgendaTelefone AS AGET WHERE " + idGAsAgendaTAnd + " AGET.agenda.id IN(" + listaId + ")";
+                        }
+                        break;
                 }
                 Query qry = getEntityManager().createQuery(query);
                 qry.setMaxResults(250);
                 list = qry.getResultList();
                 if (!list.isEmpty()) {
-                    return qry.getResultList();
+                    return list;
                 } else {
                     String subQuery = "";
                     String subQueryFiltroGrupoAgendaA = "";
                     if (idGrupoAgenda > 0) {
-                        subQuery = " SELECT AGET FROM Agenda AS AGE WHERE AGE.grupoAgenda.id = " + idGrupoAgenda + " ORDER BY AGE.id DESC ";
-                        subQueryFiltroGrupoAgendaA = " AND AGE.grupoAgenda.id = " + idGrupoAgenda + " ";
+                        subQuery = " SELECT AGET FROM Agenda AS AGE WHERE AGE.cliente.id = " + cliente + " AND AGE.grupoAgenda.id = " + idGrupoAgenda + " ORDER BY AGE.id DESC ";
+                        subQueryFiltroGrupoAgendaA = " AGE.cliente.id = " + cliente + " AND AGE.grupoAgenda.id = " + idGrupoAgenda + " ";
                     }
-                    if (porPesquisa.equals("pessoa")) {
-                        if (comoPesquisa.equals("Inicial")) {
-                            subQuery = " SELECT AGE FROM Agenda AS AGE WHERE " + idGAsAgendaAnd + " UPPER(AGE.pessoa.nome) LIKE '" + descricaoPesquisa.toUpperCase() + "%' " + subQueryFiltroGrupoAgendaA + " ORDER BY AGE.nome ASC ";
-                        } else {
-                            subQuery = " SELECT AGE FROM Agenda AS AGE WHERE  " + idGAsAgendaAnd + " UPPER(AGE.pessoa.nome) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' " + subQueryFiltroGrupoAgendaA + " ORDER BY AGE.nome ASC ";
-                        }
-                    } else if (porPesquisa.equals("nome")) {
-                        if (comoPesquisa.equals("Inicial")) {
-                            subQuery = " SELECT AGE FROM Agenda AS AGE WHERE  " + idGAsAgendaAnd + " UPPER(AGE.nome) LIKE '" + descricaoPesquisa.toUpperCase() + "%' " + subQueryFiltroGrupoAgendaA + " ORDER BY AGE.nome ASC ";
-                        } else {
-                            subQuery = " SELECT AGE FROM Agenda AS AGE WHERE  " + idGAsAgendaAnd + " UPPER(AGE.nome) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' " + subQueryFiltroGrupoAgendaA + " ORDER BY AGE.nome ASC ";
-                        }
+                    switch (porPesquisa) {
+                        case "pessoa":
+                            if (comoPesquisa.equals("Inicial")) {
+                                subQuery = " SELECT AGE FROM Agenda AS AGE WHERE " + idGAsAgendaAnd + " UPPER(AGE.pessoa.nome) LIKE '" + descricaoPesquisa.toUpperCase() + "%' " + subQueryFiltroGrupoAgendaA + " ORDER BY AGE.nome ASC ";
+                            } else {
+                                subQuery = " SELECT AGE FROM Agenda AS AGE WHERE  " + idGAsAgendaAnd + " UPPER(AGE.pessoa.nome) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' " + subQueryFiltroGrupoAgendaA + " ORDER BY AGE.nome ASC ";
+                            }
+                            break;
+                        case "nome":
+                            if (comoPesquisa.equals("Inicial")) {
+                                subQuery = " SELECT AGE FROM Agenda AS AGE WHERE  " + idGAsAgendaAnd + " UPPER(AGE.nome) LIKE '" + descricaoPesquisa.toUpperCase() + "%' " + subQueryFiltroGrupoAgendaA + " ORDER BY AGE.nome ASC ";
+                            } else {
+                                subQuery = " SELECT AGE FROM Agenda AS AGE WHERE  " + idGAsAgendaAnd + " UPPER(AGE.nome) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' " + subQueryFiltroGrupoAgendaA + " ORDER BY AGE.nome ASC ";
+                            }
+                            break;
                     }
                     Query subQry = getEntityManager().createQuery(subQuery);
                     List<Agenda> subList = subQry.getResultList();
@@ -236,11 +253,11 @@ public class AgendaTelefoneDao extends DB {
                     }
                 }
             } else {
-                query = " SELECT AF.agenda FROM AgendaFavorito AS AF WHERE AF.agenda.grupoAgenda.id IN (" + idGAs + ") AND AF.usuario.id = :p1 ORDER BY AF.agenda.nome ";
+                query = " SELECT AF.agenda FROM AgendaFavorito AS AF WHERE AF.agenda.cliente.id = " + cliente + " AND  AF.agenda.grupoAgenda.id IN (" + idGAs + ") AND AF.usuario.id = :p1 ORDER BY AF.agenda.nome ";
                 Query qry = getEntityManager().createQuery(query);
                 qry.setParameter("p1", idUsuario);
                 list = qry.getResultList();
-                List<AgendaTelefone> agendaTelefones = new ArrayList<AgendaTelefone>();
+                List<AgendaTelefone> agendaTelefones = new ArrayList<>();
                 AgendaTelefone agendaTelefone = new AgendaTelefone();
                 if (!list.isEmpty()) {
                     for (int i = 0; i < list.size(); i++) {
@@ -261,13 +278,13 @@ public class AgendaTelefoneDao extends DB {
         String queryString = "";
         try {
             if (agenda.getPessoa() != null && agenda.getEndereco() != null && !agenda.getNome().equals("")) {
-                queryString = " SELECT AGE FROM Agenda AS AGE WHERE AGE.pessoa.id = " + agenda.getPessoa().getId() + " AND AGE.endereco.id = " + agenda.getEndereco().getId() + " AND UPPER(AGE.nome) = '" + agenda.getNome().toUpperCase() + "'";
+                queryString = " SELECT AGE FROM Agenda AS AGE WHERE AGE.pessoa.id = " + agenda.getPessoa().getId() + " AND AGE.endereco.id = " + agenda.getEndereco().getId() + " AND UPPER(AGE.nome) = '" + agenda.getNome().toUpperCase() + "' AND AGE.cliente.id = " + agenda.getCliente().getId();
             } else if (agenda.getPessoa() != null && !agenda.getNome().equals("")) {
-                queryString = " SELECT AGE FROM Agenda AS AGE WHERE AGE.pessoa.id = " + agenda.getPessoa().getId() + " AND UPPER(AGE.nome )= '" + agenda.getNome().toUpperCase() + "'";
+                queryString = " SELECT AGE FROM Agenda AS AGE WHERE AGE.pessoa.id = " + agenda.getPessoa().getId() + " AND UPPER(AGE.nome )= '" + agenda.getNome().toUpperCase() + "'" + "' AND AGE.cliente.id = " + agenda.getCliente().getId();
             } else if (agenda.getEndereco() != null && !agenda.getNome().equals("")) {
-                queryString = " SELECT AGE FROM Agenda AS AGE WHERE AGE.endereco.id = " + agenda.getEndereco().getId() + " AND UPPER(AGE.nome) = '" + agenda.getNome().toUpperCase() + "'";
+                queryString = " SELECT AGE FROM Agenda AS AGE WHERE AGE.endereco.id = " + agenda.getEndereco().getId() + " AND UPPER(AGE.nome) = '" + agenda.getNome().toUpperCase() + "'" + "' AND AGE.cliente.id = " + agenda.getCliente().getId();
             } else if (!agenda.getNome().equals("")) {
-                queryString = " SELECT AGE FROM Agenda AS AGE WHERE UPPER(AGE.nome) = '" + agenda.getNome().toUpperCase() + "'";
+                queryString = " SELECT AGE FROM Agenda AS AGE WHERE UPPER(AGE.nome) = '" + agenda.getNome().toUpperCase() + "'" + "' AND AGE.cliente.id = " + agenda.getCliente().getId();
             }
             if (!queryString.equals("")) {
                 Query query = getEntityManager().createQuery(queryString);
@@ -351,61 +368,64 @@ public class AgendaTelefoneDao extends DB {
         return new ArrayList();
     }
 
-    public List<AgendaContato> listaGrupoAgendaPorUsuario(int idUsuario) {
+    public List listaGrupoAgendaPorUsuarioCliente(int idUsuario, int cliente) {
         try {
             String queryString = ""
                     + " SELECT id FROM age_grupo_agenda                             "
-                    + "  WHERE id IN (SELECT id_grupo_agenda                        "
+                    + "  WHERE id_cliente = " + cliente + "                         "
+                    + "    AND id IN (SELECT id_grupo_agenda                        "
                     + "                 FROM age_grupo_usuario                      "
-                    + "                WHERE id_usuario = " + idUsuario + ")            "
+                    + "                WHERE id_usuario = " + idUsuario + "         "
+                    + "                  AND id_cliente = " + cliente + ")          "
                     + "  UNION SELECT id                                            "
                     + "          FROM age_grupo_agenda                              "
                     + "         WHERE id NOT IN (SELECT id_grupo_agenda             "
                     + "                            FROM age_grupo_usuario           "
                     + "                           WHERE id_usuario != " + idUsuario + ")";
-            Query queryNative = getEntityManager().createNativeQuery(queryString);
-            List listNative = queryNative.getResultList();
-            String ids = "";
-            for (int i = 0; i < listNative.size(); i++) {
-                if (i == 0) {
-                    ids = "" + ((List) (listNative.get(i))).get(0).toString();
-                } else {
-                    ids += ", " + ((List) (listNative.get(i))).get(0).toString();
-                }
+            Query query = getEntityManager().createNativeQuery(queryString, GrupoAgenda.class);
+            List list = query.getResultList();
+            if(!list.isEmpty()) {
+                return list;
             }
-            if (!listNative.isEmpty()) {
-                Query query = getEntityManager().createQuery("SELECT GA FROM GrupoAgenda AS GA WHERE GA.id IN ( :ids ) ");
-                query.setParameter("ids", ids);
-                List list = query.getResultList();
-                if (!list.isEmpty()) {
-                    return list;
-                }
-            }
+            //List listNative = queryNative.getResultList();
+//            String ids = "";
+//            for (int i = 0; i < listNative.size(); i++) {
+//                if (i == 0) {
+//                    ids = "" + ((List) (listNative.get(i))).get(0).toString();
+//                } else {
+//                    ids += ", " + ((List) (listNative.get(i))).get(0).toString();
+//                }
+//            }
+//            if (!listNative.isEmpty()) {
+//                Query query = getEntityManager().createQuery("SELECT GA FROM GrupoAgenda AS GA WHERE GA.id IN ( :ids ) ");
+//                query.setParameter("ids", ids);
+//                List list = query.getResultList();
+//                if (!list.isEmpty()) {
+//                    return list;
+//                }
+//            }
         } catch (Exception e) {
 
         }
         return new ArrayList();
     }
 
-    public List<AgendaContato> pesquisaAniversariantesPorPeriodo() {
+    public List<AgendaContato> pesquisaAniversariantesPorPeriodo(int cliente) {
         try {
-            Query query = getEntityManager().createNativeQuery("SELECT id FROM age_contato WHERE is_notifica_aniversario = TRUE AND TO_CHAR(dt_nascimento, 'MM') = TO_CHAR(current_date, 'MM')");
+            Query query = getEntityManager().createNativeQuery(""
+                    + "     SELECT ac.*                                         "
+                    + "       FROM age_contato as ac                            "
+                    + " INNER JOIN age_agenda as a ON a.id = ac.id_agenda       "
+                    + "      WHERE ac.is_notifica_aniversario = TRUE "
+                    + "        AND TO_CHAR(dt_nascimento, 'MM') = TO_CHAR(current_date, 'MM') "
+                    + "        AND a.id_cliente = " + cliente, AgendaContato.class);
             List list = query.getResultList();
-            String inIds = "";
             if (!list.isEmpty()) {
-                for (int i = 0; i < list.size(); i++) {
-                    if (i == 0) {
-                        inIds = "" + ((List) list.get(i)).get(0).toString();
-                    } else {
-                        inIds += ", " + ((List) list.get(i)).get(0).toString();
-                    }
-                }
-                Query query1 = getEntityManager().createQuery("SELECT AC FROM AgendaContato AS AC WHERE AC.id IN ( :ids ) ORDER BY AC.nascimento ASC, AC.contato ASC");
-                query1.setParameter("ids", inIds);
-                return (List<AgendaContato>) query1.getResultList();
+                return list;
             }
+
         } catch (Exception e) {
         }
-        return new ArrayList<AgendaContato>();
+        return new ArrayList<>();
     }
 }
