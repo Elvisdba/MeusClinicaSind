@@ -6,6 +6,7 @@ import br.com.rtools.pessoa.TipoDocumentoProfissao;
 import br.com.rtools.utilitarios.Dao;
 import br.com.rtools.utilitarios.Messages;
 import br.com.rtools.utilitarios.Sessions;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -16,7 +17,7 @@ import javax.faces.model.SelectItem;
 
 @ManagedBean
 @SessionScoped
-public class TipoDocumentoProfissaoBean {
+public class TipoDocumentoProfissaoBean implements Serializable {
 
     private TipoDocumentoProfissao tipoDocumentoProfissao;
     private List<TipoDocumentoProfissao> listTipoDocumentoProfissao;
@@ -52,14 +53,14 @@ public class TipoDocumentoProfissaoBean {
             return;
         }
         tipoDocumentoProfissao.setProfissao((Profissao) dao.find(new Profissao(), Integer.parseInt(listProfissao.get(idProfissao).getDescription())));
-        for (int i = 0; i < getListTipoDocumentoProfissao().size(); i++) {
-            if (listTipoDocumentoProfissao.get(i).getDescricao().toUpperCase().equals(tipoDocumentoProfissao.getDescricao().toUpperCase()) && listTipoDocumentoProfissao.get(i).getProfissao().getProfissao().toUpperCase().equals(tipoDocumentoProfissao.getProfissao().getProfissao().toUpperCase())) {
-                Messages.warn("Validação", "Tipo de documento e profissão já cadastrado!");
-                return;
-            }
-        }
         Logger logger = new Logger();
         if (tipoDocumentoProfissao.getId() == -1) {
+            for (int i = 0; i < getListTipoDocumentoProfissao().size(); i++) {
+                if (listTipoDocumentoProfissao.get(i).getDescricao().toUpperCase().equals(tipoDocumentoProfissao.getDescricao().toUpperCase()) && listTipoDocumentoProfissao.get(i).getProfissao().getProfissao().toUpperCase().equals(tipoDocumentoProfissao.getProfissao().getProfissao().toUpperCase())) {
+                    Messages.warn("Validação", "Tipo de documento e profissão já cadastrado!");
+                    return;
+                }
+            }
             if (dao.save(tipoDocumentoProfissao, true)) {
                 Messages.info("Sucesso", "Registro adicionado");
                 logger.save(
@@ -78,7 +79,7 @@ public class TipoDocumentoProfissaoBean {
                     + " - Profissão: [" + tdp.getProfissao().getId() + "]" + tdp.getProfissao().getProfissao()
                     + " - Descrição: " + tdp.getDescricao();
             if (dao.update(tipoDocumentoProfissao, true)) {
-                Messages.info("Sucesso", "Registro adicionado");
+                Messages.info("Sucesso", "Registro atualizado");
                 logger.update(beforeUpdate,
                         " ID: " + tipoDocumentoProfissao.getId()
                         + " - Profissão: [" + tipoDocumentoProfissao.getProfissao().getId() + "]" + tipoDocumentoProfissao.getProfissao().getProfissao()

@@ -18,19 +18,21 @@ import br.com.rtools.pessoa.TipoEndereco;
 import br.com.rtools.seguranca.*;
 import br.com.rtools.seguranca.controleUsuario.SessaoCliente;
 import br.com.rtools.seguranca.dao.RotinaDao;
-import br.com.rtools.sistema.Combustivel;
 import br.com.rtools.sistema.Cor;
 import br.com.rtools.utilitarios.Dao;
 import br.com.rtools.utilitarios.DaoInterface;
 import br.com.rtools.utilitarios.Messages;
 import br.com.rtools.utilitarios.Sessions;
+import br.com.rtools.utilitarios.Tables;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.persistence.Query;
 
 @ManagedBean
 @SessionScoped
@@ -53,6 +55,7 @@ public class SimplesBean implements Serializable {
     private int idRotina;
 
     public SimplesBean() {
+        String a = "";
         rotina = new Rotina();
         idRotina = 0;
         listaRotinaCombo = new ArrayList<>();
@@ -99,7 +102,7 @@ public class SimplesBean implements Serializable {
                     return;
 
                 }
-                int t = objeto.getClass().getDeclaredFields().length; 
+                int t = objeto.getClass().getDeclaredFields().length;
                 if (t == 2) {
                     if (dao.save(objeto, true)) {
                         editaObjeto(objeto);
@@ -302,11 +305,8 @@ public class SimplesBean implements Serializable {
             case "TipoDocumento":
                 o = (TipoDocumento) new TipoDocumento(id, descricao);
                 break;
-            case "GrupoAgenda":
-                o = (GrupoAgenda) new GrupoAgenda(id, descricao);
-                break;
             case "Evento":
-                o = (Evento) new Evento(id, descricao);
+                o = (SegEvento) new SegEvento(id, descricao);
                 break;
             case "Modulo":
                 o = (Modulo) new Modulo(id, descricao);
@@ -329,25 +329,25 @@ public class SimplesBean implements Serializable {
             case "GrauParentesco":
                 o = (GrauParentesco) new GrauParentesco(id, descricao);
                 break;
-            case "Combustivel":
-                o = (Combustivel) new Combustivel(id, descricao);
-                break;
             case "TipoDesligamento":
                 o = (TipoDesligamento) new TipoDesligamento(id, descricao);
                 break;
             case "TipoInternacao":
                 o = (TipoInternacao) new TipoInternacao(id, descricao);
                 break;
+            case "TipoAtendimento":
+                o = (TipoAtendimento) new TipoAtendimento(id, descricao);
+                break;
 
             // SIMPLES COM ID CLIENTE
-            case "TipoAtendimento":
-                o = (TipoAtendimento) new TipoAtendimento(id, cliente, descricao);
-                break;
             case "FuncaoEscala":
                 o = (FuncaoEscala) new FuncaoEscala(id, cliente, descricao);
                 break;
             case "GrupoEvento":
                 o = (GrupoEvento) new GrupoEvento(id, cliente, descricao);
+                break;
+            case "GrupoAgenda":
+                o = (GrupoAgenda) new GrupoAgenda(id, cliente, descricao);
                 break;
         }
         return o;
@@ -374,7 +374,7 @@ public class SimplesBean implements Serializable {
                 ((GrupoAgenda) objeto).setDescricao(descricao);
                 break;
             case "Evento":
-                ((Evento) objeto).setDescricao(descricao);
+                ((SegEvento) objeto).setDescricao(descricao);
                 break;
             case "Modulo":
                 ((Modulo) objeto).setDescricao(descricao);
@@ -397,23 +397,20 @@ public class SimplesBean implements Serializable {
             case "GrauParentesco":
                 ((GrauParentesco) objeto).setDescricao(descricao);
                 break;
-            case "Combustivel":
-                ((Combustivel) objeto).setDescricao(descricao);
-                break;
             case "TipoDesligamento":
                 ((TipoDesligamento) objeto).setDescricao(descricao);
                 break;
             case "TipoInternacao":
                 ((TipoInternacao) objeto).setDescricao(descricao);
                 break;
-            case "TipoAtendimento":
-                ((TipoAtendimento) objeto).setDescricao(descricao);
-                break;
             case "FuncaoEscala":
                 ((FuncaoEscala) objeto).setDescricao(descricao);
                 break;
             case "GrupoEvento":
                 ((GrupoEvento) objeto).setDescricao(descricao);
+                break;
+            case "TipoAtendimento":
+                ((TipoAtendimento) objeto).setDescricao(descricao);
                 break;
         }
     }
@@ -440,13 +437,9 @@ public class SimplesBean implements Serializable {
                 descricao = ((TipoDocumento) obj).getDescricao();
                 id = ((TipoDocumento) objeto).getId();
                 break;
-            case "GrupoAgenda":
-                descricao = ((GrupoAgenda) obj).getDescricao();
-                id = ((GrupoAgenda) objeto).getId();
-                break;
             case "Evento":
-                descricao = ((Evento) obj).getDescricao();
-                id = ((Evento) objeto).getId();
+                descricao = ((SegEvento) obj).getDescricao();
+                id = ((SegEvento) objeto).getId();
                 break;
             case "Modulo":
                 descricao = ((Modulo) obj).getDescricao();
@@ -476,10 +469,6 @@ public class SimplesBean implements Serializable {
                 descricao = ((GrauParentesco) obj).getDescricao();
                 id = ((GrauParentesco) objeto).getId();
                 break;
-            case "Combustivel":
-                descricao = ((Combustivel) obj).getDescricao();
-                id = ((Combustivel) objeto).getId();
-                break;
             case "TipoDesligamento":
                 descricao = ((TipoDesligamento) obj).getDescricao();
                 id = ((TipoDesligamento) objeto).getId();
@@ -488,13 +477,12 @@ public class SimplesBean implements Serializable {
                 descricao = ((TipoInternacao) obj).getDescricao();
                 id = ((TipoInternacao) objeto).getId();
                 break;
-
-            // SIMPLES COM GRUPO EVENTO    
             case "TipoAtendimento":
                 descricao = ((TipoAtendimento) obj).getDescricao();
                 id = ((TipoAtendimento) objeto).getId();
-                cliente = ((TipoAtendimento) objeto).getCliente();
                 break;
+
+            // SIMPLES COM GRUPO EVENTO    
             case "FuncaoEscala":
                 descricao = ((FuncaoEscala) obj).getDescricao();
                 id = ((FuncaoEscala) objeto).getId();
@@ -504,6 +492,11 @@ public class SimplesBean implements Serializable {
                 descricao = ((GrupoEvento) obj).getDescricao();
                 id = ((GrupoEvento) objeto).getId();
                 cliente = ((GrupoEvento) objeto).getCliente();
+                break;
+            case "GrupoAgenda":
+                descricao = ((GrupoAgenda) obj).getDescricao();
+                id = ((GrupoAgenda) objeto).getId();
+                cliente = ((GrupoAgenda) objeto).getCliente();
                 break;
         }
         Dao dao = new Dao();
@@ -543,7 +536,7 @@ public class SimplesBean implements Serializable {
                 }
                 break;
             case "Evento":
-                if (((Evento) obj).getDescricao().contains(pesquisaLista)) {
+                if (((SegEvento) obj).getDescricao().contains(pesquisaLista)) {
                     return true;
                 }
                 break;
@@ -597,11 +590,6 @@ public class SimplesBean implements Serializable {
                     return true;
                 }
                 break;
-            case "TipoAtendimento":
-                if (((TipoAtendimento) obj).getDescricao().contains(pesquisaLista)) {
-                    return true;
-                }
-                break;
             case "FuncaoEscala":
                 if (((FuncaoEscala) obj).getDescricao().contains(pesquisaLista)) {
                     return true;
@@ -609,6 +597,11 @@ public class SimplesBean implements Serializable {
                 break;
             case "GrupoEvento":
                 if (((GrupoEvento) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "TipoAtendimento":
+                if (((TipoAtendimento) obj).getDescricao().contains(pesquisaLista)) {
                     return true;
                 }
                 break;
@@ -620,21 +613,35 @@ public class SimplesBean implements Serializable {
         // lista.clear();
     }
 
-    public synchronized List getLista() {
+    public synchronized List getLista() throws ClassNotFoundException {
         if (sessoes != null) {
-            Dao dao = new Dao();
             if (!pesquisaLista.isEmpty()) {
                 Object o = (Object) convertToObject(sessoes[0]);
+                String tableName = Tables.name(o);
+                Dao dao = new Dao();
                 if (o == null) {
                     return new ArrayList();
                 }
-                int t = o.getClass().getDeclaredFields().length; 
-                if (t == 2) { 
-                    lista = dao.findByDescription(sessoes[0], pesquisaLista, "p");
+                String queryString;
+                int t = o.getClass().getDeclaredFields().length;
+                if (t == 2) {
+                    queryString = " SELECT * FROM " + tableName + " WHERE translate(upper(ds_descricao)) LIKE '%" + descricao.toUpperCase() + "%'";
                 } else {
-                    lista = dao.findByDescriptionByCliente(sessoes[0], pesquisaLista, "p");
+                    queryString = " SELECT * FROM " + tableName + " WHERE translate(upper(ds_descricao)) LIKE '%" + descricao.toUpperCase() + "%' AND id_cliente = " + SessaoCliente.get().getId();
+                }
+                try {
+                    Query query = dao.getEntityManager().createNativeQuery(queryString, o.getClass());
+                    query.setMaxResults(1000);
+                    lista = query.getResultList();
+                    if (!lista.isEmpty()) {
+                        return lista;
+                    }
+                } catch (Exception e) {
+                    java.util.logging.Logger.getLogger(SimplesBean.class.getName()).log(Level.SEVERE, null, e);
+
                 }
             }
+            return new ArrayList();
         }
         return lista;
     }
@@ -649,6 +656,37 @@ public class SimplesBean implements Serializable {
 
     public void setPesquisaLista(String pesquisaLista) {
         this.pesquisaLista = pesquisaLista;
+    }
+
+    public String pacoteDaClasse(String classe) {
+        List<String> list_class = new ArrayList();
+
+        list_class.add("br.com.rtools.academia");
+        list_class.add("br.com.rtools.agenda");
+        list_class.add("br.com.rtools.arrecadacao");
+        list_class.add("br.com.rtools.associativo");
+        list_class.add("br.com.rtools.atendimento");
+        list_class.add("br.com.rtools.endereco");
+        list_class.add("br.com.rtools.escola");
+        list_class.add("br.com.rtools.estoque");
+        list_class.add("br.com.rtools.financeiro");
+        list_class.add("br.com.rtools.homologacao");
+        list_class.add("br.com.rtools.locadoraFilme");
+        list_class.add("br.com.rtools.pessoa");
+        list_class.add("br.com.rtools.relatorios");
+        list_class.add("br.com.rtools.seguranca");
+        list_class.add("br.com.rtools.sistema");
+        list_class.add("br.com.rtools.suporte");
+
+        for (String list_clas : list_class) {
+            try {
+                Class.forName(list_clas + "." + classe);
+                return list_clas + "." + classe;
+            } catch (ClassNotFoundException e) {
+                //my class isn't there!
+            }
+        }
+        return "";
     }
 }
 //                Class cls = Class.forName(sessoes[0]);

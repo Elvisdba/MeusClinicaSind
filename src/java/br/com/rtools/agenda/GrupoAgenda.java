@@ -1,32 +1,36 @@
 package br.com.rtools.agenda;
 
+import br.com.rtools.seguranca.Cliente;
 import br.com.rtools.utilitarios.BaseEntity;
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "age_grupo_agenda")
-@NamedQueries({
-    @NamedQuery(name = "GrupoAgenda.pesquisaID", query = "SELECT GRA FROM GrupoAgenda GRA WHERE GRA.id = :pid"),
-    @NamedQuery(name = "GrupoAgenda.findAll", query = "SELECT GRA FROM GrupoAgenda GRA ORDER BY GRA.descricao ASC "),
-    @NamedQuery(name = "GrupoAgenda.findName", query = "SELECT GRA FROM GrupoAgenda GRA WHERE UPPER(GRA.descricao) LIKE :pdescricao ORDER BY GRA.descricao ASC ")
-})
+@Table(name = "age_grupo_agenda",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"id_cliente", "ds_descricao"}))
+@NamedQuery(name = "GrupoAgenda.findAll", query = "SELECT GRA FROM GrupoAgenda GRA WHERE GRA.cliente.id = :p1 ORDER BY GRA.descricao ASC ")
 public class GrupoAgenda implements BaseEntity, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
+    @Column(name = "id")
     private int id;
+    @JoinColumn(name = "id_cliente", referencedColumnName = "id")
+    @ManyToOne
+    private Cliente cliente;
     @Column(name = "ds_descricao", length = 100, nullable = false, unique = true)
     private String descricao;
 
     public GrupoAgenda() {
         this.id = -1;
+        this.cliente = new Cliente();
         this.descricao = "";
     }
 
-    public GrupoAgenda(int id, String descricao) {
+    public GrupoAgenda(int id, Cliente cliente, String descricao) {
         this.id = id;
+        this.cliente = cliente;
         this.descricao = descricao;
     }
 
@@ -37,6 +41,14 @@ public class GrupoAgenda implements BaseEntity, Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 
     public String getDescricao() {
@@ -50,8 +62,9 @@ public class GrupoAgenda implements BaseEntity, Serializable {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 23 * hash + this.id;
-        hash = 23 * hash + (this.descricao != null ? this.descricao.hashCode() : 0);
+        hash = 29 * hash + this.id;
+        hash = 29 * hash + Objects.hashCode(this.cliente);
+        hash = 29 * hash + Objects.hashCode(this.descricao);
         return hash;
     }
 
@@ -67,15 +80,13 @@ public class GrupoAgenda implements BaseEntity, Serializable {
         if (this.id != other.id) {
             return false;
         }
-        if ((this.descricao == null) ? (other.descricao != null) : !this.descricao.equals(other.descricao)) {
+        if (!Objects.equals(this.cliente, other.cliente)) {
+            return false;
+        }
+        if (!Objects.equals(this.descricao, other.descricao)) {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return "GrupoAgenda{" + "id=" + id + ", descricao=" + descricao + '}';
     }
 
 }

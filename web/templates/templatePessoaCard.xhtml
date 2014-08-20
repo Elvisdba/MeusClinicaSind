@@ -19,18 +19,14 @@
             <h:outputLabel value="Documento:"  />
             <h:outputLabel value="#{pessoaCardBean.pessoa.documento}"  />
             <h:outputLabel value="Cadastro desde:"  />
-            <h:outputLabel value="#{pessoaCardBean.pessoa.criacao}"  />
+            <h:outputLabel value="#{pessoaCardBean.pessoa.criacaoString}"  />
             <h:outputLabel value="Telefone 1:"  />
             <h:outputLabel value="#{pessoaCardBean.pessoa.telefone1}"  />
             <h:outputLabel value="Telefone 2:"  />
             <h:outputLabel value="#{pessoaCardBean.pessoa.telefone2}"  />
             <h:outputLabel value="Email:"  />
             <h:commandLink value="#{pessoaCardBean.pessoa.email1}" action="#{pessoaCardBean.enviaEmail(pessoaCardBean.pessoa.id)}" />
-        </h:panelGrid>
-        <c:if test="#{!sociosCardBean.setIdPessoa(pessoaCardBean.pessoa.id)}"></c:if>
-        <p:panel header="Associado" style="background: #ccffcc;" styleClass="no-border margin-top-max" rendered="#{sociosCardBean.socios.id != -1}">
-            <ui:include src="templateSociosCard.xhtml" />
-        </p:panel>        
+        </h:panelGrid>     
         <p:panel styleClass="margin-top-max" header="Endereço" rendered="#{pessoaCardBean.pessoaEndereco.id != -1}">
             <h:outputLabel value="#{pessoaCardBean.pessoaEndereco.endereco.enderecoToString} - Nº. #{pessoaCardBean.pessoaEndereco.numero} - #{pessoaCardBean.pessoaEndereco.complemento}" />
         </p:panel>         

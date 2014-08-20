@@ -4,8 +4,9 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "age_telefone")
-@NamedQuery(name = "AgendaTelefone.pesquisaID", query = "SELECT at FROM AgendaTelefone at WHERE at.id=:pid")
+@Table(name = "age_telefone",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"id_cliente", "id_tipo_telefone", "ds_telefone"})
+)
 public class AgendaTelefone implements Serializable {
 
     @Id

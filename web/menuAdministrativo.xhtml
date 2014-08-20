@@ -26,18 +26,18 @@
                                 <p:submenu label="Cadastro" icon="ui-icon-document" style="margin-right: 15px;">  
                                     <p:submenu label="Física">
                                         <p:menuitem value="Manutenção"          action="#{chamadaPaginaBean.pagina('pessoaFisica')}" />                                        
-                                        <p:menuitem value="Parentesco"          action="#{chamadaPaginaBean.paginaSimples('GrauParentesco', 'Grau Parentesco')}"  />
+                                        <p:menuitem value="Parentesco"          action="#{chamadaPaginaBean.paginaSimples('GrauParentesco', 'Grau Parentesco')}"  rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}"/>
                                     </p:submenu>
                                     <p:menuitem value="Jurídica"                action="#{chamadaPaginaBean.pagina('pessoaJuridica')}" />
                                     <p:submenu label="Veículos">
-                                        <p:menuitem value="Manutenção"          action="#{chamadaPaginaBean.pagina('veiculo')}" />                                    
-                                        <p:menuitem value="Combustível"         action="#{chamadaPaginaBean.paginaSimples('Combustivel', 'Combustível')}"  />
+                                        <p:menuitem value="Manutenção"          action="#{chamadaPaginaBean.pagina('veiculo')}" />
+                                        <p:menuitem value="Combustível"          action="#{chamadaPaginaBean.pagina('combustivel')}" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}"/>
                                     </p:submenu>
                                     <p:submenu label="Evento">
                                         <p:menuitem value="Manutenção"          action="#{chamadaPaginaBean.pagina('evento')}" />                                        
                                         <p:menuitem value="Grupo Evento"        action="#{chamadaPaginaBean.paginaSimples('GrupoEvento', 'Grupo Evento')}"  />
                                     </p:submenu>                                    
-                                    <p:submenu label="Parâmetro Contrato">
+                                    <p:submenu label="Parâmetro Contrato" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}">
                                         <p:menuitem value="Tipo de Internação"      action="#{chamadaPaginaBean.paginaSimples('TipoInternacao', 'Tipo Internação')}" />
                                         <p:menuitem value="Tipo de Desligamento"    action="#{chamadaPaginaBean.paginaSimples('TipoDesligamento', 'Tipo Desligamento')}" />
                                     </p:submenu>

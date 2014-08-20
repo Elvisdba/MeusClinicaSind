@@ -1,5 +1,6 @@
 package br.com.rtools.sistema;
 
+import br.com.rtools.utilitarios.Moeda;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.*;
@@ -7,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "sis_combustivel")
 @NamedQueries({
-    @NamedQuery(name = "Combustivel.findAll", query = "SELECT TC FROM Combustivel AS TC ORDER BY TC.descricao ASC "),
+    @NamedQuery(name = "Combustivel.findAll", query = "SELECT TC FROM Combustivel AS TC ORDER BY TC.descricao ASC "),    
     @NamedQuery(name = "Combustivel.findName", query = "SELECT TC FROM Combustivel AS TC WHERE UPPER(TC.descricao) LIKE :pdescricao ORDER BY TC.descricao ASC ")
 })
 public class Combustivel implements Serializable {
@@ -16,17 +17,21 @@ public class Combustivel implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "ds_descricao", length = 15, unique = true)
+    @Column(name = "ds_descricao", length = 25, unique = true)
     private String descricao;
+    @Column(name = "nr_valor_litro")
+    private float valorLitro;
 
     public Combustivel() {
         this.id = -1;
         this.descricao = "";
+        this.valorLitro = 0;
     }
 
-    public Combustivel(int id, String descricao) {
+    public Combustivel(int id, String descricao, float valorLitro) {
         this.id = id;
         this.descricao = descricao;
+        this.valorLitro = valorLitro;
     }
 
     public int getId() {
@@ -47,9 +52,10 @@ public class Combustivel implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 73 * hash + this.id;
-        hash = 73 * hash + Objects.hashCode(this.descricao);
+        int hash = 3;
+        hash = 23 * hash + this.id;
+        hash = 23 * hash + Objects.hashCode(this.descricao);
+        hash = 23 * hash + Float.floatToIntBits(this.valorLitro);
         return hash;
     }
 
@@ -68,12 +74,31 @@ public class Combustivel implements Serializable {
         if (!Objects.equals(this.descricao, other.descricao)) {
             return false;
         }
+        if (Float.floatToIntBits(this.valorLitro) != Float.floatToIntBits(other.valorLitro)) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "Combustivel{" + "id=" + id + ", descricao=" + descricao + '}';
+        return "Combustivel{" + "id=" + id + ", descricao=" + descricao + ", valorLitro=" + valorLitro + '}';
+    }
+
+    public float getValorLitro() {
+        return valorLitro;
+    }
+
+    public void setValorLitro(float valorLitro) {
+        this.valorLitro = valorLitro;
+    }
+
+    public String getValorLitroString() {
+        return Moeda.converteR$Float(valorLitro);
+    }
+
+    public void setValorLitroString(String valorLitroString) {
+        this.valorLitro = Moeda.converteUS$(valorLitroString);
     }
 
 }

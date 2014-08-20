@@ -106,7 +106,8 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         pessoaEndereco = new PessoaEndereco();
         pessoaProfissao = new PessoaProfissao();
         pessoaEmpresa = new PessoaEmpresa();
-        setDependente(new Dependente());
+        dependente = new Dependente();
+        dependente.setNascimentoString("");
         file = null;
         indicaTab = "pessoal";
         enderecoCompleto = "";
@@ -202,6 +203,10 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         Dao dao = new Dao();
         if (fisica.getPessoa().getNome().equals("")) {
             Messages.warn("Validação", "Informar nome da pessoa!");
+            return;
+        }
+        if (fisica.getSexo().equals("")) {
+            Messages.warn("Validação", "Informar o sexo!");
             return;
         }
         if (fisica.getNascimento().isEmpty() || fisica.getNascimento().length() < 10) {
@@ -530,10 +535,9 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
                 }
             }
         }
-
         showImagemFisica();
         Sessions.put("linkClicado", true);
-
+        listDependente.clear();
         return url;
     }
 
@@ -806,7 +810,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
             "Turca(o)",
             "Uraguaia(o)",
             "Venezuelana(o)"};
-        List<SelectItem> selectPais = new ArrayList<SelectItem>();
+        List<SelectItem> selectPais = new ArrayList<>();
         int i = 0;
         while (i < lista.length) {
             selectPais.add(new SelectItem(i, lista[i], String.valueOf(i)));
@@ -1244,7 +1248,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
     }
 
     public void validateFile(FacesContext ctx, UIComponent comp, Object value) {
-        List<FacesMessage> msgs = new ArrayList<FacesMessage>();
+        List<FacesMessage> msgs = new ArrayList<>();
         Part files = (Part) value;
         if (files.getSize() > 1024) {
             msgs.add(new FacesMessage("file too big"));
@@ -1540,8 +1544,10 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         if (listGrauParentesco.isEmpty()) {
             Dao dao = new Dao();
             List<GrauParentesco> list = dao.list(new GrauParentesco(), true);
-            for (int i = 0; i < list.size(); i++) {
-                listGrauParentesco.add(new SelectItem(i, list.get(i).getDescricao(), "" + list.get(i).getId()));
+            int i = 0;
+            listGrauParentesco.add(new SelectItem(i, "Selecionar", "-1"));
+            for (i = 0; i < list.size(); i++) {
+                listGrauParentesco.add(new SelectItem(i + 1, list.get(i).getDescricao(), "" + list.get(i).getId()));
             }
         }
         return listGrauParentesco;
@@ -1561,6 +1567,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
 
     public void clearDependente() {
         dependente = new Dependente();
+        dependente.setNascimentoString("");
         idGrauParentesco = 0;
         listGrauParentesco.clear();
     }
@@ -1571,6 +1578,14 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
             return;
         }
         Dao dao = new Dao();
+        if (idGrauParentesco == 0) {
+            Messages.warn("Validaçao", "Informa o grau de parentesco!");
+            return;
+        }
+        if (dependente.getSexo() == null) {
+            Messages.warn("Validaçao", "Informa o sexo!");
+            return;
+        }
         dependente.setGrauParentesco((GrauParentesco) dao.find(new GrauParentesco(), Integer.parseInt(listGrauParentesco.get(idGrauParentesco).getDescription())));
         if (fisica.getId() == -1) {
             listDependente.add(dependente);

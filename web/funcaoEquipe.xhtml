@@ -35,46 +35,48 @@
                             <c:set scope="request" var="object" value="${funcaoEquipeBean.funcaoEquipe}"/>
                             <p:panel>
                                 <h:panelGrid columns="2">
-                                    <p:outputLabel value="Tipo Atendimento:" />
-                                    <h:selectOneMenu value="#{funcaoEquipeBean.idTipoAtendimento}">
-                                        <p:ajax event="change" update="@this" />
+                                    <p:outputLabel value="Função:" />
+                                    <h:selectOneMenu value="#{funcaoEquipeBean.idProfissao}">
+                                        <p:ajax event="change" update="@this i_datatable_fe" listener="#{funcaoEquipeBean.listFuncaoEquipe.clear}"/>
                                         <f:selectItem itemValue="" itemLabel="Selecionar" itemDisabled="true" />
-                                        <f:selectItems value="#{funcaoEquipeBean.listTipoAtendimento}" />
+                                        <f:selectItems value="#{funcaoEquipeBean.listProfissao}" />
                                     </h:selectOneMenu>
-                                    <p:outputLabel value="Tipo Documento Profissão:" />
+                                    <p:outputLabel value="Documento Profissão:" />
                                     <h:selectOneMenu value="#{funcaoEquipeBean.idTipoDocumentoProfissao}">
                                         <p:ajax event="change" update="@this" />
                                         <f:selectItem itemValue="" itemLabel="Selecionar" itemDisabled="true" />
                                         <f:selectItems value="#{funcaoEquipeBean.listTipoDocumentoProfissao}" />
                                     </h:selectOneMenu>
-                                    <p:outputLabel value="Profissão:" />
-                                    <h:selectOneMenu value="#{funcaoEquipeBean.idProfissao}">
+                                    <p:outputLabel value="Tipo Atendimento:" />
+                                    <h:selectOneMenu value="#{funcaoEquipeBean.idTipoAtendimento}">
                                         <p:ajax event="change" update="@this" />
-                                        <f:selectItem itemValue="" itemLabel="Selecionar" itemDisabled="true" />
-                                        <f:selectItems value="#{funcaoEquipeBean.listProfissao}" />
+                                        <f:selectItems value="#{funcaoEquipeBean.listTipoAtendimento}" />
                                     </h:selectOneMenu>
                                 </h:panelGrid>
                             </p:panel>
                             <h:panelGrid columns="4" styleClass="margin-top-max">
                                 <p:commandButton value="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.botaoSalvar}"/>
                                 <p:commandButton value="Novo" action="#{funcaoEquipeBean.clear}" update=":form_fe:" />
-                                <h:column rendered="#{funcaoEquipeBean.funcaoEquipe.id != -1}">
+                                <h:column rendered="false">
                                     <p:commandButton value="Excluir" onclick="PF('dlg_delete').show()" disabled="#{controleAcessoBean.botaoExcluir}" />
                                 </h:column>
                             </h:panelGrid>
-                            <p:panel header="Funções" styleClass="margin-top-max">
+                            <p:panel header="Funções" styleClass="margin-top-max" id="i_datatable_fe">
                                 <p:dataTable value="#{funcaoEquipeBean.listFuncaoEquipe}" var="funcaoEquipe" scrollable="true" scrollHeight="300" emptyMessage="Nenhum registro encontrado!">
                                     <p:column width="30">
                                         <p:commandButton icon="ui-icon-link" action="#{funcaoEquipeBean.edit(funcaoEquipe)}" update=":form_fe:" />
                                     </p:column>
-                                    <p:column headerText="Tipo Atendimento">
-                                        <p:outputLabel value="#{funcaoEquipe.tipoAtendimento.descricao}" />
+                                    <p:column headerText="Função">
+                                        <p:outputLabel value="#{funcaoEquipe.profissao.profissao}" />
                                     </p:column>
                                     <p:column headerText="Tipo Documento">
                                         <p:outputLabel value="#{funcaoEquipe.tipoDocumentoProfissao.descricao}" />
                                     </p:column>
-                                    <p:column headerText="Profissão">
-                                        <p:outputLabel value="#{funcaoEquipe.profissao.profissao}" />
+                                    <p:column headerText="Tipo Atendimento">
+                                        <p:outputLabel value="#{funcaoEquipe.tipoAtendimento.descricao}" />
+                                    </p:column>
+                                    <p:column width="30">
+                                        <p:commandButton icon="ui-icon-trash" action="#{funcaoEquipeBean.delete(funcaoEquipe)}" update=":form_fe:"  disabled="#{controleAcessoBean.botaoExcluir}" oncomplete="PF('dlg_message').show()"/>
                                     </p:column>
                                 </p:dataTable>
                             </p:panel>

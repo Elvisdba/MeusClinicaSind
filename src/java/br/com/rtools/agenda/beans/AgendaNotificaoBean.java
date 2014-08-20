@@ -2,6 +2,7 @@ package br.com.rtools.agenda.beans;
 
 import br.com.rtools.agenda.AgendaContato;
 import br.com.rtools.agenda.dao.AgendaTelefoneDao;
+import br.com.rtools.seguranca.controleUsuario.SessaoCliente;
 import br.com.rtools.utilitarios.DataHoje;
 import java.io.Serializable;
 import java.util.List;
@@ -22,7 +23,7 @@ public class AgendaNotificaoBean implements Serializable {
 
     public List<AgendaContato> getListAniversariantes() {
         AgendaTelefoneDao atdb = new AgendaTelefoneDao();
-        return atdb.pesquisaAniversariantesPorPeriodo();
+        return atdb.pesquisaAniversariantesPorPeriodo(SessaoCliente.get().getId());
     }
 
     public String getDataHoje() {

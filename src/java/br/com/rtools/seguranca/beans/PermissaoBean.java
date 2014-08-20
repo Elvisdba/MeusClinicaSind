@@ -27,7 +27,7 @@ public class PermissaoBean implements Serializable {
     private Permissao permissao;
     private Modulo modulo;
     private Rotina rotina;
-    private Evento evento;
+    private SegEvento segEvento;
     private List<Permissao> listPermissoes;
     private PermissaoDepartamento permissaoDepartamento;
     private String msgConfirma;
@@ -53,7 +53,7 @@ public class PermissaoBean implements Serializable {
         permissao = new Permissao();
         modulo = new Modulo();
         rotina = new Rotina();
-        evento = new Evento();
+        segEvento = new SegEvento();
         listPermissoes = new ArrayList();
         permissaoDepartamento = new PermissaoDepartamento();
         msgConfirma = "";
@@ -99,10 +99,10 @@ public class PermissaoBean implements Serializable {
         if (permissaoDao.pesquisaPermissaoModuloRotina(modulo.getId(), rotina.getId(), c.getId()).isEmpty()) {
             di.openTransaction();
             for (int i = 0; i < getListEventos().size(); i++) {
-                evento = (Evento) di.find(new Evento(), Integer.valueOf(getListEventos().get(i).getDescription()));
+                segEvento = (SegEvento) di.find(new SegEvento(), Integer.valueOf(getListEventos().get(i).getDescription()));
                 permissao.setModulo(modulo);
                 permissao.setRotina(rotina);
-                permissao.setEvento(evento);
+                permissao.setSegEvento(segEvento);
                 permissao.setCliente(c);
                 if (!di.save(permissao)) {
                     sucesso = false;
@@ -525,9 +525,9 @@ public class PermissaoBean implements Serializable {
     public List<SelectItem> getListEventos() {
         if (listEventos.isEmpty()) {
             DaoInterface di = new Dao();
-            List eventos = di.list(new Evento(), true);
-            for (int i = 0; i < eventos.size(); i++) {
-                listEventos.add(new SelectItem(i, ((Evento) eventos.get(i)).getDescricao(), Integer.toString(((Evento) eventos.get(i)).getId())));
+            List segEventos = di.list(new SegEvento(), true);
+            for (int i = 0; i < segEventos.size(); i++) {
+                listEventos.add(new SelectItem(i, ((SegEvento) segEventos.get(i)).getDescricao(), Integer.toString(((SegEvento) segEventos.get(i)).getId())));
             }
         }
         return listEventos;

@@ -1,5 +1,6 @@
 package br.com.rtools.sistema;
 
+import br.com.rtools.seguranca.Cliente;
 import br.com.rtools.seguranca.Rotina;
 import br.com.rtools.seguranca.Usuario;
 import br.com.rtools.utilitarios.DataHoje;
@@ -37,6 +38,9 @@ public class Email implements Serializable {
     private boolean confirmaRecebimento;
     @Column(name = "is_rascunho", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean rascunho;
+    @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
+    @ManyToOne
+    private Cliente cliente;
 
     public Email() {
         this.id = -1;
@@ -49,9 +53,10 @@ public class Email implements Serializable {
         this.mensagem = "";
         this.confirmaRecebimento = false;
         this.rascunho = false;
+        this.cliente = new Cliente();
     }
 
-    public Email(int id, Date data, String hora, Usuario usuario, Rotina rotina, EmailPrioridade emailPrioridade, String assunto, String mensagem, boolean confirmaRecebimento, boolean rascunho) {
+    public Email(int id, Date data, String hora, Usuario usuario, Rotina rotina, EmailPrioridade emailPrioridade, String assunto, String mensagem, boolean confirmaRecebimento, boolean rascunho, Cliente cliente) {
         this.id = id;
         this.data = data;
         this.hora = hora;
@@ -62,6 +67,7 @@ public class Email implements Serializable {
         this.mensagem = mensagem;
         this.confirmaRecebimento = confirmaRecebimento;
         this.rascunho = rascunho;
+        this.cliente = cliente;
     }
 
     public int getId() {
@@ -150,6 +156,14 @@ public class Email implements Serializable {
 
     public void setEmailPrioridade(EmailPrioridade emailPrioridade) {
         this.emailPrioridade = emailPrioridade;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 
 }

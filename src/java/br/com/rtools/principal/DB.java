@@ -22,10 +22,10 @@ public class DB {
     public EntityManager getEntityManager() {
         if (entidade == null) {
             if (!Sessions.exists("conexao")) {
-                //String clienteString = ((Cliente) Sessions.getObject("sessaoCliente")).getIdentifica();
-                Cliente cliente = servidor("ClinicaIntegrada");
+                String clienteString = ((Cliente) Sessions.getObject("sessaoCliente")).getIdentifica();
+                Cliente cliente = servidor(clienteString);
                 try {
-                    Map<String, String> properties = new HashMap<String, String>();
+                    Map<String, String> properties = new HashMap<>();
                     String jdbc_user = TopLinkProperties.JDBC_USER;
                     properties.put(TopLinkProperties.CACHE_TYPE_DEFAULT, CacheType.Full);
                     properties.put(jdbc_user, "postgres");
@@ -35,7 +35,7 @@ public class DB {
                     properties.put(TopLinkProperties.JDBC_URL, "jdbc:postgresql://" + cliente.getHost() + ":5432/" + cliente.getPersistence());
                     EntityManagerFactory emf = Persistence.createEntityManagerFactory(cliente.getPersistence(), properties);
                     String createTable = Strings.converterNullToString(Request.getParam("createTable"));
-                    if (createTable.equals("criar")) {
+                    if (!createTable.equals("criar")) {
                         properties.put(EntityManagerFactoryProvider.DDL_GENERATION, EntityManagerFactoryProvider.CREATE_ONLY);
                     }
                     entidade = emf.createEntityManager();
@@ -58,28 +58,16 @@ public class DB {
     public Cliente servidor(String clienteString) {
         Cliente cliente = new Cliente();
         String clienteName = cliente.getIdentifica();
-        if (clienteName.equals("Definir")) {
+        if (clienteName.equals("ClinicaIntegradaProducao")) {
             cliente.setCaminhoSistema(clienteString);
-            cliente.setPersistence(clienteString);
-            cliente.setHost("192.168.1.102");
-            cliente.setSenha("r#@tools");
-        } else if (clienteName.equals("Rtools")) {
-            cliente.setCaminhoSistema(clienteString);
-            cliente.setPersistence(clienteString);
-            cliente.setHost("192.168.1.102");
-            cliente.setSenha("r#@tools");
-        } else {
-            clienteString = "ClinicaIntegrada";
+            cliente.setPersistence("ClinicaIntegradaProducao");
             cliente.setHost("192.168.1.60");
             cliente.setSenha("989899");
-//            } else {
-//                if (cliente.equals("ServidoresRP")) {
-//                    configuracao.setHost("localhost");
-//                    configuracao.setSenha("989899");
-//                }
-//            }
-            cliente.setCaminhoSistema(clienteString);
-            cliente.setPersistence(clienteString);
+        } else {
+            cliente.setHost("192.168.1.60");
+            cliente.setSenha("989899");
+            cliente.setCaminhoSistema("ClinicaIntegrada");
+            cliente.setPersistence("ClinicaIntegradaProducao");
         }
         return cliente;
     }

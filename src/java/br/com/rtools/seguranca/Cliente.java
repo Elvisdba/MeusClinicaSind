@@ -2,6 +2,7 @@ package br.com.rtools.seguranca;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 import javax.persistence.*;
 
 @Entity
@@ -148,6 +149,73 @@ public class Cliente implements Serializable {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + this.id;
+        hash = 79 * hash + Objects.hashCode(this.nomeCliente);
+        hash = 79 * hash + Objects.hashCode(this.persistence);
+        hash = 79 * hash + Objects.hashCode(this.caminhoSistema);
+        hash = 79 * hash + Objects.hashCode(this.identifica);
+        hash = 79 * hash + this.idJuridica;
+        hash = 79 * hash + this.acessos;
+        hash = 79 * hash + Objects.hashCode(this.cadastro);
+        hash = 79 * hash + (this.ativo ? 1 : 0);
+        hash = 79 * hash + Objects.hashCode(this.host);
+        hash = 79 * hash + Objects.hashCode(this.senha);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Cliente other = (Cliente) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        if (!Objects.equals(this.nomeCliente, other.nomeCliente)) {
+            return false;
+        }
+        if (!Objects.equals(this.persistence, other.persistence)) {
+            return false;
+        }
+        if (!Objects.equals(this.caminhoSistema, other.caminhoSistema)) {
+            return false;
+        }
+        if (!Objects.equals(this.identifica, other.identifica)) {
+            return false;
+        }
+        if (this.idJuridica != other.idJuridica) {
+            return false;
+        }
+        if (this.acessos != other.acessos) {
+            return false;
+        }
+        if (!Objects.equals(this.cadastro, other.cadastro)) {
+            return false;
+        }
+        if (this.ativo != other.ativo) {
+            return false;
+        }
+        if (!Objects.equals(this.host, other.host)) {
+            return false;
+        }
+        if (!Objects.equals(this.senha, other.senha)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Cliente{" + "id=" + id + ", nomeCliente=" + nomeCliente + ", persistence=" + persistence + ", caminhoSistema=" + caminhoSistema + ", identifica=" + identifica + ", idJuridica=" + idJuridica + ", acessos=" + acessos + ", cadastro=" + cadastro + ", ativo=" + ativo + ", host=" + host + ", senha=" + senha + '}';
     }
 
 }

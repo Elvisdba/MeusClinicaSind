@@ -30,7 +30,7 @@ public class ChamadaPaginaBean implements Serializable {
     private boolean linkClicado = false;
     private String urlAtual = "";
     private String paginaDestino;
-    private List<MenuLinks> menuLinks = new ArrayList<MenuLinks>();
+    private List<MenuLinks> menuLinks = new ArrayList<>();
     private int nivelLink = 0;
     private int fimURL;
     private int iniURL;
@@ -43,7 +43,7 @@ public class ChamadaPaginaBean implements Serializable {
     private final int FINANCEIRO = 6;
 
     private boolean renderPesquisa = true;
-    private List<Rotina> listRotina = new ArrayList<Rotina>();
+    private List<Rotina> listRotina = new ArrayList<>();
 
     @PreDestroy
     public void destroy() {
@@ -209,11 +209,7 @@ public class ChamadaPaginaBean implements Serializable {
         Object object = null;
         try {
             object = this.getClass().getMethod(pagina).invoke(this);
-        } catch (IllegalAccessException e) {
-        } catch (IllegalArgumentException e) {
-        } catch (NoSuchMethodException e) {
-        } catch (SecurityException e) {
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException e) {
         }
         return object;
     }
@@ -429,20 +425,24 @@ public class ChamadaPaginaBean implements Serializable {
                 int nivel = 0;
                 switch (nivelLink) {
                     case 0:
-                        if (((String) Sessions.getString("indicaAcesso")).equals("local")) {
-                            limparMenuLinks(-1);
-                            menuLinks.add(new MenuLinks(0, "menuPrincipal", "Menu Principal", true));
-                            isNivel = false;
-                        } else if (((String) Sessions.getString("indicaAcesso")).equals("web")) {
-                            limparMenuLinks(-1);
-                            menuLinks.add(new MenuLinks(0, "menuPrincipalAcessoWeb", "Menu Principal", true));
-                            limparMenuLinks(-1);
-                            isNivel = false;
-                        } else if (((String) Sessions.getString("indicaAcesso")).equals("suporteWeb")) {
-                            menuLinks.add(new MenuLinks(0, "menuPrincipalSuporteWeb", "Menu Principal Suporte Web", true));
-                            isNivel = false;
+                        switch ((String) Sessions.getString("indicaAcesso")) {
+                            case "local":
+                                limparMenuLinks(-1);
+                                menuLinks.add(new MenuLinks(0, "menuPrincipal", "Menu Principal", true));
+                                isNivel = false;
+                                break;
+                            case "web":
+                                limparMenuLinks(-1);
+                                menuLinks.add(new MenuLinks(0, "menuPrincipalAcessoWeb", "Menu Principal", true));
+                                limparMenuLinks(-1);
+                                isNivel = false;
+                                break;
+                            case "suporteWeb":
+                                menuLinks.add(new MenuLinks(0, "menuPrincipalSuporteWeb", "Menu Principal Suporte Web", true));
+                                isNivel = false;
 //                            dtObject.setArgumento0("menuPrincipalSuporteWeb");
 //                            dtObjectLabel.setArgumento0("Menu Principal Suporte Web");
+                                break;
                         }
                         nivel = nivelLink;
                         nivelLink = 1;

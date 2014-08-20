@@ -5,11 +5,11 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "rot_eveno",
+@Table(name = "rot_evento",
         uniqueConstraints = @UniqueConstraint(columnNames = {"id_cliente", "id_grupo_evento", "ds_descricao"})
 )
-@NamedQuery(name = "Eventos.findAll", query = "SELECT Eve FROM Eventos AS Eve ORDER BY Eve.descricao ASC ")
-public class Eventos implements Serializable {
+@NamedQuery(name = "Evento.findAll", query = "SELECT Eve FROM Evento AS Eve ORDER BY Eve.descricao ASC ")
+public class Evento implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,25 +25,25 @@ public class Eventos implements Serializable {
     private String descricao;
     @Column(name = "ds_sigla", length = 30, nullable = true)
     private String sigla;
-    @Column(name = "is_ativo", columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean ativo;
+    @Column(name = "is_web", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean web;
 
-    public Eventos() {
+    public Evento() {
         this.id = -1;
         this.cliente = new Cliente();
         this.grupoEvento = new GrupoEvento();
         this.descricao = "";
         this.sigla = "";
-        this.ativo = false;
+        this.web = false;
     }
 
-    public Eventos(int id, Cliente cliente, GrupoEvento grupoEvento, String descricao, String sigla, boolean ativo) {
+    public Evento(int id, Cliente cliente, GrupoEvento grupoEvento, String descricao, String sigla, boolean web) {
         this.id = id;
         this.cliente = cliente;
         this.grupoEvento = grupoEvento;
         this.descricao = descricao;
         this.sigla = sigla;
-        this.ativo = ativo;
+        this.web = web;
     }
 
     public int getId() {
@@ -86,12 +86,12 @@ public class Eventos implements Serializable {
         this.sigla = sigla;
     }
 
-    public boolean isAtivo() {
-        return ativo;
+    public boolean isWeb() {
+        return web;
     }
 
-    public void setAtivo(boolean ativo) {
-        this.ativo = ativo;
+    public void setWeb(boolean web) {
+        this.web = web;
     }
 
 }

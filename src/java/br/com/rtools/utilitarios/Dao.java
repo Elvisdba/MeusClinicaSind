@@ -453,6 +453,11 @@ public class Dao extends DB implements DaoInterface {
         return list(name);
     }
 
+    public List listByCliente(Object className) {
+        String name = className.getClass().getSimpleName();
+        return listByCliente(name);
+    }
+
     /**
      * <p>
      * <strong>List</strong></p>
@@ -481,9 +486,29 @@ public class Dao extends DB implements DaoInterface {
         return result;
     }
 
+    public List listByCliente(String className) {
+        List result = new ArrayList();
+        String queryString = "SELECT OB FROM " + className + " AS OB WHERE OB.cliente.id = :cliente";
+        try {
+            Query qry = getEntityManager().createQuery(queryString);
+            qry.setParameter("cliente", SessaoCliente.get().getId());
+            List list = qry.getResultList();
+            if (!list.isEmpty()) {
+                result = qry.getResultList();
+            }
+        } catch (Exception e) {
+            Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
+        }
+        return result;
+    }
+
     @Override
     public List list(Object className, boolean order) {
         return list(className.getClass().getSimpleName(), order);
+    }
+
+    public List listByCliente(Object className, boolean order) {
+        return listByCliente(className.getClass().getSimpleName(), order);
     }
 
     /**
@@ -504,6 +529,36 @@ public class Dao extends DB implements DaoInterface {
     public List list(String className, boolean order) {
         try {
             Query query = getEntityManager().createNamedQuery(className + ".findAll");
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+            Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
+            return new ArrayList();
+        }
+        return new ArrayList();
+
+    }
+
+    /**
+     * <p>
+     * <strong>List by cliente</strong></p>
+     * <p>
+     * <strong>Exemplo:</strong> list("User", boolean (true or false)).</p>
+     *
+     * @param className (Nome do objeto String)
+     * @param order [Se o resultado deve ser ordenado (Verificar se a namedQuery
+     * esta na Classe/Entidade)]
+     *
+     * @author Bruno
+     *
+     * @return List
+     */
+    public List listByCliente(String className, boolean order) {
+        try {
+            Query query = getEntityManager().createNamedQuery(className + ".findAll");
+            query.setParameter("p1", SessaoCliente.get().getId());
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;

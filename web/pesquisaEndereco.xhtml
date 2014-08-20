@@ -35,7 +35,7 @@
                             <h:outputText value="CEP: " styleClass="fontePadraoNegrito"/>                            
                             <p:inputText id="idCEP" value="#{enderecoBean.endereco.cep}" size="10" onkeypress="if (event.keyCode === 13)
                                         PF('btnPesquisar').onclick();
-                                         " converter="#{thisNumber}">
+                                         " converter="#{thisNumber}" autocomplete="false">
                                 <p:ajax event="blur" update="@this" />
                             </p:inputText>
                             <p:commandButton widgetVar="btnPesquisar" action="#{enderecoBean.pesquisaCep}" value="Pesquisar" update="i_tbl"/>

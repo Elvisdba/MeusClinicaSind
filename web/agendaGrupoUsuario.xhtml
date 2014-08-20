@@ -15,8 +15,9 @@
             <ui:include src="templates/templatePrime.xhtml"/>
         </f:subview>
         <f:view>
+            <ui:include src="templates/templateStatus.xhtml"/>
             <p:panel styleClass="wrapper no-border">
-                <h:form id="form_agu">
+                <h:form id="form_agux">
                     <p:outputLabel value="Agenda Grupo Usuário" styleClass="fonteHeader"/>
                     <c:set scope="request" var="object" value="${agendaGrupoUsuarioBean.agendaGrupoUsuarios}"/>
                     <div class="clear"></div>                    
@@ -42,7 +43,7 @@
                             <p:commandButton icon="ui-icon-plus" action="#{agendaGrupoUsuarioBean.save()}" update="id_lista" title="Adicionar usuário ao grupo"/>
                         </h:panelGrid>
                         <h:panelGrid columns="1">
-                            <p:commandButton value="Novo" action="#{agendaGrupoUsuarioBean.clear()}" update=":form_agu:" />
+                            <p:commandButton value="Novo" action="#{agendaGrupoUsuarioBean.clear()}" update=":form_agux:" />
                         </h:panelGrid>
                     </p:panel>
                     <h:panelGrid styleClass="margin-top-max" id="id_lista">
@@ -51,7 +52,7 @@
                                 <p:outputLabel value="#{agendaGrupoUsuario.usuario.pessoa.nome}" />
                             </p:column>
                             <p:column styleClass="text-center" width="25">
-                                <p:commandButton icon="ui-icon-trash" action="#{agendaGrupoUsuarioBean.remove(agendaGrupoUsuario)}" update=":form_agu:"/>
+                                <p:commandButton icon="ui-icon-trash" action="#{agendaGrupoUsuarioBean.remove(agendaGrupoUsuario)}" update=":form_agux:"/>
                             </p:column>
                         </p:dataTable>
                     </h:panelGrid>

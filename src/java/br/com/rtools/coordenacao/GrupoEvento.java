@@ -10,7 +10,7 @@ import javax.persistence.*;
 )
 @NamedQueries({
     @NamedQuery(name = "GrupoEvento.findAll", query = "SELECT GE FROM GrupoEvento AS GE WHERE GE.cliente.id = :p1 ORDER BY GE.descricao ASC "),
-    @NamedQuery(name = "GrupoEvento.findName", query = "SELECT GE FROM GrupoEvento GE WHERE UPPER(GE.descricao) LIKE :pdescricao AND GE.cliente.id = :pcliente ORDER BY GE.descricao ASC ")
+    @NamedQuery(name = "GrupoEvento.findName", query = "SELECT GE FROM GrupoEvento GE WHERE UPPER(GE.descricao) LIKE :pdescricao AND GE.cliente.id = :p1 ORDER BY GE.descricao ASC ")
 })
 public class GrupoEvento implements Serializable {
 

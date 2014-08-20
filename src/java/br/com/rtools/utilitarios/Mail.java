@@ -4,6 +4,7 @@ import br.com.rtools.pessoa.Juridica;
 import br.com.rtools.seguranca.EmailMarketing;
 import br.com.rtools.seguranca.Registro;
 import br.com.rtools.seguranca.Usuario;
+import br.com.rtools.seguranca.controleUsuario.SessaoCliente;
 import br.com.rtools.sistema.Email;
 import br.com.rtools.sistema.EmailArquivo;
 import br.com.rtools.sistema.EmailPessoa;
@@ -183,6 +184,7 @@ public class Mail extends MailTemplate implements Serializable {
                             if (email.getUsuario().getId() == -1) {
                                 email.setUsuario((Usuario) Sessions.getObject("sessaoUsuario"));
                             }
+                            email.setCliente(SessaoCliente.get());
                             if (email.getEmailPrioridade() == null) {
                                 email.setEmailPrioridade((EmailPrioridade) di.find(new EmailPrioridade(), 1));
                             } else {

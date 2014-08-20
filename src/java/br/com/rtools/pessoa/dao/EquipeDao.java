@@ -1,55 +1,86 @@
 package br.com.rtools.pessoa.dao;
 
+import br.com.rtools.pessoa.Equipe;
 import br.com.rtools.principal.DB;
+import br.com.rtools.utilitarios.AnaliseString;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
 
 public class EquipeDao extends DB {
 
-    public List pesquisaPessoaFisica(String descricao, String por, String como, int funcaoEquipe, int cliente) {
+    public List pesquisaTodasEquipesPorCliente(String descricao, String por, String como, int funcaoEquipe, int cliente) {
         try {
-            String queryString = "SELECT E FROM Equipe AS E WHERE E.cliente.id = :cliente ORDER BY E.pessoa.nome";
-            if (por.equals("documento") || por.equals("nome")) {
-                switch (como) {
-                    case "P":
-                        descricao = "%" + descricao + "%";
-                        break;
-                    case "I":
-                        descricao = descricao + "%";
-                        break;
-                }
-                if (como.isEmpty()) {
-                    queryString += " AND UPPER(E.pessoa." + por + ") = " + descricao;
-                } else {
-                    queryString += " AND UPPER(E.pessoa." + por + ") LIKE " + descricao;
-                }
+            String queryString
+                    = "       SELECT E.*                                                "
+                    + "       FROM pes_equipe AS E                                      "
+                    + " INNER JOIN seg_cliente AS C ON C.id = E.id_cliente              "
+                    + " INNER JOIN pes_pessoa AS P ON P.id = E.id_pessoa                "
+                    + "      WHERE E.id_cliente = " + cliente;
+            switch (por) {
+                case "ds_cpf":
+                case "ds_nome":
+                    descricao = descricao.toUpperCase();
+                    if (por.equals("ds_cpf")) {
+                        por = "ds_documento";
+                    } else {
+                        descricao = AnaliseString.removerAcentos(descricao);
+                        descricao = descricao.replace("-", "");
+                        descricao = descricao.replace(".", "");
+                    }
+                    switch (como) {
+                        case "P":
+                            descricao = "%" + descricao + "%";
+                            break;
+                        case "I":
+                            descricao = descricao + "%";
+                            break;
+                    }
+                    if (como.isEmpty()) {
+                        queryString += " AND TRANSLATE(UPPER(P." + por + ")) = '" + descricao + "'";
+                    } else {
+                        queryString += " AND TRANSLATE(UPPER(P." + por + ")) LIKE '" + descricao + "'";
+                    }
+                    break;
+                case "ds_documento":
+                    switch (como) {
+                        case "P":
+                            descricao = "%" + descricao + "%";
+                            break;
+                        case "I":
+                            descricao = descricao + "%";
+                            break;
+                    }
+                    if (como.isEmpty()) {
+                        queryString += " AND UPPER(E.ds_documento) = '" + descricao + "'";
+                    } else {
+                        queryString += " AND UPPER(E.ds_documento) LIKE '" + descricao + "'";
+                    }
+                    break;
             }
             if (funcaoEquipe > 0) {
                 if (!queryString.isEmpty()) {
                     queryString += " AND ";
                 }
-                queryString += " UPPER(E.funcaoEquipe.id ";
+                queryString += " E.id_funcao_equipe = " + funcaoEquipe;
             }
-            Query query = getEntityManager().createQuery(queryString);
-            query.setParameter("cliente", cliente);
+            Query query = getEntityManager().createNativeQuery(queryString, Equipe.class);
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;
             }
         } catch (Exception e) {
-
+            return new ArrayList();
         }
         return new ArrayList();
     }
 
-    public boolean existeEquipe(int tipoAtendimento, int tipoDocumentoProfissao, int profissao, int cliente) {
+    public boolean existeEquipe(int funcaoEquipe, int pessoa, int cliente) {
         try {
-            Query query = getEntityManager().createQuery("SELECT FE FROM FuncaoEquipe AS FE WHERE FE.tipoAtendimento.id = :tipoAtendimento AND FE.tipoDocumentoProfissao.id = :tipoDocumentoProfissao  AND FE.profissao.id = :profissao  AND FE.cliente.id = :cliente ");
+            Query query = getEntityManager().createQuery("SELECT E FROM Equipe AS E WHERE E.funcaoEquipe.id = :funcaoEquipe AND E.pessoa.id = :pessoa AND E.cliente.id = :cliente ");
             query.setMaxResults(1);
-            query.setParameter("tipoAtendimento", tipoAtendimento);
-            query.setParameter("tipoDocumentoProfissao", tipoDocumentoProfissao);
-            query.setParameter("profissao", profissao);
+            query.setParameter("funcaoEquipe", funcaoEquipe);
+            query.setParameter("pessoa", pessoa);
             query.setParameter("cliente", cliente);
             List list = query.getResultList();
             if (!list.isEmpty()) {

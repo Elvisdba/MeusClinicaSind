@@ -2,6 +2,7 @@ package br.com.rtools.agenda;
 
 import br.com.rtools.seguranca.Usuario;
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,6 +21,7 @@ public class AgendaFavorito implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
     @JoinColumn(name = "id_agenda", referencedColumnName = "id", nullable = false)
     @ManyToOne

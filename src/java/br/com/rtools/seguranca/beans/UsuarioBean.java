@@ -6,7 +6,7 @@ import br.com.rtools.pessoa.Juridica;
 import br.com.rtools.pessoa.Pessoa;
 import br.com.rtools.seguranca.Cliente;
 import br.com.rtools.seguranca.Departamento;
-import br.com.rtools.seguranca.Evento;
+import br.com.rtools.seguranca.SegEvento;
 import br.com.rtools.seguranca.MacFilial;
 import br.com.rtools.seguranca.Modulo;
 import br.com.rtools.seguranca.Nivel;
@@ -17,7 +17,7 @@ import br.com.rtools.seguranca.Rotina;
 import br.com.rtools.seguranca.Usuario;
 import br.com.rtools.seguranca.UsuarioAcesso;
 import br.com.rtools.seguranca.controleUsuario.SessaoCliente;
-import br.com.rtools.seguranca.dao.EventoDao;
+import br.com.rtools.seguranca.dao.SegEventoDao;
 import br.com.rtools.seguranca.dao.ModuloDao;
 import br.com.rtools.seguranca.dao.PermissaoDao;
 import br.com.rtools.seguranca.dao.PermissaoDepartamentoDao;
@@ -312,7 +312,7 @@ public class UsuarioBean implements Serializable {
             } else {
                 listUsuario = usuarioDao.pesquisaTodosPorDescricao(descricaoPesquisa, SessaoCliente.get().getId());
             }
-            List<Usuario> list = new ArrayList<Usuario>();
+            List<Usuario> list = new ArrayList<>();
             if (filtrarUsuarioAtivo) {
                 for (int i = 0; i < listUsuario.size(); i++) {
                     if (listUsuario.get(i).getAtivo()) {
@@ -593,13 +593,13 @@ public class UsuarioBean implements Serializable {
 
     public List<SelectItem> getListEventos() {
         if (listEventos.isEmpty() && !listRotinas.isEmpty() && !listModulos.isEmpty()) {
-            EventoDao eventoDao = new EventoDao();
+            SegEventoDao eventoDao = new SegEventoDao();
             int idM = Integer.parseInt(listModulos.get(idModulo).getDescription());
             int idR = Integer.parseInt(listRotinas.get(idRotina).getDescription());
-            List<Evento> eventos = eventoDao.listaEventoPermissaoAgrupado(idM, idR, SessaoCliente.get().getId());
+            List<SegEvento> segEventos = eventoDao.listaEventoPermissaoAgrupado(idM, idR, SessaoCliente.get().getId());
             listEventos.clear();
-            for (int i = 0; i < eventos.size(); i++) {
-                listEventos.add(new SelectItem(i, eventos.get(i).getDescricao(), Integer.toString(eventos.get(i).getId())));
+            for (int i = 0; i < segEventos.size(); i++) {
+                listEventos.add(new SelectItem(i, segEventos.get(i).getDescricao(), Integer.toString(segEventos.get(i).getId())));
             }
         }
         return listEventos;
@@ -629,7 +629,7 @@ public class UsuarioBean implements Serializable {
                 if (di.save(usuarioAcesso)) {
                     di.commit();
                     Logger logger = new Logger();
-                    logger.save("Usuário Acesso - ID: " + usuarioAcesso.getId() + " - Usuário (" + usuarioAcesso.getUsuario().getId() + ") " + usuarioAcesso.getUsuario().getLogin() + " - Permissão (" + usuarioAcesso.getPermissao().getId() + ") [Módulo: " + usuarioAcesso.getPermissao().getModulo().getDescricao() + " - Rotina: " + usuarioAcesso.getPermissao().getRotina().getRotina() + " - Evento: " + usuarioAcesso.getPermissao().getEvento().getDescricao() + "]");
+                    logger.save("Usuário Acesso - ID: " + usuarioAcesso.getId() + " - Usuário (" + usuarioAcesso.getUsuario().getId() + ") " + usuarioAcesso.getUsuario().getLogin() + " - Permissão (" + usuarioAcesso.getPermissao().getId() + ") [Módulo: " + usuarioAcesso.getPermissao().getModulo().getDescricao() + " - Rotina: " + usuarioAcesso.getPermissao().getRotina().getRotina() + " - Evento: " + usuarioAcesso.getPermissao().getSegEvento().getDescricao() + "]");
                     Messages.info("Sucesso", "Permissão adicionada");
                 } else {
                     di.rollback();
@@ -688,14 +688,14 @@ public class UsuarioBean implements Serializable {
         DaoInterface di = new Dao();
         di.openTransaction();
         Logger logger = new Logger();
-        String beforeUpdate = "Usuário Acesso - ID: " + ua.getId() + " - Usuário (" + ua.getUsuario().getId() + ") " + ua.getUsuario().getLogin() + " - Permissão (" + ua.getPermissao().getId() + ") [Módulo: " + ua.getPermissao().getModulo().getDescricao() + " - Rotina: " + ua.getPermissao().getRotina().getRotina() + " - Evento: " + ua.getPermissao().getEvento().getDescricao() + "] - Permite:" + ua.isPermite();
+        String beforeUpdate = "Usuário Acesso - ID: " + ua.getId() + " - Usuário (" + ua.getUsuario().getId() + ") " + ua.getUsuario().getLogin() + " - Permissão (" + ua.getPermissao().getId() + ") [Módulo: " + ua.getPermissao().getModulo().getDescricao() + " - Rotina: " + ua.getPermissao().getRotina().getRotina() + " - Evento: " + ua.getPermissao().getSegEvento().getDescricao() + "] - Permite:" + ua.isPermite();
         if (ua.isPermite()) {
             ua.setPermite(false);
         } else {
             ua.setPermite(true);
         }
         if (di.update(ua)) {
-            logger.update(beforeUpdate, "Usuário Acesso - ID: " + ua.getId() + " - Usuário (" + ua.getUsuario().getId() + ") " + ua.getUsuario().getLogin() + " - Permissão (" + ua.getPermissao().getId() + ") [Módulo: " + ua.getPermissao().getModulo().getDescricao() + " - Rotina: " + ua.getPermissao().getRotina().getRotina() + " - Evento: " + ua.getPermissao().getEvento().getDescricao() + "] - Permite:" + ua.isPermite());
+            logger.update(beforeUpdate, "Usuário Acesso - ID: " + ua.getId() + " - Usuário (" + ua.getUsuario().getId() + ") " + ua.getUsuario().getLogin() + " - Permissão (" + ua.getPermissao().getId() + ") [Módulo: " + ua.getPermissao().getModulo().getDescricao() + " - Rotina: " + ua.getPermissao().getRotina().getRotina() + " - Evento: " + ua.getPermissao().getSegEvento().getDescricao() + "] - Permite:" + ua.isPermite());
             di.commit();
             Messages.info("Sucesso", "Permissão de acesso atualizada");
             listUsuarioAcesso.clear();
@@ -714,7 +714,7 @@ public class UsuarioBean implements Serializable {
         if (di.delete(ua)) {
             di.commit();
             Logger logger = new Logger();
-            logger.delete("Usuário Acesso - ID: " + ua.getId() + " - Usuário (" + ua.getUsuario().getId() + ") " + ua.getUsuario().getLogin() + " - Permissão (" + ua.getPermissao().getId() + ") [Módulo: " + ua.getPermissao().getModulo().getDescricao() + " - Rotina: " + ua.getPermissao().getRotina().getRotina() + " - Evento: " + ua.getPermissao().getEvento().getDescricao() + "]");
+            logger.delete("Usuário Acesso - ID: " + ua.getId() + " - Usuário (" + ua.getUsuario().getId() + ") " + ua.getUsuario().getLogin() + " - Permissão (" + ua.getPermissao().getId() + ") [Módulo: " + ua.getPermissao().getModulo().getDescricao() + " - Rotina: " + ua.getPermissao().getRotina().getRotina() + " - Evento: " + ua.getPermissao().getSegEvento().getDescricao() + "]");
             listUsuarioAcesso.clear();
             Messages.info("Sucesso", "Permissão removida");
         } else {

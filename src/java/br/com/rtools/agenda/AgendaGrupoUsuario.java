@@ -1,7 +1,9 @@
 package br.com.rtools.agenda;
 
+import br.com.rtools.seguranca.Cliente;
 import br.com.rtools.seguranca.Usuario;
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,18 +18,21 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "age_grupo_usuario",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"id_grupo_agenda", "id_usuario"})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"id_cliente", "id_grupo_agenda", "id_usuario"})
 )
 @NamedQueries({
-    @NamedQuery(name = "AgendaGrupoUsuario.findGrupoAgenda", query = "SELECT AGU FROM AgendaGrupoUsuario AS AGU WHERE AGU.grupoAgenda.id = :p1 ORDER BY AGU.grupoAgenda.descricao ASC, AGU.usuario.login ASC"),
-    @NamedQuery(name = "AgendaGrupoUsuario.existGrupoUsuario", query = "SELECT AGU FROM AgendaGrupoUsuario AS AGU WHERE AGU.grupoAgenda.id = :p1 AND AGU.usuario.id = :p2")
+    @NamedQuery(name = "AgendaGrupoUsuario.findGrupoAgenda", query = "SELECT AGU FROM AgendaGrupoUsuario AS AGU WHERE AGU.grupoAgenda.id = :p1 AND AGU.cliente.id = :p2 ORDER BY AGU.grupoAgenda.descricao ASC, AGU.usuario.login ASC"),
+    @NamedQuery(name = "AgendaGrupoUsuario.existGrupoUsuario", query = "SELECT AGU FROM AgendaGrupoUsuario AS AGU WHERE AGU.grupoAgenda.id = :p1 AND AGU.usuario.id = :p2 AND AGU.cliente.id = :p3")
 })
 public class AgendaGrupoUsuario implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
+    @Column(name = "id")
     private int id;
+    @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
+    @ManyToOne
+    private Cliente cliente;
     @JoinColumn(name = "id_grupo_agenda", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private GrupoAgenda grupoAgenda;
@@ -55,6 +60,14 @@ public class AgendaGrupoUsuario implements Serializable {
         this.id = id;
     }
 
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
     public GrupoAgenda getGrupoAgenda() {
         return grupoAgenda;
     }
@@ -72,16 +85,12 @@ public class AgendaGrupoUsuario implements Serializable {
     }
 
     @Override
-    public String toString() {
-        return "AgendaGrupoUsuario{" + "id=" + id + ", grupoAgenda=" + grupoAgenda + ", usuario=" + usuario + '}';
-    }
-
-    @Override
     public int hashCode() {
         int hash = 7;
-        hash = 59 * hash + this.id;
-        hash = 59 * hash + (this.grupoAgenda != null ? this.grupoAgenda.hashCode() : 0);
-        hash = 59 * hash + (this.usuario != null ? this.usuario.hashCode() : 0);
+        hash = 17 * hash + this.id;
+        hash = 17 * hash + Objects.hashCode(this.cliente);
+        hash = 17 * hash + Objects.hashCode(this.grupoAgenda);
+        hash = 17 * hash + Objects.hashCode(this.usuario);
         return hash;
     }
 
@@ -97,13 +106,21 @@ public class AgendaGrupoUsuario implements Serializable {
         if (this.id != other.id) {
             return false;
         }
-        if (this.grupoAgenda != other.grupoAgenda && (this.grupoAgenda == null || !this.grupoAgenda.equals(other.grupoAgenda))) {
+        if (!Objects.equals(this.cliente, other.cliente)) {
             return false;
         }
-        if (this.usuario != other.usuario && (this.usuario == null || !this.usuario.equals(other.usuario))) {
+        if (!Objects.equals(this.grupoAgenda, other.grupoAgenda)) {
+            return false;
+        }
+        if (!Objects.equals(this.usuario, other.usuario)) {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "AgendaGrupoUsuario{" + "id=" + id + ", cliente=" + cliente + ", grupoAgenda=" + grupoAgenda + ", usuario=" + usuario + '}';
     }
 
 }

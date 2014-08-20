@@ -1,8 +1,10 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:cc="http://java.sun.com/jsf/composite">
     <p:ajaxStatus id="i_status" onstart="PF('i_dlg_modal').show();" onsuccess="PF('i_dlg_modal').hide();" onerror="PF('i_dlg_err').show();" />
     <p:dialog modal="true" widgetVar="i_dlg_modal" header="Status" draggable="false" closable="false" resizable="false">
         <h:outputLabel value="Carregando ... Aguarde" />

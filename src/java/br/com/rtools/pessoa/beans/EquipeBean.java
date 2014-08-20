@@ -2,36 +2,63 @@ package br.com.rtools.pessoa.beans;
 
 import br.com.rtools.logSistema.Logger;
 import br.com.rtools.pessoa.Equipe;
+import br.com.rtools.pessoa.Fisica;
 import br.com.rtools.pessoa.FuncaoEquipe;
-import br.com.rtools.pessoa.Pessoa;
+import br.com.rtools.pessoa.TipoDocumentoProfissao;
 import br.com.rtools.pessoa.dao.EquipeDao;
-import br.com.rtools.principal.DB;
+import br.com.rtools.pessoa.dao.FuncaoEquipeDao;
+import br.com.rtools.pessoa.dao.TipoDocumentoProfissaoDao;
+import br.com.rtools.seguranca.controleUsuario.SessaoCliente;
 import br.com.rtools.utilitarios.Dao;
+import br.com.rtools.utilitarios.Mask;
+import br.com.rtools.utilitarios.Messages;
 import br.com.rtools.utilitarios.Sessions;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.model.SelectItem;
-import javax.persistence.Query;
 
 @ManagedBean
 @SessionScoped
-public class EquipeBean {
+public class EquipeBean implements Serializable {
 
     private Equipe equipe;
     private List<Equipe> listEquipe;
     private List<SelectItem> listFuncaoEquipe;
+    private int idTipoAtendimento;
     private int idFuncaoEquipe;
+    private String documento;
+    private String descricaoPesquisa;
+    private String porPesquisa;
+    private String comoPesquisa;
+    private String tipoDocumentoProfissao;
+    private String tipoAtendimento;
+    private List<SelectItem> listTipoDocumentoProfissao;
+    private int idTipoDocumentoProfissao;
+    private String maskTipoAtendimento;
 
     @PostConstruct
     public void init() {
         equipe = new Equipe();
+        equipe.setCadastro(new Date());
         listEquipe = new ArrayList<>();
         listFuncaoEquipe = new ArrayList<>();
+        listTipoDocumentoProfissao = new ArrayList<>();
+        idTipoAtendimento = 0;
         idFuncaoEquipe = 0;
+        documento = "";
+        descricaoPesquisa = "";
+        porPesquisa = "ds_nome";
+        comoPesquisa = "";
+        tipoDocumentoProfissao = "";
+        tipoAtendimento = "";
+        idTipoDocumentoProfissao = 0;
+        maskTipoAtendimento = "";
     }
 
     @PreDestroy
@@ -45,85 +72,79 @@ public class EquipeBean {
     }
 
     public void save() {
-//        Dao dao = new Dao();
-//        if (listTipoDocumentoProfissao.isEmpty()) {
-//            Messages.warn("Validação", "Cadastrar tipo de documento profissão!");
-//            return;
-//        }
-//        equipe.setTipoDocumentoProfissao((TipoDocumentoProfissao) dao.find(new TipoDocumentoProfissao(), Integer.parseInt(listTipoDocumentoProfissao.get(idTipoDocumentoProfissao).getDescription())));
-//        if (listTipoAtendimento.isEmpty()) {
-//            Messages.warn("Validação", "Cadastrar tipo de atendimento!");
-//            return;
-//        }
-//        equipe.setTipoAtendimento((TipoAtendimento) dao.find(new TipoAtendimento(), Integer.parseInt(listTipoAtendimento.get(idTipoAtendimento).getDescription())));
-//        if (listProfissao.isEmpty()) {
-//            Messages.warn("Validação", "Cadastrar tipo de atendimento!");
-//            return;
-//        }
-//        equipe.setProfissao((Profissao) dao.find(new Profissao(), Integer.parseInt(listProfissao.get(idProfissao).getDescription())));
-//        Logger logger = new Logger();
-//        EquipeDao equipeDao = new EquipeDao();
-//        if (equipeDao.existeEquipe(equipe.getTipoAtendimento().getId(), equipe.getTipoDocumentoProfissao().getId(), equipe.getProfissao().getId(), SessaoCliente.get().getId())) {
-//            Messages.warn("Validação", "Função equipe já cadastrada!");
-//            return;
-//        }
-//        if (equipe.getId() == -1) {
-//            equipe.setCliente(SessaoCliente.get());
-//            if (dao.save(equipe, true)) {
-//                Messages.info("Sucesso", "Registro adicionado");
-//                logger.save(
-//                        " ID: " + equipe.getId()
-//                        + " - Profissão: [" + equipe.getProfissao().getId() + "]" + equipe.getProfissao().getProfissao()
-//                        + " - Tipo Documento: [" + equipe.getTipoDocumentoProfissao().getId() + "]" + equipe.getTipoDocumentoProfissao().getDescricao()
-//                        + " - Tipo Atendimento: [" + equipe.getTipoAtendimento().getId() + "]" + equipe.getTipoAtendimento().getDescricao()
-//                );
-//                clear();
-//            } else {
-//                Messages.warn("Erro", "Erro ao adicionar registro!");
-//            }
-//        } else {
-//            Equipe fe = (Equipe) dao.find(equipe);
-//            String beforeUpdate = ""
-//                    + " ID: " + fe.getId()
-//                    + " - Profissão: [" + fe.getProfissao().getId() + "]" + fe.getProfissao().getProfissao()
-//                    + " - Tipo Documento: [" + fe.getTipoDocumentoProfissao().getId() + "]" + fe.getTipoDocumentoProfissao().getDescricao()
-//                    + " - Tipo Atendimento: [" + fe.getTipoAtendimento().getId() + "]" + fe.getTipoAtendimento().getDescricao();
-//            if (dao.update(equipe, true)) {
-//                Messages.info("Sucesso", "Registro atualizado");
-//                logger.update(beforeUpdate,
-//                        " ID: " + equipe.getId()
-//                        + " - Profissão: [" + equipe.getProfissao().getId() + "]" + equipe.getProfissao().getProfissao()
-//                        + " - Tipo Documento: [" + equipe.getTipoDocumentoProfissao().getId() + "]" + equipe.getTipoDocumentoProfissao().getDescricao()
-//                        + " - Tipo Atendimento: [" + equipe.getTipoAtendimento().getId() + "]" + equipe.getTipoAtendimento().getDescricao()
-//                );
-//                clear();
-//            } else {
-//                Messages.warn("Erro", "Erro ao atualizar registro!");
-//            }
-//        }
+        Dao dao = new Dao();
+        if (listFuncaoEquipe.isEmpty()) {
+            Messages.warn("Validação", "Cadastrar funções para equipe!");
+            return;
+        }
+        equipe.setFuncaoEquipe((FuncaoEquipe) dao.find(new FuncaoEquipe(), Integer.parseInt(listFuncaoEquipe.get(idFuncaoEquipe).getDescription())));
+        Logger logger = new Logger();
+        if (equipe.getId() == -1) {
+            EquipeDao equipeDao = new EquipeDao();
+            if (equipeDao.existeEquipe(equipe.getFuncaoEquipe().getId(), equipe.getPessoa().getId(), SessaoCliente.get().getId())) {
+                Messages.warn("Validação", "Pessoa equipe já cadastrada para esta função!");
+                return;
+            }
+            equipe.setCliente(SessaoCliente.get());
+            if (dao.save(equipe, true)) {
+                Messages.info("Sucesso", "Registro adicionado");
+                logger.save(
+                        " ID: " + equipe.getId()
+                        + " - Pessoa: [" + equipe.getPessoa().getId() + "]" + equipe.getPessoa().getNome()
+                        + " - Função Equipe: [" + equipe.getFuncaoEquipe().getId() + "]" + equipe.getFuncaoEquipe().getProfissao().getProfissao()
+                        + " - Documento: " + equipe.getDocumento()
+                        + " - Ativo: " + equipe.getAtivo()
+                );
+                listEquipe.clear();
+            } else {
+                Messages.warn("Erro", "Erro ao adicionar registro!");
+            }
+        } else {
+            Equipe e = (Equipe) dao.find(equipe);
+            String beforeUpdate = ""
+                    + " ID: " + e.getId()
+                    + " - Pessoa: [" + e.getPessoa().getId() + "]" + equipe.getPessoa().getNome()
+                    + " - Função Equipe: [" + e.getFuncaoEquipe().getId() + "]" + equipe.getFuncaoEquipe().getProfissao().getProfissao()
+                    + " - Documento: " + e.getDocumento()
+                    + " - Ativo: " + e.getAtivo();
+            if (dao.update(equipe, true)) {
+                Messages.info("Sucesso", "Registro atualizado");
+                logger.update(beforeUpdate,
+                        " ID: " + equipe.getId()
+                        + " - Pessoa: [" + equipe.getPessoa().getId() + "]" + equipe.getPessoa().getNome()
+                        + " - Função Equipe: [" + equipe.getFuncaoEquipe().getId() + "]" + equipe.getFuncaoEquipe().getProfissao().getProfissao()
+                        + " - Documento: " + equipe.getDocumento()
+                        + " - Ativo: " + equipe.getAtivo()
+                );
+                listEquipe.clear();
+            } else {
+                Messages.warn("Erro", "Erro ao atualizar registro!");
+            }
+        }
     }
 
     public void delete() {
         Dao dao = new Dao();
         Logger logger = new Logger();
-//        if (equipe.getId() != -1) {
-//            if (dao.delete(equipe, true)) {
-//                Messages.info("Sucesso", "Registro removido");
-//                logger.delete(
-//                        " ID: " + equipe.getId()
-//                        + " - Profissão: [" + equipe.getProfissao().getId() + "]" + equipe.getProfissao().getProfissao()
-//                        + " - Tipo Documento: [" + equipe.getTipoDocumentoProfissao().getId() + "]" + equipe.getTipoDocumentoProfissao().getDescricao()
-//                        + " - Tipo Atendimento: [" + equipe.getTipoAtendimento().getId() + "]" + equipe.getTipoAtendimento().getDescricao()
-//                );
-//                clear();
-//            } else {
-//                Messages.warn("Erro", "Erro ao remover registro!");
-//            }
-//        }
+        if (equipe.getId() != -1) {
+            if (dao.delete(equipe, true)) {
+                Messages.info("Sucesso", "Registro removido");
+                logger.delete(
+                        " ID: " + equipe.getId()
+                        + " - Pessoa: [" + equipe.getPessoa().getId() + "]" + equipe.getPessoa().getNome()
+                        + " - Função Equipe: [" + equipe.getFuncaoEquipe().getId() + "]" + equipe.getFuncaoEquipe().getProfissao().getProfissao()
+                        + " - Documento: " + equipe.getDocumento()
+                        + " - Ativo: " + equipe.getAtivo()
+                );
+                clear();
+            } else {
+                Messages.warn("Erro", "Erro ao remover registro!");
+            }
+        }
 
     }
 
-    public void edit(Equipe e) {
+    public String edit(Equipe e) {
         equipe = e;
         for (int i = 0; i < listFuncaoEquipe.size(); i++) {
             if (equipe.getFuncaoEquipe().getId() == Integer.parseInt(listFuncaoEquipe.get(i).getDescription())) {
@@ -131,26 +152,13 @@ public class EquipeBean {
                 break;
             }
         }
+        Sessions.put("linkClicado", true);
+        return "equipe";
     }
 
     public Equipe getEquipe() {
-        DB db = new DB();
-        String sql = "SELECT p.* FROM pes_pessoa as p WHERE p.id = 1 ";
-        Query query = db.getEntityManager().createNativeQuery(sql, Pessoa.class);
-        //query.setParameter(1, 1);
-        Pessoa pessoa = (Pessoa) query.getSingleResult();
-//ReadAllQuery query = new ReadAllQuery();
-// Usuario usuario = new Usuario();
-// usuario.setLogin("a");
-// query.setExampleObject(usuario);
-// QueryByExamplePolicy policy = new QueryByExamplePolicy();
-// policy.addSpecialOperation(String.class, "like");
-// policy.addSpecialOperation(Integer.class, "greaterThan");
-// policy.alwaysIncludeAttribute(Employee.class, "salary");
-// query.setQueryByExamplePolicy(policy);
-// Vector results = (Vector) session.executeQuery(query);        
         if (Sessions.exists("fisicaPesquisa")) {
-            equipe.setPessoa((Pessoa) Sessions.getObject("fisicaPesquisa", true));
+            equipe.setPessoa(((Fisica) Sessions.getObject("fisicaPesquisa", true)).getPessoa());
         }
         return equipe;
     }
@@ -162,7 +170,7 @@ public class EquipeBean {
     public List<Equipe> getListEquipe() {
         if (listEquipe.isEmpty()) {
             EquipeDao equipeDao = new EquipeDao();
-            //listEquipe = equipeDao.pesquisaTodasEquipesPorCliente(String descricaoPesquisa, SessaoCliente.get().getId());
+            listEquipe = equipeDao.pesquisaTodasEquipesPorCliente(descricaoPesquisa, porPesquisa, comoPesquisa, 0, SessaoCliente.get().getId());
         }
         return listEquipe;
     }
@@ -173,10 +181,10 @@ public class EquipeBean {
 
     public List<SelectItem> getListFuncaoEquipe() {
         if (listFuncaoEquipe.isEmpty()) {
-            Dao dao = new Dao();
-            List<FuncaoEquipe> list = (List<FuncaoEquipe>) dao.list(new FuncaoEquipe(), true);
+            FuncaoEquipeDao funcaoEquipeDao = new FuncaoEquipeDao();
+            List<FuncaoEquipe> list = (List<FuncaoEquipe>) funcaoEquipeDao.pesquisaTodasFuncaoEquipePorCliente(SessaoCliente.get().getId());
             for (int i = 0; i < list.size(); i++) {
-                listFuncaoEquipe.add(new SelectItem(i, list.get(i).getTipoAtendimento().getDescricao() + " - " + list.get(i).getTipoDocumentoProfissao().getDescricao() + " - " + list.get(i).getProfissao(), "" + list.get(i).getId()));
+                listFuncaoEquipe.add(new SelectItem(i, list.get(i).getProfissao().getProfissao(), "" + list.get(i).getId()));
             }
         }
         return listFuncaoEquipe;
@@ -192,6 +200,157 @@ public class EquipeBean {
 
     public void setIdFuncaoEquipe(int idFuncaoEquipe) {
         this.idFuncaoEquipe = idFuncaoEquipe;
+    }
+
+    public String getMask() {
+        if (!listFuncaoEquipe.isEmpty()) {
+            Dao dao = new Dao();
+            return ((FuncaoEquipe) dao.find(new FuncaoEquipe(), Integer.parseInt(listFuncaoEquipe.get(idFuncaoEquipe).getDescription()))).getTipoDocumentoProfissao().getMascara();
+        }
+        return "";
+    }
+
+    public int getIdTipoAtendimento() {
+        return idTipoAtendimento;
+    }
+
+    public void setIdTipoAtendimento(int idTipoAtendimento) {
+        this.idTipoAtendimento = idTipoAtendimento;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public void setDocumento(String documento) {
+        this.documento = documento;
+    }
+
+    public void acaoPesquisaInicial() {
+        setComoPesquisa("I");
+        listEquipe.clear();
+    }
+
+    public void acaoPesquisaParcial() {
+        setComoPesquisa("P");
+        listEquipe.clear();
+    }
+
+    public String getDescricaoPesquisa() {
+        return descricaoPesquisa;
+    }
+
+    public void setDescricaoPesquisa(String descricaoPesquisa) {
+        this.descricaoPesquisa = descricaoPesquisa;
+    }
+
+    public String getPorPesquisa() {
+        return porPesquisa;
+    }
+
+    public void setPorPesquisa(String porPesquisa) {
+        this.porPesquisa = porPesquisa;
+    }
+
+    public String getComoPesquisa() {
+        return comoPesquisa;
+    }
+
+    public void setComoPesquisa(String comoPesquisa) {
+        this.comoPesquisa = comoPesquisa;
+    }
+
+    public String getFindMask() {
+        String mask = porPesquisa;
+        if (porPesquisa.equals("ds_cpf")) {
+            mask = "cpf";
+        }
+        return Mask.getMascaraPesquisa(mask, true);
+    }
+
+    public String getTipoDocumentoProfissao() {
+        Dao dao = new Dao();
+        FuncaoEquipe fe = (FuncaoEquipe) dao.find(new FuncaoEquipe(), Integer.parseInt(listFuncaoEquipe.get(idFuncaoEquipe).getDescription()));
+        if (fe != null) {
+            tipoDocumentoProfissao = fe.getTipoDocumentoProfissao().getDescricao();
+        } else {
+            tipoDocumentoProfissao = "";
+        }
+        return tipoDocumentoProfissao;
+    }
+
+    public void setTipoDocumentoProfissao(String tipoDocumentoProfissao) {
+        this.tipoDocumentoProfissao = tipoDocumentoProfissao;
+    }
+
+    public String getTipoAtendimento() {
+        Dao dao = new Dao();
+        FuncaoEquipe fe = (FuncaoEquipe) dao.find(new FuncaoEquipe(), Integer.parseInt(listFuncaoEquipe.get(idFuncaoEquipe).getDescription()));
+        if (fe != null) {
+            if (fe.getTipoAtendimento() != null) {
+                tipoAtendimento = fe.getTipoAtendimento().getDescricao();
+            } else {
+                tipoAtendimento = "NENHUM";
+            }
+        } else {
+            tipoAtendimento = "NENHUM";
+        }
+        return tipoAtendimento;
+    }
+
+    public void setTipoAtendimento(String tipoAtendimento) {
+        this.tipoAtendimento = tipoAtendimento;
+    }
+
+    public List<SelectItem> getListTipoDocumentoProfissao() {
+        if (listTipoDocumentoProfissao.isEmpty()) {
+            listTipoDocumentoProfissao.clear();
+            TipoDocumentoProfissaoDao tipoDocumentoProfissaoDao = new TipoDocumentoProfissaoDao();
+            List list = (List) tipoDocumentoProfissaoDao.pesquisaTipoDocumentoProfissaoPorEquipeAgrupado();
+            int i = 0;
+            listTipoDocumentoProfissao.add(new SelectItem("Nome", "Nome", "ds_nome"));
+            for (i = 0; i < list.size(); i++) {
+                listTipoDocumentoProfissao.add(new SelectItem(list.get(i).toString(), list.get(i).toString(), "" + list.get(i).toString()));
+            }
+        }
+        return listTipoDocumentoProfissao;
+    }
+
+    public void setListTipoDocumentoProfissao(List<SelectItem> listTipoDocumentoProfissao) {
+        this.listTipoDocumentoProfissao = listTipoDocumentoProfissao;
+    }
+
+    public int getIdTipoDocumentoProfissao() {
+        return idTipoDocumentoProfissao;
+    }
+
+    public void setIdTipoDocumentoProfissao(int idTipoDocumentoProfissao) {
+        this.idTipoDocumentoProfissao = idTipoDocumentoProfissao;
+    }
+
+    public String getMaskTipoAtendimento() {
+        if (!listTipoDocumentoProfissao.isEmpty()) {
+            if (!porPesquisa.equals("ds_nome")) {
+                if (porPesquisa != null) {
+                    TipoDocumentoProfissaoDao tipoDocumentoProfissaoDao = new TipoDocumentoProfissaoDao();
+                    TipoDocumentoProfissao tdp1 = tipoDocumentoProfissaoDao.pesquisaTipoDocumentoProfissaoPorDescricao(porPesquisa);
+                    if (tipoDocumentoProfissao != null) {
+                        maskTipoAtendimento = tdp1.getMascara();
+                    } else {
+                        maskTipoAtendimento = "";
+                    }
+                } else {
+                    maskTipoAtendimento = "";
+                }
+            } else {
+                maskTipoAtendimento = "";
+            }
+        }
+        return maskTipoAtendimento;
+    }
+
+    public void setMaskTipoAtendimento(String maskTipoAtendimento) {
+        this.maskTipoAtendimento = maskTipoAtendimento;
     }
 
 }
