@@ -51,5 +51,9 @@ function phoneMaskHandler(event) {
     }
 }
 
-
+function selectInputText(setthis) {
+    setthis.focus();
+    setthis.select();
+    return false;
+}    
     
