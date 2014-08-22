@@ -1,13 +1,15 @@
+package br.com.clinicaintegrada.coordenacao.beans;
 
-import br.com.rtools.coordenacao.Evento;
-import br.com.rtools.coordenacao.GrupoEvento;
-import br.com.rtools.coordenacao.bao.EventoDao;
-import br.com.rtools.logSistema.Logger;
-import br.com.rtools.pessoa.Profissao;
-import br.com.rtools.seguranca.controleUsuario.SessaoCliente;
-import br.com.rtools.utilitarios.Dao;
-import br.com.rtools.utilitarios.Messages;
-import br.com.rtools.utilitarios.Sessions;
+
+import br.com.clinicaintegrada.coordenacao.Evento;
+import br.com.clinicaintegrada.coordenacao.GrupoEvento;
+import br.com.clinicaintegrada.coordenacao.dao.EventoDao;
+import br.com.clinicaintegrada.logSistema.Logger;
+import br.com.clinicaintegrada.pessoa.Profissao;
+import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
+import br.com.clinicaintegrada.utils.Dao;
+import br.com.clinicaintegrada.utils.Messages;
+import br.com.clinicaintegrada.utils.Sessions;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
