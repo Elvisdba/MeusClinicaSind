@@ -29,7 +29,13 @@
                         <div class="clear"></div>
                         <h:form id="form_u">
                             <c:set scope="request" var="object" value="${usuarioBean.usuario}" id="idObject"/>
-                            <p:panel header="Usuário">
+                            <p:panel styleClass="panel_admin">
+                                <f:facet name="header">
+                                    <h:panelGrid columns="2">
+                                        <p:outputLabel value="Usuário" rendered="#{!usuarioBean.usuario.administrador}"/>
+                                        <p:button icon="ui-icon-star" value="Administrador" rendered="#{usuarioBean.usuario.administrador}" title="Este usuário tem permissões especiais" style="background: greenyellow"/>
+                                    </h:panelGrid>
+                                </f:facet>
                                 <h:panelGrid columns="2" id="i_panel_user">
                                     <h:column>                            
                                         <p:commandButton id="idPesquisaPessoa" icon="ui-icon-search" onclick="PF('dlg_pesquisa_pessoa').show()" title="Pesquisar Pessoa"/>
@@ -94,8 +100,15 @@
                                     <h:column>
                                     </h:column>
                                     <h:column>
-                                        <p:selectBooleanCheckbox id="idAtivaUsuario"  value="#{usuarioBean.usuario.ativo}" itemLabel="Ativo?">
+                                        <p:selectBooleanCheckbox id="idAtivaUsuario"  value="#{usuarioBean.usuario.ativo}" itemLabel="Ativo">
                                             <p:ajax event="change" update="idAtivaUsuario" />
+                                        </p:selectBooleanCheckbox>
+                                    </h:column>                        
+                                    <h:column>
+                                    </h:column>
+                                    <h:column>
+                                        <p:selectBooleanCheckbox id="idAcessoExterno"  value="#{usuarioBean.usuario.acessoExterno}" itemLabel="Acesso externo">
+                                            <p:ajax event="change" update="idAcessoExterno" />
                                         </p:selectBooleanCheckbox>
                                     </h:column>                        
                                 </h:panelGrid>
@@ -119,12 +132,12 @@
                                             <p:outputLabel value="Departamento" />
                                             <p:outputLabel value="Nível" />
                                             <h:column />
-                                            <p:selectOneMenu value="#{usuarioBean.idDepartamento}" id="idSelDepto">
+                                            <h:selectOneMenu value="#{usuarioBean.idDepartamento}" id="idSelDepto">
                                                 <f:selectItems value="#{usuarioBean.listDepartamentos}"/>
-                                            </p:selectOneMenu>
-                                            <p:selectOneMenu value="#{usuarioBean.idNivel}" id="idSelNivel">
+                                            </h:selectOneMenu>
+                                            <h:selectOneMenu value="#{usuarioBean.idNivel}" id="idSelNivel">
                                                 <f:selectItems value="#{usuarioBean.listNiveis}"/>
-                                            </p:selectOneMenu>
+                                            </h:selectOneMenu>
                                             <p:commandButton icon="ui-icon-plus" action="#{usuarioBean.addUsuarioPermissao}" update="tbl,idSelDepto,idSelNivel" styleClass="no-margin" title="Adicionar novo departamento a esse usuário" disabled="#{controleAcessoBean.botaoSalvar}" />
                                         </h:panelGrid>                                                    
                                         <h:panelGrid id="tbl">
@@ -156,18 +169,18 @@
                                             <p:outputLabel value="Rotina" />
                                             <p:outputLabel value="Evento" id="idFiltroEvento" />
                                             <h:column></h:column>
-                                            <p:selectOneMenu value="#{usuarioBean.idModulo}" id="idModulo">
+                                            <h:selectOneMenu value="#{usuarioBean.idModulo}" id="idModulo">
                                                 <p:ajax event="change" listener="#{usuarioBean.limparListaUsuarioAcesso}" update="idRenderTabela tblUsuarioAcesso" />
                                                 <f:selectItems value="#{usuarioBean.listModulos}" />
-                                            </p:selectOneMenu>
-                                            <p:selectOneMenu value="#{usuarioBean.idRotina}" id="idRotina">
+                                            </h:selectOneMenu>
+                                            <h:selectOneMenu value="#{usuarioBean.idRotina}" id="idRotina">
                                                 <p:ajax event="change" listener="#{usuarioBean.limparListaUsuarioAcessox}" update="idRenderTabela tblUsuarioAcesso" />
                                                 <f:selectItems value="#{usuarioBean.listRotinas}"/>
-                                            </p:selectOneMenu>
-                                            <p:selectOneMenu value="#{usuarioBean.idEvento}" id="idEvento">
+                                            </h:selectOneMenu>
+                                            <h:selectOneMenu value="#{usuarioBean.idEvento}" id="idEvento">
                                                 <p:ajax event="change" listener="#{usuarioBean.limparListaUsuarioAcessox}" update="idRenderTabela tblUsuarioAcesso" />
                                                 <f:selectItems value="#{usuarioBean.listEventos}"/>
-                                            </p:selectOneMenu>
+                                            </h:selectOneMenu>
                                             <p:commandButton icon="ui-icon-plus" action="#{usuarioBean.addUsuarioAcesso()}" update="idRenderTabela tblUsuarioAcesso" styleClass="no-margin" title="Adicionar permissão personalizada" rendered="#{usuarioBean.usuario.pessoa.id != -1}" disabled="#{controleAcessoBean.botaoSalvar}" />
                                             <h:column>
                                                 <p:selectBooleanCheckbox id="idFiltroModulo"  value="#{usuarioBean.filtrarPorModulo}" itemLabel="Filtrar">
@@ -201,7 +214,7 @@
                                                     <p:selectBooleanCheckbox value="#{usuarioAcesso.permite}">
                                                         <p:ajax event="change" listener="#{usuarioBean.updateUsuarioAcesso(usuarioAcesso)}" update="@this, :form_u:tblUsuarioAcesso" />
                                                     </p:selectBooleanCheckbox>
-                                                </p:column>                                            
+                                                </p:column>                                               
                                                 <p:column width="25" styleClass="text-center">
                                                     <p:commandButton icon="ui-icon-trash" action="#{usuarioBean.removeUsuarioAcesso(usuarioAcesso)}" update=":form_u:tblUsuarioAcesso" />
                                                 </p:column>

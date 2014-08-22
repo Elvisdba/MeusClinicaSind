@@ -258,10 +258,15 @@
             <redirect/>
         </navigation-case>
         
-        
         <navigation-case>
             <from-outcome>registro</from-outcome>
             <to-view-id>/registro.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>grade</from-outcome>
+            <to-view-id>/grade.jsf</to-view-id>
             <redirect/>
         </navigation-case>
         
