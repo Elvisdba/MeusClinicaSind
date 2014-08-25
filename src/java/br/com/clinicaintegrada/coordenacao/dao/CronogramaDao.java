@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
 
-public class GradeDao extends DB {
+public class CronogramaDao extends DB {
 
-    public boolean existeGradePorCliente(int cliente, int filial, int semana, int evento, String horaInicio, String horaFim) {
+    public boolean existeCronogramaPorCliente(int cliente, int filial, int semana, int evento, String horaInicio, String horaFim) {
         try {
             String queryString = ""
                     + "   SELECT id "
-                    + "     FROM rot_grade "
+                    + "     FROM rot_cronograma "
                     + "    WHERE id_cliente = " + cliente
                     + "      AND id_filial = " + filial
                     + "      AND id_semana = " + semana
@@ -30,9 +30,9 @@ public class GradeDao extends DB {
         return false;
     }
 
-    public List pesquisaTodasGradesPorCliente(int cliente) {
+    public List pesquisaTodasCronogramasPorCliente(int cliente) {
         try {
-            Query query = getEntityManager().createQuery("SELECT G FROM Grade AS G WHERE G.cliente.id = :cliente  ORDER BY G.dataEvento DESC");
+            Query query = getEntityManager().createQuery("SELECT C FROM Cronograma AS C WHERE C.cliente.id = :cliente  ORDER BY C.dataEvento DESC");
             query.setParameter("cliente", cliente);
             List list = query.getResultList();
             if (!list.isEmpty()) {
@@ -44,9 +44,9 @@ public class GradeDao extends DB {
         return new ArrayList();
     }
 
-    public List pesquisaTodasGradesPorClienteFilial(int cliente, int filial) {
+    public List pesquisaTodasCronogramasPorClienteFilial(int cliente, int filial) {
         try {
-            Query query = getEntityManager().createQuery("SELECT G FROM Grade AS G WHERE G.cliente.id = :cliente AND G.filial.id = :filial ORDER BY G.dataEvento DESC");
+            Query query = getEntityManager().createQuery("SELECT C FROM Cronograma AS C WHERE C.cliente.id = :cliente AND C.filial.id = :filial ORDER BY C.dataEvento DESC");
             query.setParameter("cliente", cliente);
             query.setParameter("filial", filial);
             List list = query.getResultList();
