@@ -2,7 +2,7 @@ package br.com.clinicaintegrada.utils;
 
 //package br.com.rtools.utilitarios;
 //
-//import br.com.rtools.logSistema.NovoLog;
+//import br.com.rtools.logSistema.Logger;
 //import br.com.rtools.principal.DB;
 //import java.lang.reflect.InvocationTargetException;
 //import java.lang.reflect.Method;
@@ -34,7 +34,7 @@ package br.com.clinicaintegrada.utils;
 //            getEntityManager().flush();
 //            return true;
 //        } catch (Exception e) {
-//            NovoLog log = new NovoLog();
+//            Logger log = new Logger();
 //            log.novo("Novo Objeto", "Exception - Message: " + e.getMessage());
 //            return false;
 //        }
@@ -44,7 +44,7 @@ package br.com.clinicaintegrada.utils;
 //    public boolean alterarObjeto(Object objeto) {
 //        Class classe = objeto.getClass();
 //        int id;
-//        NovoLog log = new NovoLog();
+//        Logger log = new Logger();
 //        try {
 //            Method metodo = classe.getMethod("getId", new Class[]{});
 //            id = (Integer) metodo.invoke(objeto, (Object[]) null);
@@ -88,7 +88,7 @@ package br.com.clinicaintegrada.utils;
 //            getEntityManager().flush();
 //            return true;
 //        } catch (Exception e) {
-//            NovoLog log = new NovoLog();
+//            Logger log = new Logger();
 //            log.novo("Deletar Objeto", "Exception - Message: " + e.getMessage());
 //            return false;
 //        }
@@ -342,12 +342,12 @@ package br.com.clinicaintegrada.utils;
 //            if (valor > 0) {
 //                return true;
 //            } else {
-//                NovoLog log = new NovoLog();
+//                Logger log = new Logger();
 //                log.novo("Novo Objeto", "Exception - Message: Erro ao executar: " + textQuery);
 //                return false;
 //            }
 //        } catch (Exception e) {
-//            NovoLog log = new NovoLog();
+//            Logger log = new Logger();
 //            log.novo("Novo Objeto", "Exception - Message: " + e.getMessage());
 //            return false;
 //        }
@@ -360,12 +360,12 @@ package br.com.clinicaintegrada.utils;
 //            if (xvalor != null) {
 //                return true;
 //            } else {
-//                NovoLog log = new NovoLog();
+//                Logger log = new Logger();
 //                log.novo("Novo Objeto", "Exception - Message: Erro ao executar: " + textQuery);
 //                return false;
 //            }
 //        } catch (Exception e) {
-//            NovoLog log = new NovoLog();
+//            Logger log = new Logger();
 //            log.novo("Novo Objeto", "Exception - Message: " + e.getMessage());
 //            return false;
 //        }
@@ -378,12 +378,12 @@ package br.com.clinicaintegrada.utils;
 //            if ((Integer) valor.get(0).get(0) > 0) {
 //                return true;
 //            } else {
-//                NovoLog log = new NovoLog();
+//                Logger log = new Logger();
 //                log.novo("Novo Objeto", "Exception - Message: Erro ao executar: " + textQuery);
 //                return false;
 //            }
 //        } catch (Exception e) {
-//            NovoLog log = new NovoLog();
+//            Logger log = new Logger();
 //            log.novo("Novo Objeto", "Exception - Message: " + e.getMessage());
 //            return false;
 //        }
@@ -404,7 +404,7 @@ package br.com.clinicaintegrada.utils;
 //                return query.getResultList();
 //            }
 //        } catch (Exception e) {
-//            NovoLog log = new NovoLog();
+//            Logger log = new Logger();
 //            log.novo("Novo Objeto", "Exception - Message: " + e.getMessage());
 //        }
 //        return new ArrayList();
@@ -425,7 +425,7 @@ package br.com.clinicaintegrada.utils;
 //                return query.getResultList();
 //            }
 //        } catch (Exception e) {
-//            NovoLog log = new NovoLog();
+//            Logger log = new Logger();
 //            log.novo("Novo Objeto", "Exception - Message: " + e.getMessage());
 //        }
 //        return new ArrayList();

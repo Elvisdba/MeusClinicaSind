@@ -41,7 +41,7 @@ public class ControleUsuarioBean implements Serializable {
     private String filialDep = "";
     private String msgErro = "";
     private List<ContadorAcessos> listaContador = new ArrayList();
-    private List<String> images = new ArrayList<String>();
+    private List<String> images = new ArrayList<>();
 
     public String validacao() throws Exception {
         String pagina = null;
@@ -77,11 +77,11 @@ public class ControleUsuarioBean implements Serializable {
                     + ((Usuario) Sessions.getObject("sessaoUsuario")).getPessoa().getDocumento();
             Sessions.put("sessaoCliente", c);
             Diretorio.criar("");
-            log.novo("Usuário logou", "Usuário:" + user + "/sen: " + senh);
+            //log.novo("Usuário logou", "Usuário:" + user + "/sen: " + senh);
             usuario = new Usuario();
             msgErro = "";
         } else {
-            log.live("Login de acesso tentativa de acesso usr:" + user + "/sen: " + senh);
+            //log.live("Login de acesso tentativa de acesso usr:" + user + "/sen: " + senh);
             usuario = new Usuario();
             msgErro = "@ Usuário e/ou Senha inválidas! Tente novamente.";
             Messages.warn("Validação", msgErro);

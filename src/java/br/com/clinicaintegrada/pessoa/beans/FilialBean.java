@@ -77,13 +77,13 @@ public class FilialBean implements Serializable {
         }
 
         DaoInterface di = new Dao();
-        Logger novoLog = new Logger();
+        Logger Logger = new Logger();
         di.openTransaction();
 
         if (filial.getId() == -1) {
             filial.setMatriz((Juridica) di.find(new Juridica(), SessaoCliente.get().getIdJuridica()));
             if (di.save(filial)) {
-                novoLog.save(
+                Logger.save(
                         "ID: " + filial.getId()
                         + " - Filial: " + filial.getFilial().getPessoa().getNome()
                 );
@@ -101,7 +101,7 @@ public class FilialBean implements Serializable {
                     = "ID: " + f.getId()
                     + " - Filial: " + f.getFilial().getPessoa().getNome();
             if (di.update(filial)) {
-                novoLog.update(beforeUpdate,
+                Logger.update(beforeUpdate,
                         "ID: " + filial.getId()
                         + " - Filial: " + filial.getFilial().getPessoa().getNome()
                 );
@@ -120,7 +120,7 @@ public class FilialBean implements Serializable {
     public void saveCidadeFilial(Cidade cid, int index) {
         FilialCidadeDao db = new FilialCidadeDao();
         FilialCidade filialCidade;
-        Logger novoLog = new Logger();
+        Logger Logger = new Logger();
         DaoInterface di = new Dao();
         int iCidade = cid.getId();
         int iFilial = Integer.parseInt(result.get(index).getDescription());
@@ -130,7 +130,7 @@ public class FilialBean implements Serializable {
                 filialCidade.setFilial((Filial) di.find(new Filial(), iFilial));
                 Messages.info("Sucesso", "Cidade atualizada com Sucesso!");
                 if (di.update(filialCidade, true)) {
-                    novoLog.update("", "Cidade Filial - "
+                    Logger.update("", "Cidade Filial - "
                             + "ID: " + filialCidade.getId()
                             + " - Filial: (" + filialCidade.getFilial().getId() + ") " + filialCidade.getFilial().getFilial().getPessoa().getNome()
                             + " - Cidade: (" + filialCidade.getCidade().getId() + ") " + filialCidade.getCidade().getCidade()
@@ -142,7 +142,7 @@ public class FilialBean implements Serializable {
                 filialCidade.setFilial((Filial) di.find(new Filial(), iFilial));
                 Messages.info("Sucesso", "Cidade atualizada com Sucesso!");
                 if (di.save(filialCidade, true)) {
-                    novoLog.save("Cidade Filial - "
+                    Logger.save("Cidade Filial - "
                             + "ID: " + filialCidade.getId()
                             + " - Filial: (" + filialCidade.getFilial().getId() + ") " + filialCidade.getFilial().getFilial().getPessoa().getNome()
                             + " - Cidade: (" + filialCidade.getCidade().getId() + ") " + filialCidade.getCidade().getCidade()
@@ -153,7 +153,7 @@ public class FilialBean implements Serializable {
             filialCidade = db.pesquisaFilialPorCidade(iCidade);
             if (filialCidade.getId() != -1) {
                 if (di.delete(filialCidade, true)) {
-                    novoLog.save("Cidade Filial - "
+                    Logger.save("Cidade Filial - "
                             + "ID: " + filialCidade.getId()
                             + " - Filial: (" + filialCidade.getFilial().getId() + ") " + filialCidade.getFilial().getFilial().getPessoa().getNome()
                             + " - Cidade: (" + filialCidade.getCidade().getId() + ") " + filialCidade.getCidade().getCidade()
@@ -173,11 +173,11 @@ public class FilialBean implements Serializable {
 
     public void delete(Filial fi) {
         if (fi.getId() != -1) {
-            Logger novoLog = new Logger();
+            Logger Logger = new Logger();
             DaoInterface di = new Dao();
             di.openTransaction();
             if (di.delete(fi)) {
-                novoLog.delete(
+                Logger.delete(
                         "ID: " + fi.getId()
                         + " - Filial: " + fi.getFilial().getPessoa().getNome()
                 );

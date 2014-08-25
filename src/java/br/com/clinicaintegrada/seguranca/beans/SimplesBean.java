@@ -295,15 +295,6 @@ public class SimplesBean implements Serializable {
 //        }
         Object o = null;
         switch (tipo) {
-            case "Bairro":
-                o = (Bairro) new Bairro(id, descricao);
-                break;
-            case "Logradouro":
-                o = (Logradouro) new Logradouro(id, descricao);
-                break;
-            case "DescricaoEndereco":
-                o = (DescricaoEndereco) new DescricaoEndereco(id, descricao);
-                break;
             case "TipoEndereco":
                 o = (TipoEndereco) new TipoEndereco(id, descricao);
                 break;
@@ -343,8 +334,17 @@ public class SimplesBean implements Serializable {
             case "TipoAtendimento":
                 o = (TipoAtendimento) new TipoAtendimento(id, descricao);
                 break;
+            case "Logradouro":
+                o = (Logradouro) new Logradouro(id, descricao);
+                break;
 
             // SIMPLES COM ID CLIENTE
+            case "Bairro":
+                o = (Bairro) new Bairro(id, cliente, descricao);
+                break;
+            case "DescricaoEndereco":
+                o = (DescricaoEndereco) new DescricaoEndereco(id, cliente, descricao);
+                break;
             case "FuncaoEscala":
                 o = (FuncaoEscala) new FuncaoEscala(id, cliente, descricao);
                 break;
@@ -423,6 +423,7 @@ public class SimplesBean implements Serializable {
     public void editaObjeto(Object obj) {
         switch (obj.getClass().getSimpleName()) {
             case "Bairro":
+                cliente = ((Bairro) objeto).getCliente();
                 descricao = ((Bairro) obj).getDescricao();
                 id = ((Bairro) objeto).getId();
                 break;
@@ -431,6 +432,7 @@ public class SimplesBean implements Serializable {
                 id = ((Logradouro) objeto).getId();
                 break;
             case "DescricaoEndereco":
+                cliente = ((DescricaoEndereco) objeto).getCliente();
                 descricao = ((DescricaoEndereco) obj).getDescricao();
                 id = ((DescricaoEndereco) objeto).getId();
                 break;

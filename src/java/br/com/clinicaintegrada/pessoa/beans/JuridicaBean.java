@@ -523,8 +523,8 @@ public class JuridicaBean implements Serializable {
                 if (dao.save(juridica)) {
                     Messages.info("Sucesso", "Cadastro salvo!");
                     dao.commit();
-                    Logger novoLog = new Logger();
-                    novoLog.save("ID: " + juridica.getId() + " - Pessoa: (" + juridica.getPessoa().getId() + ") " + juridica.getPessoa().getNome() + " - Abertura" + juridica.getAbertura() + " - Fechamento" + juridica.getAbertura() + " - I.E.: " + juridica.getInscricaoEstadual() + " - Insc. Mun.: " + juridica.getInscricaoMunicipal() + " - Responsável: " + juridica.getResponsavel());
+                    Logger Logger = new Logger();
+                    Logger.save("ID: " + juridica.getId() + " - Pessoa: (" + juridica.getPessoa().getId() + ") " + juridica.getPessoa().getNome() + " - Abertura" + juridica.getAbertura() + " - Fechamento" + juridica.getAbertura() + " - I.E.: " + juridica.getInscricaoEstadual() + " - Insc. Mun.: " + juridica.getInscricaoMunicipal() + " - Responsável: " + juridica.getResponsavel());
                     Sessions.put("juridicaPesquisa", juridica);
                 } else {
                     Messages.error("Erro", "Erro ao Salvar Dados!");
@@ -569,8 +569,8 @@ public class JuridicaBean implements Serializable {
 
                 Messages.info("Sucesso", "Cadastro atualizado com Sucesso!");
                 dao.commit();
-                Logger novoLog = new Logger();
-                novoLog.update(beforeUpdate, "ID: " + juridica.getId() + " - Pessoa: (" + juridica.getPessoa().getId() + ") " + juridica.getPessoa().getNome() + " - Abertura: " + juridica.getAbertura() + " - Fechamento: " + juridica.getAbertura() + " - I.E.: " + juridica.getInscricaoEstadual() + " - Insc. Mun.: " + juridica.getInscricaoMunicipal() + " - Responsável: " + juridica.getResponsavel());
+                Logger Logger = new Logger();
+                Logger.update(beforeUpdate, "ID: " + juridica.getId() + " - Pessoa: (" + juridica.getPessoa().getId() + ") " + juridica.getPessoa().getNome() + " - Abertura: " + juridica.getAbertura() + " - Fechamento: " + juridica.getAbertura() + " - I.E.: " + juridica.getInscricaoEstadual() + " - Insc. Mun.: " + juridica.getInscricaoMunicipal() + " - Responsável: " + juridica.getResponsavel());
                 Sessions.put("juridicaPesquisa", juridica);
             } else {
                 dao.rollback();
@@ -676,8 +676,8 @@ public class JuridicaBean implements Serializable {
             return null;
         }
         Messages.info("Sucesso", "Cadastro excluido com sucesso!");
-        Logger novoLog = new Logger();
-        novoLog.delete("ID: " + juridica.getId() + " - Pessoa: (" + juridica.getPessoa().getId() + ") " + juridica.getPessoa().getNome() + " - Abertura" + juridica.getAbertura() + " - Fechamento" + juridica.getAbertura() + " - I.E.: " + juridica.getInscricaoEstadual() + " - Insc. Mun.: " + juridica.getInscricaoMunicipal() + " - Responsável: " + juridica.getResponsavel());
+        Logger Logger = new Logger();
+        Logger.delete("ID: " + juridica.getId() + " - Pessoa: (" + juridica.getPessoa().getId() + ") " + juridica.getPessoa().getNome() + " - Abertura" + juridica.getAbertura() + " - Fechamento" + juridica.getAbertura() + " - I.E.: " + juridica.getInscricaoEstadual() + " - Insc. Mun.: " + juridica.getInscricaoMunicipal() + " - Responsável: " + juridica.getResponsavel());
         dao.commit();
         novoGenerico();
         return null;
