@@ -15,7 +15,7 @@ import org.primefaces.event.SelectEvent;
         uniqueConstraints = @UniqueConstraint(columnNames = {"id_cliente", "id_grupo_evento", "ds_descricao"})
 )
 // @NamedQuery(name = "Grade.findAll", query = "SELECT G FROM Grade AS G ORDER BY G.descricao ASC ")
-public class Grade implements Serializable {
+public class Cronograma implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +33,7 @@ public class Grade implements Serializable {
     @JoinColumn(name = "id_semana", referencedColumnName = "id", nullable = false)
     @OneToOne
     private Semana semana;
-    @Column(name = "ds_hora_inicio", length = 5, nullable = false)
+    @Column(name = "ds_hora_inicio", length = 5, nullable = true)
     private String horaInicio;
     @Column(name = "ds_hora_fim", length = 5, nullable = false)
     private String horaFim;
@@ -43,7 +43,7 @@ public class Grade implements Serializable {
     @Column(name = "dt_evento", nullable = true)
     private Date dataEvento;
 
-    public Grade() {
+    public Cronograma() {
         this.id = -1;
         this.cliente = new Cliente();
         this.evento = new Evento();
@@ -55,7 +55,7 @@ public class Grade implements Serializable {
         this.dataEvento = new Date();
     }
 
-    public Grade(int id, Cliente cliente, Evento evento, Filial filial, Semana semana, String horaInicio, String horaFim, String observacao, Date dataEvento) {
+    public Cronograma(int id, Cliente cliente, Evento evento, Filial filial, Semana semana, String horaInicio, String horaFim, String observacao, Date dataEvento) {
         this.id = id;
         this.cliente = cliente;
         this.evento = evento;
