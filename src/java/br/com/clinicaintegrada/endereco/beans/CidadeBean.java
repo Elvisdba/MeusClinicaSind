@@ -2,7 +2,7 @@ package br.com.clinicaintegrada.endereco.beans;
 
 import br.com.clinicaintegrada.endereco.Cidade;
 import br.com.clinicaintegrada.endereco.dao.CidadeDao;
-import br.com.clinicaintegrada.logSistema.Logger;
+import br.com.clinicaintegrada.logSistema.NovoLog;
 import br.com.clinicaintegrada.pessoa.PessoaEndereco;
 import br.com.clinicaintegrada.pessoa.dao.PessoaEnderecoDao;
 import br.com.clinicaintegrada.utils.Dao;
@@ -82,7 +82,7 @@ public class CidadeBean implements Serializable {
         }
 
         DaoInterface di = new Dao();
-        Logger log = new Logger();
+        NovoLog log = new NovoLog();
 
         di.openTransaction();
         if (cidade.getId() == -1) {
@@ -121,7 +121,7 @@ public class CidadeBean implements Serializable {
     }
 
     public void delete(Cidade ci) {
-        Logger log = new Logger();
+        NovoLog log = new NovoLog();
         DaoInterface di = new Dao();
         if (ci.getId() != -1) {
             di.openTransaction();

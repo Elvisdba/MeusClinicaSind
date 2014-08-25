@@ -4,7 +4,7 @@ package br.com.clinicaintegrada.coordenacao.beans;
 import br.com.clinicaintegrada.coordenacao.Evento;
 import br.com.clinicaintegrada.coordenacao.GrupoEvento;
 import br.com.clinicaintegrada.coordenacao.dao.EventoDao;
-import br.com.clinicaintegrada.logSistema.Logger;
+import br.com.clinicaintegrada.logSistema.NovoLog;
 import br.com.clinicaintegrada.pessoa.Profissao;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import br.com.clinicaintegrada.utils.Dao;
@@ -53,7 +53,7 @@ public class EventoBean implements Serializable {
             return;
         }
         evento.setGrupoEvento((GrupoEvento) dao.find(new GrupoEvento(), Integer.parseInt(listGrupoEvento.get(idGrupoEvento).getDescription())));
-        Logger logger = new Logger();
+        NovoLog logger = new NovoLog();
         if (evento.getId() == -1) {
             EventoDao eventoDao = new EventoDao();
             if (eventoDao.existeEvento(evento.getGrupoEvento().getId(), evento.getDescricao(), SessaoCliente.get().getId())) {
@@ -101,7 +101,7 @@ public class EventoBean implements Serializable {
     public void delete(Evento e) {
         evento = e;
         Dao dao = new Dao();
-        Logger logger = new Logger();
+        NovoLog logger = new NovoLog();
         if (evento.getId() != -1) {
             if (dao.delete(evento, true)) {
                 Messages.info("Sucesso", "Registro removido");

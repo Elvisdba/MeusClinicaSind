@@ -8,7 +8,7 @@ import br.com.clinicaintegrada.endereco.Bairro;
 import br.com.clinicaintegrada.endereco.CepAlias;
 import br.com.clinicaintegrada.endereco.dao.CidadeDao;
 import br.com.clinicaintegrada.endereco.dao.EnderecoDao;
-import br.com.clinicaintegrada.logSistema.Logger;
+import br.com.clinicaintegrada.logSistema.NovoLog;
 import br.com.clinicaintegrada.pessoa.Filial;
 import br.com.clinicaintegrada.pessoa.Pessoa;
 import br.com.clinicaintegrada.pessoa.PessoaEndereco;
@@ -160,7 +160,7 @@ public class EnderecoBean implements Serializable {
                 }
             }
         }
-        Logger log = new Logger();
+        NovoLog log = new NovoLog();
         di.openTransaction();
         if (endereco.getId() == -1) {
             if (di.save(endereco)) {
@@ -219,7 +219,7 @@ public class EnderecoBean implements Serializable {
                 di.commit();
                 Messages.info("Sucesso", "Registro excluído");
 
-                Logger log = new Logger();
+                NovoLog log = new NovoLog();
                 log.delete(endereco.getId() + " - " + endereco.getLogradouro().getDescricao() + " " + endereco.getDescricaoEndereco().getDescricao() + ", " + endereco.getFaixa() + " - " + endereco.getBairro().getDescricao() + " (" + endereco.getBairro().getId() + ") " + endereco.getCidade().getCidade() + " (" + endereco.getCidade().getId() + ") - " + endereco.getCidade().getUf());
                 clear();
             } else {
