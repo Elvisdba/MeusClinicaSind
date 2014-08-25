@@ -66,7 +66,8 @@
 -- INSERT INTO seg_rotina (id, ds_rotina, ds_nome_pagina, ds_classe, is_ativo) SELECT 58, 'EVENTOS DIVERSOS', '"/ClinicaIntegrada/evento.jsf"', '', true WHERE NOT EXISTS ( SELECT id FROM seg_rotina WHERE id = 58);
 -- INSERT INTO seg_rotina (id, ds_rotina, ds_nome_pagina, ds_classe, is_ativo) SELECT 59, 'AGENDA GRUPO USUÁRIO', '"/ClinicaIntegrada/agendaGrupoUsuario.jsf"', '', true WHERE NOT EXISTS ( SELECT id FROM seg_rotina WHERE id = 59);
 -- INSERT INTO seg_rotina (id, ds_rotina, ds_nome_pagina, ds_classe, is_ativo) SELECT 60, 'CONFIGURAÇÕES', '"/ClinicaIntegrada/registro.jsf"', '', true WHERE NOT EXISTS ( SELECT id FROM seg_rotina WHERE id = 60);
--- INSERT INTO seg_rotina (id, ds_rotina, ds_nome_pagina, ds_classe, is_ativo) SELECT 61, 'GRADE', '"/ClinicaIntegrada/grade.jsf"', '', true WHERE NOT EXISTS ( SELECT id FROM seg_rotina WHERE id = 61);
+-- INSERT INTO seg_rotina (id, ds_rotina, ds_nome_pagina, ds_classe, is_ativo) SELECT 61, 'CRONÔGRAMA', '"/ClinicaIntegrada/cronograma.jsf"', '', true WHERE NOT EXISTS ( SELECT id FROM seg_rotina WHERE id = 61);
+-- INSERT INTO seg_rotina (id, ds_rotina, ds_nome_pagina, ds_classe, is_ativo) SELECT 62, 'CONTRATO', '"/ClinicaIntegrada/contrato.jsf"', '', true WHERE NOT EXISTS ( SELECT id FROM seg_rotina WHERE id = 62);
 -- SELECT setval('seg_rotina_id_seq', max(id)) FROM seg_rotina;
 
 
