@@ -1,9 +1,9 @@
 package br.com.clinicaintegrada.coordenacao.beans;
 
 import br.com.clinicaintegrada.coordenacao.Evento;
-import br.com.clinicaintegrada.coordenacao.Grade;
+import br.com.clinicaintegrada.coordenacao.Cronograma;
 import br.com.clinicaintegrada.coordenacao.dao.EventoDao;
-import br.com.clinicaintegrada.coordenacao.dao.GradeDao;
+import br.com.clinicaintegrada.coordenacao.dao.CronogramaDao;
 import br.com.clinicaintegrada.pessoa.Filial;
 import br.com.clinicaintegrada.pessoa.dao.FilialDao;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
@@ -23,55 +23,58 @@ import javax.faces.bean.SessionScoped;
 
 @ManagedBean
 @SessionScoped
-public class GradeBean implements Serializable {
+public class CronogramaBean implements Serializable {
 
-    private Grade grade;
+    private Cronograma grade;
     private Semana semana;
     private Filial filial;
     private Evento evento;
-    private List<Grade> listGrades;
+    private List<Cronograma> listCronogramas;
     private List<Filial> listFiliais;
     private List<Semana> listSemanas;
     private List<Evento> listEventos;
     private boolean blockPanel;
+    private boolean isSemana;
 
     @PostConstruct
     public void init() {
-        grade = new Grade();
+        grade = new Cronograma();
         semana = new Semana();
         filial = new Filial();
         evento = new Evento();
         grade.setHoraInicio(DataHoje.livre(new Date(), "HH:mm"));
         grade.setHoraFim(DataHoje.livre(new Date(), "HH:mm"));
-        listGrades = new ArrayList<>();
+        listCronogramas = new ArrayList<>();
         listFiliais = new ArrayList<>();
         listSemanas = new ArrayList<>();
         listEventos = new ArrayList<>();
         blockPanel = false;
+        isSemana = true;
     }
 
     @PreDestroy
     public void destroy() {
-        Sessions.remove("gradeBean");
+        Sessions.remove("cronogramaBean");
     }
 
     public void clear() {
-        Sessions.remove("gradeBean");
+        Sessions.remove("cronogramaBean");
     }
 
     public void clear(int tcase) {
         if (tcase == 1) {
-            Sessions.remove("gradeBean");
+            Sessions.remove("cronogramaBean");
         } else if (tcase == 2) {
-            grade = new Grade();
+            grade = new Cronograma();
             filial = new Filial();
             evento = new Evento();
             grade.setHoraInicio(DataHoje.livre(new Date(), "HH:mm"));
             grade.setHoraFim(DataHoje.livre(new Date(), "HH:mm"));
-            listGrades = new ArrayList<>();
+            listCronogramas = new ArrayList<>();
             listFiliais = new ArrayList<>();
             listSemanas = new ArrayList<>();
             listEventos = new ArrayList<>();
+            isSemana = true;
         }
     }
 
@@ -104,17 +107,23 @@ public class GradeBean implements Serializable {
             return;
         }
         grade.setEvento(evento);
-        if (semana == null) {
-            Messages.warn("Validação", "Selecionar o dia da semana!");
-            return;
+        if (isSemana) {
+            if (semana == null) {
+                Messages.warn("Validação", "Selecionar o dia da semana!");
+                return;
+            }
+            grade.setSemana(semana);
+            grade.setDataEvento(null);
+        } else {
+            grade.setSemana(null);
+            semana = null;
         }
-        grade.setSemana(semana);
         Dao dao = new Dao();
         if (grade.getId() == -1) {
             grade.setCliente(SessaoCliente.get());
-            GradeDao gradeDao = new GradeDao();
-            if (gradeDao.existeGradePorCliente(grade.getCliente().getId(), grade.getFilial().getId(), grade.getSemana().getId(), grade.getEvento().getId(), grade.getHoraInicio(), grade.getHoraFim())) {
-                Messages.warn("Validação", "Grade já cadastrada");
+            CronogramaDao cronogramaDao = new CronogramaDao();
+            if (cronogramaDao.existeCronogramaPorCliente(grade.getCliente().getId(), grade.getFilial().getId(), grade.getSemana().getId(), grade.getEvento().getId(), grade.getHoraInicio(), grade.getHoraFim())) {
+                Messages.warn("Validação", "Cronograma já cadastrada");
                 return;
             }
             if (dao.save(grade, true)) {
@@ -133,19 +142,24 @@ public class GradeBean implements Serializable {
         }
     }
 
-    public void edit(Grade g) {
-        grade = new Grade();
+    public void edit(Cronograma g) {
+        grade = new Cronograma();
         grade = g;
+        if (grade.getSemana() != null) {
+            isSemana = true;
+            semana = grade.getSemana();
+        } else {
+            isSemana = false;
+        }
         filial = grade.getFilial();
         evento = grade.getEvento();
-        semana = grade.getSemana();
     }
 
     public void delete() {
         delete(grade);
     }
 
-    public void delete(Grade g) {
+    public void delete(Cronograma g) {
         grade = g;
         Dao dao = new Dao();
         if (dao.delete(grade, true)) {
@@ -156,11 +170,11 @@ public class GradeBean implements Serializable {
         }
     }
 
-    public Grade getGrade() {
+    public Cronograma getCronograma() {
         return grade;
     }
 
-    public void setGrade(Grade grade) {
+    public void setCronograma(Cronograma grade) {
         this.grade = grade;
     }
 
@@ -223,16 +237,16 @@ public class GradeBean implements Serializable {
         this.blockPanel = blockPanel;
     }
 
-    public List<Grade> getListGrades() {
-        if (listGrades.isEmpty()) {
-            GradeDao gradeDao = new GradeDao();
-            listGrades = gradeDao.pesquisaTodasGradesPorClienteFilial(SessaoCliente.get().getId(), filial.getId());
+    public List<Cronograma> getListCronogramas() {
+        if (listCronogramas.isEmpty()) {
+            CronogramaDao cronogramaDao = new CronogramaDao();
+            listCronogramas = cronogramaDao.pesquisaTodasCronogramasPorClienteFilial(SessaoCliente.get().getId(), filial.getId());
         }
-        return listGrades;
+        return listCronogramas;
     }
 
-    public void setListGrades(List<Grade> listGrades) {
-        this.listGrades = listGrades;
+    public void setListCronogramas(List<Cronograma> listCronogramas) {
+        this.listCronogramas = listCronogramas;
     }
 
     public Semana getSemana() {
@@ -257,6 +271,14 @@ public class GradeBean implements Serializable {
 
     public void setEvento(Evento evento) {
         this.evento = evento;
+    }
+
+    public boolean isIsSemana() {
+        return isSemana;
+    }
+
+    public void setIsSemana(boolean isSemana) {
+        this.isSemana = isSemana;
     }
 
 }
