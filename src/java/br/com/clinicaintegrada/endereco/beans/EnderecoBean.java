@@ -5,6 +5,7 @@ import br.com.clinicaintegrada.endereco.Endereco;
 import br.com.clinicaintegrada.endereco.Logradouro;
 import br.com.clinicaintegrada.endereco.Cidade;
 import br.com.clinicaintegrada.endereco.Bairro;
+import br.com.clinicaintegrada.endereco.CepAlias;
 import br.com.clinicaintegrada.endereco.dao.CidadeDao;
 import br.com.clinicaintegrada.endereco.dao.EnderecoDao;
 import br.com.clinicaintegrada.logSistema.Logger;
@@ -14,6 +15,7 @@ import br.com.clinicaintegrada.pessoa.PessoaEndereco;
 import br.com.clinicaintegrada.pessoa.dao.PessoaEnderecoDao;
 import br.com.clinicaintegrada.seguranca.controleUsuario.ChamadaPaginaBean;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
+import br.com.clinicaintegrada.utils.CEPService;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.DaoInterface;
 import br.com.clinicaintegrada.utils.Messages;
@@ -137,7 +139,7 @@ public class EnderecoBean implements Serializable {
         }
         Endereco e;
         if (endereco.getId() == -1) {
-            if(SessaoCliente.get().getId() == 1) {
+            if (SessaoCliente.get().getId() == 1) {
                 endereco.setCliente(null);
             } else {
                 endereco.setCliente(SessaoCliente.get());
@@ -375,6 +377,12 @@ public class EnderecoBean implements Serializable {
             Dao dao = new Dao();
             if (porPesquisa.equals("cep")) {
                 listEndereco = enderecoDao.pesquisaEnderecoPorCep(endereco.getCep());
+                if (listEndereco.isEmpty()) {
+                    CEPService cEPService = new CEPService();
+                    cEPService.setCep(endereco.getCep());
+                    cEPService.procurar();
+                    listEndereco = enderecoDao.pesquisaEnderecoPorCep(endereco.getCep());
+                }
             } else if (porPesquisa.equals("inicial") && pesquisar) {
                 listEndereco = enderecoDao.pesquisaEndereco(cidadeBase.getUf(),
                         ((Cidade) dao.find(new Cidade(), Integer.parseInt(getListCidade().get(index[1]).getDescription()))).getCidade(),
