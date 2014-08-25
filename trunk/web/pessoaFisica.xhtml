@@ -620,7 +620,14 @@
                                         <ui:param name="idPessoa" value="#{fisicaBean.pessoaEmpresa.juridica.pessoa.id}" />
                                     </ui:include>       -->
                                 </p:panel>
-                            </p:dialog>                  
+                            </p:dialog>
+                            <p:dialog widgetVar="dlg_pesquisa_cep" modal="true" resizable="false" height="400" width="1024" header="Pesquisa CEP">
+                                <p:commandButton value="Pesquisa avançada" />
+                                <p:dataTable var="endereco">
+                                    <p:column headerText="Id" />
+                                    <p:column headerText="Id" />
+                                </p:dataTable>
+                            </p:dialog>                             
                         </h:form>
                     </p:panel>
 

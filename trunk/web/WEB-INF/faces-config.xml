@@ -265,8 +265,14 @@
         </navigation-case>
         
         <navigation-case>
-            <from-outcome>grade</from-outcome>
-            <to-view-id>/grade.jsf</to-view-id>
+            <from-outcome>cronograma</from-outcome>
+            <to-view-id>/cronograma.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>contrato</from-outcome>
+            <to-view-id>/contrato.jsf</to-view-id>
             <redirect/>
         </navigation-case>
         
