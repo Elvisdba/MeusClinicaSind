@@ -2,7 +2,7 @@ package br.com.clinicaintegrada.agenda.beans;
 
 import br.com.clinicaintegrada.agenda.AgendaGrupoUsuario;
 import br.com.clinicaintegrada.agenda.GrupoAgenda;
-import br.com.clinicaintegrada.logSistema.Logger;
+import br.com.clinicaintegrada.logSistema.NovoLog;
 import br.com.clinicaintegrada.seguranca.Usuario;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import br.com.clinicaintegrada.utils.Dao;
@@ -64,7 +64,7 @@ public class AgendaGrupoUsuarioBean implements Serializable {
                 return;
             }
         }
-        Logger logger = new Logger();
+        NovoLog logger = new NovoLog();
         agp.setCliente(SessaoCliente.get());
         if (dao.save(agp, true)) {
             logger.save("ID: " + agp.getId() + " - Grupo Agenda: " + agp.getGrupoAgenda().getDescricao() + " - Usuário: (" + agp.getUsuario().getId() + ") " + agp.getUsuario().getLogin());
@@ -79,7 +79,7 @@ public class AgendaGrupoUsuarioBean implements Serializable {
     public void remove(AgendaGrupoUsuario agp) {
         DaoInterface di = new Dao();
         if (di.delete(agp, true)) {
-            Logger logger = new Logger();
+            NovoLog logger = new NovoLog();
             logger.delete("ID: " + agp.getId() + " - Grupo Agenda: " + agp.getGrupoAgenda().getDescricao() + " - Usuário: (" + agp.getUsuario().getId() + ") " + agp.getUsuario().getLogin());
             Messages.info("Sucesso", "Registro removido");
             Sessions.remove("agendaTelefoneBean");

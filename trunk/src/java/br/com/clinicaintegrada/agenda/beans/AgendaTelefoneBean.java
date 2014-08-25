@@ -8,7 +8,7 @@ import br.com.clinicaintegrada.agenda.GrupoAgenda;
 import br.com.clinicaintegrada.agenda.TipoTelefone;
 import br.com.clinicaintegrada.agenda.dao.AgendaTelefoneDao;
 import br.com.clinicaintegrada.endereco.Endereco;
-import br.com.clinicaintegrada.logSistema.Logger;
+import br.com.clinicaintegrada.logSistema.NovoLog;
 import br.com.clinicaintegrada.pessoa.Pessoa;
 import br.com.clinicaintegrada.pessoa.PessoaEndereco;
 import br.com.clinicaintegrada.pessoa.TipoEndereco;
@@ -156,7 +156,7 @@ public class AgendaTelefoneBean implements Serializable {
         if (agenda.getPessoa().getId() == -1) {
             agenda.setPessoa(null);
         }
-        Logger novoLog = new Logger();
+        NovoLog novoLog = new NovoLog();
         if (agenda.getId() == -1) {
             agenda.setCliente(SessaoCliente.get());
             AgendaTelefoneDao agendaDB = new AgendaTelefoneDao();
@@ -232,7 +232,7 @@ public class AgendaTelefoneBean implements Serializable {
             }
             agenda = (Agenda) di.find(new Agenda(), agenda.getId());
             if (di.delete(agenda)) {
-                Logger novoLog = new Logger();
+                NovoLog novoLog = new NovoLog();
                 novoLog.delete("ID: " + agenda.getId() + " - Grupo Agenda: " + agenda.getGrupoAgenda().getDescricao() + " - Nome: " + agenda.getNome() + " - Email(s): " + agenda.getEmail1() + " - " + agenda.getEmail2());
                 di.commit();
                 clear();
@@ -487,7 +487,7 @@ public class AgendaTelefoneBean implements Serializable {
             return null;
         }
         DaoInterface di = new Dao();
-        Logger novoLog = new Logger();
+        NovoLog novoLog = new NovoLog();
         agendaTelefone.setTipoTelefone((TipoTelefone) di.find(new TipoTelefone(), Integer.parseInt(getListTipoTelefones().get(indice[1]).getDescription())));
         if (agenda.getId() != -1) {
             if (agendaTelefone.getId() == -1) {
@@ -531,7 +531,7 @@ public class AgendaTelefoneBean implements Serializable {
         at = (AgendaTelefone) di.find(at);
         di.openTransaction();
         if (di.delete(at)) {
-            Logger novoLog = new Logger();
+            NovoLog novoLog = new NovoLog();
             novoLog.delete("Telefone ID: " + at.getId() + " - Tipo Telefone: " + at.getTipoTelefone().getDescricao() + " - Telefone: (" + at.getDdi() + ") " + at.getDdd() + " " + at.getTelefone() + " - Agenda (" + at.getAgenda().getId() + ")");
             di.commit();
             Messages.info("Sucesso", "Registro excluído com sucesso");
