@@ -150,8 +150,8 @@ public class PermissaoBean implements Serializable {
             permissao = new Permissao();
         }
         if (sucesso) {
-            Logger novoLog = new Logger();
-            novoLog.save("Permissão [" + p.getModulo().getDescricao() + " - " + p.getRotina().getRotina() + "]");
+            Logger Logger = new Logger();
+            Logger.save("Permissão [" + p.getModulo().getDescricao() + " - " + p.getRotina().getRotina() + "]");
             di.commit();
             Messages.info("Sucesso", "Permissão(s) removida(s) com sucesso");
             listRotinas.clear();
