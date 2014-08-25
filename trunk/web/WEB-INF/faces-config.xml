@@ -7,6 +7,25 @@
     <navigation-rule>
         
         <navigation-case>
+            <from-outcome>locale</from-outcome>
+            <to-view-id>/locale.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+    
+        <application> 		
+            <resource-bundle>
+                <base-name>br.com.clinicaintegrada.bundle.messages</base-name>
+                <var>messages</var>
+            </resource-bundle>
+            <locale-config>
+                <default-locale>pt_BR</default-locale>
+                <supported-locale>en_US</supported-locale>
+            </locale-config>
+            <message-bundle>br.com.clinicaintegrada.bundle.messages</message-bundle>        
+        </application>        
+        
+        <navigation-case>
             <from-outcome>index</from-outcome>
             <to-view-id>/index.jsf</to-view-id>
             <redirect/>
