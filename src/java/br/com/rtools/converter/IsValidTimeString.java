@@ -1,4 +1,4 @@
-package br.com.rtools.converter;
+package br.com.clinicaintegrada.converter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,7 +9,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
 @ManagedBean
-public class IsDateString implements Converter {
+public class IsValidTimeString implements Converter {
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
@@ -19,7 +19,7 @@ public class IsDateString implements Converter {
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
         if (value != null) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
             sdf.setLenient(false);
             String dataString = value;
             try {
