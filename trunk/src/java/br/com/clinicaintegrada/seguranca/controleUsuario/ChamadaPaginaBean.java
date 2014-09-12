@@ -29,6 +29,7 @@ public class ChamadaPaginaBean implements Serializable {
     private boolean carregaPg = true;
     private boolean linkClicado = false;
     private String urlAtual = "";
+    private String penultimoLink = "";
     private String paginaDestino;
     private List<MenuLinks> menuLinks = new ArrayList<>();
     private int nivelLink = 0;
@@ -631,5 +632,19 @@ public class ChamadaPaginaBean implements Serializable {
 
     public void setUrlAtual(String urlAtual) {
         this.urlAtual = urlAtual;
+    }
+
+    public String getPenultimoLink() {
+        if (menuLinks.isEmpty() || menuLinks.size() == 1) {
+            penultimoLink = "menuPrincipal";
+        } else {
+            int posicao = menuLinks.size() - 2;
+            penultimoLink = menuLinks.get(posicao).getLink();
+        }
+        return penultimoLink;
+    }
+
+    public void setPenultimoLink(String penultimoLink) {
+        this.penultimoLink = penultimoLink;
     }
 }

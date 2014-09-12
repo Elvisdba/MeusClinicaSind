@@ -4,7 +4,6 @@ import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.seguranca.Cliente;
 import br.com.clinicaintegrada.seguranca.MacFilial;
 import br.com.clinicaintegrada.seguranca.Usuario;
-import br.com.clinicaintegrada.seguranca.beans.UsuarioBean;
 import br.com.clinicaintegrada.seguranca.dao.MacFilialDao;
 import br.com.clinicaintegrada.seguranca.dao.UsuarioDao;
 import br.com.clinicaintegrada.sistema.ContadorAcessos;
@@ -231,7 +230,7 @@ public class ControleUsuarioBean implements Serializable {
             macFilial = macFilialDao.pesquisaMac(filialDep);
             if (macFilial != null) {
                 filialDep = getMacFilial().getFilial().getFilial().getPessoa().getNome();
-                redireciona(filialDep);
+                // redireciona(filialDep);
             } else {
                 filialDep = "Filial sem Registro";
             }
@@ -302,10 +301,7 @@ public class ControleUsuarioBean implements Serializable {
 
     public boolean isBoqueiaMenu() {
         String nomeCliente = getClienteString();
-        if (nomeCliente.equals("Rtools") || nomeCliente.equals("ClinicaIntegrada")) {
-            return true;
-        }
-        return false;
+        return nomeCliente.equals("Rtools") || nomeCliente.equals("ClinicaIntegrada");
     }
 
     public static void setBloqueiaMenu(String aBloqueiaMenu) {
