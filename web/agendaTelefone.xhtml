@@ -23,7 +23,7 @@
                     <p:panel id="i_panel_acao" styleClass="fundoCinza" style="height: 50px">
                         <h:outputScript name="script_primefaces.js" library="js" />
                         <h:panelGrid columns="13" >
-                            <p:commandButton value="Adicionar" id="id_click" update="i_panel_adicionar" action="#{agendaTelefoneBean.openDialog}" onclick="dgl_adicionar.show();" />
+                            <p:commandButton value="Adicionar" id="id_click" update="i_panel_adicionar" action="#{agendaTelefoneBean.openDialog}" onclick="PF('dlg_adicionar').show();" />
                             <p:outputLabel value="Pesquisar: " />
                             <p:selectOneMenu value="#{agendaTelefoneBean.indice[3]}" id="idDDD" rendered="#{agendaTelefoneBean.porPesquisa.equals('telefone')}">
                                 <p:ajax event="change" update="idDDD" />
@@ -76,7 +76,7 @@
                             </p:column>
                         </p:dataTable>
                     </p:panel>
-                    <p:dialog id="i_adicionar" widgetVar="dgl_adicionar" modal="true" header="Cadastro" width="1024" resizable="true"  maximizable="true" minimizable="true" onShow="true" visible="#{agendaTelefoneBean.visibility}">
+                    <p:dialog id="i_adicionar" widgetVar="dlg_adicionar" modal="true" header="Cadastro" width="1024" resizable="true"  maximizable="true" minimizable="true" onShow="true" visible="#{agendaTelefoneBean.visibility}">
                         <p:ajax event="close" update="out_mensagem i_panel_adicionar id_lista" listener="#{agendaTelefoneBean.close}"/>  
                         <p:panel id="i_panel_adicionar" styleClass="no-border">
                             <div>
@@ -125,9 +125,9 @@
                                     </p:panel>
                                     <div class="clear"></div>
                                     <h:panelGrid columns="5" styleClass="margin-top-max">
-                                        <p:commandButton value="Salvar" onclick="PF('dgl_panel_salvar').show();" disabled="#{controleAcessoBean.botaoSalvar}" /> 
+                                        <p:commandButton value="Salvar" onclick="PF('dgl_panel_salvar').show();" disabled="#{controleAcessoBean.save}" /> 
                                         <p:commandButton value="Novo" action="#{agendaTelefoneBean.clear}" update="out_mensagem i_panel_adicionar id_lista" />
-                                        <p:commandButton value="Excluir" onclick="PF('dgl_panel_excluir').show();" disabled="#{controleAcessoBean.botaoExcluir}" />
+                                        <p:commandButton value="Excluir" onclick="PF('dgl_panel_excluir').show();" disabled="#{controleAcessoBean.delete}" />
                                         <p:commandButton value="Sair" action="#{agendaTelefoneBean.close}" update="out_mensagem i_panel_adicionar id_lista" />
                                         <p:commandButton value="Aniversariantes" icon="ui-icon-calendar" onclick="PF('dlg_agenda_contato').show();" styleClass="font-color-red" rendered="#{agendaTelefoneBean.agenda.id != -1}" update="i_panel_ac tbl_agenda_contato" />
                                     </h:panelGrid>
@@ -159,7 +159,7 @@
                                                     <p:column>
                                                         <h:panelGrid columns="2">
                                                             <p:inputText value="#{agendaTelefoneBean.agendaTelefone.contato}"  maxlength="500" size="28" placeholder="Nome do contato"/>
-                                                            <p:commandButton value="Adicionar" action="#{agendaTelefoneBean.addAgendaTelefone()}" title="Adicionar/atualizar telefone" rendered="#{agendaTelefoneBean.agenda.id != -1}" disabled="#{controleAcessoBean.botaoSalvar}"  update="tbl_agenda_telefone messages_telefone i_panel_cadastro_telefone" />
+                                                            <p:commandButton value="Adicionar" action="#{agendaTelefoneBean.addAgendaTelefone()}" title="Adicionar/atualizar telefone" rendered="#{agendaTelefoneBean.agenda.id != -1}" disabled="#{controleAcessoBean.save}"  update="tbl_agenda_telefone messages_telefone i_panel_cadastro_telefone" />
                                                         </h:panelGrid>
                                                     </p:column>
                                                 </p:row>

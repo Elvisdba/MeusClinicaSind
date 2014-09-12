@@ -98,9 +98,9 @@
                                     </p:column>
                                 </h:panelGrid>  
                                 <f:facet name="footer" >
-                                    <p:commandButton action="#{cronogramaBean.save}" value="Salvar" update=":form_cronograma:" disabled="#{controleAcessoBean.botaoSalvar}"/>
+                                    <p:commandButton action="#{cronogramaBean.save}" value="Salvar" update=":form_cronograma:" disabled="#{controleAcessoBean.save}"/>
                                     <p:commandButton action="#{cronogramaBean.clear}" value="Novo" update=":form_cronograma:"/>
-                                    <p:commandButton action="#{cronogramaBean.delete}" value="Excluir" update=":form_cronograma:" disabled="#{controleAcessoBean.botaoExcluir}"/>
+                                    <p:commandButton action="#{cronogramaBean.delete}" value="Excluir" update=":form_cronograma:" disabled="#{controleAcessoBean.delete}"/>
                                 </f:facet>
                             </p:panel>
                             <p:dataTable value="#{cronogramaBean.listCronogramas}" var="cronograma" scrollable="true" scrollHeight="600" styleClass="margin-top-max" emptyMessage="Nenhum registro encontrado">

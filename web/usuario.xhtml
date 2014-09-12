@@ -114,9 +114,9 @@
                                 </h:panelGrid>
                             </p:panel>
                             <h:panelGrid columns="4" styleClass="margin-top-max margin-bottom-max">
-                                <p:commandButton value="Salvar" disabled="#{controleAcessoBean.botaoSalvar}" onclick="PF('dlg_save').show();" />
+                                <p:commandButton value="Salvar" disabled="#{controleAcessoBean.save}" onclick="PF('dlg_save').show();" />
                                 <p:commandButton value="Novo" action="#{usuarioBean.clear()}" update=":form_u:"/>
-                                <p:commandButton value="Excluir" disabled="#{controleAcessoBean.botaoExcluir}" onclick="PF('dlg_delete').show();" />
+                                <p:commandButton value="Excluir" disabled="#{controleAcessoBean.delete}" onclick="PF('dlg_delete').show();" />
                                 <p:commandButton value="Pesquisar" action="#{chamadaPaginaBean.pesquisa('pesquisaUsuario')}"/>
                             </h:panelGrid>
                             <p:messages autoUpdate="true" showDetail="true" showSummary="true" closable="true" />
@@ -138,7 +138,7 @@
                                             <h:selectOneMenu value="#{usuarioBean.idNivel}" id="idSelNivel">
                                                 <f:selectItems value="#{usuarioBean.listNiveis}"/>
                                             </h:selectOneMenu>
-                                            <p:commandButton icon="ui-icon-plus" action="#{usuarioBean.addUsuarioPermissao}" update="tbl,idSelDepto,idSelNivel" styleClass="no-margin" title="Adicionar novo departamento a esse usuário" disabled="#{controleAcessoBean.botaoSalvar}" />
+                                            <p:commandButton icon="ui-icon-plus" action="#{usuarioBean.addUsuarioPermissao}" update="tbl,idSelDepto,idSelNivel" styleClass="no-margin" title="Adicionar novo departamento a esse usuário" disabled="#{controleAcessoBean.save}" />
                                         </h:panelGrid>                                                    
                                         <h:panelGrid id="tbl">
                                             <p:dataTable value="#{usuarioBean.listPermissaoUsuario}" var="permissaoUsuario" scrollable="true" scrollHeight="250" emptyMessage="Nenhum registro encontrado!">
@@ -181,7 +181,7 @@
                                                 <p:ajax event="change" listener="#{usuarioBean.limparListaUsuarioAcessox}" update="idRenderTabela tblUsuarioAcesso" />
                                                 <f:selectItems value="#{usuarioBean.listEventos}"/>
                                             </h:selectOneMenu>
-                                            <p:commandButton icon="ui-icon-plus" action="#{usuarioBean.addUsuarioAcesso()}" update="idRenderTabela tblUsuarioAcesso" styleClass="no-margin" title="Adicionar permissão personalizada" rendered="#{usuarioBean.usuario.pessoa.id != -1}" disabled="#{controleAcessoBean.botaoSalvar}" />
+                                            <p:commandButton icon="ui-icon-plus" action="#{usuarioBean.addUsuarioAcesso()}" update="idRenderTabela tblUsuarioAcesso" styleClass="no-margin" title="Adicionar permissão personalizada" rendered="#{usuarioBean.usuario.pessoa.id != -1}" disabled="#{controleAcessoBean.save}" />
                                             <h:column>
                                                 <p:selectBooleanCheckbox id="idFiltroModulo"  value="#{usuarioBean.filtrarPorModulo}" itemLabel="Filtrar">
                                                     <p:ajax event="change" listener="#{usuarioBean.limparListaUsuarioAcessox}" update="idRenderTabela tblUsuarioAcesso" />

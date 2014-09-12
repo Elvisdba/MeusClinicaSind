@@ -50,7 +50,7 @@
                                     <p:inputText value="#{tipoDocumentoProfissaoBean.tipoDocumentoProfissao.mascara}">
                                         <p:ajax update="i_test_mask" />
                                     </p:inputText>
-                                    <p:commandButton value="Adicionar" action="#{tipoDocumentoProfissaoBean.save}" update=":form_tdp:" disabled="#{controleAcessoBean.botaoSalvar}"/>
+                                    <p:commandButton value="Adicionar" action="#{tipoDocumentoProfissaoBean.save}" update=":form_tdp:" disabled="#{controleAcessoBean.save}"/>
                                     <p:commandButton value="Novo" action="#{tipoDocumentoProfissaoBean.clear}" update=":form_tdp:" />
                                 </h:panelGrid>
                                 <h:panelGrid columns="2">
@@ -73,7 +73,7 @@
                                         <p:outputLabel value="#{tipoDocumentoProfissao.mascara}" />
                                     </p:column>
                                     <p:column width="30">
-                                        <p:commandButton icon="ui-icon-trash" action="#{tipoDocumentoProfissaoBean.delete(tipoDocumentoProfissao)}" update=":form_tdp:" />
+                                        <p:commandButton icon="ui-icon-trash" action="#{tipoDocumentoProfissaoBean.delete(tipoDocumentoProfissao)}" update=":form_tdp:" disabled="#{controleAcessoBean.delete}"/>
                                     </p:column>
                                 </p:dataTable>
                             </p:panel>

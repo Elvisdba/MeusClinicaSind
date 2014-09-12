@@ -47,9 +47,9 @@
                                 </p:selectBooleanCheckbox>                            
                             </h:panelGrid>
                             <h:panelGrid columns="4" styleClass="margin-top-max">
-                                <p:commandButton id="idBtnSalvar" value="Salvar" title="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.botaoSalvar}" />
+                                <p:commandButton id="idBtnSalvar" value="Salvar" title="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.save}" />
                                 <p:commandButton action="#{clienteBean.clear}" value="Novo" title="Novo" update=":form_c:"  />
-                                <p:commandButton value="Excluir" title="Excluir" disabled="#{controleAcessoBean.botaoExcluir}" onclick="PF('dlg_delete').show()" />
+                                <p:commandButton value="Excluir" title="Excluir" disabled="#{controleAcessoBean.delete}" onclick="PF('dlg_delete').show()" />
                                 <p:commandButton action="#{chamadaPaginaBean.pesquisa('pesquisaCliente')}" title="Pesquisar" value="Pesquisar"/>
                             </h:panelGrid>
                             <p:dialog widgetVar="dlg_save" header="Deseja salvar este registro?" width="400" modal="true" resizable="false">

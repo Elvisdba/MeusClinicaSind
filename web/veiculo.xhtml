@@ -56,7 +56,7 @@
                                 </h:panelGrid>
                             </p:panel>
                             <h:panelGrid columns="4" styleClass="margin-top-max">
-                                <p:commandButton value="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.botaoSalvar}"/>
+                                <p:commandButton value="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.save}"/>
                                 <p:commandButton value="Novo" action="#{veiculoBean.clear}" update=":form_v:" />
                             </h:panelGrid>
                             <p:panel header="Funções" styleClass="margin-top-max" id="i_datatable_fe">
@@ -80,7 +80,7 @@
                                         <p:outputLabel value="#{veiculo.combustivel.valorLitroString}" />
                                     </p:column>
                                     <p:column width="30">
-                                        <p:commandButton icon="ui-icon-trash" action="#{veiculoBean.delete(veiculo)}" update=":form_v:"  disabled="#{controleAcessoBean.botaoExcluir}" oncomplete="PF('dlg_message').show()" />
+                                        <p:commandButton icon="ui-icon-trash" action="#{veiculoBean.delete(veiculo)}" update=":form_v:"  disabled="#{controleAcessoBean.delete}" oncomplete="PF('dlg_message').show()" />
                                     </p:column>
                                 </p:dataTable>
                             </p:panel>

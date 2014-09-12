@@ -57,10 +57,10 @@
                                 </h:panelGrid>
                             </p:panel>
                             <h:panelGrid columns="4" styleClass="margin-top-max">
-                                <p:commandButton value="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.botaoSalvar}"/>
+                                <p:commandButton value="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.save}"/>
                                 <p:commandButton value="Novo" action="#{equipeBean.clear}" update=":form_e:" />
                                 <h:column rendered="#{equipeBean.equipe.id != -1}">
-                                    <p:commandButton value="Excluir" onclick="PF('dlg_delete').show()" disabled="#{controleAcessoBean.botaoExcluir}" />
+                                    <p:commandButton value="Excluir" onclick="PF('dlg_delete').show()" disabled="#{controleAcessoBean.delete}" />
                                 </h:column>
                                 <p:commandButton value="Pesquisar" action="#{chamadaPaginaBean.pesquisa('pesquisaEquipe')}"/>
                             </h:panelGrid>

@@ -37,7 +37,7 @@
                             <p:selectOneMenu value="#{permissaoBean.idRotina}">
                                 <f:selectItems value="#{permissaoBean.listRotinas}"/>
                             </p:selectOneMenu>
-                            <p:commandButton icon="ui-icon-plus" value="Adicionar" action="#{permissaoBean.addPermissao}" disabled="#{controleAcessoBean.botaoSalvar}" update="id_painel_permissao, tbl" />
+                            <p:commandButton icon="ui-icon-plus" value="Adicionar" action="#{permissaoBean.addPermissao}" disabled="#{controleAcessoBean.save}" update="id_painel_permissao, tbl" />
                             <p:column></p:column>
                             <p:column></p:column>
                             <p:column></p:column>
@@ -56,7 +56,7 @@
                                 <p:outputLabel value="Inclusão, Alteração, Exclusão, Consulta"/>
                             </p:column>
                             <p:column width="25" styleClass="text-center">
-                                <p:commandButton icon="ui-icon-trash" action="#{permissaoBean.removePermissao(permissao)}" disabled="#{controleAcessoBean.botaoExcluir}" update=":form_permissao:id_painel_permissao :form_permissao:tbl :form_permissao:id_messages_growl" title="Código: #{permissao.id}"/>
+                                <p:commandButton icon="ui-icon-trash" action="#{permissaoBean.removePermissao(permissao)}" disabled="#{controleAcessoBean.delete}" update=":form_permissao:id_painel_permissao :form_permissao:tbl :form_permissao:id_messages_growl" title="Código: #{permissao.id}"/>
                             </p:column>
                         </p:dataTable>
                     </p:panel>

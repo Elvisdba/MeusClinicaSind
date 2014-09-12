@@ -38,9 +38,9 @@
                     </h:panelGrid>
                         
                     <h:panelGrid style=" clear: both; margin-top: 10px; float: left" columns="4">
-                        <p:commandButton value="Salvar" action="#{cnaeBean.save}" disabled="#{controleAcessoBean.botaoSalvar}" title="Salvar este Cnae"/>
+                        <p:commandButton value="Salvar" action="#{cnaeBean.save}" disabled="#{controleAcessoBean.save}" title="Salvar este Cnae"/>
                         <p:commandButton value="Novo" title="Novo registro / Limpar" action="#{cnaeBean.clear}" update=":form_cnae:"/>
-                        <p:commandButton value="Excluir" onclick="PF('dlg_delete').show()" disabled="#{controleAcessoBean.botaoExcluir}" title="Excluir este Cnae"/>
+                        <p:commandButton value="Excluir" onclick="PF('dlg_delete').show()" disabled="#{controleAcessoBean.delete}" title="Excluir este Cnae"/>
                         <p:commandButton value="Pesquisar" action="#{chamadaPaginaBean.pesquisa('pesquisaCnae')}" title="Pesquisar titulos"/>
                     </h:panelGrid>
                     <p:dialog widgetVar="dlg_delete" header="Deseja realmente excluir este CNAE?" resizable="false" width="400" modal="true">

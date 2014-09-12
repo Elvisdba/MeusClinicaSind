@@ -36,9 +36,9 @@
                                 <p:focus context="i_panel" />
                             </p:panel>
                             <h:panelGrid columns="4" styleClass="margin-top-max">
-                                <p:commandButton value="Salvar" disabled="#{controleAcessoBean.botaoSalvar}" onclick="PF('dlg_save').show()" title="Salvar / Atualizar"/>
+                                <p:commandButton value="Salvar" disabled="#{controleAcessoBean.save}" onclick="PF('dlg_save').show()" title="Salvar / Atualizar"/>
                                 <p:commandButton value="Novo" title="Novo registro / Limpar" action="#{profissaoBean.clearProfissao}" update=":form_profissao: :formProfissaoPesquisa:"/>
-                                <p:commandButton value="Excluir" disabled="#{controleAcessoBean.botaoExcluir}" onclick="PF('dlg_delete').show()" title="Excluir"/>
+                                <p:commandButton value="Excluir" disabled="#{controleAcessoBean.delete}" onclick="PF('dlg_delete').show()" title="Excluir"/>
                                 <p:commandButton value="Pesquisar" onclick="PF('i_dlg_pr').show()"/>
                             </h:panelGrid>
                             <p:dialog widgetVar="dlg_save" header="Salvar esta Profissão" resizable="false" width="400" modal="true">

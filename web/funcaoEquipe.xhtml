@@ -55,10 +55,10 @@
                                 </h:panelGrid>
                             </p:panel>
                             <h:panelGrid columns="4" styleClass="margin-top-max">
-                                <p:commandButton value="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.botaoSalvar}"/>
+                                <p:commandButton value="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.save}"/>
                                 <p:commandButton value="Novo" action="#{funcaoEquipeBean.clear}" update=":form_fe:" />
                                 <h:column rendered="false">
-                                    <p:commandButton value="Excluir" onclick="PF('dlg_delete').show()" disabled="#{controleAcessoBean.botaoExcluir}" />
+                                    <p:commandButton value="Excluir" onclick="PF('dlg_delete').show()" disabled="#{controleAcessoBean.delete}" />
                                 </h:column>
                             </h:panelGrid>
                             <p:panel header="Funções" styleClass="margin-top-max" id="i_datatable_fe">
@@ -76,7 +76,7 @@
                                         <p:outputLabel value="#{funcaoEquipe.tipoAtendimento.descricao}" />
                                     </p:column>
                                     <p:column width="30">
-                                        <p:commandButton icon="ui-icon-trash" action="#{funcaoEquipeBean.delete(funcaoEquipe)}" update=":form_fe:"  disabled="#{controleAcessoBean.botaoExcluir}" oncomplete="PF('dlg_message').show()"/>
+                                        <p:commandButton icon="ui-icon-trash" action="#{funcaoEquipeBean.delete(funcaoEquipe)}" update=":form_fe:"  disabled="#{controleAcessoBean.delete}" oncomplete="PF('dlg_message').show()"/>
                                     </p:column>
                                 </p:dataTable>
                             </p:panel>

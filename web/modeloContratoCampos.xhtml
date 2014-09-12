@@ -52,7 +52,7 @@
                         </h:panelGrid>
                         <h:panelGrid columns="2" style="clear: both; float: left; margin-top: 15px; margin-bottom: 15px;">
                             <h:column>
-                                <a4j:commandLink value="Adicionar"  styleClass="idPesquisar iLink" title="Adicionar registro" action="#{matriculaContratoBean.adicionarCamposModuloContrato}" disabled="#{controleAcessoBean.botaoSalvar}" render="idModulo, id_panel_matricula_contrato_campos, tbl, idMensagem" />
+                                <a4j:commandLink value="Adicionar"  styleClass="idPesquisar iLink" title="Adicionar registro" action="#{matriculaContratoBean.adicionarCamposModuloContrato}" disabled="#{controleAcessoBean.save}" render="idModulo, id_panel_matricula_contrato_campos, tbl, idMensagem" />
                                 <a4j:commandLink value="Novo" styleClass="idNovo iLink" action="#{matriculaContratoBean.novoMatriculaContratoCampos}" render="idModulo, id_panel_matricula_contrato_campos, tbl, idMensagem" />
                             </h:column>
                         </h:panelGrid>                        
@@ -72,7 +72,7 @@
                                     <f:facet name="header">
                                         <h:outputText value="..."/>
                                     </f:facet>
-                                    <a4j:commandButton image="/Imagens/excluirp.png" action="#{matriculaContratoBean.removerCamposModuloContrato(linha)}" disabled="#{controleAcessoBean.botaoExcluir}">                                        
+                                    <a4j:commandButton image="/Imagens/excluirp.png" action="#{matriculaContratoBean.removerCamposModuloContrato(linha)}" disabled="#{controleAcessoBean.delete}">                                        
                                     </a4j:commandButton>
                                 </rich:column>                                
                                 <rich:column>

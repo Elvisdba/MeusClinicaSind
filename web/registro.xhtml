@@ -15,8 +15,8 @@
         </f:subview>
         <f:view>
             <p:panel styleClass="wrapper no-border">
-                <h:outputText value="Você não possui permissões para efetuar operações nesta rotina!" styleClass="fonteHeader" rendered="#{controleAcessoBean.botaoSalvar}" title="salvar / alterar / excluir"/>
-                <h:form id="form_registro_empresarial" rendered="#{!controleAcessoBean.botaoSalvar}">
+                <h:outputText value="Você não possui permissões para efetuar operações nesta rotina!" styleClass="fonteHeader" rendered="#{controleAcessoBean.save}" title="salvar / alterar / excluir"/>
+                <h:form id="form_registro_empresarial" rendered="#{!controleAcessoBean.save}">
                     <h:outputText value="Configurações" styleClass="fonteHeader" />
                     <c:set scope="request" var="object" value="${registroBean.registro}"/>
                     <div style="clear: both;"></div>
@@ -99,13 +99,13 @@
                     <div style="clear: both;"></div>
                     <p:panelGrid columns="1" styleClass="sbb">
                         <p:column>
-                            <p:commandButton action="#{registroBean.save}" disabled="#{controleAcessoBean.botaoSalvar}" styleClass="margin-top-max" value="Salvar" update="id_messages_growl id_messages"/>
+                            <p:commandButton action="#{registroBean.save}" disabled="#{controleAcessoBean.save}" styleClass="margin-top-max" value="Salvar" update="id_messages_growl id_messages"/>
                             <p:commandButton onclick="PF('dgl_painel_criar').show()" styleClass="margin-top-max" value="Criar Logins Empresas" type="button"/>
                         </p:column>
                     </p:panelGrid>
                     <p:dialog id="i_painel_salvar" header="Deseja salvar este Registro?" widgetVar="dgl_painel_salvar" modal="true" height="100" width="300">
                         <h:panelGrid columns="2" styleClass="margin-top">
-                            <p:commandButton action="#{registroBean.save}" value="Salvar" oncomplete="PF('dgl_painel_salvar').hide(); PF('dgl_painel_mensagem').show()" update="i_painel_mensagem" global="true" disabled="#{!controleAcessoBean.botaoSalvar}"/>
+                            <p:commandButton action="#{registroBean.save}" value="Salvar" oncomplete="PF('dgl_painel_salvar').hide(); PF('dgl_painel_mensagem').show()" update="i_painel_mensagem" global="true" disabled="#{!controleAcessoBean.save}"/>
                             <p:commandButton value="Não" onclick="PF('dgl_painel_salvar').hide()" title="Não" />
                         </h:panelGrid>
                     </p:dialog>
