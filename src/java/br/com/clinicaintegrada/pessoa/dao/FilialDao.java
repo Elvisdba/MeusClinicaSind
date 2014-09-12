@@ -4,6 +4,7 @@ import br.com.clinicaintegrada.pessoa.Filial;
 import br.com.clinicaintegrada.principal.DB;
 import br.com.clinicaintegrada.seguranca.Registro;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
+import br.com.clinicaintegrada.seguranca.dao.RegistroDao;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
@@ -12,8 +13,10 @@ public class FilialDao extends DB {
 
     public List pesquisaTodasCliente() {
         try {
-            Query query = getEntityManager().createQuery("SELECT F FROM Filial AS F WHERE F.matriz.pessoa.cliente.id = :cliente ORDER BY F.filial.pessoa.nome ASC ");
-            query.setParameter("cliente", SessaoCliente.get().getId());
+            Query query = getEntityManager().createQuery("SELECT F FROM Filial AS F WHERE F.matriz.id = :matriz ORDER BY F.filial.pessoa.nome ASC ");
+            RegistroDao registroDao = new RegistroDao();
+            Registro r = registroDao.pesquisaRegistroPorCliente(SessaoCliente.get().getId());
+            query.setParameter("matriz", r.getFilial().getId());
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;
