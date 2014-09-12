@@ -223,7 +223,7 @@ public class ControleAcessoBean implements Serializable {
                     List<PermissaoUsuario> permissaoUsuarios = permissaoUsuarioDao.listaPermissaoUsuario(user.getId());
                     for (int i = 0; i < permissaoUsuarios.size(); i++) {
                         PermissaoDepartamento permissaoDepartamento = permissaoDepartamentoDao.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId(), SessaoCliente.get().getId());
-                        if (permissaoDepartamento.getId() == -1) {
+                        if (permissaoDepartamento == null) {
                             retorno = false;
                         } else {
                             retorno = true;
@@ -256,7 +256,7 @@ public class ControleAcessoBean implements Serializable {
         return retorno;
     }
 
-    public boolean getBotaoSalvar() {
+    public boolean getSave() {
         Object object = (Object) FacesContext.getCurrentInstance().getExternalContext().getRequestMap().get("object");
         if (object == null) {
             return true;
@@ -298,33 +298,34 @@ public class ControleAcessoBean implements Serializable {
                         idEvento = 3;
                     }
                 }
-                permissao = permissaoDao.pesquisaPermissao(idModulo, rotina.getId(), idEvento, SessaoCliente.get().getId());
-                if (permissao != null) {
-                    PermissaoUsuarioDao permissaoUsuarioDao = new PermissaoUsuarioDao();
-                    PermissaoDepartamentoDao permissaoDepartamentoDao = new PermissaoDepartamentoDao();
-                    List<PermissaoUsuario> permissaoUsuarios = permissaoUsuarioDao.listaPermissaoUsuario(user.getId());
-                    for (int i = 0; i < permissaoUsuarios.size(); i++) {
-                        PermissaoDepartamento permissaoDepartamento = permissaoDepartamentoDao.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId(), SessaoCliente.get().getId());
-                        if (permissaoDepartamento.getId() == -1) {
-                            retorno = true;
-                        } else {
-                            retorno = false;
-                            break;
-                        }
-                    }
-                    UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
-                    UsuarioAcesso usuarioAcesso = usuarioAcessoDao.pesquisaUsuarioAcesso(user.getId(), permissao.getId(), SessaoCliente.get().getId());
-                    if (usuarioAcesso != null) {
-                        if (usuarioAcesso.isPermite()) {
-                            retorno = false;
-                        } else {
-                            retorno = true;
-                        }
-                    }
-
-                } else {
-                    retorno = true;
-                }
+                retorno = verificaPermissao(idModulo, rotina.getId(), idEvento);
+//                permissao = permissaoDao.pesquisaPermissao(idModulo, rotina.getId(), idEvento, SessaoCliente.get().getId());
+//                if (permissao != null) {
+//                    PermissaoUsuarioDao permissaoUsuarioDao = new PermissaoUsuarioDao();
+//                    PermissaoDepartamentoDao permissaoDepartamentoDao = new PermissaoDepartamentoDao();
+//                    List<PermissaoUsuario> permissaoUsuarios = permissaoUsuarioDao.listaPermissaoUsuario(user.getId());
+//                    for (int i = 0; i < permissaoUsuarios.size(); i++) {
+//                        PermissaoDepartamento permissaoDepartamento = permissaoDepartamentoDao.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId(), SessaoCliente.get().getId());
+//                        if (permissaoDepartamento.getId() == -1) {
+//                            retorno = true;
+//                        } else {
+//                            retorno = false;
+//                            break;
+//                        }
+//                    }
+//                    UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
+//                    UsuarioAcesso usuarioAcesso = usuarioAcessoDao.pesquisaUsuarioAcesso(user.getId(), permissao.getId(), SessaoCliente.get().getId());
+//                    if (usuarioAcesso != null) {
+//                        if (usuarioAcesso.isPermite()) {
+//                            retorno = false;
+//                        } else {
+//                            retorno = true;
+//                        }
+//                    }
+//
+//                } else {
+//                    retorno = true;
+//                }
             } else {
                 retorno = false;
             }
@@ -415,155 +416,164 @@ public class ControleAcessoBean implements Serializable {
         return retorno;
     }
 
-    public boolean getBotaoExcluir() {
-        //PESQUISA DE PERMISSAO-------------------------------------------------------------------------------------------
-        boolean retorno = true;
-        if (Sessions.exists("sessaoUsuario")) {
-            Permissao permissao;
-            Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
-
-            if (user.getId() == 1 || user.isAdministrador()) {
-                return false;
-            }
-            PermissaoDao permissaoDao = new PermissaoDao();
-            if (modulo.getId() != -1) {
-                permissao = permissaoDao.pesquisaPermissao(modulo.getId(), rotina.getId(), 2, SessaoCliente.get().getId());
-            } else {
-                permissao = permissaoDao.pesquisaPermissao(2, rotina.getId(), 2, SessaoCliente.get().getId());
-            }
-
-            if (permissao != null) {
-                PermissaoUsuarioDao permissaoUsuarioDao = new PermissaoUsuarioDao();
-                List<PermissaoUsuario> permissaoUsuarios = permissaoUsuarioDao.listaPermissaoUsuario(user.getId());
-                PermissaoDepartamentoDao permissaoDepartamentoDao = new PermissaoDepartamentoDao();
-                for (int i = 0; i < permissaoUsuarios.size(); i++) {
-                    PermissaoDepartamento permissaoDepartamento = permissaoDepartamentoDao.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId(), SessaoCliente.get().getId());
-                    if (permissaoDepartamento.getId() == -1) {
-                        retorno = true;
-                    } else {
-                        retorno = false;
-                        break;
-                    }
-                }
-                UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
-                UsuarioAcesso usuarioAcesso = usuarioAcessoDao.pesquisaUsuarioAcesso(user.getId(), permissao.getId(), SessaoCliente.get().getId());
-                if (usuarioAcesso != null) {
-                    if (usuarioAcesso.isPermite()) {
-                        retorno = false;
-                    } else {
-                        retorno = true;
-                    }
-                }
-            } else {
-                retorno = true;
-            }
-        } else {
-            retorno = true;
-        }
-        return retorno;
+    public boolean view() {
+        return verificaPermissao(4);
     }
 
-    public boolean getExcluir(int idMod) {
-        //PESQUISA DE PERMISSAO-------------------------------------------------------------------------------------------
-        if (idMod == 0) {
-            idMod = Integer.parseInt((String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("idModulo"));
-        }
-        Dao dao = new Dao();
-        Modulo m = (Modulo) dao.find(new Modulo(), idMod);
-        boolean retorno = false;
-        if (Sessions.exists("sessaoUsuario")) {
-            Permissao permissao;
-            Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
-
-            if (user.getId() == 1 && user.isAdministrador()) {
-                return false;
-            }
-            PermissaoDao permissaoDao = new PermissaoDao();
-            if (m.getId() != -1) {
-                permissao = permissaoDao.pesquisaPermissao(m.getId(), rotina.getId(), 2, SessaoCliente.get().getId());
-            } else {
-                permissao = permissaoDao.pesquisaPermissao(2, rotina.getId(), 2, SessaoCliente.get().getId());
-            }
-            if (permissao != null) {
-                PermissaoUsuarioDao permissaoUsuarioDao = new PermissaoUsuarioDao();
-                List<PermissaoUsuario> permissaoUsuarios = permissaoUsuarioDao.listaPermissaoUsuario(user.getId());
-                PermissaoDepartamentoDao permissaoDepartamentoDao = new PermissaoDepartamentoDao();
-                for (int i = 0; i < permissaoUsuarios.size(); i++) {
-                    PermissaoDepartamento permissaoDepartamento = permissaoDepartamentoDao.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId(), SessaoCliente.get().getId());
-                    if (permissaoDepartamento.getId() == -1) {
-                        retorno = true;
-                    } else {
-                        retorno = false;
-                        break;
-                    }
-                }
-                UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
-                UsuarioAcesso usuarioAcesso = usuarioAcessoDao.pesquisaUsuarioAcesso(user.getId(), permissao.getId(), SessaoCliente.get().getId());
-                if (usuarioAcesso != null) {
-                    if (usuarioAcesso.isPermite()) {
-                        retorno = false;
-                    } else {
-                        retorno = true;
-                    }
-                }
-            } else {
-                retorno = true;
-            }
-        } else {
-            retorno = true;
-        }
-        return retorno;
+    public boolean view(String pageName) {
+        return verificaPermissao(pageName, 4);
     }
 
-    public boolean getBotaoAlterar() {
-        //PESQUISA DE PERMISSAO-------------------------------------------------------------------------------------------
-        boolean retorno = false;
-        if (Sessions.exists("sessaoUsuario")) {
-            Permissao permissao;
-            Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
-
-            if (user.getId() == 1 && user.isAdministrador()) {
-                return false;
-            }
-            PermissaoDao permissaoDao = new PermissaoDao();
-            if (modulo.getId() != -1) {
-                permissao = permissaoDao.pesquisaPermissao(modulo.getId(), rotina.getId(), 3, SessaoCliente.get().getId());
-            } else {
-                permissao = permissaoDao.pesquisaPermissao(2, rotina.getId(), 3, SessaoCliente.get().getId());
-            }
-            if (permissao != null) {
-                PermissaoUsuarioDao permissaoUsuarioDao = new PermissaoUsuarioDao();
-                PermissaoDepartamentoDao permissaoDepartamentoDao = new PermissaoDepartamentoDao();
-                List<PermissaoUsuario> permissaoUsuarios = permissaoUsuarioDao.listaPermissaoUsuario(user.getId());
-                for (int i = 0; i < permissaoUsuarios.size(); i++) {
-                    PermissaoDepartamento permissaoDepartamento = permissaoDepartamentoDao.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId(), SessaoCliente.get().getId());
-                    if (permissaoDepartamento.getId() == -1) {
-                        retorno = true;
-                    } else {
-                        retorno = false;
-                        break;
-                    }
-                }
-//                if (!retorno) {
-                UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
-                UsuarioAcesso usuarioAcesso = usuarioAcessoDao.pesquisaUsuarioAcesso(user.getId(), permissao.getId(), SessaoCliente.get().getId());
-                if (usuarioAcesso != null) {
-                    if (usuarioAcesso.isPermite()) {
-                        retorno = false;
-                    } else {
-                        retorno = true;
-                    }
-                }
+    public boolean getDelete() {
+        return verificaPermissao(2);
+//        //PESQUISA DE PERMISSAO-------------------------------------------------------------------------------------------
+//        boolean retorno = true;
+//        if (Sessions.exists("sessaoUsuario")) {
+//            Permissao permissao;
+//            Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
+//
+//            if (user.getId() == 1 || user.isAdministrador()) {
+//                return false;
+//            }
+//            PermissaoDao permissaoDao = new PermissaoDao();
+//            if (modulo.getId() != -1) {
+//                permissao = permissaoDao.pesquisaPermissao(modulo.getId(), rotina.getId(), 2, SessaoCliente.get().getId());
+//            } else {
+//                permissao = permissaoDao.pesquisaPermissao(2, rotina.getId(), 2, SessaoCliente.get().getId());
+//            }
+//
+//            if (permissao != null) {
+//                PermissaoUsuarioDao permissaoUsuarioDao = new PermissaoUsuarioDao();
+//                List<PermissaoUsuario> permissaoUsuarios = permissaoUsuarioDao.listaPermissaoUsuario(user.getId());
+//                PermissaoDepartamentoDao permissaoDepartamentoDao = new PermissaoDepartamentoDao();
+//                for (int i = 0; i < permissaoUsuarios.size(); i++) {
+//                    PermissaoDepartamento permissaoDepartamento = permissaoDepartamentoDao.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId(), SessaoCliente.get().getId());
+//                    if (permissaoDepartamento.getId() == -1) {
+//                        retorno = true;
+//                    } else {
+//                        retorno = false;
+//                        break;
+//                    }
 //                }
-            } else {
-                retorno = true;
-            }
-        } else {
-            retorno = true;
-        }
-        return retorno;
+//                UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
+//                UsuarioAcesso usuarioAcesso = usuarioAcessoDao.pesquisaUsuarioAcesso(user.getId(), permissao.getId(), SessaoCliente.get().getId());
+//                if (usuarioAcesso != null) {
+//                    if (usuarioAcesso.isPermite()) {
+//                        retorno = false;
+//                    } else {
+//                        retorno = true;
+//                    }
+//                }
+//            } else {
+//                retorno = true;
+//            }
+//        } else {
+//            retorno = true;
+//        }
+//        return retorno;
     }
 
+//    public boolean isDelete(int idMod) {
+//        return verificaPermissao(idMod, 0, 2);
+    //PESQUISA DE PERMISSAO-------------------------------------------------------------------------------------------
+//        if (idMod == 0) {
+//            idMod = Integer.parseInt((String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("idModulo"));
+//        }
+//        Dao dao = new Dao();
+//        Modulo m = (Modulo) dao.find(new Modulo(), idMod);
+//        boolean retorno = false;
+//        if (Sessions.exists("sessaoUsuario")) {
+//            Permissao permissao;
+//            Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
+//
+//            if (user.getId() == 1 && user.isAdministrador()) {
+//                return false;
+//            }
+//            PermissaoDao permissaoDao = new PermissaoDao();
+//            if (m.getId() != -1) {
+//                permissao = permissaoDao.pesquisaPermissao(m.getId(), rotina.getId(), 2, SessaoCliente.get().getId());
+//            } else {
+//                permissao = permissaoDao.pesquisaPermissao(2, rotina.getId(), 2, SessaoCliente.get().getId());
+//            }
+//            if (permissao != null) {
+//                PermissaoUsuarioDao permissaoUsuarioDao = new PermissaoUsuarioDao();
+//                List<PermissaoUsuario> permissaoUsuarios = permissaoUsuarioDao.listaPermissaoUsuario(user.getId());
+//                PermissaoDepartamentoDao permissaoDepartamentoDao = new PermissaoDepartamentoDao();
+//                for (int i = 0; i < permissaoUsuarios.size(); i++) {
+//                    PermissaoDepartamento permissaoDepartamento = permissaoDepartamentoDao.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId(), SessaoCliente.get().getId());
+//                    if (permissaoDepartamento.getId() == -1) {
+//                        retorno = true;
+//                    } else {
+//                        retorno = false;
+//                        break;
+//                    }
+//                }
+//                UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
+//                UsuarioAcesso usuarioAcesso = usuarioAcessoDao.pesquisaUsuarioAcesso(user.getId(), permissao.getId(), SessaoCliente.get().getId());
+//                if (usuarioAcesso != null) {
+//                    if (usuarioAcesso.isPermite()) {
+//                        retorno = false;
+//                    } else {
+//                        retorno = true;
+//                    }
+//                }
+//            } else {
+//                retorno = true;
+//            }
+//        } else {
+//            retorno = true;
+//        }
+//        return retorno;
+//    }
+//    public boolean isUpdate() {
+//        return verificaPermissao(3);
+    //PESQUISA DE PERMISSAO-------------------------------------------------------------------------------------------
+//        boolean retorno = false;
+//        if (Sessions.exists("sessaoUsuario")) {
+//            Permissao permissao;
+//            Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
+//
+//            if (user.getId() == 1 && user.isAdministrador()) {
+//                return false;
+//            }
+//            PermissaoDao permissaoDao = new PermissaoDao();
+//            if (modulo.getId() != -1) {
+//                permissao = permissaoDao.pesquisaPermissao(modulo.getId(), rotina.getId(), 3, SessaoCliente.get().getId());
+//            } else {
+//                permissao = permissaoDao.pesquisaPermissao(2, rotina.getId(), 3, SessaoCliente.get().getId());
+//            }
+//            if (permissao != null) {
+//                PermissaoUsuarioDao permissaoUsuarioDao = new PermissaoUsuarioDao();
+//                PermissaoDepartamentoDao permissaoDepartamentoDao = new PermissaoDepartamentoDao();
+//                List<PermissaoUsuario> permissaoUsuarios = permissaoUsuarioDao.listaPermissaoUsuario(user.getId());
+//                for (int i = 0; i < permissaoUsuarios.size(); i++) {
+//                    PermissaoDepartamento permissaoDepartamento = permissaoDepartamentoDao.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId(), SessaoCliente.get().getId());
+//                    if (permissaoDepartamento.getId() == -1) {
+//                        retorno = true;
+//                    } else {
+//                        retorno = false;
+//                        break;
+//                    }
+//                }
+////                if (!retorno) {
+//                UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
+//                UsuarioAcesso usuarioAcesso = usuarioAcessoDao.pesquisaUsuarioAcesso(user.getId(), permissao.getId(), SessaoCliente.get().getId());
+//                if (usuarioAcesso != null) {
+//                    if (usuarioAcesso.isPermite()) {
+//                        retorno = false;
+//                    } else {
+//                        retorno = true;
+//                    }
+//                }
+////                }
+//            } else {
+//                retorno = true;
+//            }
+//        } else {
+//            retorno = true;
+//        }
+    // return retorno;
+//    }
     public boolean verificarUsuario() {
         if (Sessions.exists("sessaoUsuario")) {
             login = ((Usuario) Sessions.getObject("sessaoUsuario")).getLogin();
@@ -597,5 +607,109 @@ public class ControleAcessoBean implements Serializable {
 
     public void setIdIndexPermissao(int idIndexPermissao) {
         this.idIndexPermissao = idIndexPermissao;
+    }
+
+    /**
+     * 1 - Inclusão; 2 - Exclusão; 3 - Alteração; 4 - Consulta
+     *
+     * @param idEvento
+     * @return
+     */
+    public boolean verificaPermissao(int idEvento) {
+        return verificaPermissao(0, 0, idEvento);
+
+    }
+
+    /**
+     * 1 - Inclusão; 2 - Exclusão; 3 - Alteração; 4 - Consulta
+     *
+     * @param pageName
+     * @param idEvento
+     * @return
+     */
+    public boolean verificaPermissao(String pageName, int idEvento) {
+        Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
+        if (user.getId() == 1 || user.isAdministrador()) {
+            return false;
+        }        
+        RotinaDao rotinaDao = new RotinaDao();
+        String pagina = "\"/ClinicaIntegrada/" + pageName + ".jsf\"";
+        Rotina r = rotinaDao.pesquisaRotinaPorPagina(pagina);
+        if (r != null) {
+            return verificaPermissao(0, r.getId(), idEvento);
+        }
+        return false;
+    }
+
+    /**
+     * 1 - Inclusão; 2 - Exclusão; 3 - Alteração; 4 - Consulta
+     *
+     * @param idRotina
+     * @param idEvento
+     * @return
+     */
+    public boolean verificaPermissao(int idRotina, int idEvento) {
+        return verificaPermissao(0, idRotina, idEvento);
+    }
+
+    /**
+     * 1 - Inclusão; 2 - Exclusão; 3 - Alteração; 4 - Consulta
+     *
+     * @param idModulo
+     * @param idRotina
+     * @param idEvento
+     * @return
+     */
+    public boolean verificaPermissao(int idModulo, int idRotina, int idEvento) {
+        //PESQUISA DE PERMISSAO-------------------------------------------------------------------------------------------
+        boolean retorno = true;
+        if (Sessions.exists("sessaoUsuario")) {
+            Permissao permissao;
+            Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
+            int idCliente = SessaoCliente.get().getId();
+            if (user.getId() == 1 || user.isAdministrador()) {
+                return false;
+            }
+            if (idModulo == 0) {
+                idModulo = modulo.getId();
+            }
+            if (idRotina == 0 || idRotina == -1) {
+                idRotina = rotina.getId();
+            }
+            PermissaoDao permissaoDao = new PermissaoDao();
+            if (idModulo != -1) {
+                permissao = permissaoDao.pesquisaPermissao(idModulo, idRotina, idEvento, idCliente);
+            } else {
+                permissao = permissaoDao.pesquisaPermissao(2, idRotina, idEvento, idCliente);
+            }
+            if (permissao != null) {
+                PermissaoUsuarioDao permissaoUsuarioDao = new PermissaoUsuarioDao();
+                PermissaoDepartamentoDao permissaoDepartamentoDao = new PermissaoDepartamentoDao();
+                List<PermissaoUsuario> permissaoUsuarios = permissaoUsuarioDao.listaPermissaoUsuario(user.getId());
+                for (int i = 0; i < permissaoUsuarios.size(); i++) {
+                    PermissaoDepartamento permissaoDepartamento = permissaoDepartamentoDao.pesquisaPermissaoDepartamento(permissaoUsuarios.get(i).getDepartamento().getId(), permissaoUsuarios.get(i).getNivel().getId(), permissao.getId(), idCliente);
+                    if (permissaoDepartamento == null) {
+                        retorno = true;
+                    } else {
+                        retorno = false;
+                        break;
+                    }
+                }
+                UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
+                UsuarioAcesso usuarioAcesso = usuarioAcessoDao.pesquisaUsuarioAcesso(user.getId(), permissao.getId(), idCliente);
+                if (usuarioAcesso != null) {
+                    if (usuarioAcesso.isPermite()) {
+                        retorno = false;
+                    } else {
+                        retorno = true;
+                    }
+                }
+            } else {
+                retorno = true;
+            }
+        } else {
+            retorno = true;
+        }
+        return retorno;
     }
 }
