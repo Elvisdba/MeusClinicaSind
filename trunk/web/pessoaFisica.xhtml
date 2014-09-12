@@ -296,9 +296,9 @@
                                             </p:selectOneRadio>
                                         </h:panelGrid>
                                         <h:panelGrid columns="2">
-                                            <p:commandButton value="Adicionar" disabled="#{controleAcessoBean.botaoSalvar}"  action="#{fisicaBean.addDependente}" update=":form_pessoa_fisica:"/>
+                                            <p:commandButton value="Adicionar" disabled="#{controleAcessoBean.save}"  action="#{fisicaBean.addDependente}" update=":form_pessoa_fisica:"/>
                                             <p:commandButton value="Novo" action="#{fisicaBean.clearDependente}" update=":form_pessoa_fisica:"/>
-                                            <p:commandButton value="Remover" disabled="#{controleAcessoBean.botaoExcluir}" action="#{fisicaBean.removeDependente}" rendered="#{fisicaBean.dependente.id != -1}" update=":form_pessoa_fisica:"/>
+                                            <p:commandButton value="Remover" disabled="#{controleAcessoBean.delete}" action="#{fisicaBean.removeDependente}" rendered="#{fisicaBean.dependente.id != -1}" update=":form_pessoa_fisica:"/>
                                         </h:panelGrid>
                                         <p:dataTable value="#{fisicaBean.listDependente}" var="dependente" scrollHeight="200" scrollable="true" emptyMessage="Nenhum registro encontrado!" styleClass="margin-top-max" rowIndexVar="index">
                                             <p:column headerText="Nome">
@@ -311,7 +311,7 @@
                                                 #{dependente.grauParentesco.descricao} 
                                             </p:column>
                                             <p:column width="30">
-                                                <p:commandButton icon="ui-icon-trash" disabled="#{controleAcessoBean.botaoExcluir}" action="#{fisicaBean.removeDependente(index)}" update=":form_pessoa_fisica:"/>
+                                                <p:commandButton icon="ui-icon-trash" disabled="#{controleAcessoBean.delete}" action="#{fisicaBean.removeDependente(index)}" update=":form_pessoa_fisica:"/>
                                             </p:column>
                                         </p:dataTable>
 
@@ -541,9 +541,9 @@
                                 </p:dialog>
 
                                 <h:panelGrid columns="6">
-                                    <p:commandButton value="Salvar" disabled="#{controleAcessoBean.botaoSalvar}" onclick="PF('dlg_save').show();"/>
+                                    <p:commandButton value="Salvar" disabled="#{controleAcessoBean.save}" onclick="PF('dlg_save').show();"/>
                                     <p:commandButton value="Novo" action="#{fisicaBean.clear}" update=":form_pessoa_fisica:"/>
-                                    <p:commandButton value="Excluir" disabled="#{controleAcessoBean.botaoExcluir}" onclick="PF('dlg_delete').show();" rendered="#{fisicaBean.fisica.id != -1}" />
+                                    <p:commandButton value="Excluir" disabled="#{controleAcessoBean.delete}" onclick="PF('dlg_delete').show();" rendered="#{fisicaBean.fisica.id != -1}" />
                                     <p:commandButton value="Pesquisar"  action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaFisica')}"/>
                                 </h:panelGrid>              
 

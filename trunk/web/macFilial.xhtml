@@ -12,9 +12,6 @@
         <style type="text/css">
             .ui-widget-content .ui-inputfield{ padding: 8px!important;} 
             .ui-button { padding: 3px!important; }
-            .ui-selectonemenu-label .ui-inputfield{
-
-            }
         </style>        
     </h:head>
     <h:body>
@@ -27,10 +24,10 @@
                 </f:subview>
                 <f:view>
                     <p:panel styleClass="wrapper" style="border: 0px;">
-                        <h:form id="formMacFilial1">
+                        <h:outputScript name="script_primefaces.js" library="js" /> 
+                        <h:form id="form_mac_filial_1">
                             <c:set scope="request" var="object" value="${macFilialBean.macFilial}"/>
                             <h:outputText value="Registro Computador" styleClass="fonteHeader" />
-
                             <p:panel styleClass="fundoCinza" style="clear: both">
                                 <h:panelGrid style="width: 100%" columns="2">
                                     <h:column>
@@ -76,7 +73,7 @@
                                         <p:selectOneMenu value="#{macFilialBean.idCaixa}" style="width: 200px">
                                             <f:selectItems value="#{macFilialBean.listaCaixa}"/>
                                         </p:selectOneMenu>
-                                        <p:commandButton value="Salvar" action="#{macFilialBean.add}" disabled="#{controleAcessoBean.botaoSalvar}" update=":formMacFilial1: :formMacFilial2:tbl"/>
+                                        <p:commandButton value="Salvar" action="#{macFilialBean.add}" disabled="#{controleAcessoBean.save}" update=":form_mac_filial_1: :form_mac_filial_2:tbl"/>
                                     </h:panelGrid>
                                 </p:column>
                             </h:panelGrid>
@@ -88,28 +85,28 @@
                             </h:panelGrid>
                         </h:form>
 
-                        <h:form id="formMacFilial2">
+                        <h:form id="form_mac_filial_2">
                             <p:growl id="i_msg_f2" showDetail="true" />  
                             <h:panelGrid id="tbl" style="width:100%; border: 0px; clear: both" columns="1">
                                 <p:dataTable value="#{macFilialBean.listaMacs}" var="macFilial" emptyMessage="Nenhum Mac Filial encontrado">
 
-                                    <p:column headerText="Excluir" style="text-align: center">
-                                        <p:commandButton icon="ui-icon-trash" action="#{macFilialBean.delete(macFilial)}" disabled="#{controleAcessoBean.botaoExcluir}" update=":formMacFilial2:i_msg_f2 :formMacFilial2:tbl" />
+                                    <p:column style="text-align: center" width="30">
+                                        <p:commandButton icon="ui-icon-trash" action="#{macFilialBean.delete(macFilial)}" disabled="#{controleAcessoBean.delete}" update=":form_mac_filial_2:i_msg_f2 :form_mac_filial_2:tbl" />
                                     </p:column>
 
                                     <p:column headerText="Filial">
                                         <h:outputLabel value="#{macFilial.filial.filial.pessoa.nome}"/>
                                     </p:column>
 
-                                    <p:column headerText="Departamento">
+                                    <p:column headerText="Departamento" styleClass="text-center">
                                         <h:outputLabel value="#{macFilial.departamento.descricao}"/>
                                     </p:column>
 
-                                    <p:column headerText="Registro">
-                                        <h:outputLabel value="#{macFilial.mac}" />
+                                    <p:column headerText="Registro" styleClass="text-center" width="140">
+                                        <p:inputText value="#{macFilial.mac}" onclick="selectInputText(this)" styleClass="text-center" readonly="true" style="color: #bc4763"/>
                                     </p:column>
 
-                                    <p:column headerText="Nr Mesa">
+                                    <p:column headerText="Nr Mesa" styleClass="text-center">
                                         <h:outputLabel value="#{macFilial.mesa}" />
                                     </p:column>
 
@@ -117,18 +114,24 @@
                                         <h:outputLabel value="#{macFilial.caixa.caixa} - #{macFilial.caixa.descricao}" rendered="#{macFilial.caixa != null}"/>
                                         <h:outputLabel value="NENHUM CAIXA" rendered="#{macFilial.caixa == null}"/>
                                     </p:column>
+
+                                    <p:column rendered="#{segurancaUtilitariosBean.sessaoUsuario.administrador}" styleClass="text-center" style="width: 30px">
+                                        <p:commandButton icon="ui-icon-transferthick-e-w" action="#{macFilialBean.putFilial(macFilial)}" title="Acessar/Trocar filial"/>
+                                    </p:column>
+
+                                    <p:column headerText="Sair" rendered="#{segurancaUtilitariosBean.sessaoUsuario.administrador}" styleClass="text-center" style="width: 30px">
+                                        <p:commandButton icon="ui-icon ui-icon-extlink" action="#{macFilialBean.putFilial(macFilial, true)}" title="Acessar/Trocar filial e sair"/>
+                                    </p:column>
+
                                 </p:dataTable>   
                             </h:panelGrid>
                         </h:form>
                     </p:panel>
-
                 </f:view>
-
                 <!-- FINALIZA div wrap main -->
             </div>
         </div>
         <!-- FINALIZA div wrap main -->
-
         <div id="footerx">
             <f:subview id="footer">
                 <ui:include src="templates/templateFooter.xhtml"/>

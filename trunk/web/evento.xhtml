@@ -54,7 +54,7 @@
                                 </h:panelGrid>
                             </p:panel>
                             <h:panelGrid columns="4" styleClass="margin-top-max">
-                                <p:commandButton value="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.botaoSalvar}"/>
+                                <p:commandButton value="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.save}"/>
                                 <p:commandButton value="Novo" action="#{eventoBean.clear}" update=":form_e:" />
                             </h:panelGrid>
                             <p:panel header="Eventos" styleClass="margin-top-max" id="i_datatable_e">
@@ -75,7 +75,7 @@
                                         <p:commandButton icon="ui-icon-check" rendered="#{evento.web}" title="Web"/>
                                     </p:column>
                                     <p:column width="30">
-                                        <p:commandButton icon="ui-icon-trash" action="#{eventoBean.delete(evento)}" update=":form_e:"  disabled="#{controleAcessoBean.botaoExcluir}" oncomplete="PF('dlg_message').show()" />
+                                        <p:commandButton icon="ui-icon-trash" action="#{eventoBean.delete(evento)}" update=":form_e:"  disabled="#{controleAcessoBean.delete}" oncomplete="PF('dlg_message').show()" />
                                     </p:column>
                                 </p:dataTable>
                             </p:panel>

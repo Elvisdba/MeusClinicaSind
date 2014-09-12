@@ -44,7 +44,7 @@
                                     <p:inputText value="#{combustivelBean.combustivel.valorLitroString}" converter="#{toCurrency}">
                                         <f:ajax event="blur" render="@this" />
                                     </p:inputText>
-                                    <p:commandButton value="Adicionar" action="#{combustivelBean.save}" update=":form_c:" disabled="#{controleAcessoBean.botaoSalvar}"/>
+                                    <p:commandButton value="Adicionar" action="#{combustivelBean.save}" update=":form_c:" disabled="#{controleAcessoBean.save}"/>
                                     <p:commandButton value="Novo" action="#{combustivelBean.clear}" update=":form_c:" />
                                 </h:panelGrid>
                             </p:panel>
@@ -60,7 +60,7 @@
                                         <p:outputLabel value="#{combustivel.valorLitroString}" />
                                     </p:column>
                                     <p:column width="30">
-                                        <p:commandButton icon="ui-icon-trash" action="#{combustivelBean.delete(combustivel)}" update=":form_c:" />
+                                        <p:commandButton icon="ui-icon-trash" action="#{combustivelBean.delete(combustivel)}" update=":form_c:" disabled="#{controleAcessoBean.delete}"/>
                                     </p:column>
                                 </p:dataTable>
                             </p:panel>

@@ -71,7 +71,7 @@
                                 <h:selectOneMenu id="idServicos" value="#{modeloContratoBean.idServicos}">
                                     <f:selectItems value="#{modeloContratoBean.listServicos}" />
                                 </h:selectOneMenu>
-                                <p:commandButton icon="ui-icon-plus" action="#{modeloContratoBean.addServicos}" disabled="#{controleAcessoBean.botaoSalvar}" update="tbl_servicos"/>
+                                <p:commandButton icon="ui-icon-plus" action="#{modeloContratoBean.addServicos}" disabled="#{controleAcessoBean.save}" update="tbl_servicos"/>
                             </h:panelGrid>
                             <h:panelGrid id="tbl_servicos" styleClass="margin-top-max">
                                 <p:dataTable var="linha" value="#{modeloContratoBean.listaMatriculaContratoServico}" emptyMessage="Nenhum registro encontrado!">
@@ -79,15 +79,15 @@
                                         <h:outputText value="#{linha.servicos.descricao}"/>
                                     </p:column>
                                     <p:column headerText="...">
-                                        <p:commandButton icon="ui-icon-trash" action="#{modeloContratoBean.removeServicos(linha)}" disabled="#{controleAcessoBean.botaoExcluir}" update=":form_contrato:tbl_servicos :form_contrato:i_growl" />
+                                        <p:commandButton icon="ui-icon-trash" action="#{modeloContratoBean.removeServicos(linha)}" disabled="#{controleAcessoBean.delete}" update=":form_contrato:tbl_servicos :form_contrato:i_growl" />
                                     </p:column>                                
                                 </p:dataTable>
                             </h:panelGrid>
                         </p:panel>
                         <h:panelGrid columns="6" styleClass="margin-top-max">
-                            <p:commandButton value="Salvar" disabled="#{controleAcessoBean.botaoSalvar}" onclick="PF('dlg_save').show()" type="button"  />
+                            <p:commandButton value="Salvar" disabled="#{controleAcessoBean.save}" onclick="PF('dlg_save').show()" type="button"  />
                             <p:commandButton value="Novo" action="#{modeloContratoBean.clear}" update=":form_contrato:"/>
-                            <p:commandButton value="Excluir" disabled="#{controleAcessoBean.botaoExcluir}" onclick="PF('dlg_delete').show()" type="button"/>
+                            <p:commandButton value="Excluir" disabled="#{controleAcessoBean.delete}" onclick="PF('dlg_delete').show()" type="button"/>
                             <p:commandButton value="Pesquisar" action="#{chamadaPaginaBean.pesquisaModeloContrato}" title="Pesquisar Contrato" />
                             <p:commandButton value="Anexar arquivos" type="button" onclick="PF('dgl_upload').show();" id="id_btn_uploads" rendered="#{modeloContratoBean.matriculaContrato.id != -1}"/>
                             <p:commandButton value="Anexos (#{modeloContratoBean.listaArquivos.size()})" type="button" onclick="PF('dgl_anexos').show();" id="id_btn_anexo" rendered="#{modeloContratoBean.matriculaContrato.id != -1}"/>

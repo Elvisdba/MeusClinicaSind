@@ -44,7 +44,7 @@
 
                                     <p:column>
                                         <br />
-                                        <p:commandButton value="Salvar" action="#{grauParentescoBean.save}" update=":form_grau_parentesco:" disabled="#{controleAcessoBean.botaoSalvar}" title="Salvar/Atualizar"/>
+                                        <p:commandButton value="Salvar" action="#{grauParentescoBean.save}" update=":form_grau_parentesco:" disabled="#{controleAcessoBean.save}" title="Salvar/Atualizar"/>
                                     </p:column>
 
                                     <p:column>
@@ -54,7 +54,7 @@
 
                                     <p:column>
                                         <br />
-                                        <p:commandButton value="Excluir" action="#{grauParentescoBean.delete}" update=":form_grau_parentesco:" disabled="#{controleAcessoBean.botaoExcluir}" title="Excluir"/>
+                                        <p:commandButton value="Excluir" action="#{grauParentescoBean.delete}" update=":form_grau_parentesco:" disabled="#{controleAcessoBean.delete}" title="Excluir"/>
                                     </p:column>
                                 </h:panelGrid>
                             </p:panel>                            

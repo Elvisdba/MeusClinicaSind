@@ -28,26 +28,26 @@
                         <p:panel style="border: 0px; width: 1024px; margin: 0 auto">
                             <p:menubar>  
                                 <p:submenu label="Departamento" icon="ui-icon-document" style="margin-right: 15px">
-                                    <p:menuitem value="Administração"                action="#{chamadaPaginaBean.menuAdministrativo()}" />
-                                    <p:menuitem value="Coordenação"             action="#{chamadaPaginaBean.menuCoordenacao()}" />
-                                    <p:menuitem value="Equipe Técnica"          action="#{chamadaPaginaBean.menuEquipeTecnica()}" />                                    
+                                    <p:menuitem value="Administração"                action="#{chamadaPaginaBean.menuAdministrativo()}" rendered="#{!controleAcessoBean.view('menuAdministrativo')}"/>
+                                    <p:menuitem value="Coordenação"             action="#{chamadaPaginaBean.menuCoordenacao()}" rendered="#{!controleAcessoBean.view('menuCoordenacao')}"/>
+                                    <p:menuitem value="Equipe Técnica"          action="#{chamadaPaginaBean.menuEquipeTecnica()}" rendered="#{!controleAcessoBean.view('menuEquipeTecnica')}"/>                                    
                                 </p:submenu>
                                 <p:submenu label="Segurança" icon="ui-icon-document" style="margin-right: 15px">
-                                    <p:menuitem value="Configurações" action="#{chamadaPaginaBean.pagina('registro')}" actionListener="#{registroBean.limparModulo()}" />
-                                    <p:menuitem value="Registro Computador" action="#{chamadaPaginaBean.pagina('macFilial')}" actionListener="#{registroBean.limparModulo()}" />
-                                    <p:menuitem value="Usuários" action="#{chamadaPaginaBean.pagina('usuario')}" />  
+                                    <p:menuitem value="Configurações" action="#{chamadaPaginaBean.pagina('registro')}" actionListener="#{registroBean.limparModulo()}" rendered="#{!controleAcessoBean.view('registro')}"/>
+                                    <p:menuitem value="Filial"     action="#{chamadaPaginaBean.pagina('filial')}" rendered="#{!controleAcessoBean.view('filial')}"/>
+                                    <p:menuitem value="Registro Computador" action="#{chamadaPaginaBean.pagina('macFilial')}" actionListener="#{registroBean.limparModulo()}" rendered="#{!controleAcessoBean.view('macFilial')}"/>
+                                    <p:menuitem value="Usuários" action="#{chamadaPaginaBean.pagina('usuario')}" rendered="#{!controleAcessoBean.view('usuario')}"/>  
                                     <p:submenu label="Permissão" icon="ui-icon-contact">  
-                                        <p:menuitem value="Perm. Departamento"      action="#{chamadaPaginaBean.permissaoDepartamento}" />
-                                        <p:menuitem value="Módulo/Rotina"           action="#{chamadaPaginaBean.permissao}" />
-                                        <p:menuitem value="Cadastro Simples"        action="#{chamadaPaginaBean.simples}" />
-                                        <p:menuitem value="Rotina"                  action="#{chamadaPaginaBean.rotina}" />
-                                        <p:menuitem value="Níveis"                  action="#{chamadaPaginaBean.nivel}" />
-                                        <p:menuitem value="Filial Departamento"     action="#{chamadaPaginaBean.pagina('filialDepartamento')}" />
+                                        <p:menuitem value="Perm. Departamento"      action="#{chamadaPaginaBean.permissaoDepartamento}" rendered="#{!controleAcessoBean.view('permissaoDepartamento')}"/>
+                                        <p:menuitem value="Módulo/Rotina"           action="#{chamadaPaginaBean.permissao}" rendered="#{!controleAcessoBean.view('permissao')}"/>
+                                        <p:menuitem value="Cadastro Simples"        action="#{chamadaPaginaBean.simples}" rendered="#{!controleAcessoBean.view('simples')}"/>
+                                        <p:menuitem value="Rotina"                  action="#{chamadaPaginaBean.rotina}" rendered="#{!controleAcessoBean.view('rotina')}" />
+                                        <p:menuitem value="Níveis"                  action="#{chamadaPaginaBean.nivel}" rendered="#{!controleAcessoBean.view('nivel')}"/>
+                                        <p:menuitem value="Filial Departamento"     action="#{chamadaPaginaBean.pagina('filialDepartamento')}" rendered="#{!controleAcessoBean.view('filialDepartamento')}" />
                                     </p:submenu>  
                                     <p:separator />  
-                                    <p:menuitem value="Pesquisar Logs"              action="#{chamadaPaginaBean.pagina('pesquisaLog')}" title="Registro de atividades"  />
-                                    <p:submenu label="Sistema">
-                                        <p:menuitem value="Filial"     action="#{chamadaPaginaBean.pagina('filial')}" />
+                                    <p:menuitem value="Pesquisar Logs"              action="#{chamadaPaginaBean.pagina('pesquisaLog')}" title="Registro de atividades" rendered="#{!controleAcessoBean.view('pesquisaLog')}"/>
+                                    <p:submenu label="Sistema">                                        
                                         <c:if test="#{controleUsuarioBean.clienteString.equals('ClinicaIntegrada')}">
                                             <p:menuitem value="Cliente"       action="#{chamadaPaginaBean.pagina('cliente')}" />
                                         </c:if>
@@ -56,29 +56,28 @@
                                 </p:submenu>                                 
                                 <p:submenu label="Ferramentas" icon="ui-icon-document" style="margin-right: 15px">  
                                     <p:submenu label="Pessoa" icon="ui-icon-contact">
-                                        <p:menuitem value="Física"                action="#{chamadaPaginaBean.pagina('pessoaFisica', 'fisicaBean')}"/>
-                                        <p:menuitem value="Juridica"              action="#{chamadaPaginaBean.pagina('pessoaJuridica', 'juridicaBean')}"/>
-                                        <p:menuitem value="Cnae"                  action="#{chamadaPaginaBean.pagina('cnae')}"/>
-                                        <p:menuitem value="Profissão"             action="#{chamadaPaginaBean.pagina('profissao')}"/>
-                                        <p:menuitem value="Filial"                action="#{chamadaPaginaBean.pagina('filial')}"/>
+                                        <p:menuitem value="Física"                action="#{chamadaPaginaBean.pagina('pessoaFisica', 'fisicaBean')}" rendered="#{!controleAcessoBean.view('pessoaFisica')}"/>
+                                        <p:menuitem value="Juridica"              action="#{chamadaPaginaBean.pagina('pessoaJuridica', 'juridicaBean')}" rendered="#{!controleAcessoBean.view('pessoaJuridica')}"/>
+                                        <p:menuitem value="Cnae"                  action="#{chamadaPaginaBean.pagina('cnae')}" rendered="#{!controleAcessoBean.view('cnae')}"/>
+                                        <p:menuitem value="Profissão"             action="#{chamadaPaginaBean.pagina('profissao')}" rendered="#{!controleAcessoBean.view('profissao')}"/>
+                                        <p:menuitem value="Filial"                action="#{chamadaPaginaBean.pagina('filial')}" rendered="#{!controleAcessoBean.view('filial')}"/>
                                         <p:submenu label="Suporte">
-                                            <p:menuitem value="Nacionalidade"         action="#{chamadaPaginaBean.paginaSimples('Nacionalidade', 'Nacionalidade')}"/>
-                                            <p:menuitem value="Tipo de Cadastro"      action="#{chamadaPaginaBean.paginaSimples('TipoCadastro', 'Tipo de Cadastro Pessoa')}"/>
-                                            <p:menuitem value="Parentesco"            action="#{chamadaPaginaBean.pagina('parentesco')}"/>
+                                            <p:menuitem value="Nacionalidade"         action="#{chamadaPaginaBean.paginaSimples('Nacionalidade', 'Nacionalidade')}" rendered="#{!controleAcessoBean.view('nacionalidade')}"/>
+                                            <p:menuitem value="Parentesco"            action="#{chamadaPaginaBean.pagina('parentesco')}" rendered="#{!controleAcessoBean.view('parentesco')}"/>
                                         </p:submenu>
                                     </p:submenu>                                       
                                     <p:submenu label="Endereço" icon="ui-icon-contact" style="margin-right: 15px">
-                                        <p:menuitem value="Endereço"      action="#{chamadaPaginaBean.pagina('endereco')}"/>
-                                        <p:menuitem value="Bairro"        action="#{chamadaPaginaBean.bairro}"/>
-                                        <p:menuitem value="Cidade"        action="#{chamadaPaginaBean.pagina('cidade')}"/>
-                                        <p:menuitem value="Logradouro"    action="#{chamadaPaginaBean.logradouro}"/>
-                                        <p:menuitem value="Descrição"     action="#{chamadaPaginaBean.descricaoEndereco}"/>
-                                        <p:menuitem value="Tipo Endereço" action="#{chamadaPaginaBean.tipoEndereco}"/>
+                                        <p:menuitem value="Endereço"      action="#{chamadaPaginaBean.pagina('endereco')}" rendered="#{!controleAcessoBean.view('endereco')}"/>
+                                        <p:menuitem value="Bairro"        action="#{chamadaPaginaBean.bairro}" rendered="#{!controleAcessoBean.view('bairro')}"/>
+                                        <p:menuitem value="Cidade"        action="#{chamadaPaginaBean.pagina('cidade')}" rendered="#{!controleAcessoBean.view('cidade')}"/>
+                                        <p:menuitem value="Logradouro"    action="#{chamadaPaginaBean.logradouro}" rendered="#{!controleAcessoBean.view('logradouro')}"/>
+                                        <p:menuitem value="Descrição"     action="#{chamadaPaginaBean.descricaoEndereco}" rendered="#{!controleAcessoBean.view('descricaoEndereco')}"/>
+                                        <p:menuitem value="Tipo Endereço" action="#{chamadaPaginaBean.tipoEndereco}" rendered="#{!controleAcessoBean.view('tipoEndereco')}"/>
                                     </p:submenu>
                                     <p:submenu label="Agenda" icon="ui-icon-document">  
-                                        <p:menuitem value="Agenda Telefônica"            action="#{chamadaPaginaBean.pagina('agendaTelefone')}" actionListener="#{agendaTelefoneBean.putType('agendaTelefone')}" title="Cadastro"/>
-                                        <p:menuitem value="Grupo Agenda"                 action="#{chamadaPaginaBean.simples('GrupoAgenda', 'Grupo Agenda')}"/>
-                                        <p:menuitem value="Grupo Usuário"     action="#{chamadaPaginaBean.pagina('agendaGrupoUsuario')}" />
+                                        <p:menuitem value="Agenda Telefônica"            action="#{chamadaPaginaBean.pagina('agendaTelefone')}" actionListener="#{agendaTelefoneBean.putType('agendaTelefone')}" title="Cadastro" rendered="#{!controleAcessoBean.view('agendaTelefone')}"/>
+                                        <p:menuitem value="Grupo Agenda"                 action="#{chamadaPaginaBean.simples('GrupoAgenda', 'Grupo Agenda')}" rendered="#{!controleAcessoBean.view('grupoAgenda')}"/>
+                                        <p:menuitem value="Grupo Usuário"     action="#{chamadaPaginaBean.pagina('agendaGrupoUsuario')}" rendered="#{!controleAcessoBean.view('agendaGrupoUsuario')}"/>
                                     </p:submenu>
                                     <p:menuitem icon="ui-icon ui-icon-mail-closed" value="Email" action="#{chamadaPaginaBean.pagina('email')}" />
                                 </p:submenu>

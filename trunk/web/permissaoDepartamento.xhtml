@@ -73,10 +73,10 @@
                                     </h:column>
                                     <h:column>
                                         <h:panelGrid columns="1">
-                                            <p:commandButton value="Todas" style="width: 100px;" action="#{permissaoBean.adicionarTodasPermissaoDpto}" id="idDPClick" update="tbl, tbl2" disabled="#{controleAcessoBean.botaoSalvar}" />
-                                            <p:commandButton value="Adicionar" style="width: 100px;" action="#{permissaoBean.adicionarPermissaoDpto}" update="tbl, tbl2" disabled="#{controleAcessoBean.botaoSalvar}" id="idAdicionar" />
-                                            <p:commandButton value="Remover" style="width: 100px;" action="#{permissaoBean.excluirPermissaoDepto}" update="tbl, tbl2" disabled="#{controleAcessoBean.botaoExcluir}" />
-                                            <p:commandButton value="Nenhum" style="width: 100px;"  action="#{permissaoBean.excluirTodasPermissaoDepto}" update="tbl, tbl2" disabled="#{controleAcessoBean.botaoExcluir}" />
+                                            <p:commandButton value="Todas" style="width: 100px;" action="#{permissaoBean.adicionarTodasPermissaoDpto}" id="idDPClick" update="tbl, tbl2" disabled="#{controleAcessoBean.save}" />
+                                            <p:commandButton value="Adicionar" style="width: 100px;" action="#{permissaoBean.adicionarPermissaoDpto}" update="tbl, tbl2" disabled="#{controleAcessoBean.save}" id="idAdicionar" />
+                                            <p:commandButton value="Remover" style="width: 100px;" action="#{permissaoBean.excluirPermissaoDepto}" update="tbl, tbl2" disabled="#{controleAcessoBean.delete}" />
+                                            <p:commandButton value="Nenhum" style="width: 100px;"  action="#{permissaoBean.excluirTodasPermissaoDepto}" update="tbl, tbl2" disabled="#{controleAcessoBean.delete}" />
                                         </h:panelGrid>
                                     </h:column>
                                     <h:column>
