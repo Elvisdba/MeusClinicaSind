@@ -37,8 +37,8 @@ public class RotinaDao extends DB {
 
     public Rotina pesquisaRotinaPorPagina(String pagina) {
         try {
-            Query query = getEntityManager().createQuery("SELECT R FROM Rotina AS R WHERE R.pagina LIKE :pagina");
-            query.setParameter("pagina", "%" + pagina + "%");
+            String queryString = "SELECT R FROM Rotina AS R WHERE R.pagina LIKE " + "'%" + pagina + "%'";
+            Query query = getEntityManager().createQuery(queryString);
             List list = query.getResultList();
             if (!list.isEmpty() && list.size() == 1) {
                 return (Rotina) query.getSingleResult();

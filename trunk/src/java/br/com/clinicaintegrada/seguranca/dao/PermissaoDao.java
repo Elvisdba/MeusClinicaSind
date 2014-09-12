@@ -150,12 +150,13 @@ public class PermissaoDao extends DB {
             queryFiltro = " AND UPPER(P.rotina.rotina) LIKE '%" + descricaoPesquisa.toUpperCase() + "%'";
         }
         try {
-            Query query = getEntityManager().createQuery(" SELECT P FROM Permissao AS P WHERE P.cliente.id = :" + idCliente + " AND P.id NOT IN ( SELECT PD.permissao.id FROM PermissaoDepartamento AS PD WHERE PD.departamento.id = " + idDepartamento + " AND PD.nivel.id = " + idNivel + " AND PD.cliente.id = " + idCliente + " ) " + queryFiltro + " ORDER BY P.modulo.descricao ASC, P.rotina.rotina ASC ");
+            Query query = getEntityManager().createQuery(" SELECT P FROM Permissao AS P WHERE P.cliente.id = " + idCliente + " AND P.id NOT IN ( SELECT PD.permissao.id FROM PermissaoDepartamento AS PD WHERE PD.departamento.id = " + idDepartamento + " AND PD.nivel.id = " + idNivel + " AND PD.cliente.id = " + idCliente + " ) " + queryFiltro + " ORDER BY P.modulo.descricao ASC, P.rotina.rotina ASC ");
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;
             }
         } catch (Exception e) {
+            return new ArrayList();
         }
         return new ArrayList();
 

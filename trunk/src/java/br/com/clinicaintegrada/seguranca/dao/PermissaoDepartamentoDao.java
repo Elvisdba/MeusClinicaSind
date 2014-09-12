@@ -92,6 +92,7 @@ public class PermissaoDepartamentoDao extends DB {
                 return (PermissaoDepartamento) query.getSingleResult();
             }
         } catch (Exception e) {
+            return null;
         }
         return null;
     }
