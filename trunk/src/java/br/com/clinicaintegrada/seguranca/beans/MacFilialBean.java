@@ -4,15 +4,20 @@ import br.com.clinicaintegrada.financeiro.Caixa;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.Filial;
 import br.com.clinicaintegrada.pessoa.dao.FilialDao;
+import br.com.clinicaintegrada.seguranca.Cliente;
 import br.com.clinicaintegrada.seguranca.Departamento;
 import br.com.clinicaintegrada.seguranca.MacFilial;
 import br.com.clinicaintegrada.seguranca.Registro;
+import br.com.clinicaintegrada.seguranca.controleUsuario.ChamadaPaginaBean;
+import br.com.clinicaintegrada.seguranca.controleUsuario.ControleUsuarioBean;
+import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import br.com.clinicaintegrada.seguranca.dao.MacFilialDao;
-import br.com.clinicaintegrada.seguranca.dao.PermissaoUsuarioDao;
+import br.com.clinicaintegrada.seguranca.dao.RegistroDao;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.DaoInterface;
 import br.com.clinicaintegrada.utils.Messages;
 import br.com.clinicaintegrada.utils.Sessions;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +25,9 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpSession;
 
 @ManagedBean
 @SessionScoped
@@ -61,7 +68,7 @@ public class MacFilialBean implements Serializable {
         DaoInterface di = new Dao();
         Logger logger = new Logger();
         if (getListaFiliais().isEmpty()) {
-            Messages.warn("Validação", "Cadastrar filiais <p:menuitem value=\"Filial\" action=\"#{chamadaPaginaBean.pagina('filial')}\"/>!");
+            Messages.warn("Validação", "Cadastrar filiais!");
             return;
         }
         Filial filial = (Filial) di.find(new Filial(), Integer.parseInt(getListaFiliais().get(idFilial).getDescription()));
@@ -193,8 +200,10 @@ public class MacFilialBean implements Serializable {
 
     public List<MacFilial> getListaMacs() {
         if (listaMacs.isEmpty()) {
-            Dao dao = new Dao();
-            listaMacs = dao.listByCliente(new MacFilial(), true);
+            MacFilialDao macFilialDao = new MacFilialDao();
+            RegistroDao registroDao = new RegistroDao();
+            Registro r = registroDao.pesquisaRegistroPorCliente(SessaoCliente.get().getId());
+            listaMacs = macFilialDao.pesquisaTodosPorMatriz(r.getFilial().getId());
         }
         return listaMacs;
     }
@@ -228,5 +237,38 @@ public class MacFilialBean implements Serializable {
 
     public void setListaCaixa(List<SelectItem> listaCaixa) {
         this.listaCaixa = listaCaixa;
+    }
+
+    public String putFilial(MacFilial mf) throws IOException {
+        putFilial(mf, false);
+        ChamadaPaginaBean chamadaPaginaBean = (ChamadaPaginaBean) Sessions.getObject("chamadaPaginaBean");
+        Sessions.put("linkClicado", true);        
+        String link = chamadaPaginaBean.getPenultimoLink();
+        return link;
+    }
+
+    public void putFilial(MacFilial mf, boolean sair) throws IOException {
+        Sessions.remove("acessoFilial");
+        Sessions.remove("chamadaPaginaBean");
+        ((ControleUsuarioBean) Sessions.getObject("controleUsuarioBean")).setMacFilial(mf);
+        ((ControleUsuarioBean) Sessions.getObject("controleUsuarioBean")).setFilial("Filial: ( " + mf.getFilial().getFilial().getPessoa().getNome() + " / " + mf.getDepartamento().getDescricao() + " )");
+        Sessions.put("acessoFilial", mf);
+        Sessions.put("linkClicado", true);
+        if (sair) {
+            String retorno = "";
+            if (Sessions.exists("sessaoCliente")) {
+                retorno = ((Cliente) Sessions.getObject("sessaoCliente")).getIdentifica() + "/";
+                if (Sessions.exists("acessoFilial")) {
+                    MacFilial mfs = (MacFilial) Sessions.getObject("acessoFilial");
+                    retorno += "?filial=" + mfs.getMac();
+                }
+
+            }
+            FacesContext conext = FacesContext.getCurrentInstance();
+            HttpSession session = (HttpSession) conext.getExternalContext().getSession(false);
+            session.invalidate();
+            FacesContext.getCurrentInstance().getExternalContext().redirect(retorno);
+        }
+
     }
 }
