@@ -68,6 +68,13 @@
 -- INSERT INTO seg_rotina (id, ds_rotina, ds_nome_pagina, ds_classe, is_ativo) SELECT 60, 'CONFIGURAÇÕES', '"/ClinicaIntegrada/registro.jsf"', '', true WHERE NOT EXISTS ( SELECT id FROM seg_rotina WHERE id = 60);
 -- INSERT INTO seg_rotina (id, ds_rotina, ds_nome_pagina, ds_classe, is_ativo) SELECT 61, 'CRONÔGRAMA', '"/ClinicaIntegrada/cronograma.jsf"', '', true WHERE NOT EXISTS ( SELECT id FROM seg_rotina WHERE id = 61);
 -- INSERT INTO seg_rotina (id, ds_rotina, ds_nome_pagina, ds_classe, is_ativo) SELECT 62, 'CONTRATO', '"/ClinicaIntegrada/contrato.jsf"', '', true WHERE NOT EXISTS ( SELECT id FROM seg_rotina WHERE id = 62);
+-- INSERT INTO seg_rotina (id, ds_rotina, ds_nome_pagina, ds_classe, is_ativo) SELECT 63, 'PLANO DE CONTAS', '"/ClinicaIntegrada/plano.jsf"', '', true WHERE NOT EXISTS ( SELECT id FROM seg_rotina WHERE id = 63);
+-- INSERT INTO seg_rotina (id, ds_rotina, ds_nome_pagina, ds_classe, is_ativo) SELECT 64, 'MENU FINANCEIRO', '"/ClinicaIntegrada/menuFinanceiro.jsf"', '', true WHERE NOT EXISTS ( SELECT id FROM seg_rotina WHERE id = 64);
+-- INSERT INTO seg_rotina (id, ds_rotina, ds_nome_pagina, ds_classe, is_ativo) SELECT 65, 'CONTA BANCO', '"/ClinicaIntegrada/contaBanco.jsf"', '', true WHERE NOT EXISTS ( SELECT id FROM seg_rotina WHERE id = 65);
+-- INSERT INTO seg_rotina (id, ds_rotina, ds_nome_pagina, ds_classe, is_ativo) SELECT 66, 'CONTA COBRANÇA', '"/ClinicaIntegrada/contaCobranca.jsf"', '', true WHERE NOT EXISTS ( SELECT id FROM seg_rotina WHERE id = 66);
+-- INSERT INTO seg_rotina (id, ds_rotina, ds_nome_pagina, ds_classe, is_ativo) SELECT 67, 'BANCO', '"/ClinicaIntegrada/banco.jsf"', '', true WHERE NOT EXISTS ( SELECT id FROM seg_rotina WHERE id = 67);
+-- INSERT INTO seg_rotina (id, ds_rotina, ds_nome_pagina, ds_classe, is_ativo) SELECT 68, 'ÍNDICE MENSAL', '"/ClinicaIntegrada/indiceMensal.jsf"', '', true WHERE NOT EXISTS ( SELECT id FROM seg_rotina WHERE id = 68);
+-- INSERT INTO seg_rotina (id, ds_rotina, ds_nome_pagina, ds_classe, is_ativo) SELECT 69, 'ÍNDICE', '"/ClinicaIntegrada/indice.jsf"', 'Indice', true WHERE NOT EXISTS ( SELECT id FROM seg_rotina WHERE id = 69);
 -- SELECT setval('seg_rotina_id_seq', max(id)) FROM seg_rotina;
 
 
