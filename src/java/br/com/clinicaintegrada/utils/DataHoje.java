@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import org.apache.jasper.tagplugins.jstl.core.Catch;
 
 public class DataHoje {
 
@@ -717,7 +718,8 @@ public class DataHoje {
      * Tipo
      *
      * @param data
-     * @param tipo 0 = dia extenso/mes extenso/ano extenso/ ; 1 = mes/ano ; 2 - ano; 3 - dia/mes extenso/ano extenso/
+     * @param tipo 0 = dia extenso/mes extenso/ano extenso/ ; 1 = mes/ano ; 2 -
+     * ano; 3 - dia/mes extenso/ano extenso/
      * @return
      */
     public static String dataExtenso(String data, int tipo) {
@@ -729,7 +731,7 @@ public class DataHoje {
             String dia = data.substring(0, 2);
             String mes = data.substring(3, 5);
             String ano = data.substring(6, 10);
-            if(tipo != 3) {                
+            if (tipo != 3) {
                 switch (Integer.parseInt(dia)) {
                     case 1:
                         dia = "Primeiro";
@@ -933,5 +935,21 @@ public class DataHoje {
 
     public static boolean isDataValida(String input) {
         return dataValidaConverte(input) != null;
+    }
+
+    public static String alteraDiaVencimento(int dia, String dataString) {
+        String diaString = "";
+        if(dia > 9) {
+            diaString = "" + dia;
+        } else {
+            diaString = "0" + dia;
+        }
+        String mesString = dataString.substring(3, 5);
+        String anoString = dataString.substring(6, 10);
+        dataString = diaString + "/" + mesString + "/" + anoString;
+        if (!isDataValida(dataString)) {
+            return "";
+        }
+        return dataString;
     }
 }
