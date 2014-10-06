@@ -1,6 +1,5 @@
 package br.com.clinicaintegrada.financeiro.dao;
 
-
 import br.com.clinicaintegrada.financeiro.Plano5;
 import br.com.clinicaintegrada.principal.DB;
 import br.com.clinicaintegrada.utils.AnaliseString;
@@ -241,10 +240,11 @@ public class PlanoDao extends DB {
         return new ArrayList();
     }
 
-    public Plano5 findPlano5ByContaBanco(int idContaBanco) {
+    public Plano5 findPlano5ByContaBanco(int idContaBanco, int idCliente) {
         try {
-            Query query = getEntityManager().createQuery("SELECT P5 FROM Plano5 AS P5 WHERE P5.contaBanco.id = :idContaBanco");
+            Query query = getEntityManager().createQuery("SELECT P5 FROM Plano5 AS P5 WHERE P5.contaBanco.id = :idContaBanco AND P5.contaBanco.cliente.id = :idCliente");
             query.setParameter("idContaBanco", idContaBanco);
+            query.setParameter("idCliente", idCliente);
             List list = query.getResultList();
             if (!list.isEmpty() && list.size() == 1) {
                 return (Plano5) query.getSingleResult();
@@ -273,6 +273,61 @@ public class PlanoDao extends DB {
             }
         } catch (Exception e) {
         }
+        return new ArrayList();
+    }
+
+    public List findPlano5InContaRotina(int idCliente) {
+        try {
+            Query query = getEntityManager().createQuery(
+                    "   SELECT P5                                                           "
+                    + "   FROM Plano5 AS P5                                                 "
+                    + "  WHERE P5.plano4.id IN(SELECT CR.plano4.id                          "
+                    + "                          FROM ContaRotina AS CR                     "
+                    + "                         WHERE CR.rotina.id = 2                      "
+                    + "                           AND (CR.pagRec IS NULL OR CR.pagRec = '') "
+                    + "  )                                                                  "
+                    + "    AND P5.contaBanco IS NULL                                        "
+                    + "    AND P5.plano4.plano3.plano2.plano.cliente.id = :idCliente        ");
+            List list = query.getResultList();
+            query.setParameter("idCliente", idCliente);
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+        }
+        return new ArrayList();
+    }
+
+    public List findPlanosByClass(String className, int idCliente) {
+        String queryPlano = "";
+        switch (className) {
+            case "Plano":
+                queryPlano = "P.cliente.id";
+                break;
+            case "Plano2":
+                queryPlano = "P.plano.cliente.id";
+                break;
+            case "Plano3":
+                queryPlano = "P.plano2.plano.cliente.id";
+                break;
+            case "Plano4":
+                queryPlano = "P.plano3.plano2.plano.cliente.id";
+                break;
+            case "Plano5":
+                queryPlano = "P.plano4.plano3.plano2.plano.cliente.id";
+                break;
+        }
+        try {
+            String queryString = "SELECT P FROM " + className + " AS P " + " WHERE " + queryPlano + " = :idCliente ORDER BY P.numero";
+            Query query = getEntityManager().createQuery(queryString);
+            query.setParameter("idCliente", idCliente);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+        }
+
         return new ArrayList();
     }
 }
