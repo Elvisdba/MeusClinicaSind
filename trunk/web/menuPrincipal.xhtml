@@ -31,6 +31,7 @@
                                     <p:menuitem value="Administração"                action="#{chamadaPaginaBean.menuAdministrativo()}" rendered="#{!controleAcessoBean.view('menuAdministrativo')}"/>
                                     <p:menuitem value="Coordenação"             action="#{chamadaPaginaBean.menuCoordenacao()}" rendered="#{!controleAcessoBean.view('menuCoordenacao')}"/>
                                     <p:menuitem value="Equipe Técnica"          action="#{chamadaPaginaBean.menuEquipeTecnica()}" rendered="#{!controleAcessoBean.view('menuEquipeTecnica')}"/>                                    
+                                    <p:menuitem value="Financeiro"              action="#{chamadaPaginaBean.menuFinanceiro()}" rendered="#{!controleAcessoBean.view('menuFinanceiro')}"/>
                                 </p:submenu>
                                 <p:submenu label="Segurança" icon="ui-icon-document" style="margin-right: 15px">
                                     <p:menuitem value="Configurações" action="#{chamadaPaginaBean.pagina('registro')}" actionListener="#{registroBean.limparModulo()}" rendered="#{!controleAcessoBean.view('registro')}"/>

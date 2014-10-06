@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Pesquisa Serviços</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/Imagens/favicon.ico"/>  
+    </h:head>
+    <h:body>
+        <f:subview id="header">
+            <ui:include src="templates/templatePrime.xhtml"/>
+        </f:subview>
+        <f:view>
+            <p:panel styleClass="wrapper" style="border: 0px;">
+                <h:form id="form_pesquisa_servicos">
+                    <h:outputText value="Pesquisa Serviços" styleClass="fonteHeader" />
+                    <div class="clear"></div>
+                    <p:panel id="i_panel_pesquisa" styleClass="fundoCinza">
+                        <h:panelGrid columns="4">
+                            <p:inputText value="#{servicosBean.descPesquisa}" size="100" autocomplete="false" />
+                            <p:commandButton value="Inicial" action="#{servicosBean.acaoInicial}" update=":form_resultado_servicos:" />
+                            <p:commandButton value="Parcial" action="#{servicosBean.acaoParcial}" update=":form_resultado_servicos:" />
+                        </h:panelGrid>
+                        <p:focus for="i_panel_pesquisa" />
+                    </p:panel>
+                </h:form>
+                <h:form id="form_resultado_servicos">
+                    <p:dataTable value="#{servicosBean.listServicos}" var="servicos" id="tbl" emptyMessage="Nenhuma registro encontrado" scrollHeight="400" scrollable="true">
+                        <p:column headerText="ID" styleClass="text-center" width="30">
+                            <p:commandButton icon="ui-icon-link" action="#{servicosBean.edit(servicos)}" title="Editar registro nº#{pessoa.id}"/>
+                        </p:column>
+                        <p:column headerText="Descrição">
+                            #{servicos.descricao}
+                            <p:commandLink action="#{pessoaBean.editar(pessoa)}" value="#{pessoa.nome}"/>
+                        </p:column>                            
+                    </p:dataTable>
+                </h:form>
+            </p:panel>
+        </f:view>        
+        <f:subview id="footer">
+            <ui:include src="templates/templateFooter.xhtml"/>
+        </f:subview>
+    </h:body>
+</ui:composition>

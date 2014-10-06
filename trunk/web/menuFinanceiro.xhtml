@@ -1,0 +1,67 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Clínica Integrada - Menu Financeiro</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" charset="UTF-8"/>
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/Imagens/favicon.ico"/>  
+    </h:head>
+
+    <h:body>
+        <!-- INICIA DIV wrap e main -->
+        <div id="wrapx">
+            <div id="mainx">
+                <!-- INICIA DIV wrap e main -->  
+                <f:subview id="header">
+                    <ui:include src="templates/templatePrime.xhtml"/>
+                </f:subview>
+
+                <f:view>
+                    <h:form id="formMenuPrincipal">
+                        <p:panel style="border: 0px; width: 1024px; margin: 0 auto">
+                            <p:menubar>
+                                <p:submenu label="Cadastro" icon="ui-icon-document" style="margin-right: 15px!important">
+                                    <p:submenu label="Pessoa">
+                                        <p:menuitem value="Física"              action="#{chamadaPaginaBean.pagina('pessoaFisica')}" />
+                                        <p:menuitem value="Jurídica"            action="#{chamadaPaginaBean.pagina('pessoaJuridica')}" />
+                                    </p:submenu>
+                                    <p:menuitem value="Plano Contas"            action="#{chamadaPaginaBean.pagina('plano')}" />
+                                    <p:menuitem value="Conta Banco"             action="#{chamadaPaginaBean.pagina('contaBanco')}" />
+                                    <p:menuitem value="Conta Cobrança"          action="#{chamadaPaginaBean.pagina('contaCobranca')}" />
+                                    <p:menuitem value="Serv Conta Cobrança"     action="#{chamadaPaginaBean.pagina('servicoContaCobranca')}" />
+                                    <p:submenu label="Índices">
+                                        <p:menuitem value="Índice"              action="#{chamadaPaginaBean.paginaSimples('Indice', 'Índice')}" />
+                                        <p:menuitem value="Índice Mensal"       action="#{chamadaPaginaBean.pagina('indiceMensal')}" />
+                                    </p:submenu>
+                                    <p:submenu label="Serviços">
+                                        <p:menuitem value="Manutenção"          action="#{chamadaPaginaBean.pagina('servicos')}" />
+                                        <p:menuitem value="Taxas"               action="#{chamadaPaginaBean.pagina('taxas')}" />
+                                    </p:submenu>
+                                    <p:menuitem value="Correção"                action="#{chamadaPaginaBean.pagina('correcao')}" />
+                                    <p:menuitem value="Caixa"                   action="#{chamadaPaginaBean.pagina('caixa')}" />
+                                    <p:menuitem value="Cartão Bancário"         action="#{chamadaPaginaBean.pagina('cartao')}" />
+                                    <p:menuitem value="Conta Operação"          action="#{chamadaPaginaBean.pagina('contaOperacao')}" />
+                                    <p:submenu label="Suporte">
+                                        <p:menuitem value="Salário Mínimo"              action="#{chamadaPaginaBean.pagina('salarioMinimo')}" />
+                                        <p:menuitem value="Classificação Econômica"     action="#{chamadaPaginaBean.pagina('classificacaoEconomica')}" />
+                                    </p:submenu>
+                                </p:submenu>
+                            </p:menubar> 
+                        </p:panel>
+                    </h:form>
+                </f:view> 
+
+                <!-- FINALIZA div wrap main -->
+            </div>
+        </div>
+        <!-- FINALIZA div wrap main -->
+        <div id="footerx">
+            <f:subview id="footer">
+                <ui:include src="templates/templateFooter.xhtml"/>
+            </f:subview>
+        </div>
+    </h:body>
+</html>

@@ -1,0 +1,77 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Taxas</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/Imagens/favicon.ico"/>  
+        <style type="text/css">
+            .ui-widget-content .ui-inputfield{ padding: 8px!important; } 
+            .ui-button { padding: 3px!important; }
+            .ui-selectonemenu {padding-right: 25px!important;}
+        </style>
+    </h:head>
+    <h:body>
+        <!-- INICIA DIV wrap e main -->
+        <div id="wrapx">
+            <div id="mainx">
+                <!-- INICIA DIV wrap e main -->  
+                <f:subview id="header">
+                    <ui:include src="templates/templatePrime.xhtml"/>
+                </f:subview>
+                <f:view>
+                    <p:panel styleClass="wrapper" style="border: 0px;">
+                        <h:outputText value="Taxas" styleClass="fonteHeader" />
+                        <div class="clear"></div>
+                        <c:set scope="request" var="object" value="${taxasBean.taxas}" id="idObject"/>
+                        <h:form id="form_taxas">
+                            <p:messages showDetail="true" showIcon="true" autoUpdate="true" closable="true" />
+
+                            <p:panel styleClass="fundoCinza margin-top-max">
+                                <h:panelGrid columns="2">
+                                    <p:outputLabel value="Serviços:" />
+                                    <h:selectOneMenu value="#{taxasBean.idServicos}">
+                                        <p:ajax event="change" update="@this :form_taxas:" />
+                                        <f:selectItem itemValue="" itemLabel="Selecionar" noSelectionOption="true" itemDisabled="true"/>
+                                        <f:selectItems value="#{taxasBean.listServicos}" />
+                                    </h:selectOneMenu>
+                                    <p:outputLabel value="Valor:" />
+                                    <p:inputText value="#{taxasBean.taxas.valorString}" converter="#{toCurrency}">
+                                        <p:ajax global="false" update="@this" event="change" />
+                                    </p:inputText>
+                                </h:panelGrid>
+                            </p:panel>                                
+                            <h:panelGrid columns="3" styleClass="margin-top-max">
+                                <p:commandButton action="#{taxasBean.save}" value="Salvar" update=":form_taxas:" disabled="#{controleAcessoBean.save}" rendered="#{taxasBean.listServicos.size() > 0}"/>
+                                <p:commandButton action="#{taxasBean.clear}" value="Novo" update=":form_taxas:"/>
+                                <p:commandButton action="#{taxasBean.delete}" value="Excluir" update=":form_taxas:" disabled="#{controleAcessoBean.delete}" rendered="#{taxasBean.taxas.id != -1}"/>
+                            </h:panelGrid>
+                            <p:dataTable value="#{taxasBean.listTaxas}" var="taxas" scrollable="true" scrollHeight="600" styleClass="margin-top-max" emptyMessage="Nenhum registro encontrado">
+                                <p:column width="30">
+                                    <p:commandButton action="#{taxasBean.edit(taxas)}" icon="ui-icon-link" update=":form_taxas:" />
+                                </p:column>
+                                <p:column headerText="Serviços">#{taxas.servicos.descricao}</p:column>
+                                <p:column headerText="Data" width="80">#{taxas.valorString}</p:column>
+                                <p:column width="30">
+                                    <p:commandButton action="#{taxasBean.delete(taxas)}" icon="ui-icon-trash" update=":form_taxas:" disabled="#{controleAcessoBean.delete}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+                    </p:panel>
+                </f:view>
+                <!-- FINALIZA div wrap main -->
+            </div>
+        </div>
+        <!-- FINALIZA div wrap main -->
+
+        <div id="footerx">
+            <f:subview id="footer">
+                <ui:include src="templates/templateFooter.xhtml"/>
+            </f:subview>
+        </div>                
+    </h:body>
+</ui:composition>
