@@ -243,6 +243,9 @@ public class MacFilialBean implements Serializable {
         putFilial(mf, false);
         ChamadaPaginaBean chamadaPaginaBean = (ChamadaPaginaBean) Sessions.getObject("chamadaPaginaBean");
         Sessions.put("linkClicado", true);        
+        if(chamadaPaginaBean == null) {
+            return "menuPrincipal";
+        }
         String link = chamadaPaginaBean.getPenultimoLink();
         return link;
     }
