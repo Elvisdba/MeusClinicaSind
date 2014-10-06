@@ -2,6 +2,7 @@ package br.com.clinicaintegrada.financeiro;
 
 import br.com.clinicaintegrada.endereco.Cidade;
 import br.com.clinicaintegrada.pessoa.Filial;
+import br.com.clinicaintegrada.seguranca.Cliente;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +17,7 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "fin_conta_banco",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"id_banco", "ds_agencia", "ds_conta"})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"id_banco", "ds_agencia", "ds_conta", "id_cliente"})
 )
 public class ContaBanco implements Serializable {
 
@@ -39,6 +40,9 @@ public class ContaBanco implements Serializable {
     @JoinColumn(name = "id_filial", referencedColumnName = "id", nullable = true)
     @OneToOne
     private Filial filial;
+    @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
+    @OneToOne
+    private Cliente cliente;
 
     public ContaBanco() {
         this.id = -1;
@@ -48,9 +52,10 @@ public class ContaBanco implements Serializable {
         this.cidade = new Cidade();
         this.uCheque = 0;
         this.filial = new Filial();
+        this.cliente = new Cliente();
     }
 
-    public ContaBanco(int id, Banco banco, String agencia, String conta, Cidade cidade, int uCheque, Filial filial) {
+    public ContaBanco(int id, Banco banco, String agencia, String conta, Cidade cidade, int uCheque, Filial filial, Cliente cliente) {
         this.id = id;
         this.banco = banco;
         this.agencia = agencia;
@@ -58,6 +63,7 @@ public class ContaBanco implements Serializable {
         this.cidade = cidade;
         this.uCheque = uCheque;
         this.filial = filial;
+        this.cliente = cliente;
     }
 
     public int getId() {
@@ -114,5 +120,13 @@ public class ContaBanco implements Serializable {
 
     public void setFilial(Filial filial) {
         this.filial = filial;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 }
