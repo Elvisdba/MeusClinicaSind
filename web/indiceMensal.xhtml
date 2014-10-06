@@ -13,9 +13,9 @@
             .ui-widget-content .ui-inputfield{ padding: 8px!important;} 
             .ui-button { padding: 3px!important; }
         </style>
-        
+
         <script type="text/javascript">
-            
+
         </script>
     </h:head>
     <h:body>
@@ -29,79 +29,68 @@
                 <f:view>
                     <p:panel styleClass="wrapper" style="border: 0px;">
                         <h:outputText value="Índice Mensal" styleClass="fonteHeader" />
-                        <h:form id="formIndiceMensal">        
+                        <div class="clear"></div>
+                        <h:form id="formIndiceMensal">
                             <c:set scope="request" var="object" value="${indiceMensalBean.indiceMensal}"/>
-                            <p:panel styleClass="fundoCinza" style="clear: both">
+                            <p:panel styleClass="fundoCinza margin-bottom-max">
                                 <h:panelGrid columns="5">
                                     <p:column>
                                         <h:outputLabel value="Índices" /><br />
                                         <p:selectOneMenu value="#{indiceMensalBean.idIndice}" style="width: 150px">
                                             <p:ajax event="change" update="tbl"/>
-                                            <f:selectItems value="#{indiceMensalBean.listaIndices}" />
+                                            <f:selectItems value="#{indiceMensalBean.listIndices}" />
                                         </p:selectOneMenu>
                                     </p:column>
-                                    
+
                                     <p:column>
                                         <h:outputLabel value="Mês"/><br />
-                                        <p:selectOneMenu id="idMes" value="#{indiceMensalBean.numMes}" style="width: 100px">
-                                            <p:ajax event="change" update="idMes"/>
-                                            <f:selectItem itemValue="1"  itemLabel="Janeiro"/>
-                                            <f:selectItem itemValue="2"  itemLabel="Fevereiro"/>
-                                            <f:selectItem itemValue="3"  itemLabel="Março"/>
-                                            <f:selectItem itemValue="4"  itemLabel="Abril"/>
-                                            <f:selectItem itemValue="5"  itemLabel="Maio"/>
-                                            <f:selectItem itemValue="6"  itemLabel="Junho"/>
-                                            <f:selectItem itemValue="7"  itemLabel="Julho"/>
-                                            <f:selectItem itemValue="8"  itemLabel="Agosto"/>
-                                            <f:selectItem itemValue="9"  itemLabel="Setembro"/>
-                                            <f:selectItem itemValue="10" itemLabel="Outubro"/>
-                                            <f:selectItem itemValue="11" itemLabel="Novembro"/>
-                                            <f:selectItem itemValue="12" itemLabel="Dezembro"/>
+                                        <p:selectOneMenu value="#{indiceMensalBean.indiceMes}" style="width: 150px">
+                                            <p:ajax event="change" update="tbl"/>
+                                            <f:selectItems value="#{indiceMensalBean.listMeses}" />
                                         </p:selectOneMenu>
                                     </p:column>
-                                    
+
                                     <p:column>
                                         <h:outputLabel value="Ano"/><br />
                                         <p:selectOneMenu id="idAno" value="#{indiceMensalBean.ano}" style="width: 70px">
                                             <p:ajax event="change" update="idAno" />
-                                            <f:selectItems value="#{indiceMensalBean.listaAnos}"/>
+                                            <f:selectItems value="#{indiceMensalBean.listAnos}"/>
                                         </p:selectOneMenu>
                                     </p:column>
-                                    
+
                                     <p:column>
                                         <h:outputLabel value="Valor" for="idValor"/><br />
                                         <p:inputText id="idValor" size="10" value="#{indiceMensalBean.valor}" >
                                             <p:ajax event="blur" update="idValor" />
                                         </p:inputText>
                                     </p:column> 
-                                        
+
                                     <p:column>
                                         <br />
-                                        <p:commandButton value="Salvar" update="formIndiceMensal" action="#{indiceMensalBean.salvar}" />
+                                        <p:commandButton value="Salvar" update=":formIndiceMensal:" action="#{indiceMensalBean.save}" />
                                     </p:column>
                                 </h:panelGrid>
                             </p:panel>
                             <p:messages id="i_msg" showDetail="true" closable="true" />
-                            
-                            <p:dataTable value="#{indiceMensalBean.listaIndiceMensal}" var="indiceMensal" id="tbl" emptyMessage="Nenhum Índice Mensal encontrado!">
+                            <p:dataTable value="#{indiceMensalBean.listaIndiceMensal}" var="indiceMensal" id="tbl" emptyMessage="Nenhum índice mensal encontrado!" styleClass="margin-top-max">
                                 <p:column headerText="Índice">
                                     <h:outputLabel value="#{indiceMensal.indice.descricao}"/>
                                 </p:column>
-                                
+
                                 <p:column headerText="Valor" styleClass="text-center" width="100">
                                     <h:outputLabel value="#{indiceMensal.valor}" />
                                 </p:column>
-                                
-                                <p:column headerText="Mês" styleClass="text-center" width="25">
-                                    <h:outputLabel value="#{indiceMensal.mes}" />
+
+                                <p:column headerText="Mês" styleClass="text-center" width="100">
+                                    <h:outputLabel value="#{indiceMensal.mes.descricao}" />
                                 </p:column>
-                                
+
                                 <p:column headerText="Ano" styleClass="text-center"  width="50">
                                     <h:outputLabel value="#{indiceMensal.ano}" />
                                 </p:column>
-                                
+
                                 <p:column styleClass="text-center" width="25">
-                                    <p:commandButton icon="ui-icon-trash" action="#{indiceMensalBean.btnExcluir(indiceMensal)}" disabled="#{controleAcessoBean.botaoExcluir}" update=":formIndiceMensal:" />
+                                    <p:commandButton icon="ui-icon-trash" action="#{indiceMensalBean.delete(indiceMensal)}" disabled="#{controleAcessoBean.delete}" update=":formIndiceMensal:" />
                                 </p:column>
                             </p:dataTable>
                         </h:form>
