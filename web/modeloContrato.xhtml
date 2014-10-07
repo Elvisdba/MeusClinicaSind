@@ -91,7 +91,7 @@
                                     </h:panelGrid>
                                 </p:panel>
                                 <h:panelGrid columns="6" styleClass="margin-top-max">
-                                    <p:commandButton value="Salvar" disabled="#{controleAcessoBean.save}" onclick="PF('dlg_save').show()" type="button"  />
+                                    <p:commandButton value="Salvar" disabled="#{controleAcessoBean.save}" onclick="PF('dlg_save').show()" type="button" />
                                     <p:commandButton value="Novo" action="#{modeloContratoBean.clear}" update=":form_contrato:"/>
                                     <p:commandButton value="Excluir" disabled="#{controleAcessoBean.delete}" onclick="PF('dlg_delete').show()" type="button"/>
                                     <p:commandButton value="Pesquisar" action="#{chamadaPaginaBean.pesquisa('pesquisaModeloContrato')}" title="Pesquisar Contrato" />
