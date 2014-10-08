@@ -42,7 +42,7 @@
                                     <p:outputLabel value="Título: " />
                                     <p:inputText value="#{modeloContratoBean.modeloContrato.titulo}" size="50"/>
                                 </h:panelGrid>
-                                <p:editor value="#{modeloContratoBean.modeloContrato.descricao}" styleClass="margin-top-max" height="500"/>
+                                <p:editor value="#{modeloContratoBean.modeloContrato.descricao}" styleClass="margin-top-max" height="500" maxlength="20000" width="800"/>
                                 <h:panelGrid columns="4" columnClasses="coluna1, coluna2" styleClass="margin-top-max">
                                     <h:outputLabel value="Cadastro:" />
                                     <h:outputLabel value="#{modeloContratoBean.modeloContrato.dataCadastro} -" />
@@ -95,7 +95,7 @@
                                     <p:commandButton value="Novo" action="#{modeloContratoBean.clear}" update=":form_contrato:"/>
                                     <p:commandButton value="Excluir" disabled="#{controleAcessoBean.delete}" onclick="PF('dlg_delete').show()" type="button"/>
                                     <p:commandButton value="Pesquisar" action="#{chamadaPaginaBean.pesquisa('pesquisaModeloContrato')}" title="Pesquisar Contrato" />
-                                    <p:commandButton value="Anexar arquivos" type="button" onclick="PF('dgl_upload').show();" id="id_btn_uploads" rendered="#{modeloContratoBean.modeloContrato.id != -1}"/>
+                                    <p:commandButton value="Anexar arquivos" type="button" onclick="PF('dgl_upload').show()" id="id_btn_uploads" rendered="#{modeloContratoBean.modeloContrato.id != -1}"/>
                                     <p:commandButton value="Anexos (#{modeloContratoBean.listaArquivos.size()})" type="button" onclick="PF('dgl_anexos').show()" id="id_btn_anexo" rendered="#{modeloContratoBean.modeloContrato.id != -1}" />
                                 </h:panelGrid>
                             </p:panel>

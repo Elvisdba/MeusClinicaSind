@@ -346,6 +346,18 @@
             <redirect/>
         </navigation-case>
         
+        <navigation-case>
+            <from-outcome>modeloContrato</from-outcome>
+            <to-view-id>/modeloContrato.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>pesquisaModeloContrato</from-outcome>
+            <to-view-id>/pesquisaModeloContrato.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
         <!-- 
         <navigation-case>
             <from-outcome>#{navigationRules.param}</from-outcome>

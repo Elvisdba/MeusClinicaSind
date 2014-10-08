@@ -15,7 +15,7 @@
             .ui-selectonemenu {padding-right: 25px!important; }
             .row-1-col-1-left {width: 830px; vertical-align: top!important}
             .row-1-col-2-right { vertical-align: top!important}
-        </style>
+        </style>   
     </h:head>
     <h:body>
         <!-- INICIA DIV wrap e main -->
@@ -243,10 +243,11 @@
                                     <p:commandButton value="Excluir" disabled="#{controleAcessoBean.delete}" onclick="PF('dlg_delete').show()" rendered="#{contratoBean.contrato.id != -1}"/>
                                     <p:commandButton action="#{chamadaPaginaBean.pesquisa('pesquisaContrato')}" value="Pesquisar" disabled="#{controleAcessoBean.view('pesquisaContrato')}"/>
                                     <p:commandButton value="Extrato" disabled="true" rendered="#{contratoBean.contrato.id != -1}"/>
-                                    <p:commandButton value="Imprimir" icon="ui-icon-print" disabled="#{contratoBean.contrato.id == -1}" rendered="#{contratoBean.contrato.id != -1}" onclick="PF('dlg_imprimir').show()"/>
+                                    <h:commandLink action="#{contratoBean.imprimir}" disabled="#{contratoBean.contrato.id == -1}" rendered="#{contratoBean.contrato.id != -1}">
+                                        <p:button value="Imprimir" icon="ui-icon-print" />
+                                    </h:commandLink>                                    
                                 </f:facet>                                
-                            </p:panel>
-                            <p:selectBooleanCheckbox value="#{contratoBean.contrato.impresso}" itemLabel="Impresso" />
+                            </p:panel>                            
                             <p:dialog widgetVar="dlg_save" width="400" closable="true" header="Deseja salvar este contrato?" modal="true">
                                 <f:facet name="footer">
                                     <h:panelGrid columns="2">
@@ -274,7 +275,8 @@
                             <p:dialog widgetVar="dlg_imprimir" width="400" closable="true" header="Tem certeza que deseja gerar este contrato?" modal="true">
                                 <f:facet name="footer">
                                     <h:panelGrid columns="2">
-                                        <p:commandButton action="#{contratoBean.imprimir}" value="Confirmar" update=":form_contrato:" oncomplete="PF('dlg_imprimir').close();"/>
+                                        <h:commandLink action="#{contratoBean.imprimir}" value="Confirmar">
+                                        </h:commandLink>
                                         <p:commandButton value="Cancelar" onclick="PF('dlg_imprimir').close()"/>
                                     </h:panelGrid>
                                 </f:facet>
