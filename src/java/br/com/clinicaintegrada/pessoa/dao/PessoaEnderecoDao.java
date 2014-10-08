@@ -35,7 +35,7 @@ public class PessoaEnderecoDao extends DB {
                     + "     FROM PessoaEndereco AS PE               "
                     + "    WHERE PE.pessoa.id = :pessoa             "
                     + "      AND PE.tipoEndereco.id = :tipoEndereco ");
-            qry.setParameter("pesspa", idPessoa);
+            qry.setParameter("pessoa", idPessoa);
             qry.setParameter("tipoEndereco", idTipoEndereco);
             List list = qry.getResultList();
             if (!list.isEmpty() && list.size() == 1) {

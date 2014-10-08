@@ -14,7 +14,7 @@ import javax.persistence.*;
 import org.primefaces.event.SelectEvent;
 
 @Entity
-@Table(name = "rot_contrato",
+@Table(name = "ctr_contrato",
         uniqueConstraints = @UniqueConstraint(columnNames = {})
 )
 public class Contrato implements Serializable {
@@ -67,6 +67,8 @@ public class Contrato implements Serializable {
     private int quantidadeParcelas;
     @Column(name = "ds_obs_rescisao", length = 255, nullable = true)
     private String observacaoRescisao;
+    @Column(name = "is_impresso")
+    private boolean impresso;
 
     public Contrato() {
         this.id = -1;
@@ -87,9 +89,10 @@ public class Contrato implements Serializable {
         this.valorEntrada = 0;
         this.quantidadeParcelas = 1;
         this.observacaoRescisao = "";
+        this.impresso = false;
     }
 
-    public Contrato(int id, Cliente cliente, Filial filial, Filial filialAtual, String senha, Date dataCadastro, Date dataInternacao, Date dataRescisao, Pessoa responsavel, Pessoa paciente, TipoInternacao tipoInternacao, int previsaoDias, TipoDesligamento tipoDesligamento, String observacao, float valorTotal, float valorEntrada, int quantidadeParcelas, String observacaoRescisao) {
+    public Contrato(int id, Cliente cliente, Filial filial, Filial filialAtual, String senha, Date dataCadastro, Date dataInternacao, Date dataRescisao, Pessoa responsavel, Pessoa paciente, TipoInternacao tipoInternacao, int previsaoDias, TipoDesligamento tipoDesligamento, String observacao, float valorTotal, float valorEntrada, int quantidadeParcelas, String observacaoRescisao, boolean impresso) {
         this.id = id;
         this.cliente = cliente;
         this.filial = filial;
@@ -108,6 +111,7 @@ public class Contrato implements Serializable {
         this.valorEntrada = valorEntrada;
         this.quantidadeParcelas = quantidadeParcelas;
         this.observacaoRescisao = observacaoRescisao;
+        this.impresso = impresso;
     }
 
     public int getId() {
@@ -283,6 +287,9 @@ public class Contrato implements Serializable {
     }
 
     public void setQuantidadeParcelas(int quantidadeParcelas) {
+        if (quantidadeParcelas < 0) {
+            quantidadeParcelas = 0;
+        }
         this.quantidadeParcelas = quantidadeParcelas;
     }
 
@@ -309,7 +316,7 @@ public class Contrato implements Serializable {
     public void setValorEntrada(float valorEntrada) {
         this.valorEntrada = valorEntrada;
     }
-    
+
     public void selectedDataCadastro(SelectEvent event) {
         SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
         this.dataCadastro = DataHoje.converte(format.format(event.getObject()));
@@ -325,5 +332,12 @@ public class Contrato implements Serializable {
         this.dataRescisao = DataHoje.converte(format.format(event.getObject()));
     }
 
+    public boolean isImpresso() {
+        return impresso;
+    }
+
+    public void setImpresso(boolean impresso) {
+        this.impresso = impresso;
+    }
 
 }
