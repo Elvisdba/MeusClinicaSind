@@ -1,8 +1,10 @@
 package br.com.clinicaintegrada.coordenacao.beans;
 
+import br.com.clinicaintegrada.administrativo.ModeloContrato;
 import br.com.clinicaintegrada.administrativo.Taxas;
 import br.com.clinicaintegrada.administrativo.TipoDesligamento;
 import br.com.clinicaintegrada.administrativo.TipoInternacao;
+import br.com.clinicaintegrada.administrativo.dao.ModeloContratoDao;
 import br.com.clinicaintegrada.administrativo.dao.TaxasDao;
 import br.com.clinicaintegrada.coordenacao.Contrato;
 import br.com.clinicaintegrada.coordenacao.dao.ContratoDao;
@@ -19,25 +21,39 @@ import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.Filial;
 import br.com.clinicaintegrada.pessoa.Fisica;
 import br.com.clinicaintegrada.pessoa.Pessoa;
+import br.com.clinicaintegrada.pessoa.PessoaEndereco;
 import br.com.clinicaintegrada.pessoa.dao.FilialDao;
 import br.com.clinicaintegrada.pessoa.dao.FisicaDao;
+import br.com.clinicaintegrada.pessoa.dao.PessoaEnderecoDao;
 import br.com.clinicaintegrada.seguranca.MacFilial;
+import br.com.clinicaintegrada.seguranca.controleUsuario.ControleUsuarioBean;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.DataHoje;
+import br.com.clinicaintegrada.utils.Diretorio;
+import br.com.clinicaintegrada.utils.Download;
+import br.com.clinicaintegrada.utils.HtmlToPDF;
 import br.com.clinicaintegrada.utils.Messages;
 import br.com.clinicaintegrada.utils.Moeda;
 import br.com.clinicaintegrada.utils.Sessions;
 import br.com.clinicaintegrada.utils.ValidDocuments;
+import br.com.clinicaintegrada.utils.ValorExtenso;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.servlet.ServletContext;
 
 @ManagedBean
 @SessionScoped
@@ -803,10 +819,248 @@ public class ContratoBean implements Serializable {
     }
 
     public void imprimir() {
+        LoteDao loteDao = new LoteDao();
+        Lote lote = loteDao.findLoteByContrato(contrato.getId());
+        if (lote == null) {
+            Messages.warn("Sistema", "Necessário gerar movimento para imprimir esse contrato!");
+            return;
+        }
         if (contrato.getId() != -1) {
-            contrato.setImpresso(true);
             Dao dao = new Dao();
-            dao.update(contrato, true);
+            String contratoDiaSemana = "";
+            ModeloContrato modeloContrato = new ModeloContrato();
+            ModeloContratoDao modeloContratoDao = new ModeloContratoDao();
+            modeloContrato = modeloContratoDao.pesquisaCodigoServico(1);
+            if (modeloContrato == null) {
+                Messages.warn("Sistema", "Não é possível gerar um contrato para este serviço. Para gerar um contrato acesse: Menu Escola > Suporte > Modelo Contrato.");
+                return;
+            }
+            String horaInicial;
+            String horaFinal;
+            FisicaDao fisicaDao = new FisicaDao();
+            Fisica responsavelFisica = fisicaDao.pesquisaFisicaPorPessoa(contrato.getResponsavel().getId());
+            Fisica pacienteFisica = fisicaDao.pesquisaFisicaPorPessoa(contrato.getResponsavel().getId());
+            List listaDiaSemana = new ArrayList();
+            int periodoMeses = 0;
+            String periodoMesesExtenso;
+            if (periodoMeses == 0) {
+                periodoMesesExtenso = "mês atual";
+            } else {
+                ValorExtenso valorExtenso = new ValorExtenso();
+                valorExtenso.setNumber((double) periodoMeses);
+                periodoMesesExtenso = (valorExtenso.toString()).replace("reais", "");
+            }
+            for (int i = 0; i < listaDiaSemana.size(); i++) {
+                if (i == 0) {
+                    contratoDiaSemana = listaDiaSemana.get(i).toString();
+                } else {
+                    contratoDiaSemana += " , " + listaDiaSemana.get(i).toString();
+                }
+            }
+            String enderecoPacienteString = "";
+            String bairroPacienteString = "";
+            String cidadePacienteString = "";
+            String estadoPacienteString = "";
+            String cepPacienteString = "";
+            String enderecoResponsavelString = "";
+            String bairroResponsavelString = "";
+            String cidadeResponsavelString = "";
+            String estadoResponsavelString = "";
+            String cepResponsavelString = "";
+            PessoaEnderecoDao pessoaEnderecoDao = new PessoaEnderecoDao();
+            PessoaEndereco pessoaEnderecoPaciente = (PessoaEndereco) pessoaEnderecoDao.pesquisaPessoaEnderecoPorPessoaTipo(contrato.getPaciente().getId(), 1);
+
+            int idTipoEndereco = -1;
+            if (pessoaEnderecoPaciente != null) {
+                enderecoPacienteString = pessoaEnderecoPaciente.getEndereco().getEnderecoSimplesToString() + ", " + pessoaEnderecoPaciente.getNumero();
+                bairroPacienteString = pessoaEnderecoPaciente.getEndereco().getBairro().getDescricao();
+                cidadePacienteString = pessoaEnderecoPaciente.getEndereco().getCidade().getCidade();
+                estadoPacienteString = pessoaEnderecoPaciente.getEndereco().getCidade().getUf();
+                cepPacienteString = pessoaEnderecoPaciente.getEndereco().getCep();
+            }
+            if (contrato.getResponsavel().getId() != contrato.getPaciente().getId()) {
+                // Tipo Documento - CPF
+                if (contrato.getResponsavel().getTipoDocumento().getId() == 1) {
+                    idTipoEndereco = 1;
+                    // Tipo Documento - CNPJ
+                } else if (contrato.getResponsavel().getTipoDocumento().getId() == 2) {
+                    idTipoEndereco = 3;
+                }
+            } else {
+                enderecoResponsavelString = enderecoPacienteString;
+                bairroResponsavelString = bairroPacienteString;
+                cidadeResponsavelString = cidadePacienteString;
+                estadoResponsavelString = estadoPacienteString;
+                cepResponsavelString = cepPacienteString;
+            }
+            PessoaEndereco pessoaEnderecoResponsavel = (PessoaEndereco) pessoaEnderecoDao.pesquisaPessoaEnderecoPorPessoaTipo(contrato.getResponsavel().getId(), idTipoEndereco);
+            if (pessoaEnderecoResponsavel != null) {
+                enderecoResponsavelString = pessoaEnderecoResponsavel.getEndereco().getEnderecoSimplesToString() + ", " + pessoaEnderecoResponsavel.getNumero();
+                bairroResponsavelString = pessoaEnderecoResponsavel.getEndereco().getBairro().getDescricao();
+                cidadeResponsavelString = pessoaEnderecoResponsavel.getEndereco().getCidade().getCidade();
+                estadoResponsavelString = pessoaEnderecoResponsavel.getEndereco().getCidade().getUf();
+                cepResponsavelString = pessoaEnderecoResponsavel.getEndereco().getCep();
+            }
+
+//          PACIENTE
+            String rgp = pacienteFisica.getRg();
+            if(pacienteFisica.getRg().isEmpty()) {
+                rgp = " -- ";
+            }
+            String telp = "";
+            if(!contrato.getPaciente().getTelefone1().isEmpty()) { 
+                telp += contrato.getPaciente().getTelefone1();
+            }
+            if(!contrato.getPaciente().getTelefone2().isEmpty()) {
+                telp += " - " + contrato.getPaciente().getTelefone2();
+            }
+            if(!contrato.getPaciente().getTelefone3().isEmpty()) {
+                telp += " - " + contrato.getPaciente().getTelefone3();
+            }            
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$paciente", contrato.getPaciente().getNome()));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$enderecoPaciente", (enderecoPacienteString)));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$bairroPaciente", (bairroPacienteString)));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$cidadePaciente", (cidadePacienteString)));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$estadoPaciente", (estadoPacienteString)));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$cepPaciente", (cepPacienteString)));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$nascimentoPaciente", pacienteFisica.getNascimento()));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$emailPaciente", (contrato.getPaciente().getEmail1())));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$cpfPaciente", (contrato.getPaciente().getDocumento())));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$rgPaciente", rgp));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$telefonesPaciente", telp));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$estadoCivilPaciente", pacienteFisica.getEstadoCivil()));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$naturalidadePaciente", pacienteFisica.getNaturalidade()));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$nacionalidadePaciente", pacienteFisica.getNacionalidade()));
+//
+////          RESPONSÁVEL
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$responsavel", (contrato.getResponsavel().getNome())));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$cpfResponsavel", contrato.getResponsavel().getDocumento()));
+            String rgr = responsavelFisica.getRg();
+            if(responsavelFisica.getRg().isEmpty()) {
+                rgr = " -- ";
+            }
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$rgResponsavel", rgr));
+            String telr = "";
+            if(!contrato.getResponsavel().getTelefone1().isEmpty()) { 
+                telr += contrato.getResponsavel().getTelefone1();
+            }
+            if(!contrato.getResponsavel().getTelefone2().isEmpty()) {
+                telr += " - " + contrato.getResponsavel().getTelefone2();
+            }
+            if(!contrato.getResponsavel().getTelefone3().isEmpty()) {
+                telr += " - " + contrato.getResponsavel().getTelefone3();
+            }
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$telefonesResponsavel", telr));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$estadoCivilResponsavel", responsavelFisica.getEstadoCivil()));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$enderecoResponsavel", enderecoResponsavelString));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$bairroResponsavel", bairroResponsavelString));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$cidadeResponsavel", cidadeResponsavelString));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$estadoResponsavel", estadoResponsavelString));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$cepResponsavel", cepResponsavelString));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$emailResponsavel", contrato.getResponsavel().getEmail1()));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$nascimentoResponsavel", responsavelFisica.getNascimento()));
+            responsavelFisica.setNaturalidade(responsavelFisica.getNaturalidade().replace("<", ""));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$nacionalidadeResponsavel", responsavelFisica.getNacionalidade()));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$naturalidadeResponsavel", responsavelFisica.getNaturalidade()));
+//            
+////          CONTRATO
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$contrato", (Integer.toString(contrato.getId()))));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$mesesExtenso", (periodoMesesExtenso)));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$meses", (Integer.toString(periodoMeses))));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$ano", (DataHoje.livre(DataHoje.dataHoje(), "yyyy"))));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$servico", ""));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$diaSemana", (contratoDiaSemana)));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$dataExtenso", (DataHoje.dataExtenso(DataHoje.data()))));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$parcelas", contrato.getQuantidadeParcelasString()));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$diaVencimento", ""));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$dataContrato", DataHoje.dataExtenso(contrato.getDataCadastroString())));            
+//            
+////          FINANCEIRO
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorParcela", (Moeda.converteR$Float(contrato.getValorTotal() / contrato.getQuantidadeParcelas()))));
+            String valorTaxaString = "";
+            String listaValores = "";
+            String listaValoresComData = "";
+            int z = 1;
+            int quantidadeDivisao = 0;
+            if (!listMovimentoTaxa.isEmpty()) {
+                if (listMovimentoTaxa.get(0).getTipoServico().getId() == 5) {
+                    if (listMovimentoTaxa.size() > 1) {
+                        quantidadeDivisao = listMovimentoTaxa.size() - 1;
+                    } else {
+                        quantidadeDivisao = listMovimentoTaxa.size();
+                    }
+                } else {
+                    if (listMovimentoTaxa.size() > 1) {
+                        quantidadeDivisao = listMovimentoTaxa.size();
+                    }
+                }
+            }
+            float valorTotalComEntrada = contrato.getValorTotal() - contrato.getValorEntrada();
+            if (valorTotalComEntrada > 0) {
+                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorTotalComEntrada", Moeda.converteR$Float(valorTotalComEntrada)));                
+            } else {
+                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorTotalComEntrada", "Sem entrada"));
+            }
+            if(contrato.getQuantidadeParcelas() > 1) {
+                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$parcelado", "X"));
+                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$avista", ""));
+            } else {
+                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$parcelado", ""));
+                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$avista", "X"));
+            }
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorTotal", contrato.getValorTotalString()));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorEntrada", contrato.getValorEntradaString()));
+            float valorDesc = 0;
+            for (Movimento listaMovimento : listMovimento) {
+                if (listaMovimento.getTipoServico().getId() == 5) {
+                    valorTaxaString = Moeda.converteR$Float(listaMovimento.getValor());
+                } else {
+                    if (z == 1) {
+                        if (valorDesc > 0) { 
+                            listaValores = "Parcela nº" + z + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor());
+                            listaValoresComData = z + "º - " + listaMovimento.getVencimento() + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor());
+                        } else {
+                            listaValores += "; " + "Parcela nº" + z + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor());
+                            listaValoresComData += "; " + z + "º - " + listaMovimento.getVencimento() + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor());
+                        }
+                        modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$vencimentoParcela" + z, listaMovimento.getVencimentoString()));
+                        z++;
+                    }
+                }
+                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$taxa", valorTaxaString));
+                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$listaValoresComData", listaValoresComData));
+                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$listaValores", listaValores));
+            }
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("<br>", "<br />"));
+            try {
+                File dirFile = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato/"));
+                if (!dirFile.exists()) {
+                    if (!Diretorio.criar("Arquivos/contrato")) {
+                        return;
+                    }
+                }
+                String fileName = "contrato" + DataHoje.hora().hashCode() + ".pdf";
+                String filePDF = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato/" + fileName);
+                File file = new File(filePDF);
+                boolean success = file.createNewFile();
+                if (success) {
+                    OutputStream os = new FileOutputStream(filePDF);
+                    HtmlToPDF.convert(modeloContrato.getDescricao(), os);
+                    os.close();
+                    String pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato");
+                    Download download = new Download(fileName, pathPasta, "application/pdf", FacesContext.getCurrentInstance());
+                    download.baixar();
+                    download.remover();
+                    if (contrato.getId() != -1) {
+                        contrato.setImpresso(true);
+                        dao.update(contrato, true);
+                    }
+                }
+            } catch (IOException e) {
+                e.getMessage();
+            } catch (com.itextpdf.text.DocumentException ex) {
+
+            }
         }
     }
 }
