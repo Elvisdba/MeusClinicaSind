@@ -17,21 +17,21 @@
             <p:panel styleClass="wrapper no-border">
                 <h:form id="form_pesquisa_modelo_contrato">
                     <p:outputLabel value="Pesquisa Modelo Contrato - #{modeloContratoBean.modulo.descricao}" styleClass="fonteHeader"/>
-                    <c:set scope="request" var="object" value="${modeloContratoBean.matriculaContrato}"/>
+                    <c:set scope="request" var="object" value="${modeloContratoBean.modeloContrato}"/>
                     
                     <div class="clear"></div>
-                    <p:dataTable value="#{modeloContratoBean.matriculaContratos}" var="linha" scrollHeight="400" scrollable="true" emptyMessage="Nenhum registro encontrado!">
+                    <p:dataTable value="#{modeloContratoBean.modeloContratos}" var="linha" scrollHeight="400" scrollable="true" emptyMessage="Nenhum registro encontrado!">
                         <f:facet name="footer">
                             Selecione um modelo de contrato
                         </f:facet>
                         <p:column headerText="Cadastro" styleClass="text-center" width="80" >
-                            <p:commandLink value="#{linha.dataCadastro}" action="#{modeloContratoBean.edit(linha)}" styleClass="underline-hover"/>
+                            <p:commandLink value="#{linha.dataCadastro}" action="#{modeloContratoBean.link(linha)}" styleClass="underline-hover"/>
                         </p:column>
                         <p:column headerText="Atualizado" styleClass="text-center" width="80" >
-                            <p:commandLink value="#{linha.dataAtualizado}" action="#{modeloContratoBean.edit(linha)}" styleClass="underline-hover"/>
+                            <p:commandLink value="#{linha.dataAtualizado}" action="#{modeloContratoBean.link(linha)}" styleClass="underline-hover"/>
                         </p:column>
                         <p:column headerText="Título" >
-                            <p:commandLink value="#{linha.titulo}" title="Código: #{linha.id}"  action="#{modeloContratoBean.edit(linha)}" styleClass="underline-hover" style="text-transform: uppercase"/>
+                            <p:commandLink value="#{linha.titulo}" title="Código: #{linha.id}"  action="#{modeloContratoBean.link(linha)}" styleClass="underline-hover" style="text-transform: uppercase"/>
                         </p:column>
                     </p:dataTable>                     
                 </h:form>                    
