@@ -157,10 +157,17 @@ public class ContratoBean implements Serializable {
             if (dao.save(contrato)) {
                 listMovimento.addAll(listMovimentoContrato);
                 listMovimento.addAll(listMovimentoTaxa);
+                float valorTotal = 0;
+                if (!listMovimentoTaxa.isEmpty()) {
+                    for (int i = 0; i < listMovimentoTaxa.size(); i++) {
+                        valorTotal += listMovimentoTaxa.get(i).getValor();
+                    }
+                }
+                valorTotal = valorTotal + contrato.getValorTotal();
                 if (!listMovimento.isEmpty()) {
                     Lote lote = new Lote();
                     lote.setCliente(SessaoCliente.get());
-                    lote.setValor(contrato.getValorTotal());
+                    lote.setValor(valorTotal);
                     lote.setDepartamento(null);
                     lote.setDocumento("");
                     lote.setEmissao(new Date());
@@ -904,19 +911,19 @@ public class ContratoBean implements Serializable {
 
 //          PACIENTE
             String rgp = pacienteFisica.getRg();
-            if(pacienteFisica.getRg().isEmpty()) {
+            if (pacienteFisica.getRg().isEmpty()) {
                 rgp = " -- ";
             }
             String telp = "";
-            if(!contrato.getPaciente().getTelefone1().isEmpty()) { 
+            if (!contrato.getPaciente().getTelefone1().isEmpty()) {
                 telp += contrato.getPaciente().getTelefone1();
             }
-            if(!contrato.getPaciente().getTelefone2().isEmpty()) {
+            if (!contrato.getPaciente().getTelefone2().isEmpty()) {
                 telp += " - " + contrato.getPaciente().getTelefone2();
             }
-            if(!contrato.getPaciente().getTelefone3().isEmpty()) {
+            if (!contrato.getPaciente().getTelefone3().isEmpty()) {
                 telp += " - " + contrato.getPaciente().getTelefone3();
-            }            
+            }
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$paciente", contrato.getPaciente().getNome()));
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$enderecoPaciente", (enderecoPacienteString)));
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$bairroPaciente", (bairroPacienteString)));
@@ -936,18 +943,18 @@ public class ContratoBean implements Serializable {
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$responsavel", (contrato.getResponsavel().getNome())));
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$cpfResponsavel", contrato.getResponsavel().getDocumento()));
             String rgr = responsavelFisica.getRg();
-            if(responsavelFisica.getRg().isEmpty()) {
+            if (responsavelFisica.getRg().isEmpty()) {
                 rgr = " -- ";
             }
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$rgResponsavel", rgr));
             String telr = "";
-            if(!contrato.getResponsavel().getTelefone1().isEmpty()) { 
+            if (!contrato.getResponsavel().getTelefone1().isEmpty()) {
                 telr += contrato.getResponsavel().getTelefone1();
             }
-            if(!contrato.getResponsavel().getTelefone2().isEmpty()) {
+            if (!contrato.getResponsavel().getTelefone2().isEmpty()) {
                 telr += " - " + contrato.getResponsavel().getTelefone2();
             }
-            if(!contrato.getResponsavel().getTelefone3().isEmpty()) {
+            if (!contrato.getResponsavel().getTelefone3().isEmpty()) {
                 telr += " - " + contrato.getResponsavel().getTelefone3();
             }
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$telefonesResponsavel", telr));
@@ -973,11 +980,13 @@ public class ContratoBean implements Serializable {
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$dataExtenso", (DataHoje.dataExtenso(DataHoje.data()))));
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$parcelas", contrato.getQuantidadeParcelasString()));
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$diaVencimento", ""));
-            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$dataContrato", DataHoje.dataExtenso(contrato.getDataCadastroString())));            
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$dataContrato", DataHoje.dataExtenso(contrato.getDataCadastroString())));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$periodoDiasInternacao", contrato.getPrevisaoDiasString()));
 //            
 ////          FINANCEIRO
-            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorParcela", (Moeda.converteR$Float(contrato.getValorTotal() / contrato.getQuantidadeParcelas()))));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorParcela", (Moeda.converteR$Float((contrato.getValorTotal() - contrato.getValorEntrada()) / contrato.getQuantidadeParcelas()))));
             String valorTaxaString = "";
+            String valorTotalTaxaString = "";
             String listaValores = "";
             String listaValoresComData = "";
             int z = 1;
@@ -997,40 +1006,53 @@ public class ContratoBean implements Serializable {
             }
             float valorTotalComEntrada = contrato.getValorTotal() - contrato.getValorEntrada();
             if (valorTotalComEntrada > 0) {
-                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorTotalComEntrada", Moeda.converteR$Float(valorTotalComEntrada)));                
+                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorTotalComEntrada", Moeda.converteR$Float(valorTotalComEntrada)));
             } else {
                 modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorTotalComEntrada", "Sem entrada"));
             }
-            if(contrato.getQuantidadeParcelas() > 1) {
+            if (contrato.getQuantidadeParcelas() > 1) {
                 modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$parcelado", "X"));
                 modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$avista", ""));
             } else {
                 modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$parcelado", ""));
                 modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$avista", "X"));
             }
-            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorTotal", contrato.getValorTotalString()));
-            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorEntrada", contrato.getValorEntradaString()));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorEntrada", "Valor da entrada R$ " + contrato.getValorEntradaString()));
             float valorDesc = 0;
-            for (Movimento listaMovimento : listMovimento) {
-                if (listaMovimento.getTipoServico().getId() == 5) {
-                    valorTaxaString = Moeda.converteR$Float(listaMovimento.getValor());
-                } else {
-                    if (z == 1) {
-                        if (valorDesc > 0) { 
-                            listaValores = "Parcela nº" + z + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor());
-                            listaValoresComData = z + "º - " + listaMovimento.getVencimento() + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor());
-                        } else {
-                            listaValores += "; " + "Parcela nº" + z + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor());
-                            listaValoresComData += "; " + z + "º - " + listaMovimento.getVencimento() + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor());
-                        }
-                        modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$vencimentoParcela" + z, listaMovimento.getVencimentoString()));
-                        z++;
-                    }
-                }
-                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$taxa", valorTaxaString));
-                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$listaValoresComData", listaValoresComData));
-                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$listaValores", listaValores));
+            if(!listMovimentoTaxa.isEmpty()) {
+                valorTaxaString += "Taxas: <br /><br />";
             }
+            for (Movimento listaMovimento : listMovimentoTaxa) {
+                valorTaxaString += " - " + listaMovimento.getServicos().getDescricao() + " - R$ " + listaMovimento.getValorString() + "; <br /><br />";
+                valorTotalTaxaString += Moeda.converteR$Float(listaMovimento.getValor()) + Moeda.converteR$(valorTotalTaxaString);
+            }
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$listaTaxas", valorTaxaString));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorTotalTaxas", valorTotalTaxaString));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$listaValoresComData", listaValoresComData));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$listaValores", "Valor total das taxas: R$ " + listaValores));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorTotal", contrato.getValorTotalString()));
+//            for (Movimento listaMovimento : listMovimento) {
+//                if (listaMovimento.getTipoServico().getId() == 5) {
+//                    valorTaxaString += listaMovimento.getServicos().getDescricao() + " - R$ " + listaMovimento.getValorString();
+//                    valorTaxaString += Moeda.converteR$Float(listaMovimento.getValor());
+//                } else {
+//                    if (z == 1) {
+//                        if (valorDesc > 0) {
+//                            listaValores = "Parcela nº" + z + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor());
+//                            listaValoresComData = z + "º - " + listaMovimento.getVencimento() + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor());
+//                        } else {
+//                            listaValores += "; " + "Parcela nº" + z + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor());
+//                            listaValoresComData += "; " + z + "º - " + listaMovimento.getVencimento() + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor());
+//                        }
+//                        modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$vencimentoParcela" + z, listaMovimento.getVencimentoString()));
+//                        z++;
+//                    }
+//                }
+//                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$listaTaxas", valorTaxaString));
+//                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorTotalTaxas", valorTaxaString));
+//                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$listaValoresComData", listaValoresComData));
+//                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$listaValores", listaValores));
+//            }
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("<br>", "<br />"));
             try {
                 File dirFile = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato/"));
