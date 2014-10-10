@@ -986,7 +986,7 @@ public class ContratoBean implements Serializable {
 ////          FINANCEIRO
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorParcela", (Moeda.converteR$Float((contrato.getValorTotal() - contrato.getValorEntrada()) / contrato.getQuantidadeParcelas()))));
             String valorTaxaString = "";
-            String valorTotalTaxaString = "";
+            float valorTotalTaxas = 0;
             String listaValores = "";
             String listaValoresComData = "";
             int z = 1;
@@ -1017,42 +1017,35 @@ public class ContratoBean implements Serializable {
                 modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$parcelado", ""));
                 modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$avista", "X"));
             }
-            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorEntrada", "Valor da entrada R$ " + contrato.getValorEntradaString()));
+            if (contrato.getValorEntrada() > 0) {
+                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorEntrada", "<strong>Valor da entrada: R$ " + contrato.getValorEntradaString() + "</strong>"));
+            } else {
+                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorEntrada", ""));
+            }
             float valorDesc = 0;
-            if(!listMovimentoTaxa.isEmpty()) {
+            if (!listMovimentoTaxa.isEmpty()) {
                 valorTaxaString += "Taxas: <br /><br />";
             }
             for (Movimento listaMovimento : listMovimentoTaxa) {
                 valorTaxaString += " - " + listaMovimento.getServicos().getDescricao() + " - R$ " + listaMovimento.getValorString() + "; <br /><br />";
-                valorTotalTaxaString += Moeda.converteR$Float(listaMovimento.getValor()) + Moeda.converteR$(valorTotalTaxaString);
+                valorTotalTaxas += listaMovimento.getValor();
+            }
+            String valorTotalTaxaString = " -- ";
+            if (valorTotalTaxas > 0) {
+                valorTotalTaxaString = "<strong>Valor total taxa(s): R$ " + Moeda.converteR$Float(valorTotalTaxas) + "; </strong>";
             }
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$listaTaxas", valorTaxaString));
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorTotalTaxas", valorTotalTaxaString));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorTotal", contrato.getValorTotalString()));
+            for (Movimento listaMovimento : listMovimentoContrato) {
+                listaValores += "Parcela nº" + z + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor()) + "; ";
+                listaValoresComData += z + "º - " + listaMovimento.getVencimentoString() + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor()) + "; ";
+                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$vencimentoParcela" + z, listaMovimento.getVencimentoString()));
+            }
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$listaValoresComData", listaValoresComData));
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$listaValores", "Valor total das taxas: R$ " + listaValores));
-            modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorTotal", contrato.getValorTotalString()));
-//            for (Movimento listaMovimento : listMovimento) {
-//                if (listaMovimento.getTipoServico().getId() == 5) {
-//                    valorTaxaString += listaMovimento.getServicos().getDescricao() + " - R$ " + listaMovimento.getValorString();
-//                    valorTaxaString += Moeda.converteR$Float(listaMovimento.getValor());
-//                } else {
-//                    if (z == 1) {
-//                        if (valorDesc > 0) {
-//                            listaValores = "Parcela nº" + z + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor());
-//                            listaValoresComData = z + "º - " + listaMovimento.getVencimento() + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor());
-//                        } else {
-//                            listaValores += "; " + "Parcela nº" + z + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor());
-//                            listaValoresComData += "; " + z + "º - " + listaMovimento.getVencimento() + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor());
-//                        }
-//                        modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$vencimentoParcela" + z, listaMovimento.getVencimentoString()));
-//                        z++;
-//                    }
-//                }
-//                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$listaTaxas", valorTaxaString));
-//                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorTotalTaxas", valorTaxaString));
-//                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$listaValoresComData", listaValoresComData));
-//                modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$listaValores", listaValores));
-//            }
+
+            // ADICIONAIS
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("<br>", "<br />"));
             try {
                 File dirFile = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato/"));
