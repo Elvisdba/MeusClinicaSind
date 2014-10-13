@@ -3,7 +3,9 @@ package br.com.clinicaintegrada.administrativo.beans;
 import br.com.clinicaintegrada.administrativo.ModeloContrato;
 import br.com.clinicaintegrada.administrativo.ModeloContratoCampos;
 import br.com.clinicaintegrada.administrativo.ModeloContratoServico;
+import br.com.clinicaintegrada.administrativo.ModeloDocumentos;
 import br.com.clinicaintegrada.administrativo.dao.ModeloContratoDao;
+import br.com.clinicaintegrada.administrativo.dao.ModeloDocumentosDao;
 import br.com.clinicaintegrada.financeiro.Servicos;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.seguranca.Modulo;
@@ -52,6 +54,7 @@ public class ModeloContratoBean implements Serializable {
     private String descricaoPesquisa;
     private String msgServico;
     private boolean desabilitaObservacao;
+    private List<ModeloDocumentos> listModeloDocumentos;
 
     @PostConstruct
     public void init() {
@@ -76,6 +79,7 @@ public class ModeloContratoBean implements Serializable {
         descricaoPesquisa = "";
         msgServico = "";
         desabilitaObservacao = false;
+        listModeloDocumentos = new ArrayList<>();
     }
 
     @PreDestroy
@@ -566,5 +570,36 @@ public class ModeloContratoBean implements Serializable {
 
     public void setQuantidadeAnexo(int quantidadeAnexo) {
         this.quantidadeAnexo = quantidadeAnexo;
+    }
+
+    public List<ModeloDocumentos> getListModeloDocumentos() {
+        if (listModeloDocumentos.isEmpty()) {
+            ModeloDocumentosDao modeloDocumentosDao = new ModeloDocumentosDao();
+            listModeloDocumentos = modeloDocumentosDao.pesquisaTodosPorRotina(73);
+        }
+        return listModeloDocumentos;
+    }
+
+    public void setListModeloDocumentos(List<ModeloDocumentos> listModeloDocumentos) {
+        this.listModeloDocumentos = listModeloDocumentos;
+    }
+
+    public void addModeloDocumento() {
+
+    }
+
+    public void removeModeloDocumento(ModeloDocumentos md) {
+        if (md.getId() != -1) {
+            Dao dao = new Dao();
+            dao.openTransaction();
+            if (dao.delete(md)) {
+                dao.commit();
+                Messages.info("Sucesso", "Model de documento removido");
+                listModeloDocumentos.clear();
+            } else {
+                dao.rollback();
+                Messages.warn("Erro", "Ao remover!");
+            }
+        }
     }
 }
