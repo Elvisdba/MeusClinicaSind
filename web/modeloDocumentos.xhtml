@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Modelo Documentos Rotina</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    </h:head>
+    <h:body class="divMenu">
+        <!-- INICIA DIV wrap e main -->
+        <div id="wrapx">
+            <div id="mainx">
+                <!-- INICIA DIV wrap e main -->  
+                <f:subview id="header">
+                    <ui:include src="templates/templatePrime.xhtml"/>
+                </f:subview>
+                <f:view>
+                    <p:panel styleClass="wrapper no-border">                
+                        <h:form id="form_modelo_documentos">                    
+                            <h:outputText value="Modelo Documentos Rotina" styleClass="fonteHeader" />
+                            <div class="clear"></div>                            
+                            <p:messages autoUpdate="true" showDetail="true" showSummary="true"  />
+                            <c:set scope="request" var="object" value="${modeloDocumentosBean.modeloDocumentos}"/>
+                            <p:panel>
+                                <h:panelGrid columns="2">
+                                    <p:outputLabel value="Descrição:" />
+                                    <p:inputText value="#{modeloDocumentosBean.modeloDocumentos.descricao}"  styleClass="margin-top-max"/>
+                                    <p:commandButton value="Pesquisar Rotina: " action="#{chamadaPaginaBean.pesquisa('pesquisaRotina')}" title="Pesquisar Rotina" icon="ui-icon-search" styleClass="margin-top-max"/>
+                                    <p:outputLabel value="#{modeloDocumentosBean.modeloDocumentos.rotina.rotina}" style="text-decoration: underline"  styleClass="margin-top-max"/>
+                                    <p:commandButton value="Pesquisar Modelo:" action="#{chamadaPaginaBean.pesquisa('pesquisaModeloContrato')}" title="Pesquisar Modelo Contrato: "  icon="ui-icon-search" />
+                                    <p:outputLabel value="#{modeloDocumentosBean.modeloDocumentos.modeloContrato.titulo}"  style="text-decoration: underline"/>
+                                </h:panelGrid>
+                            </p:panel>
+                            <h:panelGrid columns="6" styleClass="margin-top-max">
+                                <p:commandButton value="Adicionar" action="#{modeloDocumentosBean.addModeloDocumentos}" disabled="#{controleAcessoBean.save}" update=":form_modelo_documentos:"/>
+                                <p:commandButton value="Novo" action="#{modeloDocumentosBean.clear}" update=":form_modelo_documentos:"/>
+                            </h:panelGrid>                            
+                            <h:panelGrid id="tbl_servicos" styleClass="margin-top-max">
+                                <p:dataTable var="modeloDocumentos" value="#{modeloDocumentosBean.listModeloDocumentos}" emptyMessage="Nenhum registro encontrado!">
+                                    <p:column headerText="Modelo Contrato">
+                                        <h:outputText value="#{modeloDocumentos.descricao}"/>
+                                    </p:column>
+                                    <p:column width="30">
+                                        <p:commandButton icon="ui-icon-trash" action="#{modeloDocumentosBean.removeModeloDocumentos(modeloDocumentos)}" disabled="#{controleAcessoBean.delete}" update=":form_modelo_documentos:" />
+                                    </p:column>                                
+                                </p:dataTable>
+                            </h:panelGrid>
+                        </h:form>
+                    </p:panel>
+                </f:view>
+                <!-- FINALIZA div wrap main -->
+            </div>
+        </div>
+        <!-- FINALIZA div wrap main -->
+
+        <div id="footerx">
+            <f:subview id="footer">
+                <ui:include src="templates/templateFooter.xhtml"/>
+            </f:subview>
+        </div> 
+    </h:body>
+</ui:composition>
