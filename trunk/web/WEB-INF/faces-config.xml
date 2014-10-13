@@ -358,6 +358,18 @@
             <redirect/>
         </navigation-case>
         
+        <navigation-case>
+            <from-outcome>modeloDocumentos</from-outcome>
+            <to-view-id>/modeloDocumentos.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>pesquisaRotina</from-outcome>
+            <to-view-id>/pesquisaRotina.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
         <!-- 
         <navigation-case>
             <from-outcome>#{navigationRules.param}</from-outcome>
