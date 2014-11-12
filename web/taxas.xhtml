@@ -43,6 +43,8 @@
                                     <p:inputText value="#{taxasBean.taxas.valorString}" converter="#{toCurrency}">
                                         <p:ajax global="false" update="@this" event="change" />
                                     </p:inputText>
+                                    <h:column />
+                                    <p:selectBooleanCheckbox itemLabel="* Ocultar no contrato impresso" styleClass="margin-top-max" value="#{taxasBean.taxas.ocultaContrato}"/>
                                 </h:panelGrid>
                             </p:panel>                                
                             <h:panelGrid columns="3" styleClass="margin-top-max">
@@ -55,7 +57,10 @@
                                     <p:commandButton action="#{taxasBean.edit(taxas)}" icon="ui-icon-link" update=":form_taxas:" />
                                 </p:column>
                                 <p:column headerText="Serviços">#{taxas.servicos.descricao}</p:column>
-                                <p:column headerText="Data" width="80">#{taxas.valorString}</p:column>
+                                <p:column headerText="Valor (R$)" width="80">#{taxas.valorString}</p:column>
+                                <p:column headerText="Oculta" width="50" styleClass="text-center">
+                                    <p:selectBooleanCheckbox value="#{taxas.ocultaContrato}" disabled="true" />
+                                </p:column>
                                 <p:column width="30">
                                     <p:commandButton action="#{taxasBean.delete(taxas)}" icon="ui-icon-trash" update=":form_taxas:" disabled="#{controleAcessoBean.delete}"/>
                                 </p:column>
