@@ -34,19 +34,23 @@ public class Taxas implements Serializable {
     private Cliente cliente;
     @Column(name = "nr_valor", length = 10, nullable = false)
     private float valor;
+    @Column(name = "is_oculta_contrato", columnDefinition = "boolean default false")
+    private Boolean ocultaContrato;
 
     public Taxas() {
         this.id = -1;
         this.servicos = new Servicos();
         this.cliente = new Cliente();
         this.valor = 0;
+        this.ocultaContrato = false;
     }
 
-    public Taxas(int id, Servicos servicos, Cliente cliente, float valor) {
+    public Taxas(int id, Servicos servicos, Cliente cliente, float valor, boolean ocultaContrato) {
         this.id = id;
         this.servicos = servicos;
         this.cliente = cliente;
         this.valor = valor;
+        this.ocultaContrato = ocultaContrato;
     }
 
     public int getId() {
@@ -87,5 +91,13 @@ public class Taxas implements Serializable {
 
     public void setValorString(String valorString) {
         this.valor = Moeda.converteUS$(valorString);
+    }
+
+    public Boolean getOcultaContrato() {
+        return ocultaContrato;
+    }
+
+    public void setOcultaContrato(Boolean ocultaContrato) {
+        this.ocultaContrato = ocultaContrato;
     }
 }
