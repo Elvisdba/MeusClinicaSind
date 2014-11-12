@@ -35,7 +35,7 @@ public class Taxas implements Serializable {
     @Column(name = "nr_valor", length = 10, nullable = false)
     private float valor;
     @Column(name = "is_oculta_contrato", columnDefinition = "boolean default false")
-    private Boolean ocultaContrato;
+    private boolean ocultaContrato;
 
     public Taxas() {
         this.id = -1;
@@ -93,11 +93,11 @@ public class Taxas implements Serializable {
         this.valor = Moeda.converteUS$(valorString);
     }
 
-    public Boolean getOcultaContrato() {
+    public boolean isOcultaContrato() {
         return ocultaContrato;
     }
 
-    public void setOcultaContrato(Boolean ocultaContrato) {
+    public void setOcultaContrato(boolean ocultaContrato) {
         this.ocultaContrato = ocultaContrato;
     }
 }
