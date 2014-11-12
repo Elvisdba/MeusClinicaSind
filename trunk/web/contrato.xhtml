@@ -162,7 +162,9 @@
                                             <h:outputLabel value="Dias primeira parcela:" />
                                         </p:column>
                                         <p:column>
-                                            <p:inputText size="5" />
+                                            <p:inputText size="5" value="#{contratoBean.adicionarDias}" converter="#{thisNumber}">
+                                                <p:ajax event="change" update="@this" />
+                                            </p:inputText>
                                         </p:column>
                                     </p:row>
                                 </p:panelGrid>
