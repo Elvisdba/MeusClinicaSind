@@ -156,6 +156,14 @@
                                         <p:column styleClass="text-center" rendered="#{contratoBean.contrato.responsavel.id != -1}">
                                             <p:commandLink value="Alterar dia de vencimento" onclick="PF('dlg_dia_vencimento').show()" style="color: blue"/>
                                         </p:column>
+                                        <p:column />
+                                        <p:column />
+                                        <p:column>
+                                            <h:outputLabel value="Dias primeira parcela:" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText size="5" />
+                                        </p:column>
                                     </p:row>
                                 </p:panelGrid>
                                 <p:dataTable value="#{contratoBean.listMovimentoContrato}" var="movimento" styleClass="margin-top-max" emptyMessage="Nenhum movimento gerado!" id="i_tbl">
@@ -164,7 +172,7 @@
                                     </f:facet>
                                     <p:column headerText="Documento" width="100" styleClass="text-center">#{movimento.nrCtrBoleto}</p:column>
                                     <p:column headerText="Serviços" styleClass="text-center">#{movimento.servicos.descricao}</p:column>
-                                    <p:column headerText="Data do Vencimento" styleClass="text-center">#{movimento.vencimentoString}</p:column>
+                                    <p:column headerText="Data do Vencimento" styleClass="text-center"><p:inputMask value="#{movimento.vencimentoString}" mask="99/99/9999" size="8" styleClass="text-center"/></p:column>
                                     <p:column headerText="Valor Parcela" styleClass="text-center">#{movimento.valorString}</p:column>
                                     <p:column headerText="Data de Quitação" styleClass="text-center">
                                         <p:inputMask mask="99/99/9999" value="#{movimento.baixa.baixa}" styleClass="text-center" disabled="true"/>
