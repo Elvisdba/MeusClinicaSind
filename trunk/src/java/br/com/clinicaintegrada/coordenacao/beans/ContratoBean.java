@@ -40,6 +40,11 @@ import br.com.clinicaintegrada.utils.Moeda;
 import br.com.clinicaintegrada.utils.Sessions;
 import br.com.clinicaintegrada.utils.ValidDocuments;
 import br.com.clinicaintegrada.utils.ValorExtenso;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
+import com.lowagie.text.Element;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -906,6 +911,10 @@ public class ContratoBean implements Serializable {
             PessoaEndereco pessoaEnderecoResponsavel = (PessoaEndereco) pessoaEnderecoDao.pesquisaPessoaEnderecoPorPessoaTipo(contrato.getResponsavel().getId(), idTipoEndereco);
             if (pessoaEnderecoResponsavel != null) {
                 enderecoResponsavelString = pessoaEnderecoResponsavel.getEndereco().getEnderecoSimplesToString() + ", " + pessoaEnderecoResponsavel.getNumero();
+                if (!pessoaEnderecoResponsavel.getComplemento().isEmpty()) {
+                    enderecoResponsavelString += " - Complemento " + pessoaEnderecoResponsavel.getNumero();
+
+                }
                 bairroResponsavelString = pessoaEnderecoResponsavel.getEndereco().getBairro().getDescricao();
                 cidadeResponsavelString = pessoaEnderecoResponsavel.getEndereco().getCidade().getCidade();
                 estadoResponsavelString = pessoaEnderecoResponsavel.getEndereco().getCidade().getUf();
@@ -1029,13 +1038,23 @@ public class ContratoBean implements Serializable {
             if (!listMovimentoTaxa.isEmpty()) {
                 valorTaxaString += "Taxas: <br /><br />";
             }
+            int l = 0;
+            Taxas t = new Taxas();
             for (Movimento listaMovimento : listMovimentoTaxa) {
-                valorTaxaString += " - " + listaMovimento.getServicos().getDescricao() + " - R$ " + listaMovimento.getValorString() + "; <br /><br />";
-                valorTotalTaxas += listaMovimento.getValor();
+                for (l = 0; l < listTaxas.size(); l++) {
+                    t = (Taxas) dao.find(new Taxas(), Integer.parseInt(listTaxas.get(l).getDescription()));
+                    if (listaMovimento.getServicos().getId() == t.getServicos().getId()) {
+                        if (!t.isOcultaContrato()) {
+                            valorTaxaString += " - Vencimento: " + listaMovimento.getVencimentoString() + " - " + listaMovimento.getServicos().getDescricao() + " - R$ " + listaMovimento.getValorString() + "; <br /><br />";
+                            valorTotalTaxas += listaMovimento.getValor();
+                            break;
+                        }
+                    }
+                }
             }
             String valorTotalTaxaString = " -- ";
             if (valorTotalTaxas > 0) {
-                valorTotalTaxaString = "<strong>Valor total taxa(s): R$ " + Moeda.converteR$Float(valorTotalTaxas) + "; </strong>";
+                valorTotalTaxaString = "<strong>Valor total taxa(s): R$ " + Moeda.converteR$Float(valorTotalTaxas) + " - ; </strong>";
             }
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$listaTaxas", valorTaxaString));
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$valorTotalTaxas", valorTotalTaxaString));
@@ -1045,9 +1064,10 @@ public class ContratoBean implements Serializable {
                 if (contrato.getValorEntrada() > 0 && !isEntrada) {
                     isEntrada = true;
                 } else {
-                    listaValores += "Parcela nº" + z + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor()) + "; ";
-                    listaValoresComData += z + "º - " + listaMovimento.getVencimentoString() + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor()) + "; ";
+                    listaValores += "Parcela nº" + z + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor()) + "; <br />";
+                    listaValoresComData += z + "º - " + listaMovimento.getVencimentoString() + " - Valor: R$ " + Moeda.converteR$Float(listaMovimento.getValor()) + "; <br />";
                     modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$vencimentoParcela" + z, listaMovimento.getVencimentoString()));
+                    z++;
                 }
             }
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$listaValoresComData", listaValoresComData));
@@ -1055,6 +1075,7 @@ public class ContratoBean implements Serializable {
 
             // ADICIONAIS
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("<br>", "<br />"));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replaceAll("(<img[^>]*[^/]>)(?!\\s*</img>)", "$1</img>"));
             try {
                 File dirFile = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato/"));
                 if (!dirFile.exists()) {
@@ -1063,20 +1084,50 @@ public class ContratoBean implements Serializable {
                     }
                 }
                 String fileName = "contrato" + DataHoje.hora().hashCode() + ".pdf";
-                String filePDF = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato/" + fileName);
-                File file = new File(filePDF);
-                boolean success = file.createNewFile();
+                String filePDF = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato/_" + fileName);
+                boolean success = new File(filePDF).createNewFile();
+                //boolean success = file.createNewFile();
+                boolean delete = false;
                 if (success) {
                     OutputStream os = new FileOutputStream(filePDF);
                     HtmlToPDF.convert(modeloContrato.getDescricao(), os);
+                    os.flush();
                     os.close();
                     String pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato");
-                    Download download = new Download(fileName, pathPasta, "application/pdf", FacesContext.getCurrentInstance());
-                    download.baixar();
-                    download.remover();
-                    if (contrato.getId() != -1) {
-                        contrato.setImpresso(true);
-                        dao.update(contrato, true);
+                    try {
+                        PdfReader reader = new PdfReader(filePDF);
+                        int n = reader.getNumberOfPages();
+                        FileOutputStream fileOutputStream = new FileOutputStream(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato/" + fileName));
+                        PdfStamper stamp = new PdfStamper(reader, fileOutputStream);
+                        int i = 0;
+                        PdfContentByte over;
+                        BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED);
+                        while (i < n) {
+                            i++;
+                            over = stamp.getOverContent(i);
+                            over.beginText();
+                            over.setFontAndSize(bf, 10);
+                            over.showTextAligned(Element.ALIGN_LEFT, "" + i, 570, 20, 0);
+                            over.endText();
+                        }
+                        stamp.close();
+                        fileOutputStream.flush();
+                        fileOutputStream.close();
+                        Download download = new Download(fileName, pathPasta, "application/pdf", FacesContext.getCurrentInstance());
+                        download.baixar();
+                        download.remover();
+                        if (contrato.getId() != -1) {
+                            contrato.setImpresso(true);
+                            dao.update(contrato, true);
+                        }
+                    } catch (Exception de) {
+                        de.printStackTrace();
+                    }
+                    boolean remove = false;
+                    try {
+                        remove = new File(filePDF).delete();
+                    } catch (Exception e) {
+                        e.getMessage();
                     }
                 }
             } catch (IOException e) {
@@ -1239,14 +1290,15 @@ public class ContratoBean implements Serializable {
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$periodoDiasInternacao", contrato.getPrevisaoDiasString()));
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$motivoSaida", contrato.getObservacaoRescisao()));
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$dataRescisao", contrato.getDataRescisaoString()));
-            if(contrato.getTipoDesligamento() != null){
+            if (contrato.getTipoDesligamento() != null) {
                 modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$tipoRescisao", contrato.getTipoDesligamento().getDescricao()));
             } else {
                 modeloContrato.setDescricao(modeloContrato.getDescricao().replace("$tipoRescisao", " -- "));
             }
-            
+
             // ADICIONAIS
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("<br>", "<br />"));
+            modeloContrato.setDescricao(modeloContrato.getDescricao().replaceAll("(<img[^>]*[^/]>)(?!\\s*</img>)", "$1</img>"));
             try {
                 File dirFile = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato/"));
                 if (!dirFile.exists()) {
