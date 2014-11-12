@@ -88,9 +88,13 @@ public class ContratoBean implements Serializable {
     private String vencimentoString;
     private String valorTotalTaxa;
     private List<ModeloDocumentos> listModeloDocumentos;
+    private String adicionarDias;
+    private boolean disabledSave;
+    private String calculaValorMovimentoAlterado;
 
     @PostConstruct
     public void init() {
+        disabledSave = false;
         contrato = new Contrato();
         filialSessao = new Filial();
         listContratos = new ArrayList<>();
@@ -115,6 +119,8 @@ public class ContratoBean implements Serializable {
         valorTotalTaxa = "0,00";
         vencimentoString = DataHoje.data();
         listModeloDocumentos = new ArrayList<>();
+        adicionarDias = "0";
+        calculaValorMovimentoAlterado = "0";
     }
 
     @PreDestroy
@@ -335,6 +341,9 @@ public class ContratoBean implements Serializable {
 
     public void calculaSaldoDevedor() {
         if (contrato.getValorTotal() > 0) {
+            if (contrato.getValorEntrada() == 0 && contrato.getQuantidadeParcelas() > 1) {
+                adicionarDias = "0";
+            }
             if (contrato.getId() == -1) {
                 saldoDevedor = Float.toString((contrato.getValorTotal()));
             } else {
@@ -538,6 +547,12 @@ public class ContratoBean implements Serializable {
                 Messages.warn("Validação", "Informar número de parcelas maior que 0, Ex. 1");
                 return;
             }
+            int addDias = 0;
+            try {
+                addDias = Integer.parseInt(adicionarDias);
+            } catch (Exception e) {
+                addDias = 0;
+            }
             listMovimentoContrato.clear();
             DataHoje dh = new DataHoje();
             Movimento m = new Movimento();
@@ -549,8 +564,15 @@ public class ContratoBean implements Serializable {
                 }
                 nrCtrBoletoResp += contrato.getResponsavel().getId();
                 String nrCtrBoleto = "";
+                boolean isEntrada = false;
                 if (contrato.getValorEntrada() > 0) {
-                    m.setVencimento(contrato.getDataCadastro());
+                    if (addDias > 0) {
+                        m.setVencimento(DataHoje.converte(dh.incrementarDias(addDias, contrato.getDataCadastroString())));
+                        isEntrada = true;
+                    } else {
+                        m.setVencimentoString(DataHoje.data());
+                        m.setVencimento(contrato.getDataCadastro());
+                    }
                     m.setPessoa(contrato.getResponsavel());
                     m.setfTipoDocumento(null);
                     m.setServicos((Servicos) dao.find(new Servicos(), 1));
@@ -558,7 +580,6 @@ public class ContratoBean implements Serializable {
                     m.setEs("E");
                     nrCtrBoleto = nrCtrBoletoResp + Long.toString(DataHoje.calculoDosDias(DataHoje.converte("07/10/1997"), DataHoje.converte(m.getVencimentoString())));
                     m.setNrCtrBoleto(nrCtrBoleto);
-                    m.setVencimentoString(DataHoje.data());
                     m.setReferencia(DataHoje.dataReferencia(m.getVencimentoString()));
                     m.setDocumento("");
                     m.setLote(null);
@@ -587,7 +608,12 @@ public class ContratoBean implements Serializable {
                     int h = 0;
                     float v = (Moeda.substituiVirgulaFloat(getSaldoDevedor()) - contrato.getValorEntrada()) / contrato.getQuantidadeParcelas();
                     for (int i = 0; i < contrato.getQuantidadeParcelas(); i++) {
-                        m.setVencimentoString(dh.incrementarMeses(i + 1, dataVencimento));
+                        if (!isEntrada && i == 0 && addDias > 0) {
+                            m.setVencimentoString(dh.incrementarMeses(i + 1, dataVencimento));
+                            m.setVencimento(DataHoje.converte(dh.incrementarDias(addDias, m.getVencimentoString())));
+                        } else {
+                            m.setVencimentoString(dh.incrementarMeses(i + 1, dataVencimento));
+                        }
                         nrCtrBoleto = nrCtrBoletoResp + Long.toString(DataHoje.calculoDosDias(DataHoje.converte("07/10/1997"), DataHoje.converte(m.getVencimentoString())));
                         m.setPessoa(contrato.getResponsavel());
                         m.setfTipoDocumento((FTipoDocumento) dao.find(new FTipoDocumento(), 2));
@@ -1336,5 +1362,49 @@ public class ContratoBean implements Serializable {
 
     public void setListModeloDocumentos(List<ModeloDocumentos> listModeloDocumentos) {
         this.listModeloDocumentos = listModeloDocumentos;
+    }
+
+    public String getAdicionarDias() {
+        return adicionarDias;
+    }
+
+    public void setAdicionarDias(String adicionarDias) {
+        this.adicionarDias = adicionarDias;
+    }
+
+    public String getCalculaValorMovimentoAlterado() {
+        if (contrato.getId() == -1) {
+            disabledSave = false;
+            float v = 0;
+            float vn = 0;
+            for (int i = 0; i < listMovimentoContrato.size(); i++) {
+                v += listMovimentoContrato.get(i).getValor();
+            }
+            vn = v;
+            vn = contrato.getValorTotal() - v;
+            if (v != contrato.getValorTotal()) {
+                disabledSave = true;
+                String message = "";
+                if (vn > 0) {
+                    message = " Acrescentar ";
+                } else {
+                    message = " Remover ";
+                }
+                return "Existe uma difereça na soma das parcelas do contrato: " + message + " R$ " + Moeda.converteR$Float(vn) + ".  Corrigir para salvar.";
+            }
+        }
+        return "";
+    }
+
+    public boolean isDisabledSave() {
+        return disabledSave;
+    }
+
+    public void setDisabledSave(boolean disabledSave) {
+        this.disabledSave = disabledSave;
+    }
+
+    public void setCalculaValorMovimentoAlterado(String calculaValorMovimentoAlterado) {
+        this.calculaValorMovimentoAlterado = calculaValorMovimentoAlterado;
     }
 }
