@@ -19,17 +19,22 @@ public class Servicos implements Serializable {
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Cliente cliente;
+    @JoinColumn(name = "id_tipo_documento", referencedColumnName = "id", nullable = false)
+    @ManyToOne
+    private FTipoDocumento tipoDocumento;
 
     public Servicos() {
         this.id = -1;
         this.descricao = "";
         this.cliente = new Cliente();
+        this.tipoDocumento = new FTipoDocumento();
     }
 
-    public Servicos(int id, String descricao, Cliente cliente) {
+    public Servicos(int id, String descricao, Cliente cliente, FTipoDocumento tipoDocumento) {
         this.id = id;
         this.descricao = descricao;
         this.cliente = cliente;
+        this.tipoDocumento = tipoDocumento;
     }
 
     public int getId() {
@@ -54,5 +59,13 @@ public class Servicos implements Serializable {
 
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
+    }
+
+    public FTipoDocumento getTipoDocumento() {
+        return tipoDocumento;
+    }
+
+    public void setTipoDocumento(FTipoDocumento tipoDocumento) {
+        this.tipoDocumento = tipoDocumento;
     }
 }
