@@ -51,4 +51,28 @@ public class FTipoDocumento implements Serializable {
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final FTipoDocumento other = (FTipoDocumento) obj;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "FTipoDocumento{" + "id=" + id + ", descricao=" + descricao + '}';
+    }
+
 }
