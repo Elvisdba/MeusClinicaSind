@@ -153,6 +153,10 @@ public class ContratoBean implements Serializable {
             Messages.warn("Validação", "Cadastrar tipos de internação!");
             return;
         }
+        if (disabledSave) {
+            Messages.warn("Validação", getCalculaValorMovimentoAlterado());
+            return;
+        }
         Dao dao = new Dao();
         contrato.setTipoInternacao((TipoInternacao) dao.find(new TipoInternacao(), Integer.parseInt(listTipoInternacao.get(idTipoInternacao).getDescription())));
         Logger logger = new Logger();
