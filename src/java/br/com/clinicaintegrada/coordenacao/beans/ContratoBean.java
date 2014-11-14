@@ -91,6 +91,10 @@ public class ContratoBean implements Serializable {
     private String adicionarDias;
     private boolean disabledSave;
     private String calculaValorMovimentoAlterado;
+    private List<SelectItem> listFTipoDocumento;
+    private String idFTipoDocumento;
+    private Movimento updateMovimento;
+    private int indexList;
 
     @PostConstruct
     public void init() {
@@ -119,8 +123,12 @@ public class ContratoBean implements Serializable {
         valorTotalTaxa = "0,00";
         vencimentoString = DataHoje.data();
         listModeloDocumentos = new ArrayList<>();
+        listFTipoDocumento = new ArrayList<>();
         adicionarDias = "0";
         calculaValorMovimentoAlterado = "0";
+        idFTipoDocumento = null;
+        updateMovimento = new Movimento();
+        indexList = -1;
     }
 
     @PreDestroy
@@ -560,8 +568,9 @@ public class ContratoBean implements Serializable {
             listMovimentoContrato.clear();
             DataHoje dh = new DataHoje();
             Movimento m = new Movimento();
+            Dao dao = new Dao();
+            Servicos s1 = (Servicos) dao.find(new Servicos(), 1);
             if (listMovimentoContrato.isEmpty()) {
-                Dao dao = new Dao();
                 String nrCtrBoletoResp = "";
                 for (int x = 0; x < (Integer.toString(contrato.getResponsavel().getId())).length(); x++) {
                     nrCtrBoletoResp += 0;
@@ -578,8 +587,8 @@ public class ContratoBean implements Serializable {
                         m.setVencimento(contrato.getDataCadastro());
                     }
                     m.setPessoa(contrato.getResponsavel());
-                    m.setfTipoDocumento(null);
-                    m.setServicos((Servicos) dao.find(new Servicos(), 1));
+                    m.setTipoDocumento(s1.getTipoDocumento());
+                    m.setServicos(s1);
                     m.setTipoServico((TipoServico) dao.find(new TipoServico(), 1));
                     m.setEs("E");
                     nrCtrBoleto = nrCtrBoletoResp + Long.toString(DataHoje.calculoDosDias(DataHoje.converte("07/10/1997"), DataHoje.converte(m.getVencimentoString())));
@@ -620,8 +629,8 @@ public class ContratoBean implements Serializable {
                         }
                         nrCtrBoleto = nrCtrBoletoResp + Long.toString(DataHoje.calculoDosDias(DataHoje.converte("07/10/1997"), DataHoje.converte(m.getVencimentoString())));
                         m.setPessoa(contrato.getResponsavel());
-                        m.setfTipoDocumento((FTipoDocumento) dao.find(new FTipoDocumento(), 2));
-                        m.setServicos((Servicos) dao.find(new Servicos(), 1));
+                        m.setTipoDocumento(s1.getTipoDocumento());
+                        m.setServicos(s1);
                         m.setTipoServico((TipoServico) dao.find(new TipoServico(), 1));
                         m.setEs("E");
                         m.setNrCtrBoleto(nrCtrBoleto);
@@ -691,10 +700,11 @@ public class ContratoBean implements Serializable {
         if (tam > 0) {
             tam = listMovimentoContrato.size() - 1;
         }
+        Taxas t = ((Taxas) dao.find(new Taxas(), Integer.parseInt(listTaxas.get(idTaxa).getDescription())));
         String nrCtrBoleto = listMovimentoContrato.get(tam).getNrCtrBoleto() + Long.toString(DataHoje.calculoDosDias(DataHoje.converte("07/10/1997"), DataHoje.converte(vencimentoString)));
         m.setPessoa(contrato.getResponsavel());
-        m.setfTipoDocumento(null);
-        m.setServicos(((Taxas) dao.find(new Taxas(), Integer.parseInt(listTaxas.get(idTaxa).getDescription()))).getServicos());
+        m.setTipoDocumento(t.getServicos().getTipoDocumento());
+        m.setServicos(t.getServicos());
         m.setTipoServico((TipoServico) dao.find(new TipoServico(), 5));
         m.setEs("E");
         m.setNrCtrBoleto(nrCtrBoleto);
@@ -708,7 +718,7 @@ public class ContratoBean implements Serializable {
         m.setBaixa(null);
         listTaxas.clear();
         if (contrato.getId() != -1) {
-            m.setfTipoDocumento((FTipoDocumento) dao.find(new FTipoDocumento(), 1));
+            //m.setTipoDocumento((FTipoDocumento) dao.find(new FTipoDocumento(), 1));
             m.setLote(listMovimento.get(0).getLote());
             if (dao.save(m, true)) {
                 listMovimento.clear();
@@ -1410,5 +1420,68 @@ public class ContratoBean implements Serializable {
 
     public void setCalculaValorMovimentoAlterado(String calculaValorMovimentoAlterado) {
         this.calculaValorMovimentoAlterado = calculaValorMovimentoAlterado;
+    }
+
+    public List<SelectItem> getListFTipoDocumento() {
+        if (listFTipoDocumento.isEmpty()) {
+            Dao dao = new Dao();
+            List<FTipoDocumento> list = (List<FTipoDocumento>) dao.find("FTipoDocumento", new int[]{2, 13});
+            for (int i = 0; i < list.size(); i++) {
+                listFTipoDocumento.add(new SelectItem(list.get(i).getId(), list.get(i).getDescricao()));
+            }
+        }
+        return listFTipoDocumento;
+    }
+
+    public void setListFTipoDocumento(List<SelectItem> listFTipoDocumento) {
+        this.listFTipoDocumento = listFTipoDocumento;
+    }
+
+    public void editMovimento(int index, Movimento m) {        
+        indexList = index;
+        updateMovimento = m;
+        idFTipoDocumento = "" + m.getTipoDocumento().getId();
+    }
+
+    public void updateFTipoDocumento(int tipo) {
+        Dao dao = new Dao();
+        if (tipo == 0) {
+            listMovimentoContrato.get(indexList).setTipoDocumento((FTipoDocumento) dao.find(new FTipoDocumento(), Integer.parseInt(idFTipoDocumento)));
+            if (listMovimentoContrato.get(indexList).getId() != -1) {
+                dao.update(listMovimentoContrato.get(indexList), true);
+            }
+        } else {
+            listMovimentoTaxa.get(indexList).setTipoDocumento((FTipoDocumento) dao.find(new FTipoDocumento(), Integer.parseInt(idFTipoDocumento)));
+            if (listMovimentoTaxa.get(indexList).getId() != -1) {
+                dao.update(listMovimentoTaxa.get(indexList), true);
+            }
+        }
+        updateMovimento = new Movimento();
+        indexList = 0;
+        idFTipoDocumento = null;
+    }
+
+    public String getIdFTipoDocumento() {
+        return idFTipoDocumento;
+    }
+
+    public void setIdFTipoDocumento(String idFTipoDocumento) {
+        this.idFTipoDocumento = idFTipoDocumento;
+    }
+
+    public Movimento getUpdateMovimento() {
+        return updateMovimento;
+    }
+
+    public void setUpdateMovimento(Movimento updateMovimento) {
+        this.updateMovimento = updateMovimento;
+    }
+
+    public int getIndexList() {
+        return indexList;
+    }
+
+    public void setIndexList(int indexList) {
+        this.indexList = indexList;
     }
 }
