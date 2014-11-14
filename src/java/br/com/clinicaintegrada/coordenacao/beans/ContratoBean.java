@@ -1437,7 +1437,7 @@ public class ContratoBean implements Serializable {
         this.listFTipoDocumento = listFTipoDocumento;
     }
 
-    public void editMovimento(int index, Movimento m) {        
+    public void editMovimento(int index, Movimento m) {
         indexList = index;
         updateMovimento = m;
         idFTipoDocumento = "" + m.getTipoDocumento().getId();
