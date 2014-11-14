@@ -44,6 +44,14 @@ public class FTipoDocumento implements Serializable {
         this.id = id;
     }
 
+    public String getIdString() {
+        return Integer.toString(id);
+    }
+
+    public void setIdString(String id) {
+        this.id = Integer.parseInt(id);
+    }
+
     public String getDescricao() {
         return descricao;
     }
