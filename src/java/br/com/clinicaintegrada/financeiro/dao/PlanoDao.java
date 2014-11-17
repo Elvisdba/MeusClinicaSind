@@ -288,12 +288,13 @@ public class PlanoDao extends DB {
                     + "  )                                                                  "
                     + "    AND P5.contaBanco IS NULL                                        "
                     + "    AND P5.plano4.plano3.plano2.plano.cliente.id = :idCliente        ");
-            List list = query.getResultList();
             query.setParameter("idCliente", idCliente);
+            List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;
             }
         } catch (Exception e) {
+            return new ArrayList();
         }
         return new ArrayList();
     }
