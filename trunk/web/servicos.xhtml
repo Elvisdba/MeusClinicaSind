@@ -33,6 +33,10 @@
                                         <p:inputText value="#{servicosBean.servicos.descricao}" converter="#{toUpperCase}">
                                             <p:ajax event="change" update="@this" />
                                         </p:inputText>
+                                        <p:outputLabel value="Tipo documento: "/>
+                                        <p:selectOneMenu value="#{servicosBean.idFTipoDocumento}">
+                                            <f:selectItems value="#{servicosBean.listFTipoDocumento}" />
+                                        </p:selectOneMenu>
                                     </h:panelGrid>
                                 </f:facet>
                                 <h:panelGrid columns="4" id="id_acao" styleClass="margin-top-max">
