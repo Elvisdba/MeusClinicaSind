@@ -243,6 +243,7 @@ public class PlanoBean {
 
     public boolean savePlano(Dao dao) {
         if (plano.getId() == -1) {
+            plano.setCliente(SessaoCliente.get());
             if (dao.save(plano)) {
                 Messages.info("Sucesso", "Plano 1 adicionado");
             } else {

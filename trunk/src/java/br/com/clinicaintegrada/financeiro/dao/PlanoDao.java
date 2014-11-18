@@ -319,7 +319,7 @@ public class PlanoDao extends DB {
                 break;
         }
         try {
-            String queryString = "SELECT P FROM " + className + " AS P " + " WHERE " + queryPlano + " = :idCliente ORDER BY P.numero";
+            String queryString = "SELECT P FROM " + className + " AS P " + " WHERE " + queryPlano + " = :idCliente ORDER BY P.classificador, P.numero";
             Query query = getEntityManager().createQuery(queryString);
             query.setParameter("idCliente", idCliente);
             List list = query.getResultList();

@@ -1,5 +1,6 @@
 package br.com.clinicaintegrada.financeiro.beans;
 
+import br.com.clinicaintegrada.financeiro.FTipoDocumento;
 import br.com.clinicaintegrada.financeiro.Servicos;
 import br.com.clinicaintegrada.financeiro.dao.ServicosDao;
 import br.com.clinicaintegrada.logSistema.Logger;
@@ -28,7 +29,9 @@ public class ServicosBean implements Serializable {
     private String porPesquisa;
     private String comoPesquisa;
     private String descPesquisa;
+    private String idFTipoDocumento;
     private final String messageClass = "Serviço";
+    private List<SelectItem> listFTipoDocumento;
 
     @PostConstruct
     public void init() {
@@ -40,6 +43,8 @@ public class ServicosBean implements Serializable {
         listGrupo = new ArrayList<>();
         listSubGrupo = new ArrayList<>();
         listPeriodo = new ArrayList<>();
+        listFTipoDocumento = new ArrayList<>();
+        idFTipoDocumento = null;
     }
 
     @PreDestroy
@@ -92,6 +97,7 @@ public class ServicosBean implements Serializable {
         Dao dao = new Dao();
         Logger logger = new Logger();
         dao.openTransaction();
+        servicos.setTipoDocumento((FTipoDocumento) dao.find(new FTipoDocumento(), Integer.parseInt(idFTipoDocumento)));
         if (servicos.getId() == -1) {
             servicos.setCliente(SessaoCliente.get());
             if (servicosDao.existsServicos(servicos)) {
@@ -130,6 +136,7 @@ public class ServicosBean implements Serializable {
 
     public String edit(Servicos s) {
         servicos = s;
+        idFTipoDocumento = Integer.toString(s.getTipoDocumento().getId());
         Sessions.put("pesquisaServicos", servicos);
         Sessions.put("linkClicado", true);
         if (Sessions.exists("urlRetorno")) {
@@ -180,4 +187,27 @@ public class ServicosBean implements Serializable {
         }
         return listServicos;
     }
+
+    public String getIdFTipoDocumento() {
+        return idFTipoDocumento;
+    }
+
+    public void setIdFTipoDocumento(String idFTipoDocumento) {
+        this.idFTipoDocumento = idFTipoDocumento;
+    }
+    
+    public List<SelectItem> getListFTipoDocumento() {
+        if (listFTipoDocumento.isEmpty()) {
+            Dao dao = new Dao();
+            List<FTipoDocumento> list = (List<FTipoDocumento>) dao.find("FTipoDocumento", new int[]{2,13});
+            for (int i = 0; i < list.size(); i++) {
+                listFTipoDocumento.add(new SelectItem(list.get(i).getId(), list.get(i).getDescricao()));
+            }
+        }
+        return listFTipoDocumento;
+    }
+
+    public void setListFTipoDocumento(List<SelectItem> listFTipoDocumento) {
+        this.listFTipoDocumento = listFTipoDocumento;
+    }    
 }
