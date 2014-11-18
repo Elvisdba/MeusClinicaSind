@@ -11,6 +11,7 @@ public class ContaBancoDao extends DB {
     public List findAllByCliente(int idCliente) {
         try {
             Query query = getEntityManager().createQuery("SELECT CB FROM ContaBanco AS CB WHERE CB.cliente.id = :idCliente ORDER BY CB.banco.banco");
+            query.setParameter("idCliente", idCliente);
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;

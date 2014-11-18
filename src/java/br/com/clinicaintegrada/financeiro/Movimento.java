@@ -47,7 +47,7 @@ public class Movimento implements Serializable {
     private TipoServico tipoServico;
     @JoinColumn(name = "id_tipo_documento", referencedColumnName = "id")
     @ManyToOne
-    private FTipoDocumento fTipoDocumento;
+    private FTipoDocumento tipoDocumento;
     @Column(name = "nr_valor", length = 10, nullable = false)
     private float valor;
     @Column(name = "nr_ctr_boleto", length = 30)
@@ -76,7 +76,7 @@ public class Movimento implements Serializable {
         this.servicos = new Servicos();
         this.evento = new Evento();
         this.tipoServico = new TipoServico();
-        this.fTipoDocumento = new FTipoDocumento();
+        this.tipoDocumento = new FTipoDocumento();
         this.valor = 0;
         this.nrCtrBoleto = "";
         this.referencia = "";
@@ -88,14 +88,14 @@ public class Movimento implements Serializable {
         this.baixa = new Baixa();
     }
 
-    public Movimento(int id, Lote lote, Pessoa pessoa, Servicos servicos, Evento evento, TipoServico tipoServico, FTipoDocumento fTipoDocumento, float valor, String nrCtrBoleto, String referencia, Date vencimento, int quantidade, boolean ativo, String es, String documento, Baixa baixa) {
+    public Movimento(int id, Lote lote, Pessoa pessoa, Servicos servicos, Evento evento, TipoServico tipoServico, FTipoDocumento tipoDocumento, float valor, String nrCtrBoleto, String referencia, Date vencimento, int quantidade, boolean ativo, String es, String documento, Baixa baixa) {
         this.id = id;
         this.lote = lote;
         this.pessoa = pessoa;
         this.servicos = servicos;
         this.evento = evento;
         this.tipoServico = tipoServico;
-        this.fTipoDocumento = fTipoDocumento;
+        this.tipoDocumento = tipoDocumento;
         this.valor = valor;
         this.nrCtrBoleto = nrCtrBoleto;
         this.referencia = referencia;
@@ -147,12 +147,12 @@ public class Movimento implements Serializable {
         this.tipoServico = tipoServico;
     }
 
-    public FTipoDocumento getfTipoDocumento() {
-        return fTipoDocumento;
+    public FTipoDocumento getTipoDocumento() {
+        return tipoDocumento;
     }
 
-    public void setfTipoDocumento(FTipoDocumento fTipoDocumento) {
-        this.fTipoDocumento = fTipoDocumento;
+    public void setTipoDocumento(FTipoDocumento tipoDocumento) {
+        this.tipoDocumento = tipoDocumento;
     }
 
     public float getValor() {
