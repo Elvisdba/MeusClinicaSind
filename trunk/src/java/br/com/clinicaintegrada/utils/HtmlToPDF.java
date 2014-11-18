@@ -4,7 +4,6 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +21,6 @@ public class HtmlToPDF {
         PdfWriter writer = PdfWriter.getInstance(document, out);
         document.open();
         XMLWorkerHelper.getInstance().parseXHtml(writer, document, input);
-        document.close();      
+        document.close();
     }
 }
