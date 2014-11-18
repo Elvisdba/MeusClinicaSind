@@ -8,6 +8,7 @@ import br.com.clinicaintegrada.financeiro.dao.ContaBancoDao;
 import br.com.clinicaintegrada.financeiro.dao.PlanoDao;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.Filial;
+import br.com.clinicaintegrada.pessoa.dao.FilialDao;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.ListArgumentos;
@@ -74,7 +75,7 @@ public class ContaBancoBean implements Serializable {
         Dao dao = new Dao();
         Filial filial = (Filial) dao.find(new Filial(), Integer.parseInt(getListFilial().get(idFilial).getDescription()));
         contaBanco.setFilial(filial);
-        if (cidade == null) {
+        if (cidade == null || cidade.getId() == -1) {
             Messages.warn("Validação", "Pesquise uma Cidade!");
             return;
         }
@@ -91,6 +92,7 @@ public class ContaBancoBean implements Serializable {
         Logger logger = new Logger();
         dao.openTransaction();
         if (contaBanco.getId() == -1) {
+            contaBanco.setCliente(SessaoCliente.get());
             salvar = true;
             if (!dao.save(contaBanco)) {
                 Messages.warn("Erro", "Ao inserir registro!");
@@ -211,6 +213,7 @@ public class ContaBancoBean implements Serializable {
     public String edit(ContaBanco cb) {
         contaBanco = cb;
         PlanoDao planoDao = new PlanoDao();
+        listPlano5Conta.clear();
         plano5 = planoDao.findPlano5ByContaBanco(contaBanco.getId(), SessaoCliente.get().getId());
         if (plano5 != null && plano5.getId() != -1) {
             int qnt = getListPlano5Conta().size();
@@ -240,12 +243,15 @@ public class ContaBancoBean implements Serializable {
     }
 
     public List<SelectItem> getListBancoCompleta() {
-        if (!listBancoCompleta.isEmpty()) {
+        if (listBancoCompleta.isEmpty()) {
             Dao dao = new Dao();
             List<Banco> list = (List<Banco>) dao.list(new Banco());
-            listBancoCompleta.add(new SelectItem(0, "Nenhum", "0"));
-            for (int i = 1; i < listBancoCompleta.size(); i++) {
-                listBancoCompleta.add(new SelectItem(i + 1, list.get(i).getNumero() + " - " + list.get(i).getBanco(), Integer.toString(list.get(i).getId())));
+            int b = 0;
+            listBancoCompleta.add(new SelectItem(b, "Nenhum", "0"));
+            b = 1;
+            for (int i = 0; i < list.size(); i++) {
+                listBancoCompleta.add(new SelectItem(b, list.get(i).getNumero() + " - " + list.get(i).getBanco(), Integer.toString(list.get(i).getId())));
+                b++;
             }
         }
         return listBancoCompleta;
@@ -258,7 +264,9 @@ public class ContaBancoBean implements Serializable {
     public List<SelectItem> getListFilial() {
         if (listFilial.isEmpty()) {
             Dao dao = new Dao();
-            List<Filial> listaFilial = (List<Filial>) dao.list(new Filial(), true);
+            FilialDao filialDao = new FilialDao();
+            List<Filial> listaFilial = filialDao.pesquisaTodasCliente();
+            //List<Filial> listaFilial = (List<Filial>) dao.list(new Filial(), true);
             for (int i = 0; i < listaFilial.size(); i++) {
                 listFilial.add(new SelectItem(i, listaFilial.get(i).getFilial().getPessoa().getNome(), Integer.toString(listaFilial.get(i).getId())));
             }
@@ -285,9 +293,12 @@ public class ContaBancoBean implements Serializable {
             } else {
                 planoContas = planoDao.findPlano5InContaRotina(SessaoCliente.get().getId());
             }
-            listPlano5Conta.add(new SelectItem(0, "Nenhum", "0"));
-            for (int i = 1; i < planoContas.size(); i++) {
-                listPlano5Conta.add(new SelectItem(i + 1, ((Plano5) planoContas.get(i)).getConta(), Integer.toString(((Plano5) planoContas.get(i)).getId())));
+            int b = 0;
+            listPlano5Conta.add(new SelectItem(b, "Nenhum", "0"));
+            b = 1;
+            for (int i = 0; i < planoContas.size(); i++) {
+                listPlano5Conta.add(new SelectItem(b, ((Plano5) planoContas.get(i)).getConta(), Integer.toString(((Plano5) planoContas.get(i)).getId())));
+                b++;
             }
         }
         return listPlano5Conta;
