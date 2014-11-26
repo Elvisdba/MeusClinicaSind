@@ -40,6 +40,7 @@ import br.com.clinicaintegrada.utils.Moeda;
 import br.com.clinicaintegrada.utils.Sessions;
 import br.com.clinicaintegrada.utils.ValidDocuments;
 import br.com.clinicaintegrada.utils.ValorExtenso;
+import br.com.clinicaintegrada.utils.dao.FunctionsDao;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfReader;
@@ -171,6 +172,7 @@ public class ContratoBean implements Serializable {
         contrato.setFilial(MacFilial.getAcessoFilial().getFilial());
         contrato.setFilialAtual(MacFilial.getAcessoFilial().getFilial());
         dao.openTransaction();
+        FunctionsDao functionsDao = new FunctionsDao();
         if (contrato.getId() == -1) {
             contrato.setCliente(SessaoCliente.get());
             contrato.setFilial(MacFilial.getAcessoFilial().getFilial());
@@ -232,6 +234,7 @@ public class ContratoBean implements Serializable {
                         + " - Paciente: [" + contrato.getPaciente().getId() + "] - " + contrato.getPaciente().getNome()
                 );
                 Messages.info("Sucesso", "Registro inserido!");
+                functionsDao.gerarBoletos();
             } else {
                 dao.rollback();
                 Messages.warn("Erro", "Erro ao inserir registro!");
@@ -259,6 +262,7 @@ public class ContratoBean implements Serializable {
                         + " - Responsável: [" + contrato.getResponsavel().getId() + "] - " + contrato.getResponsavel().getNome()
                         + " - Paciente: [" + contrato.getPaciente().getId() + "] - " + contrato.getPaciente().getNome()
                 );
+                functionsDao.gerarBoletos();
             } else {
                 dao.rollback();
                 Messages.warn("Erro", "Erro ao atualizar registro!");
