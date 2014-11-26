@@ -2,6 +2,7 @@ package br.com.clinicaintegrada.utils.dao;
 
 import br.com.clinicaintegrada.principal.DB;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
+import java.util.List;
 import javax.persistence.Query;
 
 public class FunctionsDao extends DB {
@@ -12,16 +13,16 @@ public class FunctionsDao extends DB {
      * @return
      */
     public boolean gerarBoletos() {
-        int idResponsavel = -1;
         try {
-            Query query = getEntityManager().createNativeQuery(" SELECT func_geraBoleto(" + SessaoCliente.get().getId() + "); ");
-            int bool = query.executeUpdate();
-            if (bool == 1) {
-                return false;
+            String queryString = " SELECT func_geraBoleto(" + SessaoCliente.get().getId() + ")";
+            Query query = getEntityManager().createNativeQuery(queryString);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return true;
             }
         } catch (Exception e) {
             return false;
         }
-        return true;
+        return false;
     }
 }
