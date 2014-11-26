@@ -592,7 +592,7 @@ public class ContratoBean implements Serializable {
                     m.setTipoServico((TipoServico) dao.find(new TipoServico(), 1));
                     m.setEs("E");
                     nrCtrBoleto = nrCtrBoletoResp + Long.toString(DataHoje.calculoDosDias(DataHoje.converte("07/10/1997"), DataHoje.converte(m.getVencimentoString())));
-                    m.setNrCtrBoleto(nrCtrBoleto);
+                    m.setNrCtrBoleto(null);
                     m.setReferencia(DataHoje.dataReferencia(m.getVencimentoString()));
                     m.setDocumento("");
                     m.setLote(null);
@@ -633,7 +633,7 @@ public class ContratoBean implements Serializable {
                         m.setServicos(s1);
                         m.setTipoServico((TipoServico) dao.find(new TipoServico(), 1));
                         m.setEs("E");
-                        m.setNrCtrBoleto(nrCtrBoleto);
+                        m.setNrCtrBoleto(null);
                         m.setReferencia(DataHoje.dataReferencia(m.getVencimentoString()));
                         m.setDocumento("");
                         m.setLote(null);
@@ -707,7 +707,7 @@ public class ContratoBean implements Serializable {
         m.setServicos(t.getServicos());
         m.setTipoServico((TipoServico) dao.find(new TipoServico(), 5));
         m.setEs("E");
-        m.setNrCtrBoleto(nrCtrBoleto);
+        m.setNrCtrBoleto(null);
         m.setVencimento(DataHoje.converte(vencimentoString));
         m.setReferencia(DataHoje.dataReferencia(vencimentoString));
         m.setDocumento("");
