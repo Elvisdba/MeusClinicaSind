@@ -882,4 +882,13 @@ public class Dao extends DB implements DaoInterface {
         }
         return false;
     }
+
+    public boolean executeQuery(String textQuery) {
+        try {
+            Object o = getEntityManager().createNativeQuery(textQuery).getSingleResult();
+            return o != null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
