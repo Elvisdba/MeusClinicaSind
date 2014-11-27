@@ -1,5 +1,6 @@
 package br.com.clinicaintegrada.financeiro.dao;
 
+import br.com.clinicaintegrada.financeiro.Boleto;
 import br.com.clinicaintegrada.principal.DB;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,7 @@ public class MovimentoDao extends DB {
      */
     public List findMovimentos(int idLote, int idServico, int tBaixa, boolean ativo) {
         try {
-            String queryString = "SELECT M FROM Movimento AS M WHERE M.ativo = " + ativo + " AND M.lote.id = " + idLote;
+            String queryString = " SELECT M FROM Movimento AS M WHERE M.ativo = " + ativo + " AND M.lote.id = " + idLote;
             if (idServico != -1) {
                 queryString += " AND M.servicos.id = " + idServico;
             }
@@ -47,6 +48,21 @@ public class MovimentoDao extends DB {
             return new ArrayList();
         }
         return new ArrayList();
+    }
+
+    public Boleto findBoletosByNrCtrBoleto(String nrCtrBoleto) {
+        try {
+            Query qry = getEntityManager().createQuery(
+                    "  SELECT B                             "
+                    + "  FROM Boleto AS B                   "
+                    + " WHERE B.nrCtrBoleto = " + nrCtrBoleto);
+            List list = qry.getResultList();
+            if (!list.isEmpty()) {
+                return (Boleto) qry.getSingleResult();
+            }
+        } catch (Exception e) {
+        }
+        return null;
     }
 
 }
