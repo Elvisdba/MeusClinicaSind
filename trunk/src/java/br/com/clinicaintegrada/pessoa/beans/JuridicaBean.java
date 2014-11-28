@@ -180,176 +180,176 @@ public class JuridicaBean implements Serializable {
         }
     }
 
-    public void pesquisaCnpj() {
-        if (juridica.getId() != -1) {
-            return;
-        }
-
-        if (juridica.getPessoa().getDocumento().isEmpty()) {
-            return;
-        }
-
-        String documento = AnaliseString.extrairNumeros(juridica.getPessoa().getDocumento());
-
-        if (!validaTipoDocumento(2, documento)) {
-            msgDocumento = "Documento inválido!";
-            Messages.warn("Erro", "Documento Inválido!");
-            return;
-        }
-        JuridicaDao juridicaDao = new JuridicaDao();
-        List listDocumento = juridicaDao.pesquisaJuridicaPorDocumento(juridica.getPessoa().getDocumento());
-        for (int i = 0; i < listDocumento.size(); i++) {
-            if (!listDocumento.isEmpty()) {
-                Messages.warn("Erro", "Empresa já esta cadastrada no Sistema!");
-                return;
-            }
-        }
-
-        JuridicaReceitaDao juridicaReceitaDao = new JuridicaReceitaDao();
-
-        juridicaReceita = juridicaReceitaDao.pesquisaJuridicaReceitaPorDocumento(documento);
-        if (juridicaReceita == null) {
-            juridicaReceita = new JuridicaReceita();
-        }
-        if (juridicaReceita.getPessoa() != null && juridicaReceita.getPessoa().getId() != -1) {
-            Messages.warn("Erro", "Pessoa já cadastrada no Sistema!");
-            return;
-        }
-        CnaeDao cnaeDao = new CnaeDao();
-        Dao dao = new Dao();
-        if (juridicaReceita.getId() == -1) {
-            try {
-                System.loadLibrary("knu");
-            } catch (Exception | UnsatisfiedLinkError e) {
-                System.out.println(e.getMessage() + " Erro Carregar Lib ");
-                Messages.warn("Erro", "Consulta temporárimente indisponível!");
-                return;
-            }
-
-            knu.ReceitaCNPJ resultado = knu.knu.receitaCNPJ(documento);
-
-            if (resultado.getCod_erro() != 0) {
-                Messages.warn("Erro", resultado.getDesc_erro());
-                return;
-            }
-
-            if (resultado.getNome_empresarial().isEmpty()) {
-                Messages.warn("Erro", "Erro ao pesquisar na Receita!");
-                return;
-            }
-
-            if (resultado.getSituacao_cadastral().equals("BAIXADA")) {
-                Messages.warn("Erro", "Erro ao pesquisar na Receita!");
-                return;
-            }
-
-            juridicaReceita.setNome(resultado.getNome_empresarial());
-            juridicaReceita.setFantasia(resultado.getNome_empresarial());
-            juridicaReceita.setDocumento(documento);
-            juridicaReceita.setCep(resultado.getCep());
-            juridicaReceita.setDescricaoEndereco(resultado.getLogradouro());
-            juridicaReceita.setBairro(resultado.getBairro());
-            juridicaReceita.setComplemento(resultado.getComplemento());
-            juridicaReceita.setNumero(resultado.getNumero());
-            juridicaReceita.setCnae(resultado.getAtividade_principal());
-            juridicaReceita.setPessoa(null);
-            juridicaReceita.setStatus(resultado.getSituacao_cadastral());
-
-            dao.openTransaction();
-
-            if (!dao.save(juridicaReceita)) {
-                Messages.warn("Erro", "Erro ao Salvar pesquisa!");
-                dao.rollback();
-                return;
-            }
-
-            dao.commit();
-
-            juridica.getPessoa().setNome(juridicaReceita.getNome());
-            juridica.setFantasia(juridicaReceita.getNome());
-
-            String result[] = juridicaReceita.getCnae().split(" ");
-
-            List<Cnae> listac = cnaeDao.pesquisaCnae(result[0], "cnae", "I");
-
-            if (listac.isEmpty()) {
-                Messages.warn("Erro", "Erro ao pesquisar CNAE");
-                return;
-            }
-            //retornaCnaeReceita(listac.get(0));
-
-            PessoaEnderecoDao pessoaEnderecoDao = new PessoaEnderecoDao();
-
-            String cep = juridicaReceita.getCep();
-            cep = cep.replace(".", "").replace("-", "");
-
-            String descricao[] = AnaliseString.removerAcentos(resultado.getLogradouro()).split(" ");
-            String bairros[] = AnaliseString.removerAcentos(resultado.getBairro()).split(" ");
-
-            endereco = pessoaEnderecoDao.enderecoReceita(cep, descricao, bairros);
-
-            if (endereco != null) {
-                List<TipoEndereco> tipoEnderecos = (List<TipoEndereco>) dao.find("TipoEndereco", new int[]{2, 3, 4, 5});
-                for (int i = 0; i < tipoEnderecos.size(); i++) {
-                    pessoaEndereco.setEndereco(endereco);
-                    pessoaEndereco.setTipoEndereco((TipoEndereco) tipoEnderecos.get(i));
-                    pessoaEndereco.setPessoa(juridica.getPessoa());
-                    pessoaEndereco.setNumero(juridicaReceita.getNumero());
-                    pessoaEndereco.setComplemento(juridicaReceita.getComplemento());
-                    listEnd.add(pessoaEndereco);
-
-                    pessoaEndereco = new PessoaEndereco();
-                }
-            } else {
-                String msg = "Endereço não encontrado no Sistema - CEP: " + resultado.getCep() + " DESC: " + resultado.getLogradouro() + " BAIRRO: " + resultado.getBairro();
-                Messages.warn("Erro", msg);
-            }
-        } else {
-            juridica.getPessoa().setNome(juridicaReceita.getNome());
-            juridica.setFantasia(juridicaReceita.getNome());
-
-            String result[] = juridicaReceita.getCnae().split(" ");
-
-            List<Cnae> listac = cnaeDao.pesquisaCnae(result[0], "cnae", "I");
-
-            if (listac.isEmpty()) {
-                Messages.warn("Erro", "Erro ao pesquisar CNAE");
-                return;
-            }
-            //retornaCnaeReceita(listac.get(0));
-
-            if (juridicaReceita.getStatus().equals("BAIXADA")) {
-                Messages.warn("Erro", "Esta empresa esta INATIVA na receita!");
-            }
-
-            PessoaEnderecoDao pessoaEnderecoDao = new PessoaEnderecoDao();
-
-            String cep = juridicaReceita.getCep();
-            cep = cep.replace(".", "").replace("-", "");
-
-            String descricao[] = AnaliseString.removerAcentos(juridicaReceita.getDescricaoEndereco()).split(" ");
-            String bairros[] = AnaliseString.removerAcentos(juridicaReceita.getBairro()).split(" ");
-
-            endereco = pessoaEnderecoDao.enderecoReceita(cep, descricao, bairros);
-
-            if (endereco != null) {
-                List<TipoEndereco> tipoEnderecos = (List<TipoEndereco>) dao.find("TipoEndereco", new int[]{2, 3, 4, 5});
-                for (int i = 0; i < tipoEnderecos.size(); i++) {
-                    pessoaEndereco.setEndereco(endereco);
-                    pessoaEndereco.setTipoEndereco((TipoEndereco) tipoEnderecos.get(i));
-                    pessoaEndereco.setPessoa(juridica.getPessoa());
-                    pessoaEndereco.setNumero(juridicaReceita.getNumero());
-                    pessoaEndereco.setComplemento(juridicaReceita.getComplemento());
-                    listEnd.add(pessoaEndereco);
-
-                    pessoaEndereco = new PessoaEndereco();
-                }
-            } else {
-                String msg = "Endereço não encontrado no Sistema - CEP: " + juridicaReceita.getCep() + " DESC: " + juridicaReceita.getDescricaoEndereco() + " BAIRRO: " + juridicaReceita.getBairro();
-                Messages.warn("Erro", msg);
-            }
-        }
-    }
+//    public void pesquisaCnpj() {
+//        if (juridica.getId() != -1) {
+//            return;
+//        }
+//
+//        if (juridica.getPessoa().getDocumento().isEmpty()) {
+//            return;
+//        }
+//
+//        String documento = AnaliseString.extrairNumeros(juridica.getPessoa().getDocumento());
+//
+//        if (!validaTipoDocumento(2, documento)) {
+//            msgDocumento = "Documento inválido!";
+//            Messages.warn("Erro", "Documento Inválido!");
+//            return;
+//        }
+//        JuridicaDao juridicaDao = new JuridicaDao();
+//        List listDocumento = juridicaDao.pesquisaJuridicaPorDocumento(juridica.getPessoa().getDocumento());
+//        for (int i = 0; i < listDocumento.size(); i++) {
+//            if (!listDocumento.isEmpty()) {
+//                Messages.warn("Erro", "Empresa já esta cadastrada no Sistema!");
+//                return;
+//            }
+//        }
+//
+//        JuridicaReceitaDao juridicaReceitaDao = new JuridicaReceitaDao();
+//
+//        juridicaReceita = juridicaReceitaDao.pesquisaJuridicaReceitaPorDocumento(documento);
+//        if (juridicaReceita == null) {
+//            juridicaReceita = new JuridicaReceita();
+//        }
+//        if (juridicaReceita.getPessoa() != null && juridicaReceita.getPessoa().getId() != -1) {
+//            Messages.warn("Erro", "Pessoa já cadastrada no Sistema!");
+//            return;
+//        }
+//        CnaeDao cnaeDao = new CnaeDao();
+//        Dao dao = new Dao();
+//        if (juridicaReceita.getId() == -1) {
+//            try {
+//                System.loadLibrary("knu");
+//            } catch (Exception | UnsatisfiedLinkError e) {
+//                System.out.println(e.getMessage() + " Erro Carregar Lib ");
+//                Messages.warn("Erro", "Consulta temporárimente indisponível!");
+//                return;
+//            }
+//
+//            //knu.ReceitaCNPJ resultado = knu.knu.receitaCNPJ(documento);
+//
+//            if (resultado.getCod_erro() != 0) {
+//                Messages.warn("Erro", resultado.getDesc_erro());
+//                return;
+//            }
+//
+//            if (resultado.getNome_empresarial().isEmpty()) {
+//                Messages.warn("Erro", "Erro ao pesquisar na Receita!");
+//                return;
+//            }
+//
+//            if (resultado.getSituacao_cadastral().equals("BAIXADA")) {
+//                Messages.warn("Erro", "Erro ao pesquisar na Receita!");
+//                return;
+//            }
+//
+//            juridicaReceita.setNome(resultado.getNome_empresarial());
+//            juridicaReceita.setFantasia(resultado.getNome_empresarial());
+//            juridicaReceita.setDocumento(documento);
+//            juridicaReceita.setCep(resultado.getCep());
+//            juridicaReceita.setDescricaoEndereco(resultado.getLogradouro());
+//            juridicaReceita.setBairro(resultado.getBairro());
+//            juridicaReceita.setComplemento(resultado.getComplemento());
+//            juridicaReceita.setNumero(resultado.getNumero());
+//            juridicaReceita.setCnae(resultado.getAtividade_principal());
+//            juridicaReceita.setPessoa(null);
+//            juridicaReceita.setStatus(resultado.getSituacao_cadastral());
+//
+//            dao.openTransaction();
+//
+//            if (!dao.save(juridicaReceita)) {
+//                Messages.warn("Erro", "Erro ao Salvar pesquisa!");
+//                dao.rollback();
+//                return;
+//            }
+//
+//            dao.commit();
+//
+//            juridica.getPessoa().setNome(juridicaReceita.getNome());
+//            juridica.setFantasia(juridicaReceita.getNome());
+//
+//            String result[] = juridicaReceita.getCnae().split(" ");
+//
+//            List<Cnae> listac = cnaeDao.pesquisaCnae(result[0], "cnae", "I");
+//
+//            if (listac.isEmpty()) {
+//                Messages.warn("Erro", "Erro ao pesquisar CNAE");
+//                return;
+//            }
+//            //retornaCnaeReceita(listac.get(0));
+//
+//            PessoaEnderecoDao pessoaEnderecoDao = new PessoaEnderecoDao();
+//
+//            String cep = juridicaReceita.getCep();
+//            cep = cep.replace(".", "").replace("-", "");
+//
+//            String descricao[] = AnaliseString.removerAcentos(resultado.getLogradouro()).split(" ");
+//            String bairros[] = AnaliseString.removerAcentos(resultado.getBairro()).split(" ");
+//
+//            endereco = pessoaEnderecoDao.enderecoReceita(cep, descricao, bairros);
+//
+//            if (endereco != null) {
+//                List<TipoEndereco> tipoEnderecos = (List<TipoEndereco>) dao.find("TipoEndereco", new int[]{2, 3, 4, 5});
+//                for (int i = 0; i < tipoEnderecos.size(); i++) {
+//                    pessoaEndereco.setEndereco(endereco);
+//                    pessoaEndereco.setTipoEndereco((TipoEndereco) tipoEnderecos.get(i));
+//                    pessoaEndereco.setPessoa(juridica.getPessoa());
+//                    pessoaEndereco.setNumero(juridicaReceita.getNumero());
+//                    pessoaEndereco.setComplemento(juridicaReceita.getComplemento());
+//                    listEnd.add(pessoaEndereco);
+//
+//                    pessoaEndereco = new PessoaEndereco();
+//                }
+//            } else {
+//                String msg = "Endereço não encontrado no Sistema - CEP: " + resultado.getCep() + " DESC: " + resultado.getLogradouro() + " BAIRRO: " + resultado.getBairro();
+//                Messages.warn("Erro", msg);
+//            }
+//        } else {
+//            juridica.getPessoa().setNome(juridicaReceita.getNome());
+//            juridica.setFantasia(juridicaReceita.getNome());
+//
+//            String result[] = juridicaReceita.getCnae().split(" ");
+//
+//            List<Cnae> listac = cnaeDao.pesquisaCnae(result[0], "cnae", "I");
+//
+//            if (listac.isEmpty()) {
+//                Messages.warn("Erro", "Erro ao pesquisar CNAE");
+//                return;
+//            }
+//            //retornaCnaeReceita(listac.get(0));
+//
+//            if (juridicaReceita.getStatus().equals("BAIXADA")) {
+//                Messages.warn("Erro", "Esta empresa esta INATIVA na receita!");
+//            }
+//
+//            PessoaEnderecoDao pessoaEnderecoDao = new PessoaEnderecoDao();
+//
+//            String cep = juridicaReceita.getCep();
+//            cep = cep.replace(".", "").replace("-", "");
+//
+//            String descricao[] = AnaliseString.removerAcentos(juridicaReceita.getDescricaoEndereco()).split(" ");
+//            String bairros[] = AnaliseString.removerAcentos(juridicaReceita.getBairro()).split(" ");
+//
+//            endereco = pessoaEnderecoDao.enderecoReceita(cep, descricao, bairros);
+//
+//            if (endereco != null) {
+//                List<TipoEndereco> tipoEnderecos = (List<TipoEndereco>) dao.find("TipoEndereco", new int[]{2, 3, 4, 5});
+//                for (int i = 0; i < tipoEnderecos.size(); i++) {
+//                    pessoaEndereco.setEndereco(endereco);
+//                    pessoaEndereco.setTipoEndereco((TipoEndereco) tipoEnderecos.get(i));
+//                    pessoaEndereco.setPessoa(juridica.getPessoa());
+//                    pessoaEndereco.setNumero(juridicaReceita.getNumero());
+//                    pessoaEndereco.setComplemento(juridicaReceita.getComplemento());
+//                    listEnd.add(pessoaEndereco);
+//
+//                    pessoaEndereco = new PessoaEndereco();
+//                }
+//            } else {
+//                String msg = "Endereço não encontrado no Sistema - CEP: " + juridicaReceita.getCep() + " DESC: " + juridicaReceita.getDescricaoEndereco() + " BAIRRO: " + juridicaReceita.getBairro();
+//                Messages.warn("Erro", msg);
+//            }
+//        }
+//    }
 
 //    public void pesquisaCnpjXML(){
 //        if (juridica.getId() != -1){
