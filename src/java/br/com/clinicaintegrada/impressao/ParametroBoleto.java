@@ -2,80 +2,86 @@ package br.com.clinicaintegrada.impressao;
 
 public class ParametroBoleto {
 
-    private String clienteLogo;
-    private String clienteNome;
+    private String cliente_logo;
+    private String cliente_nome;
     private String codigo;
     private String responsavel;
     private String vencimento;
-    private String matricula;
-    private String categoria;
-    private String grupo;
-    private String codigoBeneficiario;
-    private String beneficiario;
     private String servico;
     private String valor;
-    private String valorTotal;
-    private String valorAtrasada;
-    private String valorVencimento;
-    private String logoPromocao;
-    private String logoBanco;
+    private String valor_total;
+    private String valor_atrasada;
+    private String valor_vencimento;
+    private String logo_promocao;
+    private String logo_banco;
     private String mensagem;
     private String agencia;
     private String representacao;
-    private String codigoCedente;
-    private String nossoNumero;
+    private String codigo_cedente;
+    private String nosso_numero;
     private String processamento;
-    private String codigoBarras;
+    private String codigo_barras;
     private String serrilha;
-    private String enderecoResponsavel;
-    private String enderecoFilial;
-    private String complementoResponsavel;
-    private String complementoFilial;
-    private String cnpjFilial;
-    private String telefoneFilial;
-    private String emailFilial;
-    private String siteFilial;
-    private String logoVerso;
-    private String localPagamento;
+    private String endereco_responsavel;
+    private String endereco_filial;
+    private String complemento_responsavel;
+    private String complemento_filial;
+    private String cnpj_filial;
+    private String telefone_filial;
+    private String email_filial;
+    private String site_filial;
+    private String logo_verso;
+    private String local_pagamento;
     private String informativo;
 
-    public ParametroBoleto(String clienteLogo, String clienteNome, String codigo, String responsavel, String vencimento, String matricula, String categoria, String grupo, String codigoBeneficiario, String beneficiario, String servico, String valor, String valorTotal, String valorAtrasada, String valorVencimento, String logoPromocao, String logoBanco, String mensagem, String agencia, String representacao, String codigoCedente, String nossoNumero, String processamento, String codigoBarras, String serrilha, String enderecoResponsavel, String enderecoFilial, String complementoResponsavel, String complementoFilial, String cnpjFilial, String telefoneFilial, String emailFilial, String siteFilial, String logoVerso, String localPagamento, String informativo) {
-        this.clienteLogo = clienteLogo;
-        this.clienteNome = clienteNome;
+    public ParametroBoleto(String cliente_logo, String cliente_nome, String codigo, String responsavel, String vencimento, String servico, String valor, String valor_total, String valor_atrasada, String valor_vencimento, String logo_promocao, String logo_banco, String mensagem, String agencia, String representacao, String codigo_cedente, String nosso_numero, String processamento, String codigo_barras, String serrilha, String endereco_responsavel, String endereco_filial, String complemento_responsavel, String complemento_filial, String cnpj_filial, String telefone_filial, String email_filial, String site_filial, String logo_verso, String local_pagamento, String informativo) {
+        this.cliente_logo = cliente_logo;
+        this.cliente_nome = cliente_nome;
         this.codigo = codigo;
         this.responsavel = responsavel;
         this.vencimento = vencimento;
-        this.matricula = matricula;
-        this.categoria = categoria;
-        this.grupo = grupo;
-        this.codigoBeneficiario = codigoBeneficiario;
-        this.beneficiario = beneficiario;
         this.servico = servico;
         this.valor = valor;
-        this.valorTotal = valorTotal;
-        this.valorAtrasada = valorAtrasada;
-        this.valorVencimento = valorVencimento;
-        this.logoPromocao = logoPromocao;
-        this.logoBanco = logoBanco;
+        this.valor_total = valor_total;
+        this.valor_atrasada = valor_atrasada;
+        this.valor_vencimento = valor_vencimento;
+        this.logo_promocao = logo_promocao;
+        this.logo_banco = logo_banco;
         this.mensagem = mensagem;
         this.agencia = agencia;
         this.representacao = representacao;
-        this.codigoCedente = codigoCedente;
-        this.nossoNumero = nossoNumero;
+        this.codigo_cedente  = codigo_cedente;
+        this.nosso_numero = nosso_numero;
         this.processamento = processamento;
-        this.codigoBarras = codigoBarras;
+        this.codigo_barras = codigo_barras;
         this.serrilha = serrilha;
-        this.enderecoResponsavel = enderecoResponsavel;
-        this.enderecoFilial = enderecoFilial;
-        this.complementoResponsavel = complementoResponsavel;
-        this.complementoFilial = complementoFilial;
-        this.cnpjFilial = cnpjFilial;
-        this.telefoneFilial = telefoneFilial;
-        this.emailFilial = emailFilial;
-        this.siteFilial = siteFilial;
-        this.logoVerso = logoVerso;
-        this.localPagamento = localPagamento;
+        this.endereco_responsavel = endereco_responsavel;
+        this.endereco_filial = endereco_filial;
+        this.complemento_responsavel = complemento_responsavel;
+        this.complemento_filial = complemento_filial;
+        this.cnpj_filial = cnpj_filial;
+        this.telefone_filial = telefone_filial;
+        this.email_filial = email_filial;
+        this.site_filial = site_filial;
+        this.logo_verso = logo_verso;
+        this.local_pagamento = local_pagamento;
         this.informativo = informativo;
+    }
+
+    public String getCliente_logo() {
+        return cliente_logo;
+    }
+
+    public void setCliente_logo(String cliente_logo) {
+        this.cliente_logo = cliente_logo;
+    }
+
+    public String getCliente_nome() {
+        return cliente_nome;
+    }
+
+    public void setCliente_nome(String cliente_nome) {
+        this.cliente_nome = cliente_nome;
     }
 
     public String getCodigo() {
@@ -102,38 +108,6 @@ public class ParametroBoleto {
         this.vencimento = vencimento;
     }
 
-    public String getMatricula() {
-        return matricula;
-    }
-
-    public void setMatricula(String matricula) {
-        this.matricula = matricula;
-    }
-
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
-    }
-
-    public String getGrupo() {
-        return grupo;
-    }
-
-    public void setGrupo(String grupo) {
-        this.grupo = grupo;
-    }
-
-    public String getBeneficiario() {
-        return beneficiario;
-    }
-
-    public void setBeneficiario(String beneficiario) {
-        this.beneficiario = beneficiario;
-    }
-
     public String getServico() {
         return servico;
     }
@@ -150,36 +124,44 @@ public class ParametroBoleto {
         this.valor = valor;
     }
 
-    public String getValorTotal() {
-        return valorTotal;
+    public String getValor_total() {
+        return valor_total;
     }
 
-    public void setValorTotal(String valorTotal) {
-        this.valorTotal = valorTotal;
+    public void setValor_total(String valor_total) {
+        this.valor_total = valor_total;
     }
 
-    public String getValorAtrasada() {
-        return valorAtrasada;
+    public String getValor_atrasada() {
+        return valor_atrasada;
     }
 
-    public void setValorAtrasada(String valorAtrasada) {
-        this.valorAtrasada = valorAtrasada;
+    public void setValor_atrasada(String valor_atrasada) {
+        this.valor_atrasada = valor_atrasada;
     }
 
-    public String getValorVencimento() {
-        return valorVencimento;
+    public String getValor_vencimento() {
+        return valor_vencimento;
     }
 
-    public void setValorVencimento(String valorVencimento) {
-        this.valorVencimento = valorVencimento;
+    public void setValor_vencimento(String valor_vencimento) {
+        this.valor_vencimento = valor_vencimento;
     }
 
-    public String getLogoPromocao() {
-        return logoPromocao;
+    public String getLogo_promocao() {
+        return logo_promocao;
     }
 
-    public void setLogoPromocao(String logoPromocao) {
-        this.logoPromocao = logoPromocao;
+    public void setLogo_promocao(String logo_promocao) {
+        this.logo_promocao = logo_promocao;
+    }
+
+    public String getLogo_banco() {
+        return logo_banco;
+    }
+
+    public void setLogo_banco(String logo_banco) {
+        this.logo_banco = logo_banco;
     }
 
     public String getMensagem() {
@@ -206,20 +188,20 @@ public class ParametroBoleto {
         this.representacao = representacao;
     }
 
-    public String getCodigoCedente() {
-        return codigoCedente;
+    public String getCodigo_cedente() {
+        return codigo_cedente;
     }
 
-    public void setCodigoCedente(String codigoCedente) {
-        this.codigoCedente = codigoCedente;
+    public void setCodigo_cedente(String codigo_cedente) {
+        this.codigo_cedente = codigo_cedente;
     }
 
-    public String getNossoNumero() {
-        return nossoNumero;
+    public String getNosso_numero() {
+        return nosso_numero;
     }
 
-    public void setNossoNumero(String nossoNumero) {
-        this.nossoNumero = nossoNumero;
+    public void setNosso_numero(String nosso_numero) {
+        this.nosso_numero = nosso_numero;
     }
 
     public String getProcessamento() {
@@ -230,20 +212,12 @@ public class ParametroBoleto {
         this.processamento = processamento;
     }
 
-    public String getCodigoBarras() {
-        return codigoBarras;
+    public String getCodigo_barras() {
+        return codigo_barras;
     }
 
-    public void setCodigoBarras(String codigoBarras) {
-        this.codigoBarras = codigoBarras;
-    }
-
-    public String getLogoBanco() {
-        return logoBanco;
-    }
-
-    public void setLogoBanco(String logoBanco) {
-        this.logoBanco = logoBanco;
+    public void setCodigo_barras(String codigo_barras) {
+        this.codigo_barras = codigo_barras;
     }
 
     public String getSerrilha() {
@@ -254,92 +228,84 @@ public class ParametroBoleto {
         this.serrilha = serrilha;
     }
 
-    public String getCodigoBeneficiario() {
-        return codigoBeneficiario;
+    public String getEndereco_responsavel() {
+        return endereco_responsavel;
     }
 
-    public void setCodigoBeneficiario(String codigoBeneficiario) {
-        this.codigoBeneficiario = codigoBeneficiario;
+    public void setEndereco_responsavel(String endereco_responsavel) {
+        this.endereco_responsavel = endereco_responsavel;
     }
 
-    public String getEnderecoResponsavel() {
-        return enderecoResponsavel;
+    public String getEndereco_filial() {
+        return endereco_filial;
     }
 
-    public void setEnderecoResponsavel(String enderecoResponsavel) {
-        this.enderecoResponsavel = enderecoResponsavel;
+    public void setEndereco_filial(String endereco_filial) {
+        this.endereco_filial = endereco_filial;
     }
 
-    public String getEnderecoFilial() {
-        return enderecoFilial;
+    public String getComplemento_responsavel() {
+        return complemento_responsavel;
     }
 
-    public void setEnderecoFilial(String enderecoFilial) {
-        this.enderecoFilial = enderecoFilial;
+    public void setComplemento_responsavel(String complemento_responsavel) {
+        this.complemento_responsavel = complemento_responsavel;
     }
 
-    public String getComplementoResponsavel() {
-        return complementoResponsavel;
+    public String getComplemento_filial() {
+        return complemento_filial;
     }
 
-    public void setComplementoResponsavel(String complementoResponsavel) {
-        this.complementoResponsavel = complementoResponsavel;
+    public void setComplemento_filial(String complemento_filial) {
+        this.complemento_filial = complemento_filial;
     }
 
-    public String getComplementoFilial() {
-        return complementoFilial;
+    public String getCnpj_filial() {
+        return cnpj_filial;
     }
 
-    public void setComplementoFilial(String complementoFilial) {
-        this.complementoFilial = complementoFilial;
+    public void setCnpj_filial(String cnpj_filial) {
+        this.cnpj_filial = cnpj_filial;
     }
 
-    public String getCnpjFilial() {
-        return cnpjFilial;
+    public String getTelefone_filial() {
+        return telefone_filial;
     }
 
-    public void setCnpjFilial(String cnpjFilial) {
-        this.cnpjFilial = cnpjFilial;
+    public void setTelefone_filial(String telefone_filial) {
+        this.telefone_filial = telefone_filial;
     }
 
-    public String getTelefoneFilial() {
-        return telefoneFilial;
+    public String getEmail_filial() {
+        return email_filial;
     }
 
-    public void setTelefoneFilial(String telefoneFilial) {
-        this.telefoneFilial = telefoneFilial;
+    public void setEmail_filial(String email_filial) {
+        this.email_filial = email_filial;
     }
 
-    public String getEmailFilial() {
-        return emailFilial;
+    public String getSite_filial() {
+        return site_filial;
     }
 
-    public void setEmailFilial(String emailFilial) {
-        this.emailFilial = emailFilial;
+    public void setSite_filial(String site_filial) {
+        this.site_filial = site_filial;
     }
 
-    public String getSiteFilial() {
-        return siteFilial;
+    public String getLogo_verso() {
+        return logo_verso;
     }
 
-    public void setSiteFilial(String siteFilial) {
-        this.siteFilial = siteFilial;
+    public void setLogo_verso(String logo_verso) {
+        this.logo_verso = logo_verso;
     }
 
-    public String getLogoVerso() {
-        return logoVerso;
+    public String getLocal_pagamento() {
+        return local_pagamento;
     }
 
-    public void setLogoVerso(String logoVerso) {
-        this.logoVerso = logoVerso;
-    }
-
-    public String getLocalPagamento() {
-        return localPagamento;
-    }
-
-    public void setLocalPagamento(String localPagamento) {
-        this.localPagamento = localPagamento;
+    public void setLocal_pagamento(String local_pagamento) {
+        this.local_pagamento = local_pagamento;
     }
 
     public String getInformativo() {
@@ -348,22 +314,6 @@ public class ParametroBoleto {
 
     public void setInformativo(String informativo) {
         this.informativo = informativo;
-    }
-
-    public String getClienteLogo() {
-        return clienteLogo;
-    }
-
-    public void setClienteLogo(String clienteLogo) {
-        this.clienteLogo = clienteLogo;
-    }
-
-    public String getClienteNome() {
-        return clienteNome;
-    }
-
-    public void setClienteNome(String clienteNome) {
-        this.clienteNome = clienteNome;
     }
 
 }
