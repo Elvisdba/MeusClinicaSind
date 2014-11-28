@@ -13,7 +13,7 @@ package br.com.clinicaintegrada.financeiro.dao;
 //import br.com.clinicaintegrada.principal.DB;
 //import br.com.clinicaintegrada.seguranca.Usuario;
 //import br.com.clinicaintegrada.dao.Dao;
-import br.com.clinicaintegrada.financeiro.BoletoVw;
+import br.com.clinicaintegrada.financeiro.BoletosVw;
 import br.com.clinicaintegrada.principal.DB;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +23,10 @@ import javax.persistence.Query;
 public class FinanceiroDao extends DB {
 
     // NOVO
-    public List<BoletoVw> listaBoletos(String nr_ctr_boleto) {
+    public List<BoletosVw> listaBoletos(String nr_ctr_boleto) {
         try {
-            String queryString = "SELECT * FROM fin_boletos_vw WHERE nr_ctr_boleto IN ('" + nr_ctr_boleto + "')";
-            Query query = getEntityManager().createNativeQuery(queryString, BoletoVw.class);
+            String queryString = "SELECT * FROM boletos_vw WHERE nr_ctr_boleto IN ('" + nr_ctr_boleto + "')";
+            Query query = getEntityManager().createNativeQuery(queryString, BoletosVw.class);
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;
@@ -37,7 +37,26 @@ public class FinanceiroDao extends DB {
         return new ArrayList<>();
     }
 
-    public List<BoletoVw> listaBoletosGroup(String responsavel, String lote, String data) {
+    public List<BoletosVw> finBoletosByLote(Integer idLote) {
+        String queryString = ""
+                + "    SELECT *                                                                             "
+                + "      FROM boletos_vw                                                                    "
+                + "     WHERE id_fin_lote  = " + idLote
+                + "  ORDER BY vencimento, nr_ctr_boleto DESC";
+
+        try {
+            Query query = getEntityManager().createNativeQuery(queryString, BoletosVw.class);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>();
+    }
+
+    public List<BoletosVw> listaBoletosGroup(String responsavel, String lote, String data) {
 
         String queryWhere = "";
         if (!responsavel.isEmpty()) {
@@ -55,7 +74,8 @@ public class FinanceiroDao extends DB {
         }
 
         String queryString = ""
-                + "    SELECT nr_ctr_boleto,                                                                "
+                + "    SELECT -1 AS id,                                                                   "
+                + "           nr_ctr_boleto,                                                                "
                 + "           id_lote_boleto,                                                               "
                 + "           responsavel,                                                                  "
                 + "           boleto,                                                                       "
@@ -67,7 +87,7 @@ public class FinanceiroDao extends DB {
                 + "  ORDER BY responsavel, vencimento DESC";
 
         try {
-            Query query = getEntityManager().createNativeQuery(queryString, BoletoVw.class);
+            Query query = getEntityManager().createNativeQuery(queryString, BoletosVw.class);
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;
