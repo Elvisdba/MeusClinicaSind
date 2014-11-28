@@ -176,7 +176,7 @@
                                         <f:facet name="header">
                                             Parcelas
                                         </f:facet>
-                                        <p:column headerText="Documento" width="100" styleClass="text-center">#{movimento.nrCtrBoleto}</p:column>
+                                        <p:column headerText="Documento" width="100" styleClass="text-center" style="font-size: 7.5pt!important">#{movimento.documento}</p:column>
                                         <p:column headerText="Serviços" styleClass="text-center">#{movimento.servicos.descricao}</p:column>
                                         <p:column headerText="Data do Vencimento" styleClass="text-center">
                                             <p:inputMask value="#{movimento.vencimentoString}" mask="99/99/9999" size="8" styleClass="text-center" rendered="#{movimento.id == -1}" />
@@ -203,7 +203,7 @@
                                         <f:facet name="header">
                                             Taxas
                                         </f:facet>
-                                        <p:column width="100" styleClass="text-center">#{movimento.nrCtrBoleto}</p:column>
+                                        <p:column width="100" styleClass="text-center" style="font-size: 7.5pt!important">#{movimento.documento}</p:column>
                                         <p:column styleClass="text-center">#{movimento.servicos.descricao}</p:column>
                                         <p:column styleClass="text-center">#{movimento.vencimentoString}</p:column>
                                         <p:column styleClass="text-center">#{movimento.valorString}</p:column>
@@ -276,7 +276,10 @@
                                         <p:commandButton action="#{chamadaPaginaBean.pesquisa('pesquisaContrato')}" value="Pesquisar" disabled="#{controleAcessoBean.view('pesquisaContrato')}"/>
                                         <p:commandButton value="Extrato" disabled="true" rendered="#{contratoBean.contrato.id != -1}"/>
                                         <h:commandLink action="#{contratoBean.imprimir}" disabled="#{contratoBean.contrato.id == -1}" rendered="#{contratoBean.contrato.id != -1}">
-                                            <p:button value="Imprimir" icon="ui-icon-print" />
+                                            <p:button value="Imprimir Contrato" icon="ui-icon-print" />
+                                        </h:commandLink>
+                                        <h:commandLink action="#{contratoBean.printBoletos}" disabled="#{contratoBean.contrato.id == -1}" rendered="#{contratoBean.contrato.id != -1}">
+                                            <p:button value="Imprimir Boletos" icon="ui-icon-print" />
                                         </h:commandLink>
                                     </h:panelGrid>
                                 </f:facet>                                
