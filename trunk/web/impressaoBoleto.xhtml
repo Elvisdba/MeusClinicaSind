@@ -1,0 +1,121 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Clínica Integrada - Impressão de Boleto</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/Imagens/favicon.ico"/>  
+        <style type="text/css">
+            .ui-widget-content .ui-inputfield{ padding: 8px!important;} 
+            .ui-button { padding: 3px!important; }
+        </style>
+
+        <script type="text/javascript">
+
+        </script>
+    </h:head>
+    <h:body>
+        <!-- INICIA DIV wrap e main -->
+        <div id="wrapx">
+            <div id="mainx">
+                <!-- INICIA DIV wrap e main -->  
+                <f:subview id="header">
+                    <ui:include src="templates/templatePrime.xhtml"/>
+                </f:subview>
+                <f:view>
+                    <p:ajaxStatus id="i_status" onstart="PF('i_dlg_modal').show()" onsuccess="PF('i_dlg_modal').hide()" />
+                    <p:dialog modal="true" widgetVar="i_dlg_modal" header="Status" draggable="false" closable="false">  
+                        <h:outputLabel value="Aguarde ..." />
+                    </p:dialog>
+                    <p:panel styleClass="wrapper" style="border: 0px;">
+                        <h:outputText value="Impressão de Boleto" styleClass="fonteHeader" />
+                        <h:form id="formImpressaoBoletoSocial">
+                            <p:panel styleClass="fundoCinza" style="clear: both">
+                                <h:outputLabel value="Opção Marcar" style="font-size: 12pt!important"/><br />
+                                <h:panelGrid columns="7">
+                                    <p:column>
+                                        <h:outputLabel value="De" /><br />
+                                        <p:inputText size="5" value="#{impressaoBoletoBean.de}"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputLabel value="Até" /><br />
+                                        <p:inputText size="5" value="#{impressaoBoletoBean.ate}"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <br />
+                                        <p:commandButton value="Marcar" action="#{impressaoBoletoBean.select()}" update="tbl"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputLabel value="Responsável" style="margin-left: 20px"/><br />
+                                        <p:inputText value="#{impressaoBoletoBean.strResponsavel}" size="60" style="margin-left: 20px"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputLabel value="Lote" /><br />
+                                        <p:inputText value="#{impressaoBoletoBean.strLote}" size="10"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputLabel value="Data Proc." /><br />
+                                        <p:inputMask value="#{impressaoBoletoBean.processamentoString}" mask="99/99/9999" size="8" style="background: #ffc8c8; font-weight: bold"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <br />
+                                        <p:commandButton value="Filtrar" action="#{impressaoBoletoBean.filter()}" update="tbl"/>
+                                    </p:column>
+                                </h:panelGrid>        
+                            </p:panel>
+
+                            <p:dataTable var="boletosVw" id="tbl" value="#{impressaoBoletoBean.listaBoletos}" emptyMessage="Nenhum Boleto Encontrado!" paginator="true" rows="10">
+                                <p:column headerText="Lote" style="text-align: center" width="30">
+                                    <p:commandLink value="#{boletosVw.lote.id}"/>
+                                </p:column>
+
+                                <p:column headerText="Responsável">
+                                    <p:commandLink value="#{boletosVw.responsavel}"/>
+                                </p:column>
+
+                                <p:column headerText="N Boleto" style="text-align: center" width="120">
+                                    <p:commandLink value="#{boletosVw.boleto}"/>
+                                </p:column>
+
+                                <p:column headerText="Proc." style="text-align: center" width="65">
+                                    <p:commandLink value="#{boletosVw.processamentoString}"/>
+                                </p:column>
+
+                                <p:column headerText="Vencto" style="text-align: center" width="65">
+                                    <p:commandLink value="#{boletosVw.vencimentoString}"/>
+                                </p:column>
+
+                                <p:column headerText="Valor Total" width="65" >
+                                    <p:commandLink value="#{boletosVw.valorString}" style="float: right"/>
+                                </p:column>
+                            </p:dataTable>
+
+                            <h:panelGrid columns="2">
+                                <p:commandButton ajax="false" value="Imprimir" action="#{impressaoBoletoBean.print()}"/>
+                                <p:selectBooleanCheckbox value="#{impressaoBoletoBean.imprimeVerso}" style="margin-left: 30px" itemLabel="Imprimir Verso"/>
+                            </h:panelGrid>
+                        </h:form>
+                    </p:panel>
+                </f:view>
+                <!-- FINALIZA div wrap main -->
+            </div>
+        </div>
+        <!-- FINALIZA div wrap main -->
+
+        <div id="footerx">
+            <f:subview id="footer">
+                <ui:include src="templates/templateFooter.xhtml"/>
+            </f:subview>
+        </div>                
+    </h:body>
+</ui:composition>
