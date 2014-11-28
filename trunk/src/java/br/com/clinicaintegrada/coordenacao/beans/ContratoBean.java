@@ -8,8 +8,19 @@ import br.com.clinicaintegrada.administrativo.TipoInternacao;
 import br.com.clinicaintegrada.administrativo.dao.ModeloContratoDao;
 import br.com.clinicaintegrada.administrativo.dao.ModeloDocumentosDao;
 import br.com.clinicaintegrada.administrativo.dao.TaxasDao;
+import br.com.clinicaintegrada.cobranca.BancoDoBrasil;
+import br.com.clinicaintegrada.cobranca.Bradesco;
+import br.com.clinicaintegrada.cobranca.CaixaFederalSicob;
+import br.com.clinicaintegrada.cobranca.CaixaFederalSigCB;
+import br.com.clinicaintegrada.cobranca.Cobranca;
+import br.com.clinicaintegrada.cobranca.Itau;
+import br.com.clinicaintegrada.cobranca.Real;
+import br.com.clinicaintegrada.cobranca.Santander;
+import br.com.clinicaintegrada.cobranca.Sicoob;
 import br.com.clinicaintegrada.coordenacao.Contrato;
 import br.com.clinicaintegrada.coordenacao.dao.ContratoDao;
+import br.com.clinicaintegrada.financeiro.Boleto;
+import br.com.clinicaintegrada.financeiro.BoletosVw;
 import br.com.clinicaintegrada.financeiro.CondicaoPagamento;
 import br.com.clinicaintegrada.financeiro.FStatus;
 import br.com.clinicaintegrada.financeiro.FTipoDocumento;
@@ -17,8 +28,11 @@ import br.com.clinicaintegrada.financeiro.Lote;
 import br.com.clinicaintegrada.financeiro.Movimento;
 import br.com.clinicaintegrada.financeiro.Servicos;
 import br.com.clinicaintegrada.financeiro.TipoServico;
+import br.com.clinicaintegrada.financeiro.beans.GerarBoletoBean;
+import br.com.clinicaintegrada.financeiro.dao.FinanceiroDao;
 import br.com.clinicaintegrada.financeiro.dao.LoteDao;
 import br.com.clinicaintegrada.financeiro.dao.MovimentoDao;
+import br.com.clinicaintegrada.impressao.ParametroBoleto;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.Filial;
 import br.com.clinicaintegrada.pessoa.Fisica;
@@ -37,6 +51,7 @@ import br.com.clinicaintegrada.utils.Download;
 import br.com.clinicaintegrada.utils.HtmlToPDF;
 import br.com.clinicaintegrada.utils.Messages;
 import br.com.clinicaintegrada.utils.Moeda;
+import br.com.clinicaintegrada.utils.SalvaArquivos;
 import br.com.clinicaintegrada.utils.Sessions;
 import br.com.clinicaintegrada.utils.ValidDocuments;
 import br.com.clinicaintegrada.utils.ValorExtenso;
@@ -46,6 +61,7 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.lowagie.text.Element;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -53,7 +69,10 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
@@ -61,6 +80,16 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.JRPdfExporter;
+import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
+import net.sf.jasperreports.engine.util.JRLoader;
 
 @ManagedBean
 @SessionScoped
@@ -1487,5 +1516,129 @@ public class ContratoBean implements Serializable {
 
     public void setIndexList(int indexList) {
         this.indexList = indexList;
+    }
+
+    public void printBoletos() {
+        if (!listMovimento.isEmpty()) {
+            FinanceiroDao financeiroDao = new FinanceiroDao();
+            List<BoletosVw> listBoletosVw = financeiroDao.finBoletosByLote(listMovimento.get(0).getLote().getId());
+            if (!listBoletosVw.isEmpty()) {
+                List list = new ArrayList();
+                Dao dao = new Dao();
+                Filial filial = (Filial) dao.find(new Filial(), 1);
+                Map<String, Object> map = new LinkedHashMap<>();
+                float valor = 0;
+                float valor_total = 0;
+
+                try {
+                    File file_jasper = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Relatorios/BOLETO.jasper"));
+                    JasperReport jasperReport = (JasperReport) JRLoader.loadObject(file_jasper);
+
+                    File file_jasper_verso = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Relatorios/BOLETO_VERSO.jasper"));
+                    JasperReport jasperReportVerso = (JasperReport) JRLoader.loadObject(file_jasper_verso);
+                    List<JasperPrint> jasperPrintList = new ArrayList<>();
+                    File file_promo = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/BannerPromoBoleto.png"));
+
+                    if (!file_promo.exists()) {
+                        file_promo = null;
+                    }
+
+                    MovimentoDao movimentoDao = new MovimentoDao();
+                    Cobranca cobranca = null;
+
+                    for (int w = 0; w < listBoletosVw.size(); w++) {
+                        Boleto boletox = movimentoDao.findBoletosByNrCtrBoleto("'" + listBoletosVw.get(w).getNrCtrBoleto() + "'"); // NR_CTR_BOLETO
+                        Movimento mov = (Movimento) dao.find(new Movimento(), (Integer) listBoletosVw.get(w).getMovimento().getId());
+                        if ((boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.caixaFederal))
+                                && (boletox.getContaCobranca().getLayout().getId() == Cobranca.SICOB)) {
+                            cobranca = new CaixaFederalSicob(mov, boletox);
+                        } else if ((boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.caixaFederal))
+                                && (boletox.getContaCobranca().getLayout().getId() == Cobranca.SIGCB)) {
+                            cobranca = new CaixaFederalSigCB(mov, boletox);
+                        } else if (boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.itau)) {
+                            cobranca = new Itau(mov, boletox);
+                        } else if (boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.bancoDoBrasil)) {
+                            cobranca = new BancoDoBrasil(mov, boletox);
+                        } else if (boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.real)) {
+                            cobranca = new Real(mov, boletox);
+                        } else if (boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.bradesco)) {
+                            cobranca = new Bradesco(mov, boletox);
+                        } else if (boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.santander)) {
+                            cobranca = new Santander(mov, boletox);
+                        } else if (boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.sicoob)) {
+                            cobranca = new Sicoob(mov, boletox);
+                        }
+
+                        valor = Moeda.converteUS$(listBoletosVw.get(w).getValorString());
+                        valor_total = Moeda.somaValores(valor_total, Moeda.converteUS$(listBoletosVw.get(w).getValor().toString()));
+                        list.add(new ParametroBoleto(
+                                ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/LogoCliente.png"), // LOGO CLÍNICA
+                                filial.getFilial().getPessoa().getNome(), // CLIENTE NOME
+                                "" + listBoletosVw.get(w).getCodigo(), // CODIGO
+                                listBoletosVw.get(w).getResponsavel(), // RESPONSAVEL
+                                listBoletosVw.get(w).getVencimentoString(), // VENCIMENTO
+                                listBoletosVw.get(w).getServico(), // SERVICO
+                                Moeda.converteR$Float(valor), // VALOR
+                                Moeda.converteR$Float(valor_total), // VALOR TOTAL
+                                Moeda.converteR$("" + listBoletosVw.get(w).getMensalidadesCorrigidas()), // VALOR ATRASADAS
+                                Moeda.converteR$Float(valor_total), // VALOR ATÉ  VALOR VENCIMENTO
+                                file_promo == null ? null : file_promo.getAbsolutePath(), // LOGO PROMOÇÃO
+                                ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(boletox.getContaCobranca().getContaBanco().getBanco().getLogo().trim()), // LOGO BANCO
+                                listBoletosVw.get(w).getMensagemBoleto(), // MENSAGEM
+                                listBoletosVw.get(w).getAgencia(), // AGENCIA
+                                cobranca.representacao(), // REPRESENTACAO
+                                listBoletosVw.get(w).getCedente(), // CODIGO CEDENTE
+                                listBoletosVw.get(w).getNrCtrBoleto(), // NOSSO NUMENTO
+                                listBoletosVw.get(w).getProcessamentoString(), // PROCESSAMENTO
+                                cobranca.codigoBarras(),
+                                ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Imagens/serrilha.GIF"), // SERRILHA
+                                listBoletosVw.get(w).getLogradouroResponsavel() + " " + listBoletosVw.get(w).getEnderecoResponsavel(), // ENDERECO RESPONSAVEL
+                                listBoletosVw.get(w).getBairroFilial() + " " + listBoletosVw.get(w).getEnderecoFilial(), // ENDERECO FILIAL
+                                listBoletosVw.get(w).getCidadeResponsavel() + " " + listBoletosVw.get(w).getUfResponsavel() + " " + listBoletosVw.get(w).getCepResponsavel(), // COMPLEMENTO RESPONSAVEL
+                                listBoletosVw.get(w).getCidadeFilial() + " " + listBoletosVw.get(w).getUfFilial() + " " + listBoletosVw.get(w).getCepFilial(), // COMPLEMENTO FILIAL
+                                listBoletosVw.get(w).getCnpjFilial(), // CNPJ FILIAL
+                                listBoletosVw.get(w).getTelefoneFilial(), // TELEFONE FILIAL
+                                listBoletosVw.get(w).getEmail(), // EMAIL FILIAL
+                                listBoletosVw.get(w).getSilteFilial(), // SITE FILIAL
+                                ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/LogoCliente.png"), // LOGO BOLETO - VERSO
+                                listBoletosVw.get(w).getLocalPagamento(), // LOCAL DE PAGAMENTO
+                                listBoletosVw.get(w).getInformativo()
+                        ));
+                        JRBeanCollectionDataSource dtSource = new JRBeanCollectionDataSource(list);
+                        jasperPrintList.add(JasperFillManager.fillReport(jasperReport, null, dtSource));
+                        if (true) {
+                            dtSource = new JRBeanCollectionDataSource(list);
+                            jasperPrintList.add(JasperFillManager.fillReport(jasperReportVerso, null, dtSource));
+                        }
+                        valor = 0;
+                        valor_total = 0;
+                        list.clear();
+                    }
+
+                    JRPdfExporter exporter = new JRPdfExporter();
+                    ByteArrayOutputStream retorno = new ByteArrayOutputStream();
+
+                    exporter.setParameter(JRExporterParameter.JASPER_PRINT_LIST, jasperPrintList);
+                    exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, retorno);
+                    exporter.setParameter(JRPdfExporterParameter.IS_CREATING_BATCH_MODE_BOOKMARKS, Boolean.TRUE);
+                    exporter.exportReport();
+
+                    byte[] arquivo = retorno.toByteArray();
+
+                    String nomeDownload = "boleto_bancario_" + DataHoje.horaMinuto().replace(":", "") + ".pdf";
+                    Diretorio.criar("Arquivos/downloads/boletos");
+                    String pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/downloads/boletos");
+                    SalvaArquivos sa = new SalvaArquivos(arquivo, nomeDownload, false);
+                    sa.salvaNaPasta(pathPasta);
+                    Download download = new Download(nomeDownload, pathPasta, "application/pdf", FacesContext.getCurrentInstance());
+                    download.baixar();
+                    download.remover();
+                } catch (JRException e) {
+                    e.getMessage();
+                }
+            }
+
+        }
+
     }
 }
