@@ -1,6 +1,8 @@
 package br.com.clinicaintegrada.financeiro;
 
 import br.com.clinicaintegrada.pessoa.Pessoa;
+import br.com.clinicaintegrada.utils.DataHoje;
+import br.com.clinicaintegrada.utils.Moeda;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
@@ -13,11 +15,11 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name = "boleto_vw")
-public class BoletoVw implements Serializable {
+@Table(name = "boletos_vw")
+public class BoletosVw implements Serializable {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "seq")
     private Long id;
     @JoinColumn(name = "id_fin_lote", referencedColumnName = "id")
     @ManyToOne
@@ -108,7 +110,7 @@ public class BoletoVw implements Serializable {
     @Column(name = "local_pagamento")
     private String localPagamento;
 
-    public BoletoVw() {
+    public BoletosVw() {
         this.id = null;
         this.lote = null;
         this.movimento = null;
@@ -153,7 +155,7 @@ public class BoletoVw implements Serializable {
         this.localPagamento = "";
     }
 
-    public BoletoVw(Long id, Lote lote, Movimento movimento, String nrCtrBoleto, LoteBoleto loteBoleto, Date processamento, String logoBanco, String logo, String logoInformativo, String logoVerso, Integer codigo, String responsavel, Date vencimento, String grupoCategoria, String categoria, String servico, Pessoa pessoa, String nomeBeneficiario, Double valor, Integer mensalidadesCorrigidas, String mensagemBoleto, String banco, String agencia, String cedente, String boleto, String email, String nomeFilial, String silteFilial, String cnpjFilial, String telefoneFilial, String enderecoFilial, String bairroFilial, String cidadeFilial, String ufFilial, String cepFilial, String logradouroResponsavel, String enderecoResponsavel, String cepResponsavel, String ufResponsavel, String cidadeResponsavel, String informativo, String localPagamento) {
+    public BoletosVw(Long id, Lote lote, Movimento movimento, String nrCtrBoleto, LoteBoleto loteBoleto, Date processamento, String logoBanco, String logo, String logoInformativo, String logoVerso, Integer codigo, String responsavel, Date vencimento, String grupoCategoria, String categoria, String servico, Pessoa pessoa, String nomeBeneficiario, Double valor, Integer mensalidadesCorrigidas, String mensagemBoleto, String banco, String agencia, String cedente, String boleto, String email, String nomeFilial, String silteFilial, String cnpjFilial, String telefoneFilial, String enderecoFilial, String bairroFilial, String cidadeFilial, String ufFilial, String cepFilial, String logradouroResponsavel, String enderecoResponsavel, String cepResponsavel, String ufResponsavel, String cidadeResponsavel, String informativo, String localPagamento) {
         this.id = id;
         this.lote = lote;
         this.movimento = movimento;
@@ -246,6 +248,14 @@ public class BoletoVw implements Serializable {
         this.processamento = processamento;
     }
 
+    public String getProcessamentoString() {
+        return DataHoje.converteData(processamento);
+    }
+
+    public void setProcessamento(String processamentoString) {
+        this.processamento = DataHoje.converte(processamentoString);
+    }
+
     public String getLogoBanco() {
         return logoBanco;
     }
@@ -302,6 +312,14 @@ public class BoletoVw implements Serializable {
         this.vencimento = vencimento;
     }
 
+    public String getVencimentoString() {
+        return DataHoje.converteData(vencimento);
+    }
+
+    public void setVencimentoString(String vencimentoString) {
+        this.vencimento = DataHoje.converte(vencimentoString);
+    }
+
     public String getGrupoCategoria() {
         return grupoCategoria;
     }
@@ -348,6 +366,14 @@ public class BoletoVw implements Serializable {
 
     public void setValor(Double valor) {
         this.valor = valor;
+    }
+
+    public String getValorString() {
+        return Moeda.converteR$Float(valor);
+    }
+
+    public void setValorString(String valorString) {
+        this.valor = Moeda.converteUS$ToDouble(valorString);
     }
 
     public Integer getMensalidadesCorrigidas() {
