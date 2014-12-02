@@ -68,6 +68,20 @@ public class Movimento implements Serializable {
     @JoinColumn(name = "id_baixa", referencedColumnName = "id")
     @ManyToOne
     private Baixa baixa;
+    @Column(name = "nr_correcao")
+    private float correcao;
+    @Column(name = "nr_juros")
+    private float juros;
+    @Column(name = "nr_multa")
+    private float multa;
+    @Column(name = "nr_desconto")
+    private float desconto;
+    @Column(name = "nr_taxa")
+    private float taxa;
+    @Column(name = "nr_valor_baixa")
+    private float valorBaixa;
+    @Column(name = "nr_desconto_ate_vencimento")
+    private float descontoAteVencimento;
 
     public Movimento() {
         this.id = -1;
@@ -86,9 +100,16 @@ public class Movimento implements Serializable {
         this.es = "";
         this.documento = "";
         this.baixa = new Baixa();
+        this.correcao = 0;
+        this.juros = 0;
+        this.multa = 0;
+        this.desconto = 0;
+        this.taxa = 0;
+        this.valorBaixa = 0;
+        descontoAteVencimento = 0;
     }
 
-    public Movimento(int id, Lote lote, Pessoa pessoa, Servicos servicos, Evento evento, TipoServico tipoServico, FTipoDocumento tipoDocumento, float valor, String nrCtrBoleto, String referencia, Date vencimento, int quantidade, boolean ativo, String es, String documento, Baixa baixa) {
+    public Movimento(int id, Lote lote, Pessoa pessoa, Servicos servicos, Evento evento, TipoServico tipoServico, FTipoDocumento tipoDocumento, float valor, String nrCtrBoleto, String referencia, Date vencimento, int quantidade, boolean ativo, String es, String documento, Baixa baixa, float correcao, float juros, float multa, float desconto, float taxa, float valorBaixa, float descontoAteVencimento) {
         this.id = id;
         this.lote = lote;
         this.pessoa = pessoa;
@@ -105,6 +126,13 @@ public class Movimento implements Serializable {
         this.es = es;
         this.documento = documento;
         this.baixa = baixa;
+        this.correcao = correcao;
+        this.juros = juros;
+        this.multa = multa;
+        this.desconto = desconto;
+        this.taxa = taxa;
+        this.valorBaixa = valorBaixa;
+        this.descontoAteVencimento = descontoAteVencimento;
     }
 
     public int getId() {
@@ -249,6 +277,62 @@ public class Movimento implements Serializable {
 
     public void setBaixa(Baixa baixa) {
         this.baixa = baixa;
+    }
+
+    public float getCorrecao() {
+        return correcao;
+    }
+
+    public void setCorrecao(float correcao) {
+        this.correcao = correcao;
+    }
+
+    public float getJuros() {
+        return juros;
+    }
+
+    public void setJuros(float juros) {
+        this.juros = juros;
+    }
+
+    public float getMulta() {
+        return multa;
+    }
+
+    public void setMulta(float multa) {
+        this.multa = multa;
+    }
+
+    public float getDesconto() {
+        return desconto;
+    }
+
+    public void setDesconto(float desconto) {
+        this.desconto = desconto;
+    }
+
+    public float getTaxa() {
+        return taxa;
+    }
+
+    public void setTaxa(float taxa) {
+        this.taxa = taxa;
+    }
+
+    public float getValorBaixa() {
+        return valorBaixa;
+    }
+
+    public void setValorBaixa(float valorBaixa) {
+        this.valorBaixa = valorBaixa;
+    }
+
+    public float getDescontoAteVencimento() {
+        return descontoAteVencimento;
+    }
+
+    public void setDescontoAteVencimento(float descontoAteVencimento) {
+        this.descontoAteVencimento = descontoAteVencimento;
     }
 
 }
