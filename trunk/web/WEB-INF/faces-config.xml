@@ -376,6 +376,12 @@
             <redirect/>
         </navigation-case>
         
+        <navigation-case>
+            <from-outcome>movimentosReceber</from-outcome>
+            <to-view-id>/movimentosReceber.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
         <!-- 
         <navigation-case>
             <from-outcome>#{navigationRules.param}</from-outcome>
