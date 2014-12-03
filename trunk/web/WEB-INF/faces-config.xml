@@ -382,6 +382,24 @@
             <redirect/>
         </navigation-case>
         
+        <navigation-case>
+            <from-outcome>alterarMovimento</from-outcome>
+            <to-view-id>/alterarMovimento.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>baixa</from-outcome>
+            <to-view-id>/baixa.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>acordo</from-outcome>
+            <to-view-id>/acordo.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
         <!-- 
         <navigation-case>
             <from-outcome>#{navigationRules.param}</from-outcome>
