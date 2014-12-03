@@ -1,6 +1,8 @@
 package br.com.clinicaintegrada.financeiro.dao;
 
 import br.com.clinicaintegrada.financeiro.Boleto;
+import br.com.clinicaintegrada.financeiro.FormaPagamento;
+import br.com.clinicaintegrada.financeiro.Movimento;
 import br.com.clinicaintegrada.principal.DB;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,19 +52,19 @@ public class MovimentoDao extends DB {
         return new ArrayList();
     }
 
-    public Boleto findBoletosByNrCtrBoleto(String nrCtrBoleto) {
+    public List<Movimento> listMovimentosByBaixaOrderByBaixa(int idBaixa) {
         try {
-            Query qry = getEntityManager().createQuery(
-                    "  SELECT B                             "
-                    + "  FROM Boleto AS B                   "
-                    + " WHERE B.nrCtrBoleto = " + nrCtrBoleto);
-            List list = qry.getResultList();
+            String textoQuery = " SELECT M FROM Movimento AS M WHERE M.baixa.id = :idBaixa ORDER BY M.pessoa.id ASC";
+            Query query = getEntityManager().createQuery(textoQuery);
+            query.setParameter("idBaixa", idBaixa);
+            List list = query.getResultList();
             if (!list.isEmpty()) {
-                return (Boleto) qry.getSingleResult();
+                return list;
             }
         } catch (Exception e) {
+            return new ArrayList();
         }
-        return null;
+        return new ArrayList();
     }
 
 }

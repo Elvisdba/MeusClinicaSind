@@ -5,6 +5,7 @@ import br.com.clinicaintegrada.pessoa.Filial;
 import br.com.clinicaintegrada.pessoa.Pessoa;
 import br.com.clinicaintegrada.seguranca.Cliente;
 import br.com.clinicaintegrada.seguranca.Departamento;
+import br.com.clinicaintegrada.utils.DataHoje;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
@@ -126,6 +127,14 @@ public class Lote implements Serializable {
 
     public void setEmissao(Date emissao) {
         this.emissao = emissao;
+    }
+
+    public String getEmissaoString() {
+        return DataHoje.converteData(emissao);
+    }
+
+    public void setEmissaoString(String emissaoString) {
+        this.emissao = DataHoje.converte(emissaoString);
     }
 
     public String getPagRec() {

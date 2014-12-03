@@ -72,6 +72,20 @@ public final class Moeda {
         return Float.parseFloat(dolar);
     }
 
+    public static double converteUS$ToDouble(String dolar) {
+        if (dolar == null) {
+            dolar = "0,00";
+        }
+        if (dolar.length() >= 3) {
+            String wponto = dolar.substring(dolar.trim().length() - 3, dolar.trim().length() - 2);
+            if (wponto.equals(",")) {
+                dolar = dolar.replace(".", "");
+                dolar = dolar.replace(",", ".");
+            }
+        }
+        return Double.parseDouble(dolar);
+    }
+
     public static String converteR$(String dolar) {
         //dolar = dolar.replaceAll("[^0-9]", "");
         if (dolar == null || dolar.trim().equals("")) {
@@ -89,6 +103,10 @@ public final class Moeda {
         return dolar;
     }
 
+    public static String converteR$Float(double valor) {
+        return converteR$Float((float) valor);
+    }
+
     public static String converteR$Float(float valor) {
         String dolar = Float.toString(valor);
         if ((dolar == null) || (dolar.trim().equals(""))) {
@@ -104,6 +122,10 @@ public final class Moeda {
             dolar = Moeda.mascaraDinheiro(Float.parseFloat(dolar), Moeda.DINHEIRO_REAL);
         }
         return dolar;
+    }
+
+    public static Double converteFloatR$Float(double valor) {
+        return (double) converteFloatR$Float((float) valor);
     }
 
     public static Float converteFloatR$Float(float valor) {
@@ -139,6 +161,10 @@ public final class Moeda {
         v = v.replace(".", "");
         v = v.replace(",", ".");
         return Float.parseFloat(v);
+    }
+
+    public static double somaValores(double a, double b) {
+        return somaValores(a, b);
     }
 
     public static float somaValores(float a, float b) {

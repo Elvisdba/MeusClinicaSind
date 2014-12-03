@@ -149,4 +149,28 @@ public class Correcao implements Serializable {
     public void setReferenciaFinal(String referenciaFinal) {
         this.referenciaFinal = referenciaFinal;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Correcao other = (Correcao) obj;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Correcao{" + "id=" + id + ", multaPriMes=" + multaPriMes + ", multaApartir2Mes=" + multaApartir2Mes + ", jurosPriMes=" + jurosPriMes + ", jurosApartir2Mes=" + jurosApartir2Mes + ", multaPorFuncionario=" + multaPorFuncionario + ", jurosDiarios=" + jurosDiarios + ", indice=" + indice + ", servicos=" + servicos + ", referenciaInicial=" + referenciaInicial + ", referenciaFinal=" + referenciaFinal + '}';
+    }
+
 }

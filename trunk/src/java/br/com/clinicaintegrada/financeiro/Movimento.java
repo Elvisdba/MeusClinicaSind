@@ -48,7 +48,7 @@ public class Movimento implements Serializable {
     @JoinColumn(name = "id_tipo_documento", referencedColumnName = "id")
     @ManyToOne
     private FTipoDocumento tipoDocumento;
-    @Column(name = "nr_valor", length = 10, nullable = false)
+    @Column(name = "nr_valor", length = 10, nullable = false, columnDefinition = "DOUBLE PRECISION DEFAULT 0")
     private float valor;
     @Column(name = "nr_ctr_boleto", length = 30)
     private String nrCtrBoleto;
@@ -68,29 +68,32 @@ public class Movimento implements Serializable {
     @JoinColumn(name = "id_baixa", referencedColumnName = "id")
     @ManyToOne
     private Baixa baixa;
-    @Column(name = "nr_correcao")
+    @Column(name = "nr_correcao", columnDefinition = "DOUBLE PRECISION DEFAULT 0")
     private float correcao;
-    @Column(name = "nr_juros")
+    @Column(name = "nr_juros", columnDefinition = "DOUBLE PRECISION DEFAULT 0")
     private float juros;
-    @Column(name = "nr_multa")
+    @Column(name = "nr_multa", columnDefinition = "DOUBLE PRECISION DEFAULT 0")
     private float multa;
-    @Column(name = "nr_desconto")
+    @Column(name = "nr_desconto", columnDefinition = "DOUBLE PRECISION DEFAULT 0")
     private float desconto;
-    @Column(name = "nr_taxa")
+    @Column(name = "nr_taxa", columnDefinition = "DOUBLE PRECISION DEFAULT 0")
     private float taxa;
-    @Column(name = "nr_valor_baixa")
+    @Column(name = "nr_valor_baixa", columnDefinition = "DOUBLE PRECISION DEFAULT 0")
     private float valorBaixa;
-    @Column(name = "nr_desconto_ate_vencimento")
+    @Column(name = "nr_desconto_ate_vencimento", columnDefinition = "DOUBLE PRECISION DEFAULT 0")
     private float descontoAteVencimento;
+    @JoinColumn(name = "id_acordo", referencedColumnName = "id", nullable = true)
+    @ManyToOne
+    private Acordo acordo;
 
     public Movimento() {
         this.id = -1;
-        this.lote = new Lote();
-        this.pessoa = new Pessoa();
-        this.servicos = new Servicos();
-        this.evento = new Evento();
-        this.tipoServico = new TipoServico();
-        this.tipoDocumento = new FTipoDocumento();
+        this.lote = null;
+        this.pessoa = null;
+        this.servicos = null;
+        this.evento = null;
+        this.tipoServico = null;
+        this.tipoDocumento = null;
         this.valor = 0;
         this.nrCtrBoleto = "";
         this.referencia = "";
@@ -99,17 +102,18 @@ public class Movimento implements Serializable {
         this.ativo = false;
         this.es = "";
         this.documento = "";
-        this.baixa = new Baixa();
+        this.baixa = null;
         this.correcao = 0;
         this.juros = 0;
         this.multa = 0;
         this.desconto = 0;
         this.taxa = 0;
         this.valorBaixa = 0;
-        descontoAteVencimento = 0;
+        this.descontoAteVencimento = 0;
+        this.acordo = null;
     }
 
-    public Movimento(int id, Lote lote, Pessoa pessoa, Servicos servicos, Evento evento, TipoServico tipoServico, FTipoDocumento tipoDocumento, float valor, String nrCtrBoleto, String referencia, Date vencimento, int quantidade, boolean ativo, String es, String documento, Baixa baixa, float correcao, float juros, float multa, float desconto, float taxa, float valorBaixa, float descontoAteVencimento) {
+    public Movimento(int id, Lote lote, Pessoa pessoa, Servicos servicos, Evento evento, TipoServico tipoServico, FTipoDocumento tipoDocumento, float valor, String nrCtrBoleto, String referencia, Date vencimento, int quantidade, boolean ativo, String es, String documento, Baixa baixa, float correcao, float juros, float multa, float desconto, float taxa, float valorBaixa, float descontoAteVencimento, Acordo acordo) {
         this.id = id;
         this.lote = lote;
         this.pessoa = pessoa;
@@ -133,6 +137,7 @@ public class Movimento implements Serializable {
         this.taxa = taxa;
         this.valorBaixa = valorBaixa;
         this.descontoAteVencimento = descontoAteVencimento;
+        this.acordo = acordo;
     }
 
     public int getId() {
@@ -333,6 +338,22 @@ public class Movimento implements Serializable {
 
     public void setDescontoAteVencimento(float descontoAteVencimento) {
         this.descontoAteVencimento = descontoAteVencimento;
+    }
+
+    public String getDescontoAteVencimentoString() {
+        return Moeda.converteR$Float(descontoAteVencimento);
+    }
+
+    public void setDescontoAteVencimentoString(String descontoAteVencimentoString) {
+        this.descontoAteVencimento = Moeda.converteUS$(descontoAteVencimentoString);
+    }
+
+    public Acordo getAcordo() {
+        return acordo;
+    }
+
+    public void setAcordo(Acordo acordo) {
+        this.acordo = acordo;
     }
 
 }

@@ -28,7 +28,7 @@ import br.com.clinicaintegrada.financeiro.Lote;
 import br.com.clinicaintegrada.financeiro.Movimento;
 import br.com.clinicaintegrada.financeiro.Servicos;
 import br.com.clinicaintegrada.financeiro.TipoServico;
-import br.com.clinicaintegrada.financeiro.beans.GerarBoletoBean;
+import br.com.clinicaintegrada.financeiro.dao.BoletoDao;
 import br.com.clinicaintegrada.financeiro.dao.FinanceiroDao;
 import br.com.clinicaintegrada.financeiro.dao.LoteDao;
 import br.com.clinicaintegrada.financeiro.dao.MovimentoDao;
@@ -72,7 +72,6 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
@@ -80,7 +79,6 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -1543,11 +1541,11 @@ public class ContratoBean implements Serializable {
                         file_promo = null;
                     }
 
-                    MovimentoDao movimentoDao = new MovimentoDao();
+                    BoletoDao boletoDao = new BoletoDao();
                     Cobranca cobranca = null;
 
                     for (int w = 0; w < listBoletosVw.size(); w++) {
-                        Boleto boletox = movimentoDao.findBoletosByNrCtrBoleto("'" + listBoletosVw.get(w).getNrCtrBoleto() + "'"); // NR_CTR_BOLETO
+                        Boleto boletox = boletoDao.findBoletosByNrCtrBoleto("'" + listBoletosVw.get(w).getNrCtrBoleto() + "'"); // NR_CTR_BOLETO
                         Movimento mov = (Movimento) dao.find(new Movimento(), (Integer) listBoletosVw.get(w).getMovimento().getId());
                         if ((boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.caixaFederal))
                                 && (boletox.getContaCobranca().getLayout().getId() == Cobranca.SICOB)) {
