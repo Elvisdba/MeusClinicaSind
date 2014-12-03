@@ -27,7 +27,7 @@ public class PessoaDao extends DB {
                 break;
         }
         try {
-            String queryString = "SELECT p.* FROM pes_pessoa AS p WHERE UPPER(TRANSLATE(p." + por + ")) LIKE '"+AnaliseString.removerAcentos(descricao)+"' AND p.id_cliente = "+cliente+" ORDER BY p.ds_nome";
+            String queryString = "SELECT p.* FROM pes_pessoa AS p WHERE UPPER(TRANSLATE(p." + por + ")) LIKE '" + AnaliseString.removerAcentos(descricao) + "' AND p.id_cliente = " + cliente + " ORDER BY p.ds_nome";
             Query qry = getEntityManager().createNativeQuery(queryString, Pessoa.class);
             List list = qry.getResultList();
             if (!list.isEmpty()) {
@@ -79,6 +79,26 @@ public class PessoaDao extends DB {
         }
         return result;
 
+    }
+
+    public Pessoa findPessoaByBoletoAndContaCobranca(String boleto, int idContaCobranca) {
+        Pessoa pessoa = null;
+        String textqry
+                = "      SELECT PES.*                                                   "
+                + "        FROM pes_pessoa AS PES                                       "
+                + "  INNER JOIN fin_movimento AS M ON PES.id = M.id_pessoa              "
+                + "  INNER JOIN fin_boleto AS B ON M.nr_ctr_boleto = B.nr_ctr_boleto    "
+                + "         AND M.is_ativo IS TRUE                                      "
+                + "         AND B.id_conta_cobranca = " + idContaCobranca
+                + "         AND M.ds_documento = '" + boleto + "'";
+        try {
+            Query qry = getEntityManager().createNativeQuery(textqry, Pessoa.class);
+            qry.setMaxResults(1);
+            pessoa = (Pessoa) qry.getSingleResult();
+        } catch (Exception e) {
+            e.getMessage();
+        }
+        return pessoa;
     }
 
 }
