@@ -1,0 +1,269 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Movimentos a Receber</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/Imagens/favicon.ico"/>  
+        <style type="text/css">
+            .ui-widget-content .ui-inputfield{ padding: 8px!important;} 
+            .ui-button { padding: 3px!important; }
+
+            .ui-datatable tr.ui-datatable-even:hover, .ui-datatable tr.ui-datatable-odd:hover {
+                background: #ECF3FE;
+            }
+            .tblListaBoleto{
+                background-color: #39ff9c!important;
+                //color: #CCFF66!important;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <!-- INICIA DIV wrap e main -->
+        <div id="wrapx">
+            <div id="mainx">
+                <!-- INICIA DIV wrap e main -->  
+                <f:subview id="header">
+                    <ui:include src="templates/templatePrime.xhtml"/>
+                    <ui:include src="templates/templateAcessoFilial.xhtml"/>
+                </f:subview>
+                <f:view>
+                    <p:panel styleClass="wrapper" style="border: 0px;">
+                        <h:outputText value="Movimentos a Receber" styleClass="fonteHeader" />
+                        <h:form id="formMovimentosReceberPesquisa">
+                            <h:panelGrid columns="3" style="clear: both; float: right">
+                                <p:column>
+                                    <p:outputLabel value="Pesquisa por Boleto" style="font-size: 10pt!important; font-weight: bold"/>
+                                </p:column>
+                                <p:column>
+                                    <p:selectOneMenu value="#{movimentosReceberBean.indexConta}" style="width: 300px">
+                                        <p:ajax event="change" global="false" update=":formMovimentosReceber"/>
+                                        <f:selectItems value="#{movimentosReceberBean.listContas}" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText placeholder="Número do Boleto" value="#{movimentosReceberBean.descPesquisaBoleto}" size="20">
+                                        <p:ajax event="blur" update="@this" global="false"/>
+                                    </p:inputText>
+
+                                    <p:commandButton icon="ui-icon-search" action="#{movimentosReceberBean.pesquisaBoleto()}" update=":formMovimentosReceber" title="Pesquisar pelo número do Boleto"/>
+                                </p:column>
+                            </h:panelGrid>
+                        </h:form>
+
+                        <h:form id="formMovimentosReceber">
+                            <p:panel styleClass="fundoCinza" style="clear: both">
+                                <h:panelGrid columns="3" style="width: 100%">
+                                    <p:column>
+                                        <p:commandButton value="Adicionar uma Pessoa" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoa')}" rendered="#{movimentosReceberBean.pessoa.id == -1}"/>
+                                        <p:commandButton value="Pesquisar outra Pessoa" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoa')}" rendered="#{movimentosReceberBean.pessoa.id != -1}"/>
+                                        <h:outputText value="#{movimentosReceberBean.pessoa.nome}" title="#{movimentosReceberBean.pessoa.nome}" style="margin-left: 20px; font-weight: bold"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:commandButton ajax="false" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoa')}" actionListener="#{movimentosReceberBean.adicionarPesquisa()}" value="Adicionar mais Pessoas" rendered="#{movimentosReceberBean.listPessoa.size() > 0}" style="margin-left: 10px; cursor: pointer; float: right" /> 
+                                    </p:column>
+                                </h:panelGrid>
+
+                                <h:panelGrid style="clear: both;" rendered="#{movimentosReceberBean.listPessoa.size() > 1}">
+                                    <p:dataGrid value="#{movimentosReceberBean.listPessoa}" var="linha" id="tbl_list" rowIndexVar="index">
+                                        <h:outputLabel value="#{linha.nome}" rendered="#{index != 0}" />
+                                        <p:commandButton icon="ui-icon-trash" action="#{movimentosReceberBean.removerPessoaLista(index)}" rendered="#{index != 0}" update=":formMovimentosReceber" title="Clique para remover #{linha.nome} da Lista"/>
+                                    </p:dataGrid>
+                                </h:panelGrid>
+                            </p:panel>
+
+                            <h:panelGrid style="float: left; clear: both; margin-top: 10px; margin-bottom: 10px" columns="8" id="i_panel" rendered="#{movimentosReceberBean.listMovimento.size() > 0 or movimentosReceberBean.pessoa.id != -1}">
+                                <p:column>
+                                    <h:outputText value="Filtrar por" /><br />
+                                    <p:selectOneMenu value="#{movimentosReceberBean.porPesquisa}" style="padding-right: 10px; margin-right: 20px">
+                                        <p:ajax event="change" update="formMovimentosReceber" listener="#{movimentosReceberBean.atualizarStatus}"/>
+                                        <f:selectItem itemValue="todos"    itemLabel="Todos"/>
+                                        <f:selectItem itemValue="abertos"  itemLabel="Abertos"/>
+                                        <f:selectItem itemValue="quitados" itemLabel="Quitados"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+
+                                <p:column>
+                                    <h:outputText value="Total em Aberto" /><br />
+                                    <p:inputText readonly="true" size="10" value="#{movimentosReceberBean.total}" style="font-weight: bold; margin-right: 20px"/>
+                                </p:column>
+
+                                <p:column>
+                                    <h:outputText value="Acréscimo" /><br />
+                                    <p:inputText readonly="true" size="10" value="#{movimentosReceberBean.acrescimo}" style="font-weight: bold; margin-right: 20px"/>
+                                </p:column>
+
+                                <p:column>
+                                    <h:outputText value="Desconto"/><br />
+                                    <p:inputText id="i_desconto" size="10" value="#{movimentosReceberBean.desconto}" style="margin-right: 20px">
+                                        <p:ajax event="blur" update="i_desconto tbl" listener="#{movimentosReceberBean.calculoDesconto()}" />
+                                    </p:inputText>
+                                </p:column>
+
+                                <p:column>
+                                    <h:outputText value="Total Calculado em Aberto"/><br />
+                                    <p:inputText readonly="true" value="#{movimentosReceberBean.totalCalculado}" style="font-weight: bold; margin-right: 20px" />
+                                </p:column>
+
+                                <p:column>
+                                    <br />
+                                    <p:commandButton value="Baixar" title="Baixar este movimento" action="#{movimentosReceberBean.telaBaixa()}" rendered="#{movimentosReceberBean.porPesquisa != 'quitados'}" update="formMovimentosReceber" />
+                                </p:column>
+
+                                <p:column>
+                                    <br />
+                                    <p:commandButton value="Acordo" title="Fazer um acordo" action="#{movimentosReceberBean.telaAcordo()}" rendered="#{movimentosReceberBean.porPesquisa != 'quitados'}" update="formMovimentosReceber"/>
+                                </p:column>
+
+                                <p:column>
+                                    <br />
+                                    <p:commandButton value="Estornar" title="Estornar Movimentos Baixados" onclick="PF('i_dlg_estorno').show()" rendered="#{movimentosReceberBean.porPesquisa != 'abertos'}"/>
+                                </p:column>
+                            </h:panelGrid>
+
+                            <h:panelGrid style="clear: both; width: 100%">
+                                <p:messages id="i_msg" showDetail="true" closable="true" />  
+                            </h:panelGrid>
+
+                            <p:dataTable value="#{movimentosReceberBean.listMovimento}" var="listMovimentoReceber" style="clear: both; font-size: 8pt!important" id="tbl" paginator="true" rows="20" emptyMessage="Nenhuma pendência foi encontrada!" rowStyleClass="#{listMovimentoReceber.row_css}">
+                                <p:column style="text-align: center; width: 15px">
+                                    <p:selectBooleanCheckbox value="#{listMovimentoReceber.selected}" disabled="#{listMovimentoReceber.disabled}">
+                                        <p:ajax event="change" update="tbl :formMovimentosReceber:i_panel" listener="#{movimentosReceberBean.calculoDesconto()}"/>
+                                    </p:selectBooleanCheckbox>
+                                </p:column>
+
+                                <p:column headerText="Titular" rendered="#{movimentosReceberBean.listPessoa.size() > 1}">
+                                    <p:commandLink value="#{listMovimentoReceber.pessoa_nome}" action="#{movimentosReceberBean.complementoPessoa(listMovimentoReceber)}" onclick="PF('i_dlg_dados').show()" update=":formMovimentosReceber:i_dados" style="font-size: 8pt!important"/>
+                                </p:column>
+
+                                <p:column headerText="Serviços">
+                                    <h:outputText value="#{listMovimentoReceber.servicos_descricao}" style="font-size: 8pt!important"/>
+                                </p:column>
+
+                                <p:column style="text-align: center;" headerText="Vencimento">
+                                    <h:outputText value="#{listMovimentoReceber.movimento_vencimento}" style="font-size: 8pt!important"/>
+                                </p:column>
+
+                                <p:column headerText="Valor Base">
+                                    <h:outputText value="#{listMovimentoReceber.movimento_valor}" style="font-size: 8pt!important; float: right"/>
+                                </p:column>
+
+                                <p:column headerText="Acréscimo">
+                                    <h:outputText value="#{listMovimentoReceber.movimento_acrescimo}" style="font-size: 8pt!important; float: right"/>
+                                </p:column>
+
+                                <p:column headerText="Desconto">
+                                    <h:outputText value="#{listMovimentoReceber.movimento_desconto}" style="font-size: 8pt!important; float: right"/>
+                                </p:column>
+
+                                <p:column headerText="Vl. Calculado">
+                                    <h:outputText value="#{listMovimentoReceber.movimento_valor_calculado}" style="font-size: 8pt!important; float: right"/>
+                                </p:column>
+
+                                <p:column style="text-align: center;" headerText="Data Baixa">
+                                    <h:outputText value="#{listMovimentoReceber.movimento_baixa}" style="font-size: 8pt!important;"/>
+                                </p:column>
+
+                                <p:column headerText="Valor Pago">
+                                    <h:outputText value="#{listMovimentoReceber.movimento_valor_calculado}" style="font-size: 8pt!important; float: right"/>
+                                </p:column>
+
+                                <p:column style="text-align: center;" headerText="E/S">
+                                    <h:outputText value="#{listMovimentoReceber.movimento_es}" style="font-size: 8pt!important"/>
+                                </p:column>
+
+                                <p:column style="text-align: center;" headerText="Mais">
+                                    <p:commandLink ajax="false" value="Alterar" action="#{movimentosReceberBean.telaMovimento(listMovimentoReceber.movimento_id)}"/>
+                                </p:column>
+
+                                <p:column style="text-align: center;" headerText="Recibo">
+                                    <h:commandLink target="_blank" action="#{movimentosReceberBean.recibo(listMovimentoReceber.movimento_id)}" rendered="#{!empty(listMovimentoReceber.baixa_data)}" title="Imprimir este Recibo">
+                                        <p:commandButton icon="ui-icon-print"  title="Imprimir este Recibo"/>
+                                    </h:commandLink>
+                                </p:column>
+
+                            </p:dataTable>      
+
+                            <p:dialog widgetVar="i_dlg_estorno" header="Deseja estornar este Movimento" resizable="false" width="400" modal="true">
+                                <p:commandButton value="Sim"      type="submit" styleClass="ui-confirmdialog-yes" action="#{movimentosReceberBean.estornarBaixa()}" update="formMovimentosReceber" onclick="PF('i_dlg_estorno').hide()" style="clear: both; float: left" icon="ui-icon-check"/>  
+                                <p:commandButton value="Cancelar" type="button" styleClass="ui-confirmdialog-no" onclick="PF('i_dlg_estorno').hide()" style="float: left" icon="ui-icon-close"/>       
+                            </p:dialog>
+
+                            <p:dialog widgetVar="i_dlg_dados" header="Ver Mais" resizable="false" modal="true">
+                                <h:panelGrid id="i_dados">
+                                    <h:panelGrid columns="4" style="width: 100%">
+                                        <h:column>
+                                            <h:outputLabel value="Data / Boleto" style="float: left"/><br />
+                                            <h:outputLabel value="#{movimentosReceberBean.data} - #{movimentosReceberBean.boleto}" style="float: left; font-weight: bold"/>
+                                        </h:column>
+
+                                        <h:column>
+                                            <div>
+                                                <h:outputLabel value="Lote Baixa" style="float: right"/><br />
+                                                <h:outputLabel value="#{movimentosReceberBean.id_baixa}" style="float: right; font-weight: bold"/>
+                                            </div>
+                                        </h:column>
+                                    </h:panelGrid>
+
+                                    <br />
+                                    <h:panelGrid columns="4" style="background: #e2e2e2; width: 100%">
+                                        <h:column>
+                                            <h:outputLabel value="Dias em Atraso" style="float: left"/><br />
+                                            <h:outputLabel value="#{movimentosReceberBean.diasAtraso}" style="float: left; font-weight: bold"/>
+                                        </h:column>
+
+                                        <h:column>
+                                            <div>
+                                                <h:outputLabel value="Multa / Juros / Correção" style="float: right"/><br />
+                                                <h:outputLabel value="#{movimentosReceberBean.multa} - #{movimentosReceberBean.juros} - #{movimentosReceberBean.correcao}" style="float: right; font-weight: bold"/>
+                                            </div>
+                                        </h:column>
+                                    </h:panelGrid>
+
+                                    <br />
+                                    <h:panelGrid>
+                                        <h:outputLabel value="Caixa"/><br />
+                                        <h:outputLabel value="#{movimentosReceberBean.caixa}" style="font-weight: bold"/>
+                                    </h:panelGrid>
+
+                                    <h:panelGrid columns="2" style="background: #e2e2e2; width: 100%">
+                                        <h:column>
+                                            <h:outputLabel value="Documento" style="float: left"/><br />
+                                            <h:outputLabel value="#{movimentosReceberBean.documento}" style="float: left; font-weight: bold"/>
+                                        </h:column>
+
+                                        <h:column>
+                                            <div>
+                                                <h:outputLabel value="Tipo / Referência" style="float: right"/><br />
+                                                <h:outputLabel value="#{movimentosReceberBean.tipo} - #{movimentosReceberBean.referencia}" style="float: right; font-weight: bold"/>
+                                            </div>
+                                        </h:column>
+                                    </h:panelGrid>
+                                </h:panelGrid>
+                            </p:dialog>
+
+                        </h:form>
+                    </p:panel>
+
+                    <p:ajaxStatus id="i_status" onstart="PF('i_dlg_modal').show();" onsuccess="PF('i_dlg_modal').hide();" />
+                    <p:dialog modal="true" widgetVar="i_dlg_modal" header="Status" draggable="false" closable="false">  
+                        <h:outputLabel value="Aguarde ..." />
+                    </p:dialog> 
+                </f:view>
+                <!-- FINALIZA div wrap main -->
+            </div>
+        </div>
+        <!-- FINALIZA div wrap main -->
+
+        <div id="footerx">
+            <f:subview id="footer">
+                <ui:include src="templates/templateFooter.xhtml"/>
+            </f:subview>
+        </div>                
+    </h:body>
+</ui:composition>
