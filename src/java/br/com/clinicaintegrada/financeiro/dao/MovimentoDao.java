@@ -6,6 +6,7 @@ import br.com.clinicaintegrada.financeiro.Movimento;
 import br.com.clinicaintegrada.principal.DB;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import javax.persistence.Query;
 
 public class MovimentoDao extends DB {
@@ -52,6 +53,11 @@ public class MovimentoDao extends DB {
         return new ArrayList();
     }
 
+    /**
+     * 
+     * @param idBaixa
+     * @return 
+     */
     public List<Movimento> listMovimentosByBaixaOrderByBaixa(int idBaixa) {
         try {
             String textoQuery = " SELECT M FROM Movimento AS M WHERE M.baixa.id = :idBaixa ORDER BY M.pessoa.id ASC";
@@ -67,4 +73,51 @@ public class MovimentoDao extends DB {
         return new ArrayList();
     }
 
+    /**
+     * 
+     * @param idMovimento
+     * @return 
+     */
+    public List<List> findAcrescimoByMovimento(int idMovimento) {
+        try {
+            String queryString = ""
+                    + "SELECT M.nr_valor    AS valor,                                                           "
+                    + "       M.nr_multa    AS multa,                                                           "
+                    + "       M.nr_juros    AS juros,                                                           "
+                    + "       M.nr_correcao AS correcao,                                                        "
+                    + "       M.nr_desconto AS desconto,                                                        "
+                    + "      (M.nr_valor + M.nr_multa + M.nr_juros + M.nr_correcao - M.nr_desconto) vlrpagar    "
+                    + "  FROM fin_movimento AS M "
+                    + " WHERE M.id = " + idMovimento;
+            Query query = getEntityManager().createNativeQuery(queryString);
+            return (List) query.getResultList();
+        } catch (Exception e) {
+            return new ArrayList();
+        }
+    }
+
+    /**
+     * 
+     * @param idAcordo
+     * @return 
+     */
+    public List<Movimento> findMovimentoByAcordoAberto(int idAcordo) {
+        try {
+            String queryString
+                    = "  SELECT M                       "
+                    + "    FROM Movimento AS M          "
+                    + "   WHERE M.acordo.id = :idAcordo "
+                    + "     AND M.ativo = true          "
+                    + "ORDER BY M.dtVencimento ASC      ";
+            Query query = getEntityManager().createQuery(queryString);
+            query.setParameter("idAcordo", idAcordo);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+            return new ArrayList();
+        }
+        return new ArrayList();
+    }
 }

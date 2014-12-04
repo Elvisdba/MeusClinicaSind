@@ -295,4 +295,28 @@ public class ContaCobranca implements Serializable {
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ContaCobranca other = (ContaCobranca) obj;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "ContaCobranca{" + "id=" + id + ", contaBanco=" + contaBanco + ", codCedente=" + codCedente + ", localPagamento=" + localPagamento + ", repasse=" + repasse + ", boletoInicial=" + boletoInicial + ", categoriaSindical=" + categoriaSindical + ", arrecadacaoSindical=" + arrecadacaoSindical + ", febranSindical=" + febranSindical + ", segmentoSindical=" + segmentoSindical + ", sicasSindical=" + sicasSindical + ", codigoSindical=" + codigoSindical + ", moeda=" + moeda + ", especieMoeda=" + especieMoeda + ", especieDoc=" + especieDoc + ", carteira=" + carteira + ", aceite=" + aceite + ", cedente=" + cedente + ", layout=" + layout + ", caminhoRetorno=" + caminhoRetorno + ", ativo=" + ativo + ", apelido=" + apelido + ", cliente=" + cliente + '}';
+    }
+
 }
