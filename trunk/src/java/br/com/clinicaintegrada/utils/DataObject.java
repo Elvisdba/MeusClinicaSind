@@ -2,6 +2,10 @@ package br.com.clinicaintegrada.utils;
 
 import java.io.Serializable;
 
+/**
+ * @deprecated 
+ * @author rtools2
+ */
 public class DataObject implements Serializable{
 
     private Object argumento0;

@@ -331,4 +331,23 @@ public class PlanoDao extends DB {
 
         return new ArrayList();
     }
+
+    public List findPlano5ByContaRotina(int idRotina) {
+        try {
+            Query query = getEntityManager().createQuery(
+                    "  SELECT P5                        "
+                    + "  FROM ContaRotina AS C,         "
+                    + "       Plano5 AS P5              "
+                    + " WHERE C.partida = 1             "
+                    + "   AND C.rotina.id = :idRotina   "
+                    + "   AND C.plano4.id = P5.plano4.id");
+            query.setParameter("idRotina", idRotina);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+        }
+        return new ArrayList();
+    }
 }
