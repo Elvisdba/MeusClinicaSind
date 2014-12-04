@@ -20,7 +20,6 @@ import br.com.clinicaintegrada.pessoa.TipoEndereco;
 import br.com.clinicaintegrada.pessoa.Pessoa;
 import br.com.clinicaintegrada.endereco.Endereco;
 import br.com.clinicaintegrada.logSistema.Logger;
-import br.com.clinicaintegrada.pessoa.dao.CnaeDao;
 import br.com.clinicaintegrada.pessoa.dao.JuridicaDao;
 import br.com.clinicaintegrada.pessoa.dao.JuridicaReceitaDao;
 import br.com.clinicaintegrada.pessoa.dao.PessoaEnderecoDao;
@@ -29,9 +28,7 @@ import br.com.clinicaintegrada.seguranca.Rotina;
 import br.com.clinicaintegrada.seguranca.Usuario;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import br.com.clinicaintegrada.seguranca.dao.RegistroDao;
-import br.com.clinicaintegrada.sistema.Arquivo;
 import br.com.clinicaintegrada.sistema.Email;
-import br.com.clinicaintegrada.sistema.EmailArquivo;
 import br.com.clinicaintegrada.sistema.EmailPessoa;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -350,7 +347,6 @@ public class JuridicaBean implements Serializable {
 //            }
 //        }
 //    }
-
 //    public void pesquisaCnpjXML(){
 //        if (juridica.getId() != -1){
 //            return;
