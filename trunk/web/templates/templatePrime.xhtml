@@ -51,6 +51,7 @@
                     <p:commandLink value="Sair" action="#{usuarioBean.sairSistema}" title="Desejo mesmo sair do Sistema?" style="float: right; font-weight: bold; margin-left: 20px" immediate="true"/>
                     <br /><br />
                     <p:outputLabel value="#{controleUsuarioBean.filial}" style="color: #bc4763; font-size: 10pt;  margin-left: 50px; "/>
+                    <p:outputLabel value="Caixa: #{controleUsuarioBean.macFilial.caixa.caixa}" style="color: #bc4763; font-size: 10pt; " styleClass="margin-left-max" rendered="#{controleUsuarioBean.macFilial.caixa.id != -1}"/>
                 </p:panel>
                 <c:if test="true">
                     <div class="clear"></div>
