@@ -28,26 +28,23 @@ public class Download {
         this.facesContext = facesContext;
     }
 
-    public synchronized void baixar() {
+    public synchronized void open() {
         ExternalContext context = facesContext.getExternalContext();
-        String path = fileLocation; // LOCALIZACAO DO ARQUIVO
-        String fullFileName = path + "/" + filename;
-        file = new File(fullFileName); // LINHA ALTERADA
+        file = new File(fileLocation + "/" + filename);
         response = (HttpServletResponse) context.getResponse();
         response.setHeader("Content-Disposition", "attachment;filename=\"" + filename + "\""); // SETA O HEADER COM O QUE VAI APARECER NA HORA DO DOWNLOAD
         response.setContentLength((int) file.length()); // TAMANHO DO ARQUIVO
         response.setContentType(mimeType); // O TIPO DO ARQUIVO
         try {
-            FileInputStream in = new FileInputStream(file);
-            OutputStream out = response.getOutputStream();
-
-            byte[] buf = new byte[(int) file.length()];
-            int count;
-            while ((count = in.read(buf)) >= 0) {
-                out.write(buf, 0, count);
+            OutputStream out;
+            try (FileInputStream in = new FileInputStream(file)) {
+                out = response.getOutputStream();
+                byte[] buf = new byte[(int) file.length()];
+                int count;
+                while ((count = in.read(buf)) >= 0) {
+                    out.write(buf, 0, count);
+                }
             }
-
-            in.close();
             out.flush();
             out.close();
             facesContext.responseComplete();
@@ -55,8 +52,8 @@ public class Download {
             System.out.println("Error in downloadFile: " + ex.getMessage());
         }
     }
-    
-    public void remover () {
+
+    public void close() {
         if (file.exists()) {
             file.delete();
         }
