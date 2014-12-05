@@ -39,7 +39,7 @@
                             </h:panelGrid>
 
                             <h:panelGrid id="i_panel_mensagem" columns="1" style="float: left; clear: both; width: 640px">
-                                <h:outputLabel value="Mensagem do Contribuinte" />
+                                <h:outputLabel value="Mensagem" />
                                 <p:inputTextarea value="#{mensagemBoletoBean.mensagemBoleto.mensagem}" style="clear: both; width: 100%; margin-top: 10px" rows="4" disabled="#{mensagemBoletoBean.disAcordo}" />
                                 <br /><br />
 
@@ -53,13 +53,13 @@
                                 <h:panelGrid columns="2" >
 
                                     <h:outputText value="Contribuição " style="color:blue; font-weight: bold"/>
-                                    <p:selectOneMenu  value="#{mensagemBoletoBean.idServico}" disabled="#{mensagemBoletoBean.habilitar}" style="width: 220px">
+                                    <p:selectOneMenu  value="#{mensagemBoletoBean.idServico}" disabled="#{mensagemBoletoBean.habilitar}" style="width: 220px" rendered="#{mensagemBoletoBean.listServicos.size() > 0}">
                                         <p:ajax event="change" update="i_panel" />
-                                        <f:selectItems value="#{mensagemBoletoBean.listServico}" />
+                                        <f:selectItems value="#{mensagemBoletoBean.listServicos}" />
                                     </p:selectOneMenu>
 
                                     <h:outputText value="Tipo " style="color:blue; font-weight: bold"/>
-                                    <p:selectOneMenu value="#{mensagemBoletoBean.idTipoServico}" disabled="#{mensagemBoletoBean.habilitar}" style="width: 220px">
+                                    <p:selectOneMenu value="#{mensagemBoletoBean.idTipoServico}" disabled="#{mensagemBoletoBean.habilitar}" style="width: 220px" rendered="#{mensagemBoletoBean.listServicos.size() > 0}">
                                         <p:ajax event="change" update="i_panel" />
                                         <f:selectItems value="#{mensagemBoletoBean.listTipoServico}" />
                                     </p:selectOneMenu>
@@ -75,14 +75,6 @@
                                 </h:panelGrid>
                             </p:panel>
                             <br /><br /><br />
-                            <p:panel style="clear: both; border: 0px">
-                                <p:selectOneRadio value="#{mensagemBoletoBean.processarGrupos}" rendered="#{mensagemBoletoBean.novox}">
-                                    <f:selectItem itemValue="1" itemLabel="Salvar para todos os Grupos desta Convenção."/>
-                                    <f:selectItem itemValue="2" itemLabel="Salvar para todas as Convenções deste Grupo."/>
-                                    <f:selectItem itemValue="3" itemLabel="Salvar para todos os Grupos e Convenções."/>
-                                    <f:selectItem itemValue="4" itemLabel="Nenhuma das anteriores."/>
-                                </p:selectOneRadio>
-                            </p:panel>
 
                             <h:panelGrid columns="2" style="width: 100%;">
                                 <h:column>
@@ -108,8 +100,8 @@
                             </h:panelGrid>
 
                             <p:dataTable value="#{mensagemBoletoBean.listMensagens}" var="mensagemBoleto" id="tbl" paginator="true" rows="15" emptyMessage="Nenhuma mensagem encontrada!">
-                                <p:column headerText="ID" style="text-align: center">
-                                    <p:commandLink ajax="false" value="#{mensagemBoleto.id}" action="#{mensagemBoletoBean.edit(mensagemBoleto)}" />
+                                <p:column styleClass="text-center" width="30">
+                                    <p:commandButton icon="ui-icon-link" title="Editar registro nº#{mensagemBoleto.id}" action="#{mensagemBoletoBean.edit(mensagemBoleto)}" />
                                 </p:column>
 
                                 <p:column headerText="Referência">
@@ -125,7 +117,7 @@
                                 </p:column>
 
                                 <p:column headerText="Vencimento">
-                                    <h:outputText value="#{mensagemBoleto.vencimento}"/>
+                                    <h:outputText value="#{mensagemBoleto.vencimentoString}"/>
                                 </p:column>
                             </p:dataTable>
 
