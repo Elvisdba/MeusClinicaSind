@@ -39,7 +39,7 @@ public class Upload {
             if (diretorio.equals("")) {
                 return false;
             }
-            Diretorio.criar(cu.getDiretorio());
+            Dirs.create(cu.getDiretorio());
         }
         try {
             if (!cu.getTiposPermitidos().isEmpty()) {

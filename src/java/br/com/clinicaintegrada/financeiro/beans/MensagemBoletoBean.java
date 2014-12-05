@@ -6,6 +6,7 @@ import br.com.clinicaintegrada.financeiro.TipoServico;
 import br.com.clinicaintegrada.financeiro.dao.MensagemBoletoDao;
 import br.com.clinicaintegrada.financeiro.dao.ServicosDao;
 import br.com.clinicaintegrada.logSistema.Logger;
+import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.DataHoje;
 import br.com.clinicaintegrada.utils.Messages;
@@ -29,6 +30,8 @@ public class MensagemBoletoBean {
     private int processarGrupos;
     private int idIndex;
     private List listMensagens;
+    private List<SelectItem> listTipoServico;
+    private List<SelectItem> listServicos;
     private boolean disAcordo;
     private boolean processarTipoServicos;
     private boolean gerarAno;
@@ -44,21 +47,20 @@ public class MensagemBoletoBean {
         processarGrupos = 4;
         idIndex = -1;
         listMensagens = new ArrayList<>();
+        listTipoServico = new ArrayList<>();
+        listServicos = new ArrayList<>();
         disAcordo = false;
         processarTipoServicos = false;
         gerarAno = false;
         vencimento = DataHoje.data();
         replicaPara = "";
+        mensagemBoleto.setReferencia(DataHoje.data().substring(3));
     }
 
     @PreDestroy
     public void destroy() {
         Sessions.remove("mensagemBoletoBean");
         Sessions.remove("mensagemPesquisa");
-    }
-
-    public MensagemBoletoBean() {
-        mensagemBoleto.setReferencia(DataHoje.data().substring(3));
     }
 
     public String replicar() {
@@ -177,7 +179,7 @@ public class MensagemBoletoBean {
                 String referencia = "",
                         vencto = "",
                         diaOriginal = "";
-                int iservicos = Integer.parseInt(this.getListServico().get(idServico).getDescription()),
+                int iservicos = Integer.parseInt(this.getListServicos().get(idServico).getDescription()),
                         itiposervico = Integer.parseInt(this.getListTipoServico().get(idTipoServico).getDescription());
                 if (gerarAno && !disAcordo) {
                     ano = 12;
@@ -201,9 +203,9 @@ public class MensagemBoletoBean {
                     case 4: {
                         for (int l = 0; l < ano; l++) {
                             if (gerarAno && !disAcordo) {
-                                mensagem = this.saveMensagem(iservicos, itiposervico, referencia.substring(3), vencto);
+                                mensagem = saveMensagem(iservicos, itiposervico, referencia.substring(3), vencto);
                             } else {
-                                mensagem = this.saveMensagem(iservicos, itiposervico, referencia, vencto);
+                                mensagem = saveMensagem(iservicos, itiposervico, referencia, vencto);
                             }
 
                             referencia = dataHoje.incrementarMeses(1, referencia);
@@ -217,13 +219,14 @@ public class MensagemBoletoBean {
                         break;
                     }
                 }
+                Messages.info("Mensagem", mensagem);
             } else {
                 Dao dao = new Dao();
                 MensagemBoleto men = null;
                 Logger novoLog = new Logger();
                 if (processarTipoServicos) {
                     List<MensagemBoleto> lista = mensagemBoletoDao.mesmoTipoServico(
-                            Integer.parseInt(this.getListServico().get(idServico).getDescription()),
+                            Integer.parseInt(this.getListServicos().get(idServico).getDescription()),
                             Integer.parseInt(this.getListTipoServico().get(idTipoServico).getDescription()),
                             mensagemBoleto.getReferencia().substring(3));
                     for (int i = 0; i < lista.size(); i++) {
@@ -336,7 +339,7 @@ public class MensagemBoletoBean {
         Sessions.remove("mensagemPesquisa");
         Sessions.remove("mensagemBoletoBean");
         mensagemBoleto.setReferencia(DataHoje.data().substring(3));
-        return "mensagem";
+        return "mensagemBoleto";
     }
 
     public String delete() {
@@ -367,12 +370,12 @@ public class MensagemBoletoBean {
     }
 
     public List<MensagemBoleto> getListMensagens() {
-        if ((!this.getListServico().isEmpty()) && (!this.getListTipoServico().isEmpty())) {
+        if ((!this.getListServicos().isEmpty()) && (!this.getListTipoServico().isEmpty())) {
             MensagemBoletoDao mensagemBoletoDao = new MensagemBoletoDao();
             int param[] = new int[2];
             listMensagens = mensagemBoletoDao.listAllOrdering(
                     mensagemBoleto.getReferencia(),
-                    Integer.parseInt(this.getListServico().get(idServico).getDescription()),
+                    Integer.parseInt(this.getListServicos().get(idServico).getDescription()),
                     Integer.parseInt(this.getListTipoServico().get(idTipoServico).getDescription())
             );
 
@@ -407,7 +410,7 @@ public class MensagemBoletoBean {
         }
 
         if (mensagemBoleto.getServicos().getId() != -1) {
-            List<SelectItem> servicos = getListServico();
+            List<SelectItem> servicos = getListServicos();
             for (SelectItem servico : servicos) {
                 if (Integer.parseInt(servico.getDescription()) == mensagemBoleto.getServicos().getId()) {
                     idServico = (Integer) servico.getValue();
@@ -415,48 +418,16 @@ public class MensagemBoletoBean {
                 }
             }
         }
-        return "mensagem";
-    }
-
-    public List<SelectItem> getListTipoServico() {
-        List<SelectItem> tipoServico = new ArrayList<SelectItem>();
-        int i = 0;
-//        TipoServicoDB db = new TipoServicoDBToplink();
-//        List select = db.pesquisaTodosPeloContaCobranca();
-        List select = null;
-        while (i < select.size()) {
-            tipoServico.add(new SelectItem(
-                    i,
-                    (String) ((TipoServico) select.get(i)).getDescricao(),
-                    Integer.toString(((TipoServico) select.get(i)).getId())));
-            i++;
-        }
-        return tipoServico;
-    }
-
-    public List<SelectItem> getListServico() {
-        List<SelectItem> servicos = new ArrayList<SelectItem>();
-        int i = 0;
-        ServicosDao servicosDao = new ServicosDao();
-        //List select = servicosDao.fpesquisaTodosPeloContaCobranca(4);
-        List select = null;
-        while (i < select.size()) {
-            servicos.add(new SelectItem(
-                    i,
-                    (String) ((Servicos) select.get(i)).getDescricao(),
-                    Integer.toString(((Servicos) select.get(i)).getId())));
-            i++;
-        }
-        return servicos;
+        return "mensagemBoleto";
     }
 
     public void capturarUltimaMensagem() {
         MensagemBoletoDao mensagemBoletoDao = new MensagemBoletoDao();
-        this.mensagemBoleto.getTipoServico().setId(-1);
-        this.mensagemBoleto.getServicos().setId(-1);
+        mensagemBoleto.setTipoServico(new TipoServico());
+        mensagemBoleto.setServicos(new Servicos());
         this.mensagemBoleto.setVencimentoString("");
         MensagemBoleto msgConvencao = mensagemBoletoDao.findLastMensagem(
-                Integer.parseInt(this.getListServico().get(idServico).getDescription()),
+                Integer.parseInt(this.getListServicos().get(idServico).getDescription()),
                 Integer.parseInt(this.getListTipoServico().get(idTipoServico).getDescription())
         );
         this.mensagemBoleto.setTipoServico(msgConvencao.getTipoServico());
@@ -487,13 +458,15 @@ public class MensagemBoletoBean {
     }
 
     public boolean isDisAcordo() {
-        if (Integer.parseInt(this.getListTipoServico().get(idTipoServico).getDescription()) == 4) {
-            disAcordo = true;
-            mensagemBoleto.setReferencia("");
-            mensagemBoleto.setMensagem("");
-            mensagemBoleto.setVencimentoString("");
-        } else {
-            disAcordo = false;
+        if (!this.getListTipoServico().isEmpty()) {
+            if (Integer.parseInt(this.getListTipoServico().get(idTipoServico).getDescription()) == 4) {
+                disAcordo = true;
+                mensagemBoleto.setReferencia("");
+                mensagemBoleto.setMensagem("");
+                mensagemBoleto.setVencimentoString("");
+            } else {
+                disAcordo = false;
+            }
         }
         return disAcordo;
     }
@@ -557,5 +530,44 @@ public class MensagemBoletoBean {
 
     public void setReplicaPara(String replicaPara) {
         this.replicaPara = replicaPara;
+    }
+
+    public List<SelectItem> getListTipoServico() {
+        if (listTipoServico.isEmpty()) {
+            List<TipoServico> list = new Dao().list(new TipoServico());
+            for (int i = 0; i < list.size(); i++) {
+                listTipoServico.add(new SelectItem(
+                        i,
+                        list.get(i).getDescricao(),
+                        Integer.toString(list.get(i).getId())
+                )
+                );
+            }
+        }
+        return listTipoServico;
+    }
+
+    public void setListTipoServico(List<SelectItem> listTipoServico) {
+        this.listTipoServico = listTipoServico;
+    }
+
+    public List<SelectItem> getListServicos() {
+        if (listServicos.isEmpty()) {
+            ServicosDao servicosDao = new ServicosDao();
+            List<Servicos> list = servicosDao.findServicos(SessaoCliente.get().getId());
+            for (int i = 0; i < list.size(); i++) {
+                listServicos.add(new SelectItem(
+                        i,
+                        list.get(i).getDescricao(),
+                        Integer.toString(list.get(i).getId())
+                )
+                );
+            }
+        }
+        return listServicos;
+    }
+
+    public void setListServicos(List<SelectItem> listServicos) {
+        this.listServicos = listServicos;
     }
 }

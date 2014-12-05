@@ -15,7 +15,7 @@ import br.com.clinicaintegrada.sistema.ConfiguracaoUpload;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.DataHoje;
 import br.com.clinicaintegrada.utils.DataObject;
-import br.com.clinicaintegrada.utils.Diretorio;
+import br.com.clinicaintegrada.utils.Dirs;
 import br.com.clinicaintegrada.utils.Messages;
 import br.com.clinicaintegrada.utils.Sessions;
 import br.com.clinicaintegrada.utils.Upload;
@@ -539,7 +539,7 @@ public class ModeloContratoBean implements Serializable {
     }
 
     public void excluirArquivo(int index) {
-        if (Diretorio.remover("Arquivos/contrato/" + modeloContrato.getId() + "/" + (String) ((DataObject) listaArquivos.get(index)).getArgumento1())) {
+        if (Dirs.remove("Arquivos/contrato/" + modeloContrato.getId() + "/" + (String) ((DataObject) listaArquivos.get(index)).getArgumento1())) {
             listaArquivos.remove(index);
             listaArquivos.clear();
             getListaArquivos();
@@ -549,7 +549,7 @@ public class ModeloContratoBean implements Serializable {
     public List getListaArquivos() {
         if (modeloContrato.getId() != -1) {
             if (listaArquivos.isEmpty()) {
-                listaArquivos = Diretorio.listaArquivos("Arquivos/contrato/" + modeloContrato.getId());
+                listaArquivos = Dirs.listFiles("Arquivos/contrato/" + modeloContrato.getId());
                 if (listaArquivos.size() > 0) {
                     setQuantidadeAnexo(listaArquivos.size());
                 } else {

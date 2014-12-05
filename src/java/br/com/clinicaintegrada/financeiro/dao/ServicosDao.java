@@ -62,6 +62,23 @@ public class ServicosDao extends DB {
         return new ArrayList();
     }
 
+    public List findAllByContaCobranca(int idRotina) {
+        try {
+            Query query = getEntityManager().createQuery(
+                    "SELECT SR.servicos "
+                    + "  FROM ServicoRotina AS SR"
+                    + " WHERE SR.rotina.id = :rotina"
+                    + "   AND SR.servicos.id IN(SELECT S.servicos.id FROM ServicoContaCobranca AS S)");
+            query.setParameter("rrotina", idRotina);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+        }
+        return new ArrayList();
+    }
+
     public String getOrder() {
         return order;
     }

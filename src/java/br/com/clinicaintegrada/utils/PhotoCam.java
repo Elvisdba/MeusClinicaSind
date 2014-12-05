@@ -1,6 +1,6 @@
 package br.com.clinicaintegrada.utils;
 
-import static br.com.clinicaintegrada.utils.Diretorio.getCliente;
+import static br.com.clinicaintegrada.utils.Dirs.getCliente;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -28,7 +28,7 @@ public class PhotoCam {
         byte[] data = captureEvent.getData();
         if (diretorio) {
             caminho = "temp/" + caminhoTemporario;
-            Diretorio.criar(caminho);
+            Dirs.create(caminho);
         }
         String newFileName = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/" + caminho + "/" + photo + ".png");
         File f = new File(newFileName);

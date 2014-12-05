@@ -1755,7 +1755,7 @@ public class ImprimirBoleto {
         SalvaArquivos sa = new SalvaArquivos(arquivo, "boleto_x", false);
         sa.salvaNaPasta(pathPasta);
         Download download = new Download("boleto_x", pathPasta, "application/pdf", FacesContext.getCurrentInstance());
-        download.baixar();
+        download.open();
     }
 
     public String criarLink(Pessoa pessoa, String caminho) {
