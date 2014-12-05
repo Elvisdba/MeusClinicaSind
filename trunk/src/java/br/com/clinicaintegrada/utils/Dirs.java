@@ -1,6 +1,5 @@
 package br.com.clinicaintegrada.utils;
 
-import br.com.clinicaintegrada.seguranca.Cliente;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import java.io.File;
 import java.util.ArrayList;
@@ -9,29 +8,29 @@ import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 
 @SuppressWarnings("unchecked")
-public class Diretorio {
+public class Dirs {
 
     private final static String cliente = "";
 
-    public static boolean criar(String diretorio) {
+    public static boolean create(String diretorio) {
         diretorio = "/Cliente/" + getCliente() + "/" + diretorio;
         try {
             String s[] = diretorio.split("/");
             boolean err = false;
-            String caminhoContac = "";
+            String pathContac = "";
             int b = 0;
-            String caminho;
+            String path;
             for (String item : s) {
                 if (!item.equals("")) {
                     if (b == 0) {
-                        caminhoContac = item;
-                        caminho = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/" + caminhoContac);
+                        pathContac = item;
+                        path = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/" + pathContac);
                     } else {
-                        caminhoContac = "/" + caminhoContac + "/" + item;
-                        caminho = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(caminhoContac);
+                        pathContac = "/" + pathContac + "/" + item;
+                        path = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(pathContac);
                     }
-                    if (!new File(caminho).exists()) {
-                        File file = new File(caminho);
+                    if (!new File(path).exists()) {
+                        File file = new File(path);
                         if (!file.mkdir()) {
                             err = false;
                             break;
@@ -46,9 +45,9 @@ public class Diretorio {
         }
     }
 
-    public static boolean remover(String diretorio) {
-        if (new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/" + diretorio)).exists()) {
-            File file = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/" + diretorio));
+    public static boolean remove(String dir) {
+        if (new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/" + dir)).exists()) {
+            File file = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/" + dir));
             if (file.delete()) {
                 return true;
             }
@@ -56,11 +55,11 @@ public class Diretorio {
         return false;
     }
 
-    public static List listaArquivos(String diretorio) {
+    public static List listFiles(String dir) {
         List listaArquivos = new ArrayList();
-        String caminho = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/" + diretorio);
+        String path = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/" + dir);
         try {
-            File files = new File(caminho);
+            File files = new File(path);
             if (!files.exists()) {
                 return new ArrayList();
             }
@@ -77,11 +76,11 @@ public class Diretorio {
         return listaArquivos;
     }
 
-    public static String arquivo(String diretorio, String arquivo) {
-        if (arquivo.isEmpty()) {
+    public static String files(String dir, String file) {
+        if (file.isEmpty()) {
             return null;
         }
-        String caminho = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/" + diretorio + "/" + arquivo);
+        String caminho = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/" + dir + "/" + file);
         try {
             File files = new File(caminho);
             if (!files.exists()) {
