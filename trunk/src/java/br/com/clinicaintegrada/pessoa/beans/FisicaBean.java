@@ -1,7 +1,7 @@
 package br.com.clinicaintegrada.pessoa.beans;
 
 import br.com.clinicaintegrada.utils.ValidDocuments;
-import br.com.clinicaintegrada.utils.Diretorio;
+import br.com.clinicaintegrada.utils.Dirs;
 import br.com.clinicaintegrada.utils.Mask;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.Sessions;
@@ -974,7 +974,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
     }
 
     public void salvarImagem() {
-        if (!Diretorio.criar("Imagens/Fotos/")) {
+        if (!Dirs.create("Imagens/Fotos/")) {
             return;
         }
         String arquivo = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/Imagens/Fotos/");

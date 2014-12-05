@@ -757,18 +757,6 @@ public class GerarMovimento extends DB {
         // 0000022912
         try {
             String numeroComposto = "";
-            if (movimento.get(0).getServicos() != null) {
-
-                if (movimento.get(0).getServicos().getId() == 1) {
-                    //String documento = movimento.get(0).getPessoa().getDocumento().replace(".", "").replace("/", "").replace("-", "").substring(0, 12);
-                    String documento = movimento.get(0).getDocumento();
-                    documento = ("000000000000000").substring(0, 15 - documento.length()) + documento;
-                    String d_pagamento = ("00000000").substring(0, 8 - pagamento.replace("/", "").length()) + pagamento.replace("/", "");
-                    String v_pago = ("0000000000").substring(0, 10 - Moeda.converteR$Float(valorTotal).replace(".", "").replace(",", "").length()) + Moeda.converteR$Float(valorTotal).replace(".", "").replace(",", "");
-                    numeroComposto = documento + d_pagamento + v_pago;
-                }
-
-            }
             Dao dao = new Dao();
             Baixa baixa = new Baixa();
             baixa.setUsuario(usuario);

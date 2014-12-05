@@ -8,7 +8,7 @@ import br.com.clinicaintegrada.seguranca.dao.MacFilialDao;
 import br.com.clinicaintegrada.seguranca.dao.UsuarioDao;
 import br.com.clinicaintegrada.sistema.ContadorAcessos;
 import br.com.clinicaintegrada.sistema.dao.AtalhoDao;
-import br.com.clinicaintegrada.utils.Diretorio;
+import br.com.clinicaintegrada.utils.Dirs;
 import br.com.clinicaintegrada.utils.Messages;
 import br.com.clinicaintegrada.utils.Sessions;
 import java.io.IOException;
@@ -75,7 +75,7 @@ public class ControleUsuarioBean implements Serializable {
                     + ((Usuario) Sessions.getObject("sessaoUsuario")).getPessoa().getTipoDocumento().getDescricao() + ": "
                     + ((Usuario) Sessions.getObject("sessaoUsuario")).getPessoa().getDocumento();
             Sessions.put("sessaoCliente", c);
-            Diretorio.criar("");
+            Dirs.create("");
             //log.novo("Usuário logou", "Usuário:" + user + "/sen: " + senh);
             usuario = new Usuario();
             msgErro = "";

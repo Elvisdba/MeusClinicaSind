@@ -12,8 +12,8 @@ public class MensagemBoletoDao extends DB {
         String queryString
                 = "     SELECT MB.*                                                     "
                 + "       FROM fin_mensagem_boleto  AS MB                               "
-                + " INNER JOIN fin_servicos         AS S on (s.id = m.id_servicos)      "
-                + " INNER JOIN fin_tipo_servico     AS T on (t.id = m.id_tipo_servico)  "
+                + " INNER JOIN fin_servicos         AS S on (S.id = MB.id_servicos)      "
+                + " INNER JOIN fin_tipo_servico     AS T on (T.id = MB.id_tipo_servico)  "
                 + "      WHERE MB.ds_referencia     = \'" + referencia + "\'            "
                 + "        AND MB.id_servicos       = " + idServicos
                 + "        AND MB.id_tipo_servico   = " + idTipoServico

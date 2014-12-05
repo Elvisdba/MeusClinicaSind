@@ -43,7 +43,7 @@ public class Caixa implements Serializable {
     private int caixa;
     @Column(name = "ds_descricao", length = 100)
     private String descricao;
-    @JoinColumn(name = "id_filial", referencedColumnName = "ID")
+    @JoinColumn(name = "id_filial", referencedColumnName = "id")
     @ManyToOne
     private Filial filial;
 

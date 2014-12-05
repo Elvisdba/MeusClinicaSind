@@ -46,7 +46,7 @@ import br.com.clinicaintegrada.seguranca.controleUsuario.ControleUsuarioBean;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.DataHoje;
-import br.com.clinicaintegrada.utils.Diretorio;
+import br.com.clinicaintegrada.utils.Dirs;
 import br.com.clinicaintegrada.utils.Download;
 import br.com.clinicaintegrada.utils.HtmlToPDF;
 import br.com.clinicaintegrada.utils.Messages;
@@ -1150,7 +1150,7 @@ public class ContratoBean implements Serializable {
             try {
                 File dirFile = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato/"));
                 if (!dirFile.exists()) {
-                    if (!Diretorio.criar("Arquivos/contrato")) {
+                    if (!Dirs.create("Arquivos/contrato")) {
                         return;
                     }
                 }
@@ -1185,8 +1185,8 @@ public class ContratoBean implements Serializable {
                         fileOutputStream.flush();
                         fileOutputStream.close();
                         Download download = new Download(fileName, pathPasta, "application/pdf", FacesContext.getCurrentInstance());
-                        download.baixar();
-                        download.remover();
+                        download.open();
+                        download.close();
                         if (contrato.getId() != -1) {
                             contrato.setImpresso(true);
                             dao.update(contrato, true);
@@ -1373,7 +1373,7 @@ public class ContratoBean implements Serializable {
             try {
                 File dirFile = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato/"));
                 if (!dirFile.exists()) {
-                    if (!Diretorio.criar("Arquivos/contrato")) {
+                    if (!Dirs.create("Arquivos/contrato")) {
                         return;
                     }
                 }
@@ -1387,8 +1387,8 @@ public class ContratoBean implements Serializable {
                     os.close();
                     String pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato");
                     Download download = new Download(fileName, pathPasta, "application/pdf", FacesContext.getCurrentInstance());
-                    download.baixar();
-                    download.remover();
+                    download.open();
+                    download.close();
                 }
             } catch (IOException e) {
                 e.getMessage();
@@ -1624,13 +1624,13 @@ public class ContratoBean implements Serializable {
                     byte[] arquivo = retorno.toByteArray();
 
                     String nomeDownload = "boleto_bancario_" + DataHoje.horaMinuto().replace(":", "") + ".pdf";
-                    Diretorio.criar("Arquivos/downloads/boletos");
+                    Dirs.create("Arquivos/downloads/boletos");
                     String pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/downloads/boletos");
                     SalvaArquivos sa = new SalvaArquivos(arquivo, nomeDownload, false);
                     sa.salvaNaPasta(pathPasta);
                     Download download = new Download(nomeDownload, pathPasta, "application/pdf", FacesContext.getCurrentInstance());
-                    download.baixar();
-                    download.remover();
+                    download.open();
+                    download.close();
                 } catch (JRException e) {
                     e.getMessage();
                 }

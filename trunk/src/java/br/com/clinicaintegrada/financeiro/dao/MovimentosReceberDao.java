@@ -17,12 +17,10 @@ public class MovimentosReceberDao extends DB {
                     + "             TS.ds_descricao                                     AS tipo,            " // 1
                     + "             M.ds_referencia,                                                        " // 2
                     + "             M.dt_vencimento AS vencimento,                                          " // 3
-                    + "             func_valor(m.id) AS valor,                                              " // 4
-                    //+ "     -- func_multa_ass(m.id) + func_juros_ass(m.id)+func_correcao_ass(m.id) as acrescimo, "
-                    + "             0 as acrescimo,                                                         " // 5
-                    + "             m.nr_desconto as desconto,                                              " // 6
-                    //+ "     -- m.nr_valor + func_multa_ass(m.id)+func_juros_ass(m.id) + func_correcao_ass(m.id) as vl_calculado, "
-                    + "             0 as vl_calculado, " // 7
+                    + "             func_valor(M.id) AS valor,                                              " // 4
+                    + "             func_multa(M.id) + func_juros(M.id)+func_correcao(M.id) as acrescimo,   " // 5
+                    + "             M.nr_desconto as desconto,                                              " // 6
+                    + "             M.nr_valor + func_multa(M.id)+func_juros(M.id) + func_correcao(M.id) as vl_calculado, " // 7
                     + "             B.dt_baixa,                                                             " // 8
                     + "             nr_valor_baixa                                      AS valor_pago,      " // 9
                     + "             M.ds_es                                             AS es,              " // 10
@@ -33,12 +31,9 @@ public class MovimentosReceberDao extends DB {
                     + "             L.dt_lancamento                                     AS criacao,         " // 15
                     + "             M.ds_documento                                      AS boleto,          " // 16
                     + "             func_intervalo_dias(M.dt_vencimento,CURRENT_DATE)   AS dias_atraso,     " // 17
-                    //+ "     func_multa_ass(m.id) as multa,  "
-                    + "             0                                                   AS multa,           " // 18
-                    //+ "     func_juros_ass(m.id) as juros, "
-                    + "             0                                                   AS juros,           " // 19
-                    //+ "     func_correcao_ass(m.id) as correcao, "
-                    + "             0                                                   AS correcao,        " // 20
+                    + "             func_multa(M.id)                                    AS multa,           " // 18
+                    + "             func_juros(M.id)                                    AS juros,           " // 19
+                    + "             func_correcao(M.id)                                 AS correcao,        " // 20
                     + "             PU.ds_nome                                          AS caixa,           " // 21
                     + "             M.id_baixa                                          AS lote_baixa,      " // 22
                     + "             L.ds_documento                                      AS documento        " // 23
