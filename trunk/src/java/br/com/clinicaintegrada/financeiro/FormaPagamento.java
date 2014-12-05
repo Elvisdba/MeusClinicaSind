@@ -1,14 +1,13 @@
 package br.com.clinicaintegrada.financeiro;
 
 import br.com.clinicaintegrada.pessoa.Filial;
+import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "fin_forma_pagamento",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"id_baixa", "id_tipo_pagamento"})
-)
-public class FormaPagamento implements java.io.Serializable {
+@Table(name = "fin_forma_pagamento")
+public class FormaPagamento implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
