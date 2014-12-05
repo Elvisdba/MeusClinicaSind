@@ -389,8 +389,8 @@
         </navigation-case>
         
         <navigation-case>
-            <from-outcome>baixa</from-outcome>
-            <to-view-id>/baixa.jsf</to-view-id>
+            <from-outcome>baixaGeral</from-outcome>
+            <to-view-id>/baixaGeral.jsf</to-view-id>
             <redirect/>
         </navigation-case>
         
@@ -403,6 +403,12 @@
         <navigation-case>
             <from-outcome>mensagemBoleto</from-outcome>
             <to-view-id>/mensagemBoleto.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>caixa</from-outcome>
+            <to-view-id>/caixa.jsf</to-view-id>
             <redirect/>
         </navigation-case>
         
