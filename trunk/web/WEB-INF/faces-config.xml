@@ -77,6 +77,12 @@
         </navigation-case>
         
         <navigation-case>
+            <from-outcome>pesquisaPlano</from-outcome>
+            <to-view-id>/pesquisaPlano.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
             <from-outcome>cnae</from-outcome>
             <to-view-id>/cnae.jsf</to-view-id>
             <redirect/>
@@ -409,6 +415,30 @@
         <navigation-case>
             <from-outcome>caixa</from-outcome>
             <to-view-id>/caixa.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>servicoContaCobranca</from-outcome>
+            <to-view-id>/servicoContaCobranca.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>servicoRotina</from-outcome>
+            <to-view-id>/servicoRotina.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>correcao</from-outcome>
+            <to-view-id>/correcao.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>cartao</from-outcome>
+            <to-view-id>/cartao.jsf</to-view-id>
             <redirect/>
         </navigation-case>
         

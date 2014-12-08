@@ -59,21 +59,21 @@
                                 <p:messages id="i_msg" showDetail="true" />
                             </p:panel>
                             
-                            <p:dataTable id="tbl" value="#{caixaBean.listaCaixa}" var="linha" emptyMessage="Nenhum caixa encontrado">
-                                <p:column headerText="" style="text-align: center">
-                                    <p:commandButton icon="ui-icon-trash" action="#{caixaBean.delete(linha)}"  update="tbl" />
+                            <p:dataTable id="tbl" value="#{caixaBean.listaCaixa}" var="caixa" emptyMessage="Nenhum caixa encontrado">
+                                <p:column styleClass="text-center" width="30">
+                                    <p:commandButton icon="ui-icon-trash" action="#{caixaBean.delete(caixa)}"  update="tbl" />
                                 </p:column>
 
                                 <p:column headerText="Filial">
-                                    <h:outputLabel value="#{linha.filial.filial.pessoa.nome}"/>
+                                    <h:outputLabel value="#{caixa.filial.filial.pessoa.nome}"/>
                                 </p:column>
 
-                                <p:column headerText="Número">
-                                    <h:outputLabel value="#{linha.caixa}" />
+                                <p:column headerText="Número"  styleClass="text-center" width="50">
+                                    <h:outputLabel value="#{caixa.caixa}" />
                                 </p:column>
 
                                 <p:column headerText="Descrição">
-                                    <h:outputLabel value="#{linha.descricao}"/>
+                                    <h:outputLabel value="#{caixa.descricao}"/>
                                 </p:column>
                             </p:dataTable>   
                                 

@@ -31,13 +31,17 @@
                                     </p:column> 
                                 </p:dataTable>
                                 <h:panelGrid rendered="#{alterarMovimentoBean.movimento.id != -1}">
-                                    <h:panelGrid columns="4" cellpadding="5">
+                                    <h:panelGrid columns="2" cellpadding="5">
                                         <p:outputLabel value="Nome: "  style="margin-left: 15px" title="ID: #{alterarMovimentoBean.movimento.id}"/>
-                                        <p:outputLabel value="#{alterarMovimentoBean.movimento.pessoa.nome}" />
-                                        <p:outputLabel value="Status: "  styleClass="margin-left-max"/>
-                                        <h:column rendered="#{alterarMovimentoBean.baixa == null and alterarMovimentoBean.movimento.acordo == null}">
-                                            <p:selectBooleanCheckbox id="i_status" value="#{alterarMovimentoBean.movimento.ativo}" itemLabel="Ativo" />
+                                        <h:column>
+                                            <p:outputLabel value="#{alterarMovimentoBean.movimento.pessoa.nome}" />
+                                            <p:outputLabel value="Status: "  styleClass="margin-left-max"/>
+                                            <h:column rendered="#{alterarMovimentoBean.baixa == null and alterarMovimentoBean.movimento.acordo == null}">
+                                                <p:selectBooleanCheckbox id="i_status" value="#{alterarMovimentoBean.movimento.ativo}" itemLabel="Ativo" />
+                                            </h:column>
                                         </h:column>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="4" cellpadding="5">
                                         <p:outputLabel value="Serviço: "  />
                                         <p:selectOneMenu value="#{alterarMovimentoBean.idServicos}" filter="true">
                                             <p:ajax event="change" update="@this" />
