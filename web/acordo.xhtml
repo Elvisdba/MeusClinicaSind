@@ -1,0 +1,229 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Acordo</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/Imagens/favicon.ico"/>  
+        <style type="text/css">
+            .ui-datatable tr.ui-datatable-even:hover, .ui-datatable tr.ui-datatable-odd:hover {
+                background: #ECF3FE;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <!-- INICIA DIV wrap e main -->
+        <div id="wrapx">
+            <div id="mainx">
+                <!-- INICIA DIV wrap e main -->  
+                <f:subview id="header">
+                    <ui:include src="templates/templatePrime.xhtml"/>
+                    <ui:include src="templates/templateAcessoFilial.xhtml"/>
+                </f:subview>
+                <f:view>
+                    <p:panel styleClass="wrapper" style="border: 0px;">
+                        <h:outputText value="Acordo" styleClass="fonteHeader" />
+                        <div class="clear"></div>
+                        <h:form id="formAcordo">
+                            <c:set scope="request" var="object" value="${acordoBean.acordo}"/>
+                            <p:messages autoUpdate="true" showDetail="true" closable="true" />
+                            <p:panel>
+                                <p:panel styleClass="fundoCinza">
+                                    <h:panelGrid columns="3">
+                                        <p:outputLabel value="Empresa: " />
+                                        <p:outputLabel value="#{acordoBean.pessoa.nome} - #{acordoBean.pessoa.documento}" rendered="#{acordoBean.pessoa.id != -1}"/>
+                                    </h:panelGrid>
+                                </p:panel>
+                                <h:panelGrid columns="2" cellspacing="5" styleClass="margin-top-max" columnClasses="verticalAlignTop verticalAlignTop">
+                                    <h:column>
+                                        <p:dataTable value="#{acordoBean.listVizualizado}" var="linha" id="tblVisualizado" emptyMessage="Nenhum registro encontrado" styleClass="margin-left-right">
+                                            <p:column headerText="Serviço">
+                                                <h:outputText value="#{linha.argumento0.descricao}" />
+                                            </p:column>
+                                            <p:column headerText="Valor">
+                                                <h:outputText value="#{linha.argumento1}" />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </h:column>                                    
+                                    <h:column>
+                                        <h:panelGrid columns="2" id="idBlocoAcordo" style="border-left: 1px dashed #e3e3e3">
+                                            <p:outputLabel value="Data: "  />
+                                            <p:inputMask mask="99/99/9999" readonly="true" value="#{acordoBean.acordo.dataString}" id="idHistorico" />
+                                            <p:outputLabel value="Total Outras: "  />
+                                            <p:inputText readonly="true" value="#{acordoBean.totalOutras}" styleClass="text-right" />
+                                            <p:outputLabel value="Total: " />
+                                            <p:inputText readonly="true" value="#{acordoBean.total}" styleClass="text-right" />
+                                            <p:outputLabel value="Contato: " />
+                                            <p:inputText size="50" value="#{acordoBean.acordo.contato}" id="idContato" converter="#{toUpperCase}">
+                                                <p:ajax event="change" update="@this" />
+                                            </p:inputText>                                   
+                                            <p:outputLabel value="Email: " />
+                                            <p:inputText size="50" value="#{acordoBean.emailContato}" converter="#{toLowerCase}">
+                                                <p:ajax event="change" update="@this" />
+                                            </p:inputText>                                   
+                                            <p:outputLabel value="N° de Parcelas: " styleClass="margin-top-max"/>
+                                            <p:selectOneMenu value="#{acordoBean.parcela}" styleClass="margin-top-max">
+                                                <p:ajax event="change" update="idBlocoAcordo" listener="#{acordoBean.limparEntrada}"/>
+                                                <f:selectItem itemValue="1" itemLabel="1"/>
+                                                <f:selectItem itemValue="2" itemLabel="2"/>
+                                                <f:selectItem itemValue="3" itemLabel="3"/>
+                                                <f:selectItem itemValue="4" itemLabel="4"/>
+                                                <f:selectItem itemValue="5" itemLabel="5"/>
+                                                <f:selectItem itemValue="6" itemLabel="6"/>
+                                                <f:selectItem itemValue="7" itemLabel="7"/>
+                                                <f:selectItem itemValue="8" itemLabel="8"/>
+                                                <f:selectItem itemValue="9" itemLabel="9"/>
+                                                <f:selectItem itemValue="10" itemLabel="10"/>
+                                                <f:selectItem itemValue="11" itemLabel="11"/>
+                                                <f:selectItem itemValue="12" itemLabel="12"/>
+                                                <f:selectItem itemValue="13" itemLabel="13"/>
+                                                <f:selectItem itemValue="14" itemLabel="14"/>
+                                                <f:selectItem itemValue="15" itemLabel="15"/>
+                                                <f:selectItem itemValue="16" itemLabel="16"/>
+                                                <f:selectItem itemValue="17" itemLabel="17"/>
+                                                <f:selectItem itemValue="18" itemLabel="18"/>
+                                                <f:selectItem itemValue="19" itemLabel="19"/>
+                                                <f:selectItem itemValue="20" itemLabel="20"/>
+                                                <f:selectItem itemValue="21" itemLabel="21"/>
+                                                <f:selectItem itemValue="22" itemLabel="22"/>
+                                                <f:selectItem itemValue="23" itemLabel="23"/>
+                                                <f:selectItem itemValue="24" itemLabel="24"/>
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Vencimento: " />
+                                            <p:selectOneMenu id="cbVencimento"  value="#{acordoBean.idVencimento}" >
+                                                <p:ajax event="change" update="@this" />
+                                                <f:selectItems value="#{acordoBean.listVencimento}" />
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Intervalo: " />
+                                            <p:selectOneMenu value="#{acordoBean.frequencia}" >
+                                                <p:ajax event="change" />
+                                                <f:selectItem itemValue="30" itemLabel="Mensal"/>
+                                                <f:selectItem itemValue="7" itemLabel="Semanal"/>
+                                            </p:selectOneMenu>
+                                            <h:column id="out_i_entrada_a" rendered="#{acordoBean.parcela != 1}">
+                                                <p:outputLabel id="out_entrada" value=" Vl. Entrada Outras: " styleClass="text-right" />                                    
+                                            </h:column>
+                                            <h:column  id="out_i_entrada_b" rendered="#{acordoBean.parcela != 1}">
+                                                <p:inputText id="i_entrada" value="#{acordoBean.valorEntrada}" styleClass="text-right">
+                                                    <p:ajax event="blur" update="i_entrada"/>
+                                                </p:inputText>                                    
+                                            </h:column>
+                                            <h:column></h:column>
+                                            <h:column>
+                                                <p:commandButton id="idBtnGerarAcordo" update=":formAcordo:" value="Gerar Acordo" action="#{acordoBean.addParcela}" immediate="true"  styleClass="margin-top-max"/>
+                                            </h:column>
+                                        </h:panelGrid>                                        
+                                    </h:column>
+                                </h:panelGrid>
+                                <p:panel>
+                                    <h:panelGrid columns="2" cellspacing="5" styleClass="margin-top-max">
+                                        <h:column>
+                                            <p:dataTable value="#{acordoBean.listOperado}" var="linha" style="width: 100%;" id="tbOperado" emptyMessage="...">
+                                                <p:column width="30" styleClass="text-center">
+                                                    <h:outputLabel value="#{linha.argumento1} º" />
+                                                </p:column>
+                                                <p:column width="30" styleClass="text-center">
+                                                    <p:selectBooleanCheckbox value="#{linha.argumento0}" >
+                                                        <p:ajax event="change" update="tbOperado"/>
+                                                    </p:selectBooleanCheckbox>
+                                                </p:column>
+
+                                                <p:column headerText="Serviço">
+                                                    <h:outputText value="#{linha.argumento2.servicos.descricao}" />
+                                                </p:column>
+
+                                                <p:column styleClass="text-center" headerText="Vencimento"  width="100"> 
+                                                    <h:outputText value="#{linha.argumento2.vencimentoString}" />
+                                                </p:column>
+
+                                                <p:column styleClass="text-center" headerText="Referência" width="80">
+                                                    <h:outputText value="#{linha.argumento2.referencia}" />
+                                                </p:column>       
+
+                                                <p:column styleClass="text-center" headerText="Valor" width="100">
+                                                    <h:outputText value="#{linha.argumento2.valorString}" />
+                                                </p:column>
+                                            </p:dataTable>
+                                        </h:column>
+                                        <h:column>
+                                            <h:panelGrid>
+                                                <p:commandButton update="tbOperado"  icon="ui-icon-circle-arrow-n"  action="#{acordoBean.subirData}" title="Subir selecionado(s)"/>
+                                                <p:commandButton update="tbOperado" icon="ui-icon-circle-arrow-s" action="#{acordoBean.descerData}" title="Descer selecionado(s)"/>
+                                            </h:panelGrid>
+                                        </h:column>
+                                    </h:panelGrid>
+                                    <h:panelGrid>
+                                        <p:commandButton action="#{acordoBean.imprimir}" value="Salvar" onclick="PF('dlg_acordo').show()" disabled="#{controleAcessoBean.save}"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="2" styleClass="margin-top-max" width="400">
+                                        <p:commandButton id="enviarEmail" disabled="#{acordoBean.imprimir}" value="Enviar E-mail" oncomplete="PF('dlg_email').show()" update="idEnviarPara i_message" action="#{acordoBean.verificaEmail()}" />
+                                        <p:selectOneMenu id="chkEmail" value="#{acordoBean.emailPara}" disabled="#{acordoBean.imprimir}">
+                                            <p:ajax event="change" update="chkEmail idEnviarPara"/>
+                                            <f:selectItem itemValue="empresa"       itemLabel="Empresa"/>
+                                            <f:selectItem itemValue="contabilidade" itemLabel="Contabilidade"/>
+                                        </p:selectOneMenu>
+                                        <p:commandButton id="imprimirBoleto" disabled="#{acordoBean.imprimir}" value="Imprimir Boletos" action="#{acordoBean.imprimirBoletos}" ajax="false"/>
+                                        <p:selectBooleanCheckbox id="idImprimeVerso" disabled="#{acordoBean.imprimir}" value="#{acordoBean.imprimeVerso}" itemLabel="Imprime Verso">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:selectBooleanCheckbox>
+                                        <p:commandButton id="imprimirPlanilha" disabled="#{acordoBean.imprimir}" value="Imprimir Planilha" action="#{acordoBean.imprimirPlanilha}" ajax="false"/>
+                                        <p:selectBooleanCheckbox id="idImprimeP" disabled="#{acordoBean.imprimir}" value="#{acordoBean.imprimir_pro}" itemLabel="Imprime Promissória com Planilha">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:selectBooleanCheckbox>
+                                    </h:panelGrid>
+                                </p:panel>           
+                            </p:panel>
+                            <p:dialog widgetVar="dlg_acordo" header="Deseja concluir esse acordo?" resizable="false" width="400" modal="true">
+                                <f:facet name="footer">
+                                    <h:panelGrid columns="2">
+                                        <p:commandButton value="OK" title="OK" action="#{acordoBean.efetuarAcordo}" oncomplete="PF('dlg_acordo').close(); PF('dlg_message').show()" update="imprimirBoleto imprimirPlanilha idImprimeVerso chkEmail i_message"/>
+                                        <p:commandButton  value="Cancelar" onclick="PF('dlg_acordo').close()" />
+                                    </h:panelGrid>
+                                </f:facet>
+                            </p:dialog>
+
+                            <p:dialog widgetVar="dlg_email" header="Enviar emails?" resizable="false" width="400" modal="true">
+                                <p:outputLabel value="Endereço de email para: "  />
+                                <p:inputText id="idEnviarPara" value="#{acordoBean.pessoaEnvio.email1}">
+                                    <p:ajax event="blur" update="@this"/>
+                                </p:inputText>
+                                <f:facet name="footer">
+                                    <h:panelGrid columns="2">
+                                        <p:commandButton value="OK" title="OK" action="#{acordoBean.sendMail()}" oncomplete="PF('dlg_email').close(); PF('dlg_message').show()" update="idEnviarPara i_message"/>
+                                        <p:commandButton  value="Cancelar" onclick="PF('dlg_email').close()" />
+                                    </h:panelGrid>
+                                </f:facet>
+                            </p:dialog>
+
+                            <p:dialog widgetVar="dlg_message" header="Mensagem" resizable="false" width="400" modal="true">
+                                <p:messages autoUpdate="true" showSummary="true" closable="false" id="i_message"/>
+                                <f:facet name="footer">
+                                    <h:panelGrid columns="2">
+                                        <p:commandButton value="Ok" onclick="PF('dlg_message').close()" />
+                                    </h:panelGrid>
+                                </f:facet>
+                            </p:dialog>                
+                        </h:form>
+                    </p:panel>
+
+                    <p:ajaxStatus id="i_status" onstart="PF('i_dlg_modal').show();" onsuccess="PF('i_dlg_modal').hide();" />
+                    <p:dialog modal="true" widgetVar="i_dlg_modal" header="Status" draggable="false" closable="false">  
+                        <h:outputLabel value="Aguarde ..." />
+                    </p:dialog> 
+                </f:view>
+                <!-- FINALIZA div wrap main -->
+            </div>
+        </div>
+        <!-- FINALIZA div wrap main -->
+
+        <div id="footerx">
+            <f:subview id="footer">
+                <ui:include src="templates/templateFooter.xhtml"/>
+            </f:subview>
+        </div>                
+    </h:body>
+</ui:composition>
