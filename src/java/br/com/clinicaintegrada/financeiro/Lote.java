@@ -18,7 +18,7 @@ public class Lote implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @JoinColumn(name = "id_contrato", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "id_contrato", referencedColumnName = "id")
     @OneToOne
     private Contrato contrato;
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)

@@ -1,5 +1,6 @@
 package br.com.clinicaintegrada.movimento;
 
+import br.com.clinicaintegrada.financeiro.Acordo;
 import br.com.clinicaintegrada.financeiro.Baixa;
 import br.com.clinicaintegrada.financeiro.Boleto;
 import br.com.clinicaintegrada.financeiro.Caixa;
@@ -11,19 +12,24 @@ import br.com.clinicaintegrada.financeiro.ContaCobranca;
 import br.com.clinicaintegrada.financeiro.FStatus;
 import br.com.clinicaintegrada.financeiro.FTipoDocumento;
 import br.com.clinicaintegrada.financeiro.FormaPagamento;
+import br.com.clinicaintegrada.financeiro.Historico;
 import br.com.clinicaintegrada.financeiro.Lote;
 import br.com.clinicaintegrada.financeiro.MensagemBoleto;
+import br.com.clinicaintegrada.financeiro.MensagemCobranca;
 import br.com.clinicaintegrada.financeiro.Movimento;
 import br.com.clinicaintegrada.financeiro.MovimentoInativo;
 import br.com.clinicaintegrada.financeiro.TipoPagamento;
 import br.com.clinicaintegrada.financeiro.dao.BoletoDao;
 import br.com.clinicaintegrada.financeiro.dao.ContaCobrancaDao;
 import br.com.clinicaintegrada.financeiro.dao.FormaPagamentoDao;
+import br.com.clinicaintegrada.financeiro.dao.MensagemBoletoDao;
 import br.com.clinicaintegrada.financeiro.dao.MovimentoDao;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.Filial;
 import br.com.clinicaintegrada.principal.DB;
+import br.com.clinicaintegrada.seguranca.Rotina;
 import br.com.clinicaintegrada.seguranca.Usuario;
+import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import br.com.clinicaintegrada.utils.DataHoje;
 import br.com.clinicaintegrada.utils.Moeda;
 import br.com.clinicaintegrada.utils.Dao;
@@ -139,143 +145,133 @@ public class GerarMovimento extends DB {
         return false;
     }
 
-//    public static synchronized String salvarListaAcordo(Acordo acordo, List<Movimento> listaMovimento, List<Movimento> listaAcordados, List<String> listaHistorico) {
-//        Dao dao = new Dao();
-//        ContaCobrancaDao dbc = new ContaCobrancaDao();
-//        Logger log = new Logger();
-//        Boleto boleto = new Boleto();
-//        MensagemBoleto mb = new MensagemBoleto();
-//        MensagemBoletoDao mensagemBoletoDao = new MensagemBoletoDao();
-//
-//        MovimentoDB db = new MovimentoDBToplink();
-//        for (int i = 0; i < listaMovimento.size(); i++) {
-//            if (listaMovimento.get(i).getPessoa().getId() != 0) {
-//                Convencao convencao = dbco.pesquisarCnaeConvencaoPorPessoa(listaMovimento.get(i).getPessoa().getId());
-//                if (convencao == null) {
-//                    return "Convenção não encontrada!";
-//                }
-//
-//                mc = dbm.verificaMensagem(convencao.getId(),
-//                        listaMovimento.get(i).getServicos().getId(),
-//                        listaMovimento.get(i).getTipoServico().getId(),
-//                        dbgc.grupoCidadesPorPessoa(listaMovimento.get(i).getPessoa().getId(),
-//                                convencao.getId()).getId(),
-//                        "");
-//                if (mc == null) {
-//                    return "Mensagem de cobrança não encontrada";
-//                }
-//            }
-//            ContaCobranca cc = dbc.pesquisaServicoCobranca(listaMovimento.get(i).getServicos().getId(), listaMovimento.get(i).getTipoServico().getId());
-//            int id_boleto = db.inserirBoletoNativo(cc.getId());
-//
-//            if (id_boleto != -1) {
-//                sv.abrirTransacao();
-//                if (listaMovimento.get(i).getId() == -1) {
-//                    // LOTE ---
-//                    Lote lote = new Lote();
-//                    lote.setDepartamento(null);
-//                    lote.setStatus((FStatus) sv.pesquisaCodigo(1, "FStatus"));
-//                    lote.setLancamento(DataHoje.data());
-//                    lote.setAvencerContabil(false);
-//                    lote.setEmissao(DataHoje.data());
-//                    lote.setFTipoDocumento((FTipoDocumento) sv.pesquisaCodigo(2, "FTipoDocumento"));
-//                    lote.setValor(listaMovimento.get(i).getValor());
-//                    lote.setRotina((Rotina) sv.pesquisaCodigo(4, "Rotina"));
-//                    lote.setPessoa(listaMovimento.get(i).getPessoa());
-//                    lote.setCondicaoPagamento((CondicaoPagamento) sv.pesquisaCodigo(1, "CondicaoPagamento"));
-//                    lote.setFilial((Filial) sv.pesquisaCodigo(1, "Filial"));
-//                    lote.setPessoaSemCadastro(null);
-//                    lote.setEvt(null);
-//                    lote.setPlano5(null);
-//                    lote.setDocumento("");
-//
-//                    if (cc == null) {
-//                        sv.desfazerTransacao();
-//                        return "Conta cobrança não encontrada!";
-//                    }
-//                    if (sv.inserirObjeto(lote)) {
-//                        log.novo("Salvar Lote", "ID: " + lote.getId() + " Pessoa: " + lote.getPessoa().getNome() + " Data: " + lote.getEmissao());
-//                    } else {
-//                        sv.desfazerTransacao();
-//                        return "Erro ao salvar Lote, verifique os logs!";
-//                    }
-//
-//                    // ACORDO ----
-//                    acordo.setUsuario((Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("sessaoUsuario"));
-//                    if (sv.inserirObjeto(acordo)) {
-//                        log.novo("Salvar Acordo", "ID: " + acordo.getId() + " Usuario: " + acordo.getUsuario().getPessoa().getNome());
-//                    } else {
-//                        sv.desfazerTransacao();
-//                        return "Erro ao salvar acordo, verifique os logs!";
-//                    }
-//
-//                    // MOVIMENTO ----
-//                    listaMovimento.get(i).setLote(lote);
-//                    if (sv.inserirObjeto(listaMovimento.get(i))) {
-//                        // BOLETO ---
-//                        boleto = (Boleto) sv.pesquisaCodigo(id_boleto, "Boleto");
-//                        boleto.setContaCobranca(cc);
-//
-//                        // SE AGRUPA FOR TRUE** NR_CTR_BOLETO = ID_PESSOA + FATOR DE VENCIMENTO
-//                        if (listaMovimento.get(i).getServicos().isAgrupaBoleto()) {
-//                        } else {
-//                            boleto.setNrCtrBoleto(String.valueOf(listaMovimento.get(i).getId()));
-//
-//                            listaMovimento.get(i).setDocumento(boleto.getBoletoComposto());
-//                            listaMovimento.get(i).setNrCtrBoleto(boleto.getNrCtrBoleto());
-//                            listaMovimento.get(i).setAcordo(acordo);
-//                            sv.alterarObjeto(listaMovimento.get(i));
-//                            sv.alterarObjeto(boleto);
-//
-//                            if (listaMovimento.get(i).getPessoa().getId() != 0) {
-//                                if (!sv.inserirObjeto(new MensagemCobranca(-1, listaMovimento.get(i), mc))) {
-//                                    sv.desfazerTransacao();
-//                                    return "Erro ao salvar mensagem Cobrançam, verifique os logs!";
-//                                }
-//                            }
-//                        }
-//
-//                        log.novo("Salvar Movimento", "ID: " + listaMovimento.get(i).getId() + " Pessoa: " + listaMovimento.get(i).getPessoa().getNome() + " Valor: " + listaMovimento.get(i).getValor());
-//                    } else {
-//                        sv.desfazerTransacao();
-//                        return "Erro ao salvar movimento, verifique os logs!";
-//                    }
-//
-//                    // MOVIMENTO ACORDADOS ----
-//                    for (int wi = 0; wi < listaAcordados.size(); wi++) {
-//                        listaAcordados.get(wi).setAcordo(acordo);
-//                        listaAcordados.get(wi).setAtivo(false);
-//                        listaAcordados.get(wi).setValorBaixa(0);
-//                        if (!sv.alterarObjeto(listaAcordados.get(wi))) {
-//                            sv.desfazerTransacao();
-//                            return "Erro ao salvar boletos acordados!";
-//                        }
-//                    }
-//
-//                    // HISTORICO ----
-//                    Historico his = new Historico();
-//
-//                    his.setMovimento(listaMovimento.get(i));
-//                    his.setComplemento("");
-//                    his.setHistorico(listaHistorico.get(i));
-//                    if (sv.inserirObjeto(his)) {
-//                        log.novo("Salvar Historico", "ID: " + his.getId() + " OBS: " + his.getHistorico() + " ID_MOVIMENTO: " + his.getMovimento().getId());
-//                    } else {
-//                        sv.desfazerTransacao();
-//                        return "Erro ao salvar histórico, verifique os logs!";
-//                    }
-//                } else {
-//                    sv.desfazerTransacao();
-//                    return "Id do movimento deve ser -1";
-//                }
-//                sv.comitarTransacao();
-//                listaAcordados.clear();
-//            } else {
-//                return "Erro ao salvar boleto, verifique os logs!";
-//            }
-//        }
-//        return "";
-//    }
+    public static synchronized String salvarListaAcordo(Acordo acordo, List<Movimento> listaMovimento, List<Movimento> listaAcordados, List<String> listaHistorico) {
+        Dao dao = new Dao();
+        ContaCobrancaDao dbc = new ContaCobrancaDao();
+        Logger log = new Logger();
+        Boleto boleto = new Boleto();
+        MensagemBoleto mb = new MensagemBoleto();
+        MensagemBoletoDao mensagemBoletoDao = new MensagemBoletoDao();
+        BoletoDao boletoDao = new BoletoDao();
+
+        for (int i = 0; i < listaMovimento.size(); i++) {
+            if (listaMovimento.get(i).getPessoa().getId() != 0) {
+                mb = mensagemBoletoDao.verificaMensagem(listaMovimento.get(i).getServicos().getId(), listaMovimento.get(i).getTipoServico().getId(),
+                        "");
+                if (mb == null) {
+                    return "Mensagem de cobrança não encontrada";
+                }
+            }
+            ContaCobranca cc = dbc.findContaCobrancaByServicoAndTipoServico(listaMovimento.get(i).getServicos().getId(), listaMovimento.get(i).getTipoServico().getId());
+            int id_boleto = boletoDao.saveBoletoNativeQuery(cc.getId(), SessaoCliente.get().getId());
+
+            if (id_boleto != -1) {
+                dao.openTransaction();
+                if (listaMovimento.get(i).getId() == -1) {
+                    // LOTE ---
+                    Lote lote = new Lote();
+                    lote.setDepartamento(null);
+                    lote.setStatus((FStatus) dao.find(new FStatus(), 1));
+                    lote.setLancamento(DataHoje.dataHoje());
+                    lote.setEmissao(DataHoje.dataHoje());
+                    lote.setFtipoDocumento((FTipoDocumento) dao.find(new FTipoDocumento(), 2));
+                    lote.setValor(listaMovimento.get(i).getValor());
+                    lote.setPessoa(listaMovimento.get(i).getPessoa());
+                    lote.setCondicaoPagamento((CondicaoPagamento) dao.find(new CondicaoPagamento(), 1));
+                    lote.setFilial((Filial) dao.find(new Filial(), 1));
+                    lote.setDocumento("");
+                    lote.setCliente(SessaoCliente.get());
+                    lote.setContrato(null);
+
+                    if (cc == null) {
+                        dao.rollback();
+                        return "Conta cobrança não encontrada!";
+                    }
+                    if (dao.save(lote)) {
+                        log.novo("Salvar Lote", "ID: " + lote.getId() + " Pessoa: " + lote.getPessoa().getNome() + " Data: " + lote.getEmissao());
+                    } else {
+                        dao.rollback();
+                        return "Erro ao salvar Lote, verifique os logs!";
+                    }
+
+                    // ACORDO ----
+                    acordo.setUsuario((Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("sessaoUsuario"));
+                    if (dao.save(acordo)) {
+                        log.novo("Salvar Acordo", "ID: " + acordo.getId() + " Usuario: " + acordo.getUsuario().getPessoa().getNome());
+                    } else {
+                        dao.rollback();
+                        return "Erro ao salvar acordo, verifique os logs!";
+                    }
+
+                    // MOVIMENTO ----
+                    listaMovimento.get(i).setLote(lote);
+                    if (dao.save(listaMovimento.get(i))) {
+                        // BOLETO ---
+                        boleto = (Boleto) dao.find(new Boleto(), id_boleto);
+                        boleto.setContaCobranca(cc);
+
+                        // SE AGRUPA FOR TRUE** NR_CTR_BOLETO = ID_PESSOA + FATOR DE VENCIMENTO
+                        if (false) {
+                            //if (listaMovimento.get(i).getServicos().isAgrupaBoleto()) {
+                        } else {
+                            boleto.setNrCtrBoleto(String.valueOf(listaMovimento.get(i).getId()));
+
+                            listaMovimento.get(i).setDocumento(boleto.getBoletoComposto());
+                            listaMovimento.get(i).setNrCtrBoleto(boleto.getNrCtrBoleto());
+                            listaMovimento.get(i).setAcordo(acordo);
+                            dao.update(listaMovimento.get(i));
+                            dao.update(boleto);
+
+                            if (listaMovimento.get(i).getPessoa().getId() != 0) {
+                                if (!dao.save(new MensagemCobranca(-1, listaMovimento.get(i), mb))) {
+                                    dao.rollback();
+                                    return "Erro ao salvar mensagem Cobrançam, verifique os logs!";
+                                }
+                            }
+                        }
+
+                        log.novo("Salvar Movimento", "ID: " + listaMovimento.get(i).getId() + " Pessoa: " + listaMovimento.get(i).getPessoa().getNome() + " Valor: " + listaMovimento.get(i).getValor());
+                    } else {
+                        dao.rollback();
+                        return "Erro ao salvar movimento, verifique os logs!";
+                    }
+
+                    // MOVIMENTO ACORDADOS ----
+                    for (int wi = 0; wi < listaAcordados.size(); wi++) {
+                        listaAcordados.get(wi).setAcordo(acordo);
+                        listaAcordados.get(wi).setAtivo(false);
+                        listaAcordados.get(wi).setValorBaixa(0);
+                        if (!dao.update(listaAcordados.get(wi))) {
+                            dao.rollback();
+                            return "Erro ao salvar boletos acordados!";
+                        }
+                    }
+
+                    // HISTORICO ----
+                    Historico his = new Historico();
+
+                    his.setMovimento(listaMovimento.get(i));
+                    his.setComplemento("");
+                    his.setHistorico(listaHistorico.get(i));
+                    if (dao.save(his)) {
+                        log.novo("Salvar Historico", "ID: " + his.getId() + " OBS: " + his.getHistorico() + " ID_MOVIMENTO: " + his.getMovimento().getId());
+                    } else {
+                        dao.rollback();
+                        return "Erro ao salvar histórico, verifique os logs!";
+                    }
+                } else {
+                    dao.rollback();
+                    return "Id do movimento deve ser -1";
+                }
+                dao.commit();
+                listaAcordados.clear();
+            } else {
+                return "Erro ao salvar boleto, verifique os logs!";
+            }
+        }
+        return "";
+    }
+
     public static boolean salvarUmMovimentoBaixa(Lote lote, Movimento movimento) {
         Dao dao = new Dao();
         ContaCobrancaDao contaCobrancaDao = new ContaCobrancaDao();
@@ -283,8 +279,8 @@ public class GerarMovimento extends DB {
         Boleto boleto = new Boleto();
         BoletoDao boletoDao = new BoletoDao();
 
-        ContaCobranca cc = contaCobrancaDao.pesquisaServicoCobranca(movimento.getServicos().getId(), movimento.getTipoServico().getId());
-        int id_boleto = boletoDao.saveBoletoNativeQuery(cc.getId());
+        ContaCobranca cc = contaCobrancaDao.findContaCobrancaByServicoAndTipoServico(movimento.getServicos().getId(), movimento.getTipoServico().getId());
+        int id_boleto = boletoDao.saveBoletoNativeQuery(cc.getId(), SessaoCliente.get().getId());
 
         if (id_boleto != -1) {
             dao.openTransaction();
@@ -355,7 +351,7 @@ public class GerarMovimento extends DB {
 
         BoletoDao boletoDao = new BoletoDao();
 
-        ContaCobranca cc = contaCobrancaDao.pesquisaServicoCobranca(movimento.getServicos().getId(), movimento.getTipoServico().getId());
+        ContaCobranca cc = contaCobrancaDao.findContaCobrancaByServicoAndTipoServico(movimento.getServicos().getId(), movimento.getTipoServico().getId());
 //        if (movimento.getPessoa().getId() != 0) {
 //            Convencao convencao = dbco.pesquisarCnaeConvencaoPorPessoa(movimento.getPessoa().getId());
 //            if (convencao == null) {
@@ -374,7 +370,7 @@ public class GerarMovimento extends DB {
 //                }
 //            }
 //        }
-        int id_boleto = boletoDao.saveBoletoNativeQuery(cc.getId());
+        int id_boleto = boletoDao.saveBoletoNativeQuery(cc.getId(), SessaoCliente.get().getId());
 
         if (id_boleto != -1) {
             dao.openTransaction();

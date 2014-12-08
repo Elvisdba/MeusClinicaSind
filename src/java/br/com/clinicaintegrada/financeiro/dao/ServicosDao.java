@@ -79,6 +79,20 @@ public class ServicosDao extends DB {
         return new ArrayList();
     }
 
+    public List findAllWServicoRotina(int idRotina) {
+        try {
+            Query query = getEntityManager().createQuery("SELECT SR FROM ServicoRotina AS SR WHERE SR.rotina.id = :rotina GROUP BY SR.servicos ORDER BY SR.servicos.descricao");
+            query.setParameter("rotina", idRotina);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+            return new ArrayList();
+        }
+        return new ArrayList();
+    }
+
     public String getOrder() {
         return order;
     }

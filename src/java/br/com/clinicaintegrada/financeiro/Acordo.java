@@ -21,20 +21,20 @@ public class Acordo implements Serializable {
     private String contato;
     @Temporal(TemporalType.DATE)
     @Column(name = "dt_data")
-    private Date dtData;
+    private Date data;
 
     public Acordo() {
         this.id = -1;
         this.usuario = null;
         this.contato = "";
-        this.dtData = DataHoje.dataHoje();
+        this.data = DataHoje.dataHoje();
     }
 
-    public Acordo(int id, Usuario usuario, String contato, String data) {
+    public Acordo(int id, Usuario usuario, String contato, String dataString) {
         this.id = id;
         this.usuario = usuario;
         this.contato = contato;
-        setData(data);
+        setDataString(dataString);
     }
 
     public int getId() {
@@ -61,19 +61,19 @@ public class Acordo implements Serializable {
         this.contato = contato;
     }
 
-    public Date getDtData() {
-        return dtData;
+    public Date getData() {
+        return data;
     }
 
-    public void setDtData(Date dtData) {
-        this.dtData = dtData;
+    public void setData(Date dtData) {
+        this.data = dtData;
     }
 
-    public String getData() {
-        return DataHoje.converteData(dtData);
+    public String getDataString() {
+        return DataHoje.converteData(data);
     }
 
-    public void setData(String data) {
-        setDtData(DataHoje.converte(data));
+    public void setDataString(String dataString) {
+        setData(DataHoje.converte(dataString));
     }
 }

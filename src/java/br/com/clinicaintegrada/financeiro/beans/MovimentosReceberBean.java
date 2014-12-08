@@ -6,6 +6,7 @@ import br.com.clinicaintegrada.financeiro.ContaCobranca;
 import br.com.clinicaintegrada.financeiro.FormaPagamento;
 //import br.com.clinicaintegrada.financeiro.FormaPagamento;
 import br.com.clinicaintegrada.financeiro.Movimento;
+import br.com.clinicaintegrada.financeiro.dao.ContaCobrancaDao;
 import br.com.clinicaintegrada.financeiro.dao.FormaPagamentoDao;
 //import br.com.clinicaintegrada.financeiro.dao.FormaPagamentoDao;
 import br.com.clinicaintegrada.financeiro.dao.MovimentoDao;
@@ -140,12 +141,12 @@ public class MovimentosReceberBean {
     public void destroy() {
         Sessions.remove("movimentosReceberBean");
         Sessions.remove("pessoaPesquisa");
-        Sessions.remove("listMovimento");
+        Sessions.remove("listMovimentos");
     }
 
     public List<SelectItem> getListContas() {
         if (listContas.isEmpty()) {
-            ServicoContaCobrancaDao servDB = new ServicoContaCobrancaDao();
+            ContaCobrancaDao servDB = new ContaCobrancaDao();
             List<ContaCobranca> result = servDB.listContaCobrancaAtivoAssociativo();
             if (result.isEmpty()) {
                 listContas.add(new SelectItem(0, "Nenhuma Conta Encontrada", "0"));
@@ -453,6 +454,7 @@ public class MovimentosReceberBean {
                 }
             }
             if (!lista.isEmpty()) {
+                Sessions.put("linkClicado", true);
                 Sessions.put("listMovimentos", lista);
                 return ((ChamadaPaginaBean) Sessions.getObject("chamadaPaginaBean")).pagina("baixaGeral");
             } else {
@@ -480,6 +482,7 @@ public class MovimentosReceberBean {
         // movimento.setValorBaixa( Moeda.subtracaoValores(movimento.getValor(), movimento.getDesconto()) );
 //                    movimento.setValorBaixa(Moeda.converteUS$(listMovimento.get(i).getMovimento_valor_calculado().toString()));
         lista.add(movimento);
+        Sessions.put("linkClicado", true);
         Sessions.put("listMovimento", lista);
         return ((ChamadaPaginaBean) Sessions.getObject("chamadaPaginaBean")).pagina("alterarMovimento");
     }
@@ -517,7 +520,8 @@ public class MovimentosReceberBean {
                 }
             }
             if (!lista.isEmpty()) {
-                Sessions.put("listMovimento", lista);
+                Sessions.put("linkClicado", true);
+                Sessions.put("listMovimentos", lista);
                 return ((ChamadaPaginaBean) Sessions.getObject("chamadaPaginaBean")).pagina("acordo");
             } else {
                 Messages.warn("Erro", "Nenhum boleto foi selecionado");
@@ -672,7 +676,6 @@ public class MovimentosReceberBean {
                 } else {
                     dataBaixa = "";
                 }
-                //soma = Moeda.somaValores(Moeda.converteR$(lista.get(i).get(5).toString()), Moeda.converteUS$(listMovimento.get(i).getMovimento_valor_calculado().toString()));
                 // DATA DE HOJE MENOR OU IGUAL A DATA DE VENCIMENTO
                 if (DataHoje.converteDataParaInteger(DataHoje.converteData((Date) ((List) lista.get(i)).get(3)))
                         <= DataHoje.converteDataParaInteger(DataHoje.data())

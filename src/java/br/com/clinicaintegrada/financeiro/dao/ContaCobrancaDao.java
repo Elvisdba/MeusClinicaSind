@@ -7,7 +7,19 @@ import java.util.List;
 import javax.persistence.Query;
 
 public class ContaCobrancaDao extends DB {
-    
+
+    public List listContaCobrancaAtivoAssociativo() {
+        try {
+            Query query = getEntityManager().createQuery("SELECT CC FROM ContaCobranca AS CC WHERE CC.ativo = true");
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+        }
+        return new ArrayList();
+    }
+
     public List findAllByCliente(int idCliente) {
         try {
             Query query = getEntityManager().createQuery("SELECT CC FROM ContaCobranca AS CC WHERE CC.cliente.id = :idCliente");
@@ -20,7 +32,7 @@ public class ContaCobrancaDao extends DB {
         }
         return new ArrayList();
     }
-    
+
     public boolean existContaCobranca(ContaCobranca cc) {
         try {
             Query query = getEntityManager().createQuery("SELECT CC FROM ContaCobranca AS CC WHERE UPPER(CC.cedente) = :cedente AND CC.cliente.id = :cliente");
@@ -33,7 +45,7 @@ public class ContaCobrancaDao extends DB {
         }
         return false;
     }
-    
+
     public ContaCobranca findContaCobrancaByContaCobranca(ContaCobranca cc) {
         ContaCobranca result = null;
         String descricao = cc.getCedente().toLowerCase().toUpperCase();
@@ -45,23 +57,26 @@ public class ContaCobrancaDao extends DB {
         }
         return result;
     }
-    
-    public ContaCobranca pesquisaServicoCobranca(int idServicos, int idTipoServico) {
+
+    public ContaCobranca findContaCobrancaByServicoAndTipoServico(int idServicos, int idTipoServico) {
         ContaCobranca result = null;
         try {
-            Query qry = getEntityManager().createQuery(
-                    "select c.contaCobranca "
-                    + "  from ServicoContaCobranca c"
-                    + " where c.tipoServico.id = :idTipo"
-                    + "   and c.servicos.id = :idServicos");
-            qry.setParameter("idTipo", idTipoServico);
-            qry.setParameter("idServicos", idServicos);
-            result = (ContaCobranca) qry.getSingleResult();
+            Query query = getEntityManager().createQuery(
+                    "  SELECT SCC.contaCobranca                     "
+                    + "  FROM ServicoContaCobranca AS SCC           "
+                    + " WHERE SCC.tipoServico.id = :tipoServico     "
+                    + "   AND SCC.servicos.id = :servicos           ");
+            query.setParameter("tipoServico", idTipoServico);
+            query.setParameter("servicos", idServicos);
+            List list = query.getResultList();
+            if (!list.isEmpty() && list.size() == 1) {
+                return (ContaCobranca) query.getSingleResult();
+            }
         } catch (Exception e) {
         }
-        return result;
+        return null;
     }
-    
+
     public ContaCobranca pesquisaCobrancaCedente(String codCedente) {
         ContaCobranca result = new ContaCobranca();
         try {
