@@ -269,12 +269,14 @@ public class EquipeBean implements Serializable {
     }
 
     public String getTipoDocumentoProfissao() {
-        Dao dao = new Dao();
-        FuncaoEquipe fe = (FuncaoEquipe) dao.find(new FuncaoEquipe(), Integer.parseInt(listFuncaoEquipe.get(idFuncaoEquipe).getDescription()));
-        if (fe != null) {
-            tipoDocumentoProfissao = fe.getTipoDocumentoProfissao().getDescricao();
-        } else {
-            tipoDocumentoProfissao = "";
+        if (!listFuncaoEquipe.isEmpty()) {
+            Dao dao = new Dao();
+            FuncaoEquipe fe = (FuncaoEquipe) dao.find(new FuncaoEquipe(), Integer.parseInt(listFuncaoEquipe.get(idFuncaoEquipe).getDescription()));
+            if (fe != null) {
+                tipoDocumentoProfissao = fe.getTipoDocumentoProfissao().getDescricao();
+            } else {
+                tipoDocumentoProfissao = "";
+            }
         }
         return tipoDocumentoProfissao;
     }
