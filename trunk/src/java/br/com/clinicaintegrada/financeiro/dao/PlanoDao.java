@@ -216,17 +216,26 @@ public class PlanoDao extends DB {
         desc = AnaliseString.removerAcentos(desc);
         desc = desc.toUpperCase();
         String textQuery = null;
+        String queryInner = "";
+        queryInner += plano + " AS O ";
+        if (plano.equals("fin_plano5")) {
+            queryInner += " INNER JOIN fin_plano4   AS P4   ON P4.id =  O.id_plano4 ";
+            queryInner += " INNER JOIN fin_plano3   AS P3   ON P3.id = P4.id_plano3 ";
+            queryInner += " INNER JOIN fin_plano2   AS P2   ON P2.id = P3.id_plano2 ";
+            queryInner += " INNER JOIN fin_plano    AS P    ON P.id  = P2.id_plano  ";
+            queryInner += " WHERE P.id_cliente = " + idCliente;
+        }
         switch (como) {
             case "T":
                 textQuery = "";
                 break;
             case "P":
                 desc = "%" + desc.toLowerCase().toUpperCase() + "%";
-                textQuery = "SELECT O.* FROM " + plano + " O WHERE O.id_cliente = " + idCliente + " AND UPPER(FUNC_TRANSLATE(O." + por + ")) LIKE '" + desc + "' ORDER BY O." + por;
+                textQuery = "SELECT O.* FROM " + queryInner + " AND UPPER(FUNC_TRANSLATE(O." + por + ")) LIKE '" + desc + "' ORDER BY O." + por;
                 break;
             case "I":
                 desc = desc.toLowerCase().toUpperCase() + "%";
-                textQuery = "SELECT O.* FROM " + plano + " O WHERE O.id_cliente = " + idCliente + " AND UPPER(FUNC_TRANSLATE(O." + por + ")) LIKE '" + desc + "' ORDER BY O." + por;
+                textQuery = "SELECT O.* FROM " + queryInner + " AND UPPER(FUNC_TRANSLATE(O." + por + ")) LIKE '" + desc + "' ORDER BY O." + por;
                 break;
         }
         try {
@@ -236,7 +245,9 @@ public class PlanoDao extends DB {
                 return list;
             }
         } catch (Exception e) {
+            return new ArrayList();
         }
+
         return new ArrayList();
     }
 

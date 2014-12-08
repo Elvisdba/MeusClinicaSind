@@ -23,6 +23,7 @@ import br.com.clinicaintegrada.pessoa.PessoaEndereco;
 import br.com.clinicaintegrada.pessoa.dao.JuridicaDao;
 import br.com.clinicaintegrada.pessoa.dao.PessoaEnderecoDao;
 import br.com.clinicaintegrada.seguranca.controleUsuario.ControleUsuarioBean;
+import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import br.com.clinicaintegrada.sistema.Links;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.DataHoje;
@@ -66,8 +67,8 @@ public class ImprimirBoleto {
         for (int i = 0; i < lista.size(); i++) {
             bol = boletoDao.findBoletosByNrCtrBoleto(lista.get(i).getNrCtrBoleto());
             if (bol == null) {
-                ContaCobranca cc = dbc.pesquisaServicoCobranca(lista.get(i).getServicos().getId(), lista.get(i).getTipoServico().getId());
-                int id_boleto = boletoDao.saveBoletoNativeQuery(cc.getId());
+                ContaCobranca cc = dbc.findContaCobrancaByServicoAndTipoServico(lista.get(i).getServicos().getId(), lista.get(i).getTipoServico().getId());
+                int id_boleto = boletoDao.saveBoletoNativeQuery(cc.getId(), SessaoCliente.get().getId());
                 bol = (Boleto) dao.find(new Boleto(), id_boleto);
 
                 lista.get(i).setDocumento(bol.getBoletoComposto());
@@ -619,7 +620,7 @@ public class ImprimirBoleto {
 
                 vetor.add(new DemonstrativoAcordo(
                         acordo.getId(), // codacordo
-                        acordo.getData(), // data
+                        acordo.getDataString(), // data
                         acordo.getContato(), // contato
                         swap[0], // razao
                         swap[1], // cnpj
@@ -1229,7 +1230,7 @@ public class ImprimirBoleto {
                 if (lista.get(i).getTipoServico().getId() == 4 && lista.get(i).isAtivo()) {
                     vetor1.add(new DemonstrativoAcordo(
                             acordo.getId(), // codacordo
-                            acordo.getData(), // data
+                            acordo.getDataString(), // data
                             acordo.getContato(), // contato
                             swap[0], // razao
                             swap[1], // cnpj
@@ -1287,7 +1288,7 @@ public class ImprimirBoleto {
                 } else if (!lista.get(i).isAtivo()) {
                     vetor2.add(new DemonstrativoAcordo(
                             acordo.getId(), // codacordo
-                            acordo.getData(), // data
+                            acordo.getDataString(), // data
                             acordo.getContato(), // contato
                             swap[0], // razao
                             swap[1], // cnpj
@@ -1517,7 +1518,7 @@ public class ImprimirBoleto {
                 if (lista.get(i).getTipoServico().getId() == 4) {
                     vetor1.add(new DemonstrativoAcordo(
                             acordo.getId(), // codacordo
-                            acordo.getData(), // data
+                            acordo.getDataString(), // data
                             acordo.getContato(), // contato
                             swap[0], // razao
                             swap[1], // cnpj
@@ -1598,7 +1599,7 @@ public class ImprimirBoleto {
                 } else {
                     vetor2.add(new DemonstrativoAcordo(
                             acordo.getId(), // codacordo
-                            acordo.getData(), // data
+                            acordo.getDataString(), // data
                             acordo.getContato(), // contato
                             swap[0], // razao
                             swap[1], // cnpj

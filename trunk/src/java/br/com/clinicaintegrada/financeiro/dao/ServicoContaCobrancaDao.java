@@ -8,18 +8,18 @@ import javax.persistence.Query;
 
 public class ServicoContaCobrancaDao extends DB {
 
-    // NOVO   
-    public List listContaCobrancaAtivoAssociativo() {
+    // NOVO       
+    public List listAllByCliente(int idCliente) {
         try {
-            //Query qry = getEntityManager().createQuery("SELECT CC FROM ContaCobranca AS CC WHERE CC.ativo = true AND CC.associativo = true AND CC.arrecadacao = false");
-            Query qry = getEntityManager().createQuery("SELECT CC FROM ContaCobranca AS CC WHERE CC.ativo = true");
-            return (qry.getResultList());
+            Query query = getEntityManager().createQuery("SELECT SCC FROM ServicoContaCobranca AS SCC WHERE SCC.contaCobranca.contaBanco.cliente.id = :cliente");
+            query.setParameter("cliente", idCliente);
+            return query.getResultList();
         } catch (Exception e) {
             return new ArrayList();
         }
     }
 
-    // DO SINDICAL
+//    // DO SINDICAL
     public List pesquisaTodosTipoUm() {
         try {
             Query qry = getEntityManager().createQuery("SELECT s FROM ServicoContaCobranca s WHERE s.tipoServico.id = 1");

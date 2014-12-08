@@ -23,16 +23,16 @@ public class BoletoDao extends DB {
         return null;
     }
 
-    public int saveBoletoNativeQuery(int idContaCobranca) {
+    public int saveBoletoNativeQuery(int idContaCobranca, int idCliente) {
         try {
-            String queryString = "INSERT INTO fin_boleto (id_conta_cobranca, is_ativo) VALUES (" + idContaCobranca + ", true)";
+            String queryString = "INSERT INTO fin_boleto (id_conta_cobranca, is_ativo, id_cliente) VALUES (" + idContaCobranca + ", true, " + idCliente + ")";
             Query query = getEntityManager().createNativeQuery(queryString);
 
             getEntityManager().getTransaction().begin();
             query.executeUpdate();
             getEntityManager().getTransaction().commit();
 
-            queryString = "SELECT MAX(id) FROM fin_boleto";
+            queryString = "SELECT MAX(id) FROM fin_boleto ";
             query = getEntityManager().createNativeQuery(queryString);
             List list = (List) query.getResultList();
             return (Integer) ((List) list.get(0)).get(0);

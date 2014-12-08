@@ -182,4 +182,28 @@ public class RotinaDao extends DB {
         }
         return false;
     }
+
+    public List findRotinasSemServicoRotina(int idServico, int idCliente) {
+        try {
+            Query qry = getEntityManager().createQuery(
+                    "     SELECT ROT                                            "
+                    + "     FROM Rotina AS ROT                                  "
+                    + "    WHERE ROT.id NOT IN(                                 "
+                    + "             SELECT SR.rotina.id                         "
+                    + "               FROM ServicoRotina AS SR                  "
+                    + "              WHERE SR.servicos.id = :servico            "
+                    + "                AND SR.cliente.id = :cliente             "
+                    + "          )                                              "
+                    + "      AND ROT.ativo = true                               "
+                    + " ORDER BY ROT.rotina");
+            qry.setParameter("servico", idServico);
+            qry.setParameter("cliente", idCliente);
+            List list = qry.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+        }
+        return new ArrayList();
+    }
 }

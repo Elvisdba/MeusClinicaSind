@@ -54,9 +54,9 @@ public class MovimentoDao extends DB {
     }
 
     /**
-     * 
+     *
      * @param idBaixa
-     * @return 
+     * @return
      */
     public List<Movimento> listMovimentosByBaixaOrderByBaixa(int idBaixa) {
         try {
@@ -74,9 +74,9 @@ public class MovimentoDao extends DB {
     }
 
     /**
-     * 
+     *
      * @param idMovimento
-     * @return 
+     * @return
      */
     public List<List> findAcrescimoByMovimento(int idMovimento) {
         try {
@@ -97,9 +97,9 @@ public class MovimentoDao extends DB {
     }
 
     /**
-     * 
+     *
      * @param idAcordo
-     * @return 
+     * @return
      */
     public List<Movimento> findMovimentoByAcordoAberto(int idAcordo) {
         try {
@@ -119,5 +119,24 @@ public class MovimentoDao extends DB {
             return new ArrayList();
         }
         return new ArrayList();
+    }
+
+    public List<Movimento> findAllAcordos(int idAcordo) {
+        try {
+            Query query = getEntityManager().createQuery(
+                    "    SELECT M                                               "
+                    + "    FROM Movimento AS M                                  "
+                    + "   WHERE m.acordo.id = :acordo                           "
+                    + "ORDER BY M.vencimento ASC                                "
+            );
+            query.setParameter("acordo", idAcordo);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>();
     }
 }
