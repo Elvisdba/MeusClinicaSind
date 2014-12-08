@@ -165,7 +165,7 @@
                             <f:facet name="header">
                                 <h:outputText value="Evento" />
                             </f:facet>                            
-                            <h:outputText value="#{log.evento.descricao}" />
+                            <h:outputText value="#{log.segEvento.descricao}" />
                         </p:column>
                         <p:column headerText="Usuário">
                             <f:facet name="header">
@@ -197,13 +197,13 @@
                     <h:panelGrid columns="1" id="i_log_details_2">
                         <p:outputLabel value="Usuário: #{pesquisaLogBean.log.usuario.login} - #{pesquisaLogBean.log.usuario.pessoa.nome}" />
                         <p:outputLabel value="Rotina: #{pesquisaLogBean.log.rotina.rotina}" />
-                        <p:outputLabel value="Evento: #{pesquisaLogBean.log.evento.descricao}" />
+                        <p:outputLabel value="Evento: #{pesquisaLogBean.log.segEvento.descricao}" />
                         <br />
                         <p:outputLabel value="Conteúdo Original" styleClass="bold"/>
                         <p:inputTextarea value="#{pesquisaLogBean.log.conteudoOriginal}" cols="185" readonly="true"/>
                         <br />
-                        <p:outputLabel value="Conteúdo Alterado" rendered="#{pesquisaLogBean.log.evento.id == 3}" styleClass="bold"/>
-                        <p:inputTextarea value="#{pesquisaLogBean.log.conteudoAlterado}" cols="185" readonly="true" rendered="#{pesquisaLogBean.log.evento.id == 3}"/>
+                        <p:outputLabel value="Conteúdo Alterado" rendered="#{pesquisaLogBean.log.segEvento.id == 3}" styleClass="bold"/>
+                        <p:inputTextarea value="#{pesquisaLogBean.log.conteudoAlterado}" cols="185" readonly="true" rendered="#{pesquisaLogBean.log.segEvento.id == 3}"/>
                     </h:panelGrid>
                     <f:facet name="footer">
                         <p:commandButton value="Salvar este log" type="button" icon="ui-icon-print" >
