@@ -54,9 +54,9 @@ public class PesquisaLogBean implements Serializable {
         filtro[1] = false;
         filtro[2] = false;
         filtro[3] = false;
-        listLogs = new ArrayList<Log>();
+        listLogs = new ArrayList<>();
         listSelectItem = new ArrayList[1];
-        listSelectItem[0] = new ArrayList<SelectItem>();
+        listSelectItem[0] = new ArrayList<>();
         data = new Date[2];
         data[0] = DataHoje.dataHoje();
         data[1] = DataHoje.dataHoje();
@@ -90,7 +90,7 @@ public class PesquisaLogBean implements Serializable {
                 listSelectItem[0].add(new SelectItem(i, list.get(i).getRotina(), "" + list.get(i).getId()));
             }
             if (listSelectItem[0].isEmpty()) {
-                listSelectItem[0] = new ArrayList<SelectItem>();
+                listSelectItem[0] = new ArrayList<>();
             }
         }
         return listSelectItem[0];
@@ -114,7 +114,7 @@ public class PesquisaLogBean implements Serializable {
     public void clear() {
         if (!filtro[0]) {
             listSelectItem = new ArrayList[1];
-            listSelectItem[0] = new ArrayList<SelectItem>();
+            listSelectItem[0] = new ArrayList<>();
         }
         if (!filtro[1]) {
             data[0] = DataHoje.dataHoje();
@@ -138,29 +138,35 @@ public class PesquisaLogBean implements Serializable {
     }
 
     public void close(String close) {
-        if (close.equals("periodo")) {
-            filtro[0] = false;
-            data[0] = DataHoje.dataHoje();
-            data[1] = DataHoje.dataHoje();
-            hora[0] = "";
-            hora[1] = "";
-        } else if (close.equals("usuario")) {
-            filtro[1] = false;
-            usuario = new Usuario();
-        } else if (close.equals("rotina")) {
-            filtro[2] = false;
-            listSelectItem = new ArrayList[1];
-            listSelectItem[0] = new ArrayList<SelectItem>();
-        } else if (close.equals("evento")) {
-            filtro[3] = false;
-            filtroEvento[0] = false;
-            filtroEvento[1] = false;
-            filtroEvento[2] = false;
-            filtroEvento[3] = false;
-        } else if (close.equals("descricao")) {
-            filtro[4] = false;
-            descPesquisa = "";
-            porPesquisa = "";
+        switch (close) {
+            case "periodo":
+                filtro[0] = false;
+                data[0] = DataHoje.dataHoje();
+                data[1] = DataHoje.dataHoje();
+                hora[0] = "";
+                hora[1] = "";
+                break;
+            case "usuario":
+                filtro[1] = false;
+                usuario = new Usuario();
+                break;
+            case "rotina":
+                filtro[2] = false;
+                listSelectItem = new ArrayList[1];
+                listSelectItem[0] = new ArrayList<>();
+                break;
+            case "evento":
+                filtro[3] = false;
+                filtroEvento[0] = false;
+                filtroEvento[1] = false;
+                filtroEvento[2] = false;
+                filtroEvento[3] = false;
+                break;
+            case "descricao":
+                filtro[4] = false;
+                descPesquisa = "";
+                porPesquisa = "";
+                break;
         }
         PF.update("form_logs:id_panel");
     }
