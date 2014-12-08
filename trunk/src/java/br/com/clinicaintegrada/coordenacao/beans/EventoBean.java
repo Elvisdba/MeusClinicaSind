@@ -1,11 +1,9 @@
 package br.com.clinicaintegrada.coordenacao.beans;
 
-
 import br.com.clinicaintegrada.coordenacao.Evento;
 import br.com.clinicaintegrada.coordenacao.GrupoEvento;
 import br.com.clinicaintegrada.coordenacao.dao.EventoDao;
 import br.com.clinicaintegrada.logSistema.Logger;
-import br.com.clinicaintegrada.pessoa.Profissao;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.Messages;
@@ -82,7 +80,7 @@ public class EventoBean implements Serializable {
                     + " - Descrição: " + e.getDescricao()
                     + " - Sigla: " + e.getSigla()
                     + " - Web: " + e.isWeb();
-            if (dao.update(evento, true)) {;
+            if (dao.update(evento, true)) {
                 Messages.info("Sucesso", "Registro atualizado");
                 logger.update(beforeUpdate,
                         " ID: " + evento.getId()
@@ -140,7 +138,7 @@ public class EventoBean implements Serializable {
     }
 
     public List<Evento> getListEvento() {
-        if(listEvento.isEmpty()) {
+        if (listEvento.isEmpty()) {
             EventoDao eventoDao = new EventoDao();
             listEvento = eventoDao.pesquisaTodosPorCliente(SessaoCliente.get().getId());
         }
