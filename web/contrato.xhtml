@@ -281,6 +281,7 @@
                                         <h:commandLink action="#{contratoBean.printBoletos}" disabled="#{contratoBean.contrato.id == -1}" rendered="#{contratoBean.contrato.id != -1}">
                                             <p:button value="Imprimir Boletos" icon="ui-icon-print" />
                                         </h:commandLink>
+                                        <p:commandButton value="Pertences" action="#{chamadaPaginaBean.pagina('pertence')}" actionListener="#{pertenceBean.listenerLock('contrato', contratoBean.contrato.id)}" rendered="#{contratoBean.contrato.id != -1}"/>
                                     </h:panelGrid>
                                 </f:facet>                                
                             </p:panel>                           

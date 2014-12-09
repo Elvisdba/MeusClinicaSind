@@ -1,0 +1,216 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Pertences</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/Imagens/favicon.ico"/>  
+        <style type="text/css">            
+            .ui-selectonemenu {padding-right: 25px!important;}
+        </style>
+
+        <script type="text/javascript">
+
+        </script>
+    </h:head>
+    <h:body>
+        <!-- INICIA DIV wrap e main -->
+        <div id="wrapx">
+            <div id="mainx">
+                <!-- INICIA DIV wrap e main -->  
+                <f:subview id="header">
+                    <ui:include src="templates/templatePrime.xhtml"/>
+                </f:subview>
+                <f:view>
+                    <ui:include src="templates/templateAcessoFilial.xhtml"/>
+                    <p:panel styleClass="wrapper" style="border: 0px;">
+                        <h:outputText value="Pertences" styleClass="fonteHeader" />
+                        <div class="clear"></div>
+                        <h:form id="form_p">
+                            <c:set scope="request" var="object" value="${pertenceBean.pertenceEntrada}"/>
+                            <p:panel>
+                                <h:panelGrid columns="3" cellspacing="5">
+                                    <p:outputLabel value="Entrada: "/>
+                                    <h:column>
+                                        <p:inputText value="#{pertenceBean.pertenceEntrada.entradaString}" readonly="true" size="8"/>
+                                    </h:column>
+                                    <h:column />
+                                    <p:commandButton icon="ui-icon-search" value="Pesquisar contrato: " action="#{chamadaPaginaBean.pesquisa('pesquisaContrato')}" disabled="#{pertenceBean.lock}" />
+                                    <h:column>
+                                        <p:outputLabel value="Contrato nº#{pertenceBean.contrato.id}" rendered="#{pertenceBean.contrato.id != -1}" />
+                                    </h:column>
+                                    <h:column>
+                                        <p:commandButton icon="ui-icon-close" action="#{pertenceBean.clear(3)}" update=":form_p:" disabled="#{pertenceBean.lock}" rendered="#{pertenceBean.contrato.id != -1}" />
+                                    </h:column>
+                                    <p:commandButton icon="ui-icon-search" value="Pesquisar responsável: " action="#{chamadaPaginaBean.pesquisa('pesquisaEquipe')}" actionListener="#{pertenceBean.listernetResponsavel('entrada')}"/>
+                                    <p:outputLabel value="#{pertenceBean.responsavelEntrada.pessoa.nome}" />
+                                    <h:column>
+                                        <p:commandButton icon="ui-icon-close" action="#{pertenceBean.clear(2)}" update=":form_p:" rendered="#{pertenceBean.responsavelEntrada.id != -1}" />
+                                    </h:column>
+                                    <p:selectBooleanCheckbox value="#{pertenceBean.habilitaPertenceGrupo}" itemLabel="Habilitar grupos">
+                                        <p:ajax event="change" update="i_p_1" />
+                                    </p:selectBooleanCheckbox>
+                                    <h:column />
+                                    <h:column />
+                                </h:panelGrid>
+                                <h:panelGrid columns="6" cellspacing="5" styleClass="margin-top-max" id="i_p_1">
+                                    <p:commandLink value="Grupo:" action="#{chamadaPaginaBean.paginaSimples('PertenceGrupo', 'Pertence Grupo')}" rendered="#{pertenceBean.habilitaPertenceGrupo}"/>
+                                    <p:selectOneMenu value="#{pertenceBean.index[0]}" rendered="#{pertenceBean.habilitaPertenceGrupo}">
+                                        <p:ajax event="change" update="@this" />
+                                        <f:selectItem itemValue="" itemLabel="Selecionar" />
+                                        <f:selectItems value="#{pertenceBean.listSelectItem}" />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Descrição:" />
+                                    <p:inputText value="#{pertenceBean.pertenceEntrada.descricao}" size="70" maxlength="100" converter="#{toUpperCase}">
+                                        <p:ajax event="change" update="@this" />
+                                    </p:inputText>
+                                    <p:outputLabel value="Quantidade:" />
+                                    <p:spinner value="#{pertenceBean.pertenceEntrada.quantidade}" size="2" styleClass="text-center" min="0" max="100" stepFactor="1"/>
+                                </h:panelGrid>
+                                <h:panelGrid columns="1" cellspacing="5" styleClass="margin-top-max">
+                                    <p:outputLabel value="Observações" />
+                                    <p:inputTextarea value="#{pertenceBean.pertenceEntrada.observacao}" maxlength="255" placeholder="Observações" cols="85" rows="3" converter="#{toUpperCase}">
+                                        <p:ajax event="change" update="@this" />
+                                    </p:inputTextarea>
+                                </h:panelGrid>
+                            </p:panel>
+                            <h:panelGrid columns="4" styleClass="margin-top-max">
+                                <p:commandButton value="Adicionar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.save}"/>
+                                <p:commandButton value="Novo" action="#{pertenceBean.clear(5)}" update=":form_p:"/>
+                                <p:commandButton value="Voltar" action="#{chamadaPaginaBean.pesquisa('contrato')}" rendered="#{pertenceBean.lock}"/>
+                            </h:panelGrid>
+                            <p:panel header="Lista" styleClass="margin-top-max">
+                                <h:panelGrid columns="3">
+                                    <p:commandLink value="Grupo:" />
+                                    <p:selectOneMenu value="#{pertenceBean.index[1]}">
+                                        <p:ajax event="change" update="@this :form_p:i_datatable_fe" listener="#{pertenceBean.listPertences.clear()}"/>
+                                        <f:selectItem itemValue="" itemLabel="Todos" />
+                                        <f:selectItems value="#{pertenceBean.listSelectItem}" />
+                                    </p:selectOneMenu>
+                                    <p:selectBooleanCheckbox value="#{pertenceBean.comSaldo}" itemLabel="Somente com saldo">
+                                        <p:ajax event="change" update="@this :form_p:i_datatable_fe" listener="#{pertenceBean.listPertences.clear()}"/>
+                                    </p:selectBooleanCheckbox>                                    
+                                </h:panelGrid>
+                                <h:panelGrid id="i_datatable_fe">
+                                    <p:dataTable value="#{pertenceBean.listPertences}" var="list" scrollable="true" scrollHeight="300" emptyMessage="Nenhum registro encontrado!" styleClass="margin-top-max">
+                                        <p:column width="30">  
+                                            <p:rowToggler />  
+                                        </p:column>                                     
+                                        <p:column width="30" styleClass="text-center">
+                                            <p:commandButton icon="ui-icon-trash" action="#{pertenceBean.delete(list.pertenceEntrada)}" update=":form_p:" title="Remover registro nº #{list.pertenceEntrada.id}" oncomplete="PF('dlg_message').show()"/>
+                                        </p:column>
+                                        <p:column width="30" styleClass="text-center">
+                                            <p:commandButton icon="ui-icon-link" action="#{pertenceBean.edit(list)}" update=":form_p:" title="Editar registro nº #{list.pertenceEntrada.id}"/>
+                                        </p:column>
+                                        <p:column headerText="Data Entrada" width="100" styleClass="text-center">
+                                            #{list.pertenceEntrada.entradaString}
+                                        </p:column>
+                                        <p:column headerText="Grupo">
+                                            #{list.pertenceEntrada.pertenceGrupo.descricao}
+                                        </p:column>
+                                        <p:column headerText="Descrição">
+                                            #{list.pertenceEntrada.descricao}
+                                        </p:column>
+                                        <p:column headerText="E" width="30" styleClass="text-center">
+                                            #{list.pertenceEntrada.quantidade}
+                                        </p:column>
+                                        <p:column headerText="S"  width="50" styleClass="text-center">
+                                            <p:commandButton icon="ui-icon-circle-minus" value="#{list.saida}" title="Nova saída" oncomplete="PF('dlg_saida').show()" actionListener="#{pertenceBean.showPertenceSaida(list.pertenceEntrada)}" update=":form_p:i_pertence_saida" style="width: 50px; color: red;"/>
+                                        </p:column>
+                                        <p:column headerText="Saldo" styleClass="text-center" width="30">
+                                            #{list.saldo}
+                                        </p:column>
+                                        <p:rowExpansion>
+                                            Responsável: #{list.pertenceEntrada.responsavel.pessoa.nome}                                        
+                                        </p:rowExpansion>
+                                        <f:facet name="footer">
+                                            E - Entrada | S - Saída
+                                        </f:facet>
+                                    </p:dataTable>
+                                </h:panelGrid>
+                            </p:panel>
+                            <p:dialog widgetVar="dlg_saida" modal="true" header="Pertence Saída" width="1024" resizable="false" height="600" closeOnEscape="true" visible="#{pertenceBean.modal}">
+                                <p:ajax event="close" listener="#{pertenceBean.clear(4)}" update="i_pertence_saida"/>  
+                                <h:panelGrid id="i_pertence_saida">
+                                    <h:panelGrid>
+                                        <h:outputLabel value="#{pertenceBean.pertenceEntradaEdit.descricao}" styleClass="font-size-12 bold" style="text-decoration: underline;"/>
+                                        <h:outputLabel value="Grupo: #{pertenceBean.pertenceEntradaEdit.pertenceGrupo.descricao}" rendered="#{pertenceBean.pertenceEntradaEdit.pertenceGrupo != null}"/>
+                                        <br />
+                                        <h:outputLabel value="Quantidade: #{pertenceBean.pertenceEntradaEdit.quantidade}" />
+                                    </h:panelGrid>
+                                    <p:messages autoUpdate="true" showDetail="true" showSummary="true" closable="false" />
+                                    <h:panelGrid columns="2" cellspacing="5">
+                                        <p:commandButton icon="ui-icon-search" value="Pesquisar responsável: " action="#{chamadaPaginaBean.pesquisa('pesquisaEquipe')}" actionListener="#{pertenceBean.listernetResponsavel('saida')}"/>
+                                        <p:outputLabel value="#{pertenceBean.responsavelSaida.pessoa.nome}" />
+                                        <p:outputLabel value="Saída: "/>
+                                        <h:column>
+                                            <p:outputLabel value="#{pertenceBean.pertenceSaida.saidaString}" />
+                                        </h:column>
+                                        <p:outputLabel value="Quantidade:" />
+                                        <p:spinner value="#{pertenceBean.pertenceSaida.quantidade}" size="2" styleClass="text-center" min="0" stepFactor="1"/>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="1" cellspacing="5" styleClass="margin-top-max">
+                                        <p:outputLabel value="Observações" />
+                                        <p:inputTextarea value="#{pertenceBean.pertenceSaida.observacao}" maxlength="255" placeholder="Observações" cols="85" rows="3"/>
+                                        <p:commandButton value="Adicionar Saída" title="Adicionar saída" action="#{pertenceBean.add}" update=":form_p:i_pertence_saida :form_p:i_datatable_fe"  />
+                                    </h:panelGrid>
+                                    <p:dataTable value="#{pertenceBean.listPertenceSaida}" var="pertenceSaida" scrollable="true" scrollHeight="300" emptyMessage="Nenhum registro encontrado!" styleClass="margin-top-max">
+                                        <p:column width="30">  
+                                            <p:rowToggler />  
+                                        </p:column>                                        
+                                        <p:column width="30" styleClass="text-center">
+                                            <p:commandButton icon="ui-icon-trash" action="#{pertenceBean.delete(pertenceSaida)}" update=":form_p:i_pertence_saida :form_p:i_datatable_fe" title="Remover registro nº #{pertenceSaida.id}"/>
+                                        </p:column>
+                                        <p:column headerText="Data Saída" width="80" styleClass="text-center">
+                                            #{pertenceSaida.saidaString}
+                                        </p:column>
+                                        <p:column headerText="Responsável">
+                                            #{pertenceSaida.responsavel.pessoa.nome}
+                                        </p:column>
+                                        <p:column headerText="Quantidade" width="80" styleClass="text-center">
+                                            #{pertenceSaida.quantidade}
+                                        </p:column>
+                                        <p:rowExpansion>                                            
+                                            Responsável: #{pertenceSaida.observacao}
+                                        </p:rowExpansion>    
+
+                                    </p:dataTable>
+                                </h:panelGrid>
+                            </p:dialog>
+                            <p:dialog id="i_dlg_save" widgetVar="dlg_save" modal="true" header="Deseja salvar/atualizar este registro?" width="400" resizable="false">
+                                <h:panelGrid columns="2">
+                                    <p:commandButton value="Sim" title="Salvar" action="#{pertenceBean.save}" update=":form_p:"  oncomplete="PF('dlg_save').hide(); PF('dlg_message').show();" />
+                                    <p:commandButton value="Não" title="Cancelar" oncomplete="PF('dlg_save').hide();"/>
+                                </h:panelGrid>
+                            </p:dialog>
+                            <p:dialog id="i_dlg_delete" widgetVar="dlg_delete" modal="true" header="Deseja excluir este registro?" width="400" resizable="false">
+                                <h:panelGrid columns="2">
+                                    <p:commandButton value="Sim" title="Excluir" action="#{pertenceBean.delete}" update=":form_p:" oncomplete="PF('dlg_delete').hide(); PF('dlg_message').show();" />
+                                    <p:commandButton value="Não" title="Cancelar" oncomplete="PF('dlg_delete').hide();"/>
+                                </h:panelGrid>
+                            </p:dialog>
+                            <p:dialog widgetVar="dlg_message" modal="true" header="Mensagem"  width="400" resizable="false">
+                                <p:messages autoUpdate="true" showDetail="true" showSummary="true" id="i_message"/>
+                                <f:facet name="footer">
+                                    <p:commandButton value="Ok" title="Ok" onclick="PF('dlg_message).hide();" />
+                                </f:facet>
+                            </p:dialog>                            
+                        </h:form>
+                    </p:panel>
+                </f:view>
+                <!-- FINALIZA div wrap main -->
+            </div>
+        </div>
+        <!-- FINALIZA div wrap main -->
+
+        <div id="footerx">
+            <f:subview id="footer">
+                <ui:include src="templates/templateFooter.xhtml"/>
+            </f:subview>
+        </div>                
+    </h:body>
+</ui:composition>
