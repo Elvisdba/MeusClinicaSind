@@ -11,6 +11,7 @@ import br.com.clinicaintegrada.administrativo.TipoInternacao;
 import br.com.clinicaintegrada.agenda.GrupoAgenda;
 import br.com.clinicaintegrada.coordenacao.FuncaoEscala;
 import br.com.clinicaintegrada.coordenacao.GrupoEvento;
+import br.com.clinicaintegrada.coordenacao.PertenceGrupo;
 import br.com.clinicaintegrada.endereco.Bairro;
 import br.com.clinicaintegrada.endereco.DescricaoEndereco;
 import br.com.clinicaintegrada.endereco.Logradouro;
@@ -354,6 +355,9 @@ public class SimplesBean implements Serializable {
             case "GrupoAgenda":
                 o = (GrupoAgenda) new GrupoAgenda(id, cliente, descricao);
                 break;
+            case "PertenceGrupo":
+                o = (PertenceGrupo) new PertenceGrupo(id, cliente, descricao);
+                break;
         }
         return o;
     }
@@ -416,6 +420,9 @@ public class SimplesBean implements Serializable {
                 break;
             case "TipoAtendimento":
                 ((TipoAtendimento) objeto).setDescricao(descricao);
+                break;
+            case "PertenceGrupo":
+                ((PertenceGrupo) objeto).setDescricao(descricao);
                 break;
         }
     }
@@ -504,6 +511,11 @@ public class SimplesBean implements Serializable {
                 descricao = ((GrupoAgenda) obj).getDescricao();
                 id = ((GrupoAgenda) objeto).getId();
                 cliente = ((GrupoAgenda) objeto).getCliente();
+                break;
+            case "PertenceGrupo":
+                descricao = ((PertenceGrupo) obj).getDescricao();
+                id = ((PertenceGrupo) objeto).getId();
+                cliente = ((PertenceGrupo) objeto).getCliente();
                 break;
         }
         Dao dao = new Dao();
@@ -612,6 +624,11 @@ public class SimplesBean implements Serializable {
                     return true;
                 }
                 break;
+            case "PertenceGrupo":
+                if (((PertenceGrupo) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
         }
         return false;
     }
@@ -667,24 +684,18 @@ public class SimplesBean implements Serializable {
 
     public String pacoteDaClasse(String classe) {
         List<String> list_class = new ArrayList();
-
-        list_class.add("br.com.clinicaintegrada.academia");
+        list_class.add("br.com.clinicaintegrada.coordenacao");
         list_class.add("br.com.clinicaintegrada.agenda");
-        list_class.add("br.com.clinicaintegrada.arrecadacao");
-        list_class.add("br.com.clinicaintegrada.associativo");
-        list_class.add("br.com.clinicaintegrada.atendimento");
         list_class.add("br.com.clinicaintegrada.endereco");
-        list_class.add("br.com.clinicaintegrada.escola");
-        list_class.add("br.com.clinicaintegrada.estoque");
         list_class.add("br.com.clinicaintegrada.financeiro");
-        list_class.add("br.com.clinicaintegrada.homologacao");
-        list_class.add("br.com.clinicaintegrada.locadoraFilme");
         list_class.add("br.com.clinicaintegrada.pessoa");
         list_class.add("br.com.clinicaintegrada.relatorios");
         list_class.add("br.com.clinicaintegrada.seguranca");
         list_class.add("br.com.clinicaintegrada.sistema");
         list_class.add("br.com.clinicaintegrada.suporte");
-
+        list_class.add("br.com.clinicaintegrada.administrativo");
+        list_class.add("br.com.clinicaintegrada.movimento");
+        list_class.add("br.com.clinicaintegrada.movimento");
         for (String list_clas : list_class) {
             try {
                 Class.forName(list_clas + "." + classe);
