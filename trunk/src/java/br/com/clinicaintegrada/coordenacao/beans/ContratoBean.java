@@ -320,10 +320,12 @@ public class ContratoBean implements Serializable {
                 break;
             }
         }
-        for (int i = 0; i < listTipoDesligamento.size(); i++) {
-            if (contrato.getTipoDesligamento().getId() == Integer.parseInt(listTipoDesligamento.get(i).getDescription())) {
-                idTipoDesligamento = i;
-                break;
+        if(contrato.getTipoDesligamento() != null) {
+            for (int i = 0; i < listTipoDesligamento.size(); i++) {
+                if (contrato.getTipoDesligamento().getId() == Integer.parseInt(listTipoDesligamento.get(i).getDescription())) {
+                    idTipoDesligamento = i;
+                    break;
+                }
             }
         }
         listTaxas.clear();
@@ -336,6 +338,14 @@ public class ContratoBean implements Serializable {
         valorTotalTaxa = Moeda.converteR$Float(vt);
         calculaSaldoDevedor();
         Sessions.put("linkClicado", true);
+        if (Sessions.exists("urlRetorno")) {
+            if (!Sessions.getString("urlRetorno").equals("menuPrincipal")) {
+                Sessions.put("contratoPesquisa", contrato);
+                return (String) Sessions.getString("urlRetorno");
+            }
+        } else {
+            return "contrato";
+        }
         return "contrato";
     }
 

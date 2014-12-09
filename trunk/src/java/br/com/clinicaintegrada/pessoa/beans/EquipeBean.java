@@ -153,6 +153,14 @@ public class EquipeBean implements Serializable {
             }
         }
         Sessions.put("linkClicado", true);
+        if (Sessions.exists("urlRetorno")) {
+            if (!Sessions.getString("urlRetorno").equals("menuPrincipal")) {
+                Sessions.put("equipePesquisa", equipe);
+                return (String) Sessions.getString("urlRetorno");
+            }
+        } else {
+            return "equipe";
+        }
         return "equipe";
     }
 
@@ -205,7 +213,11 @@ public class EquipeBean implements Serializable {
     public String getMask() {
         if (!listFuncaoEquipe.isEmpty()) {
             Dao dao = new Dao();
-            return ((FuncaoEquipe) dao.find(new FuncaoEquipe(), Integer.parseInt(listFuncaoEquipe.get(idFuncaoEquipe).getDescription()))).getTipoDocumentoProfissao().getMascara();
+            try {
+                return ((FuncaoEquipe) dao.find(new FuncaoEquipe(), Integer.parseInt(listFuncaoEquipe.get(idFuncaoEquipe).getDescription()))).getTipoDocumentoProfissao().getMascara();
+            } catch (Exception e) {
+                return "";
+            }
         }
         return "";
     }
@@ -337,7 +349,10 @@ public class EquipeBean implements Serializable {
                     TipoDocumentoProfissaoDao tipoDocumentoProfissaoDao = new TipoDocumentoProfissaoDao();
                     TipoDocumentoProfissao tdp1 = tipoDocumentoProfissaoDao.pesquisaTipoDocumentoProfissaoPorDescricao(porPesquisa);
                     if (tipoDocumentoProfissao != null) {
-                        maskTipoAtendimento = tdp1.getMascara();
+                        if(tdp1 != null) {
+                            maskTipoAtendimento = tdp1.getMascara();                            
+                        }
+                            maskTipoAtendimento = "";
                     } else {
                         maskTipoAtendimento = "";
                     }

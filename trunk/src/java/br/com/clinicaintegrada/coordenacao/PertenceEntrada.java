@@ -1,7 +1,9 @@
 package br.com.clinicaintegrada.coordenacao;
 
 import br.com.clinicaintegrada.pessoa.Equipe;
+import br.com.clinicaintegrada.utils.DataHoje;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Date;
 import javax.persistence.*;
 
@@ -21,6 +23,9 @@ public class PertenceEntrada implements Serializable {
     @JoinColumn(name = "id_responsavel", referencedColumnName = "id", nullable = false)
     @OneToOne
     private Equipe responsavel;
+    @JoinColumn(name = "id_pertence_grupo", referencedColumnName = "id", nullable = true)
+    @OneToOne
+    private PertenceGrupo pertenceGrupo;
     @Column(name = "ds_descricao", length = 255, nullable = false)
     private String descricao;
     @Temporal(TemporalType.DATE)
@@ -35,16 +40,18 @@ public class PertenceEntrada implements Serializable {
         this.id = -1;
         this.contrato = null;
         this.responsavel = null;
+        this.pertenceGrupo = null;
         this.descricao = "";
         this.entrada = new Date();
         this.quantidade = 0;
         this.observacao = "";
     }
 
-    public PertenceEntrada(int id, Contrato contrato, Equipe responsavel, String descricao, Date entrada, int quantidade, String observacao) {
+    public PertenceEntrada(int id, Contrato contrato, Equipe responsavel, PertenceGrupo pertenceGrupo, String descricao, Date entrada, int quantidade, String observacao) {
         this.id = id;
         this.contrato = contrato;
         this.responsavel = responsavel;
+        this.pertenceGrupo = pertenceGrupo;
         this.descricao = descricao;
         this.entrada = entrada;
         this.quantidade = quantidade;
@@ -91,12 +98,28 @@ public class PertenceEntrada implements Serializable {
         this.entrada = entrada;
     }
 
+    public String getEntradaString() {
+        return DataHoje.converteData(entrada);
+    }
+
+    public void setEntradaString(String entradaString) {
+        this.entrada = DataHoje.converte(entradaString);
+    }
+
     public int getQuantidade() {
         return quantidade;
     }
 
     public void setQuantidade(int quantidade) {
         this.quantidade = quantidade;
+    }
+
+    public String getQuantidadeString() {
+        return "" + quantidade;
+    }
+
+    public void setQuantidadeString(String quantidadeString) {
+        this.quantidade = Integer.parseInt(quantidadeString);
     }
 
     public String getObservacao() {
@@ -128,6 +151,14 @@ public class PertenceEntrada implements Serializable {
     @Override
     public String toString() {
         return "PertenceEntrada{" + "id=" + id + ", contrato=" + contrato + ", responsavel=" + responsavel + ", descricao=" + descricao + ", entrada=" + entrada + ", quantidade=" + quantidade + ", observacao=" + observacao + '}';
+    }
+
+    public PertenceGrupo getPertenceGrupo() {
+        return pertenceGrupo;
+    }
+
+    public void setPertenceGrupo(PertenceGrupo pertenceGrupo) {
+        this.pertenceGrupo = pertenceGrupo;
     }
 
 }
