@@ -1,6 +1,7 @@
 package br.com.clinicaintegrada.coordenacao;
 
 import br.com.clinicaintegrada.pessoa.Equipe;
+import br.com.clinicaintegrada.utils.DataHoje;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
@@ -77,12 +78,28 @@ public class PertenceSaida implements Serializable {
         this.saida = saida;
     }
 
+    public String getSaidaString() {
+        return DataHoje.converteData(saida);
+    }
+
+    public void setSaida(String saidaString) {
+        this.saida = DataHoje.converte(saidaString);
+    }
+
     public int getQuantidade() {
         return quantidade;
     }
 
     public void setQuantidade(int quantidade) {
         this.quantidade = quantidade;
+    }
+
+    public String getQuantidadeString() {
+        return "" + quantidade;
+    }
+
+    public void setQuantidadeString(String quantidadeString) {
+        this.quantidade = Integer.parseInt(quantidadeString);
     }
 
     public String getObservacao() {
