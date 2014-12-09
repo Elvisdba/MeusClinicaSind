@@ -79,6 +79,11 @@ public class PertenceBean implements Serializable {
             responsavelEntrada = new Equipe();
         } else if (tCase == 3) {
             contrato = new Contrato();
+            listPertences.clear();
+            pertenceEntrada = new PertenceEntrada();
+            index[0] = null;
+            listSelectItem.clear();
+            modal = false;            
         } else if (tCase == 4) {
             modal = false;
             pertenceSaida = new PertenceSaida();
