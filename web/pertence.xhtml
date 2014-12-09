@@ -41,7 +41,7 @@
                                     <h:column />
                                     <p:commandButton icon="ui-icon-search" value="Pesquisar contrato: " action="#{chamadaPaginaBean.pesquisa('pesquisaContrato')}" disabled="#{pertenceBean.lock}" />
                                     <h:column>
-                                        <p:outputLabel value="Contrato nº#{pertenceBean.contrato.id}" rendered="#{pertenceBean.contrato.id != -1}" />
+                                        <p:outputLabel value="Contrato nº#{pertenceBean.contrato.id} - Responsável: #{pertenceBean.contrato.responsavel.nome} - Paciente: #{pertenceBean.contrato.paciente.nome}" rendered="#{pertenceBean.contrato.id != -1}" />
                                     </h:column>
                                     <h:column>
                                         <p:commandButton icon="ui-icon-close" action="#{pertenceBean.clear(3)}" update=":form_p:" disabled="#{pertenceBean.lock}" rendered="#{pertenceBean.contrato.id != -1}" />
