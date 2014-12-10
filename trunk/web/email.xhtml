@@ -64,7 +64,7 @@
                                                                 <f:selectItem itemValue="email" itemLabel="Email" />
                                                                 <f:selectItem itemValue="assunto" itemLabel="Assunto" />
                                                             </p:selectOneMenu>                                      
-                                                            <p:inputText size="40" placeholder="Digite aqui o termo a ser pesquisado" disabled="#{emailBean.filterBy.equals('')}">
+                                                            <p:inputText size="40" placeholder="Digite aqui o termo a ser pesquisado" disabled="#{empty emailBean.filterBy}">
                                                                 <p:ajax event="blur" update="@this, :form_email:i_tbl" listener="#{emailBean.listEmailPessoas.clear()}"/>
                                                             </p:inputText>
                                                         </h:panelGrid>
@@ -132,8 +132,8 @@
                                                             <p:rowExpansion styleClass="bg-yellow-ligth">
                                                                 <span class="ui-icon ui-icon-arrowreturnthick-1-e float-left"></span>
                                                                 <p:outputLabel value="Nome: #{emailPessoa.pessoa.nome}" />
-                                                                <p:outputLabel value="CC: #{emailPessoa.cc}" rendered="#{emailPessoa.cc.equals('')}" />
-                                                                <p:outputLabel value="BCC: #{emailPessoa.bcc}" rendered="#{emailPessoa.bcc.equals('')}" />
+                                                                <p:outputLabel value="CC: #{emailPessoa.cc}" rendered="#{empty emailPessoa.cc}" />
+                                                                <p:outputLabel value="BCC: #{emailPessoa.bcc}" rendered="#{empty emailPessoa.bcc}" />
                                                             </p:rowExpansion>
                                                         </p:dataTable>                                            
                                                     </h:panelGrid>
@@ -184,9 +184,9 @@
                                         <span class="ui-icon ui-icon-arrowreturnthick-1-e float-left"></span>
                                         <p:outputLabel value="Nome: #{emailPessoa.pessoa.nome}" /><br />
                                         <span class="ui-icon ui-icon-arrowreturnthick-1-e float-left"></span>
-                                        <p:outputLabel value="CC: #{emailPessoa.cc}" rendered="#{emailPessoa.cc.equals('')}" /><br />
+                                        <p:outputLabel value="CC: #{emailPessoa.cc}" rendered="#{empty emailPessoa.cc}" /><br />
                                         <span class="ui-icon ui-icon-arrowreturnthick-1-e float-left"></span>
-                                        <p:outputLabel value="BCC: #{emailPessoa.bcc}" rendered="#{emailPessoa.bcc.equals('')}" /><br />
+                                        <p:outputLabel value="BCC: #{emailPessoa.bcc}" rendered="#{empty emailPessoa.bcc}" /><br />
                                     </p:rowExpansion>                                    
                                 </p:dataTable>
                             </h:panelGrid>
