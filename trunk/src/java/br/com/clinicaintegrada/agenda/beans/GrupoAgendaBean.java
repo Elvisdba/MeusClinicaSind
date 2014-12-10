@@ -3,102 +3,95 @@ package br.com.clinicaintegrada.agenda.beans;
 import br.com.clinicaintegrada.agenda.GrupoAgenda;
 import br.com.clinicaintegrada.agenda.dao.GrupoAgendaDao;
 import br.com.clinicaintegrada.utils.Dao;
+import br.com.clinicaintegrada.utils.Sessions;
 import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.context.FacesContext;
 
 @ManagedBean
 @SessionScoped
 public class GrupoAgendaBean {
 
-    private GrupoAgenda grupoAgenda = new GrupoAgenda();
-    private String comoPesquisa = "P";
-    private String descPesquisa = "";
+    private GrupoAgenda grupoAgenda;
+    private String comoPesquisa;
+    private String descPesquisa;
     private String msgConfirma;
     private String linkVoltar;
 
-    public GrupoAgendaBean() {
-//        htmlTable = new HtmlDataTable();
+    @PostConstruct
+    public void init() {
+        grupoAgenda = new GrupoAgenda();
+        comoPesquisa = "P";
+        descPesquisa = "";
+        msgConfirma = "";
+        linkVoltar = "";
     }
 
-    public GrupoAgenda getGrupoAgenda() {
-        return grupoAgenda;
+    @PreDestroy
+    public void destroy() {
+        Sessions.remove("grupoAgendaBean");
     }
 
-    public void setGrupoAgenda(GrupoAgenda grupoAgenda) {
-        this.grupoAgenda = grupoAgenda;
-    }
-
-    public String getMsgConfirma() {
-        return msgConfirma;
-    }
-
-    public void setMsgConfirma(String msgConfirma) {
-        this.msgConfirma = msgConfirma;
-    }
-
-    public String salvar() {
+    public void save() {
         GrupoAgendaDao grupoAgendaDB = new GrupoAgendaDao();
-        Dao acumuladoDB = new Dao();
+        Dao dao = new Dao();
         if (grupoAgenda.getId() == -1) {
             if (grupoAgenda.getDescricao().equals("")) {
                 msgConfirma = "Digite um grupo de Agenda!";
             } else {
                 if (grupoAgendaDB.idGrupoAgenda(grupoAgenda) == null) {
-                    acumuladoDB.openTransaction();
-                    if (acumuladoDB.save(grupoAgenda)) {
-                        acumuladoDB.commit();
+                    dao.openTransaction();
+                    if (dao.save(grupoAgenda)) {
+                        dao.commit();
                         msgConfirma = "Grupo de agenda salvo com Sucesso!";
                     } else {
-                        acumuladoDB.rollback();
+                        dao.rollback();
                     }
                 } else {
-                    acumuladoDB.rollback();
+                    dao.rollback();
                     msgConfirma = "Este grupo de agenda já existe no Sistema.";
                 }
             }
         } else {
-            acumuladoDB.openTransaction();
-            if (acumuladoDB.update(grupoAgenda)) {
-                acumuladoDB.commit();
+            dao.openTransaction();
+            if (dao.update(grupoAgenda)) {
+                dao.commit();
                 msgConfirma = "Grupo de agenda atualizado com Sucesso!";
             } else {
-                acumuladoDB.rollback();
+                dao.rollback();
             }
         }
-        return null;
     }
 
-    public String novo() {
+    public String clear() {
         grupoAgenda = new GrupoAgenda();
         msgConfirma = "";
         return "cadGrupoAgenda";
     }
 
-    public String excluir() {
+    public void delete() {
         GrupoAgendaDao db = new GrupoAgendaDao();
         if (grupoAgenda.getId() != -1) {
-            Dao acumuladoDB = new Dao();
+            Dao dao = new Dao();
             grupoAgenda = db.pesquisaCodigo(grupoAgenda.getId());
-            acumuladoDB.openTransaction();
-            if (acumuladoDB.delete(grupoAgenda)) {
-                acumuladoDB.commit();
+            dao.openTransaction();
+            if (dao.delete(grupoAgenda)) {
+                dao.commit();
                 msgConfirma = "Grupo de agenda Excluido com Sucesso!";
             } else {
-                acumuladoDB.rollback();
+                dao.rollback();
                 msgConfirma = "Grupo de agenda não pode ser Excluido!";
             }
         }
         grupoAgenda = new GrupoAgenda();
-        return null;
     }
 
     public List getListaGrupoAgenda() {
         GrupoAgendaDao db = new GrupoAgendaDao();
-        List result = null;
-        result = db.pesquisaGrupoAgenda(descPesquisa, comoPesquisa);
-        return result;
+        List list = db.pesquisaGrupoAgenda(descPesquisa, comoPesquisa);
+        return list;
     }
 
     public String getDescPesquisa() {
@@ -117,50 +110,61 @@ public class GrupoAgendaBean {
         this.comoPesquisa = comoPesquisa;
     }
 
-    public void refreshForm() {
-    }
-
     public String pesquisarGrupoAgenda() {
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("urlRetorno", "cadGrupoAgenda");
+        Sessions.put("urlRetorno", "cadGrupoAgenda");
         descPesquisa = "";
         return "pesquisaGrupoAgenda";
     }
 
     public String pesquisarGrupoAgendaParaAgenda() {
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("urlRetorno", "cadAgenda");
+        Sessions.put("urlRetorno", "cadAgenda");
         return "pesquisaGrupoAgenda";
     }
 
-    public String editar() {
-        String result = "";
-//        grupoAgenda = (GrupoAgenda) getHtmlTable().getRowData();
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("linkClicado", true);
-        if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("urlRetorno").equals("cadGrupoAgenda")) {
+    public String edit() {
+        String result;
+        Sessions.put("linkClicado", true);
+        if (Sessions.getString("urlRetorno").equals("cadGrupoAgenda")) {
             result = "cadGrupoAgenda";
         } else {
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("grupoAgendaPesquisa", grupoAgenda);
+            Sessions.put("grupoAgendaPesquisa", grupoAgenda);
             grupoAgenda = new GrupoAgenda();
-            result = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("urlRetorno");
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("urlRetorno");
+            result = Sessions.getString("urlRetorno", true);
         }
         return result;
     }
 
     public String linkVoltar() {
-        if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("urlRetorno") == null) {
+        if (!Sessions.exists("urlRetorno")) {
             return "menuPrincipal";
         } else {
-            return (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("urlRetorno");
+            return (String) Sessions.getString("urlRetorno");
         }
     }
 
     public String linkVoltarPesquisaGrupoAgenda() {
-        linkVoltar = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("urlRetorno");
+        linkVoltar = (String) Sessions.getString("urlRetorno");
         if (linkVoltar == null) {
             return "cadGrupoAgenda";
         } else {
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("urlRetorno");
+            Sessions.remove("urlRetorno");
         }
         return linkVoltar;
+    }
+
+    public GrupoAgenda getGrupoAgenda() {
+        return grupoAgenda;
+    }
+
+    public void setGrupoAgenda(GrupoAgenda grupoAgenda) {
+        this.grupoAgenda = grupoAgenda;
+    }
+
+    public String getMsgConfirma() {
+        return msgConfirma;
+    }
+
+    public void setMsgConfirma(String msgConfirma) {
+        this.msgConfirma = msgConfirma;
     }
 }

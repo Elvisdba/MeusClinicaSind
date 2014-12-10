@@ -54,7 +54,7 @@ public class EventoBean implements Serializable {
         Logger logger = new Logger();
         if (evento.getId() == -1) {
             EventoDao eventoDao = new EventoDao();
-            if (eventoDao.existeEvento(evento.getGrupoEvento().getId(), evento.getDescricao(), SessaoCliente.get().getId())) {
+            if (eventoDao.exists(evento.getGrupoEvento().getId(), evento.getDescricao(), SessaoCliente.get().getId())) {
                 Messages.warn("Validação", "Evento já cadastrada para esta função!");
                 return;
             }
@@ -140,7 +140,7 @@ public class EventoBean implements Serializable {
     public List<Evento> getListEvento() {
         if (listEvento.isEmpty()) {
             EventoDao eventoDao = new EventoDao();
-            listEvento = eventoDao.pesquisaTodosPorCliente(SessaoCliente.get().getId());
+            listEvento = eventoDao.findAllByCliente(SessaoCliente.get().getId());
         }
         return listEvento;
     }
@@ -152,7 +152,7 @@ public class EventoBean implements Serializable {
     public List<SelectItem> getListGrupoEvento() {
         if (listGrupoEvento.isEmpty()) {
             Dao dao = new Dao();
-            List<GrupoEvento> list = (List<GrupoEvento>) dao.listByCliente(new GrupoEvento(), true);
+            List<GrupoEvento> list = (List<GrupoEvento>) dao.list(new GrupoEvento(), true);
             for (int i = 0; i < list.size(); i++) {
                 listGrupoEvento.add(new SelectItem(i, list.get(i).getDescricao(), "" + list.get(i).getId()));
             }

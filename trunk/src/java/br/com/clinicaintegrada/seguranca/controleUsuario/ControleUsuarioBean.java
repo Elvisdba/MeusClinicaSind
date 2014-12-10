@@ -93,18 +93,18 @@ public class ControleUsuarioBean implements Serializable {
             Sessions.remove("conexao");
         }
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-        String requestCliente = "";
-        Cliente cliente = new Cliente();
+        String requestCliente;
+        Cliente c = new Cliente();
         if (request.getParameter("cliente") != null && Sessions.exists("sessaoCliente") && !request.getParameter("cliente").equals(((Cliente) Sessions.getObject("sessaoCliente")).getIdentifica())) {
             requestCliente = request.getParameter("cliente");
-            cliente.setIdentifica(requestCliente);
+            c.setIdentifica(requestCliente);
         } else {
             if (request.getParameter("cliente") == null) {
-                cliente.setIdentifica("ClinicaIntegrada");
+                c.setIdentifica("ClinicaIntegrada");
                 requestCliente = "ClinicaIntegrada";
             } else {
                 requestCliente = request.getParameter("cliente");
-                cliente.setIdentifica(requestCliente);
+                c.setIdentifica(requestCliente);
             }
         }
         if (!requestCliente.equals("")) {
@@ -114,7 +114,7 @@ public class ControleUsuarioBean implements Serializable {
             if (Sessions.exists("acessoFilial")) {
                 Sessions.remove("acessoFilial");
             }
-            Sessions.put("sessaoCliente", cliente);
+            Sessions.put("sessaoCliente", c);
         } else {
             if (Sessions.exists("sessaoCliente")) {
                 Sessions.remove("sessaoCliente");
@@ -316,7 +316,7 @@ public class ControleUsuarioBean implements Serializable {
 
     public List<String> getImages() {
         if (images.isEmpty()) {
-            images = new ArrayList<String>();
+            images = new ArrayList<>();
             images.add("1.jpg");
         }
         return images;

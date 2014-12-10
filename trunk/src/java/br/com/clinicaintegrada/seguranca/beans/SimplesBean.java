@@ -338,6 +338,9 @@ public class SimplesBean implements Serializable {
             case "Logradouro":
                 o = (Logradouro) new Logradouro(id, descricao);
                 break;
+            case "GrupoEvento":
+                o = (GrupoEvento) new GrupoEvento(id, descricao);
+                break;
 
             // SIMPLES COM ID CLIENTE
             case "Bairro":
@@ -348,9 +351,6 @@ public class SimplesBean implements Serializable {
                 break;
             case "FuncaoEscala":
                 o = (FuncaoEscala) new FuncaoEscala(id, cliente, descricao);
-                break;
-            case "GrupoEvento":
-                o = (GrupoEvento) new GrupoEvento(id, cliente, descricao);
                 break;
             case "GrupoAgenda":
                 o = (GrupoAgenda) new GrupoAgenda(id, cliente, descricao);
@@ -495,17 +495,16 @@ public class SimplesBean implements Serializable {
                 descricao = ((TipoAtendimento) obj).getDescricao();
                 id = ((TipoAtendimento) objeto).getId();
                 break;
+            case "GrupoEvento":
+                descricao = ((GrupoEvento) obj).getDescricao();
+                id = ((GrupoEvento) objeto).getId();
+                break;
 
             // SIMPLES COM GRUPO EVENTO    
             case "FuncaoEscala":
                 descricao = ((FuncaoEscala) obj).getDescricao();
                 id = ((FuncaoEscala) objeto).getId();
                 cliente = ((FuncaoEscala) objeto).getCliente();
-                break;
-            case "GrupoEvento":
-                descricao = ((GrupoEvento) obj).getDescricao();
-                id = ((GrupoEvento) objeto).getId();
-                cliente = ((GrupoEvento) objeto).getCliente();
                 break;
             case "GrupoAgenda":
                 descricao = ((GrupoAgenda) obj).getDescricao();

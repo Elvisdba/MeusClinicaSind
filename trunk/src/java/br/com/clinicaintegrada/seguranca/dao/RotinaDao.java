@@ -50,7 +50,7 @@ public class RotinaDao extends DB {
 
     public Rotina pesquisaRotinaPorPagina(String pagina, boolean aliasProjeto) {
         try {
-            Query query = getEntityManager().createQuery("SELECT ROT FROM Rotina AS ROT WHERE ROT.pagina LIKE 'ClinicaIntegrada/" + pagina + ".jsf' OR ROT.pagina LIKE '\"/ClinicaIntegrada/" + pagina + ".jsf\"'");
+            Query query = getEntityManager().createQuery("SELECT ROT FROM Rotina AS ROT WHERE ROT.pagina LIKE '" + pagina + ".jsf' OR ROT.pagina LIKE '\"/ClinicaIntegrada/" + pagina + ".jsf\"'");
             List list = query.getResultList();
             if (!list.isEmpty() && list.size() == 1) {
                 return (Rotina) query.getSingleResult();
