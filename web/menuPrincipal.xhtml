@@ -49,7 +49,7 @@
                                     <p:separator />  
                                     <p:menuitem value="Pesquisar Logs"              action="#{chamadaPaginaBean.pagina('pesquisaLog')}" title="Registro de atividades" rendered="#{!controleAcessoBean.view('pesquisaLog')}"/>
                                     <p:submenu label="Sistema">                                        
-                                        <c:if test="#{controleUsuarioBean.clienteString.equals('ClinicaIntegrada')}">
+                                        <c:if test="#{controleUsuarioBean.clienteString eq 'ClinicaIntegrada'}">
                                             <p:menuitem value="Cliente"       action="#{chamadaPaginaBean.pagina('cliente')}" />
                                         </c:if>
                                     </p:submenu>

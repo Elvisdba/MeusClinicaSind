@@ -53,16 +53,16 @@
                                             #{plano5.classificador}
                                         </p:column>
                                         <p:column width="25" styleClass="text-center">
-                                            <p:commandButton icon="ui-icon-plus" action="#{contaOperacaoBean.setItem(plano5)}" disabled="#{controleAcessoBean.botaoSalvar}"/>
+                                            <p:commandButton icon="ui-icon-plus" action="#{contaOperacaoBean.setItem(plano5)}" disabled="#{controleAcessoBean.save}"/>
                                         </p:column>
                                     </p:dataTable>                                        
                                 </h:panelGrid>
                             </h:column>
                             <h:column>
                                 <h:panelGrid columns="1" >
-                                    <p:commandButton value="Remover contas selecionadas" action="#{contaOperacaoBean.removeItens()}" disabled="#{controleAcessoBean.botaoExcluir}"/>
+                                    <p:commandButton value="Remover contas selecionadas" action="#{contaOperacaoBean.removeItens()}" disabled="#{controleAcessoBean.delete}"/>
                                     <hr />
-                                    <p:commandButton value="Remover todas contas" action="#{contaOperacaoBean.removeItens()}" disabled="#{controleAcessoBean.botaoExcluir}"/>
+                                    <p:commandButton value="Remover todas contas" action="#{contaOperacaoBean.removeItens()}" disabled="#{controleAcessoBean.delete}"/>
                                 </h:panelGrid>
                             </h:column>
                             <h:column>
@@ -75,7 +75,7 @@
                                         <p:ajax event="toggleSelect" />
                                         <p:column selectionMode="multiple" width="20" styleClass="text-center"/>                                    
                                         <p:column width="25" styleClass="text-center">
-                                            <p:commandButton icon="ui-icon-link" action="#{contaOperacaoBean.editItem(contaOperacao)}" disabled="#{controleAcessoBean.botaoSalvar}" title="Editar"/>
+                                            <p:commandButton icon="ui-icon-link" action="#{contaOperacaoBean.editItem(contaOperacao)}" disabled="#{controleAcessoBean.save}" title="Editar"/>
                                         </p:column>                                    
                                         <p:column headerText="Plano 5">
                                             #{contaOperacao.plano5.conta} - #{contaOperacao.plano5.numero}
@@ -84,12 +84,12 @@
                                             #{contaOperacao.es}
                                         </p:column>
                                         <p:column headerText="C.F." width="25" styleClass="text-center">
-                                            <p:selectBooleanCheckbox value="#{contaOperacao.contaFixa}" disabled="#{controleAcessoBean.botaoSalvar}">
+                                            <p:selectBooleanCheckbox value="#{contaOperacao.contaFixa}" disabled="#{controleAcessoBean.save}">
                                                 <p:ajax event="change" listener="#{contaOperacaoBean.updateContaOperacao(contaOperacao)}" />
                                             </p:selectBooleanCheckbox>
                                         </p:column>
                                         <p:column width="25" styleClass="text-center">
-                                            <p:commandButton icon="ui-icon-close" action="#{contaOperacaoBean.removeItem(contaOperacao)}" disabled="#{controleAcessoBean.botaoExcluir}" title="Remover item"/>
+                                            <p:commandButton icon="ui-icon-close" action="#{contaOperacaoBean.removeItem(contaOperacao)}" disabled="#{controleAcessoBean.delete}" title="Remover item"/>
                                         </p:column>                                    
                                         <f:facet name="footer">
                                             C.F.: Conta Fixa

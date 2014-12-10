@@ -454,6 +454,18 @@
             <redirect/>
         </navigation-case>        
         
+        <navigation-case>
+            <from-outcome>agendamento</from-outcome>
+            <to-view-id>/agendamento.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>        
+        
+        <navigation-case>
+            <from-outcome>consultaAgendamento</from-outcome>
+            <to-view-id>/consultaAgendamento.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>        
+        
         <!-- 
         <navigation-case>
             <from-outcome>#{navigationRules.param}</from-outcome>

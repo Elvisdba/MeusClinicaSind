@@ -46,9 +46,9 @@
                                         <f:selectItem itemValue="email2" itemLabel="E-mail 2"/>
                                         <f:selectItem itemValue="endereco" itemLabel="Endereço"/>
                                     </p:selectOneMenu>                        
-                                    <p:commandButton value="Pesquisar" action="#{fisicaBean.acaoPesquisaInicial}" update="tbl" rendered="#{fisicaBean.porPesquisa.equals('cpf')}"/>
-                                    <p:commandButton value="Inicial" action="#{fisicaBean.acaoPesquisaInicial}" update="tbl" rendered="#{!fisicaBean.porPesquisa.equals('cpf')}"/>
-                                    <p:commandButton value="Parcial" action="#{fisicaBean.acaoPesquisaParcial}" update="tbl" rendered="#{!fisicaBean.porPesquisa.equals('cpf')}"/>
+                                    <p:commandButton value="Pesquisar" action="#{fisicaBean.acaoPesquisaInicial}" update="tbl" rendered="#{fisicaBean.porPesquisa eq 'cpf'}"/>
+                                    <p:commandButton value="Inicial" action="#{fisicaBean.acaoPesquisaInicial}" update="tbl" rendered="#{!fisicaBean.porPesquisa eq 'cpf'}"/>
+                                    <p:commandButton value="Parcial" action="#{fisicaBean.acaoPesquisaParcial}" update="tbl" rendered="#{!fisicaBean.porPesquisa eq 'cpf'}"/>
                                 </h:panelGrid>
                                 <p:focus for="i_panel_pesquisa" />
                             </p:panel>

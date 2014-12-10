@@ -113,7 +113,7 @@
                                 <p:column headerText="Hora inicio" width="40">#{cronograma.horaInicio}</p:column>
                                 <p:column headerText="Hora fim" width="40">#{cronograma.horaFim}</p:column>
                                 <p:column width="30">
-                                    <p:commandButton action="#{cronogramaBean.delete(cronograma)}" icon="ui-icon-close" update=":form_cronograma:" disabled="#{controleAcessoBean.botaoExcluir}"/>
+                                    <p:commandButton action="#{cronogramaBean.delete(cronograma)}" icon="ui-icon-close" update=":form_cronograma:" disabled="#{controleAcessoBean.delete}"/>
                                 </p:column>
                             </p:dataTable> 
                             <p:dialog modal="true" header="Notificação" draggable="false" resizable="false" visible="#{cronogramaBean.blockPanel}" closable="false">

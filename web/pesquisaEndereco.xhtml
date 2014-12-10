@@ -20,7 +20,7 @@
                 <h:outputLabel value=" ... Aguarde" />
             </p:dialog>
             <h:form id="form_pe">
-                <p:dialog widgetVar="dlg_mensagem" header="Mensagem" width="400" modal="true" resizable="false" visible="#{!enderecoBean.msgDetalhada.equals('')}">
+                <p:dialog widgetVar="dlg_mensagem" header="Mensagem" width="400" modal="true" resizable="false" visible="#{not empty enderecoBean.msgDetalhada}">
                     <p:outputLabel value="#{enderecoBean.msgDetalhada}" />
                     <f:facet name="footer">
                         <p:commandButton value="OK" title="OK" onclick="PF('dlg_mensagem').hide();"/>
