@@ -7,7 +7,7 @@ import javax.persistence.Query;
 
 public class EventoDao extends DB {
 
-    public boolean existeEvento(int grupoEvento, String descricao, int cliente) {
+    public boolean exists(int grupoEvento, String descricao, int cliente) {
         descricao = descricao.toUpperCase();
         try {
             Query query = getEntityManager().createQuery("SELECT E FROM Evento AS E WHERE E.grupoEvento.id = :grupoEvento AND UPPER(E.descricao) = :descricao AND E.cliente.id = :cliente");
@@ -25,10 +25,24 @@ public class EventoDao extends DB {
         return false;
     }
 
-    public List pesquisaTodosPorCliente(int cliente) {
+    public List findAllByCliente(int cliente) {
         try {
             Query query = getEntityManager().createQuery("SELECT E FROM Evento AS E WHERE E.cliente.id = :cliente");
             query.setParameter("cliente", cliente);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+
+        }
+        return new ArrayList();
+    }
+
+    public List findAllByGrupoEvento(int idGrupoEvento) {
+        try {
+            Query query = getEntityManager().createQuery("SELECT E FROM Evento AS E WHERE E.grupoEvento.id = :grupoEvento ORDER BY E.descricao ASC");
+            query.setParameter("grupoEvento", idGrupoEvento);
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;

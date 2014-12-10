@@ -27,7 +27,7 @@ public class Evento implements Serializable, BaseEntity {
     private String descricao;
     @Column(name = "ds_sigla", length = 30, nullable = true)
     private String sigla;
-    @Column(name = "is_web", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "is_web", columnDefinition = "boolean default false")
     private boolean web;
 
     public Evento() {
