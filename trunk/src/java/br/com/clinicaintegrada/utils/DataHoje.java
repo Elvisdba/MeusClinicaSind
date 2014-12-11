@@ -393,27 +393,28 @@ public class DataHoje {
         return null;
     }
 //    
-    public String decrementarDias(int qtd, String data){
-        try{
+
+    public String decrementarDias(int qtd, String data) {
+        try {
             int[] d = DataHoje.DataToArrayInt(data);
             int dias = qtdeDiasDoMes(d[1], d[2]);
-            if (qtd > dias){
-                while (qtd >= dias){
+            if (qtd > dias) {
+                while (qtd >= dias) {
                     qtd -= dias;
                     d[1]++;
-                    if (d[1] > 12){
+                    if (d[1] > 12) {
                         d[1] = 1;
                         d[2]++;
                     }
                     dias = qtdeDiasDoMes(d[1], d[2]);
                 }
                 d[0] += qtd;
-            }else{
+            } else {
                 d[0] += qtd;
             }
 
             return mascararData(d[0] + "/" + d[1] + "/" + d[2]);
-        }catch(Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
@@ -906,7 +907,7 @@ public class DataHoje {
      * System.out.println("null" + " = " + dataValidaConverte(null));
      */
     public static Date dataValidaConverte(String input) {
-        List<SimpleDateFormat> dateFormats = new ArrayList<SimpleDateFormat>();
+        List<SimpleDateFormat> dateFormats = new ArrayList<>();
         dateFormats.add(new SimpleDateFormat("M/dd/yyyy"));
         dateFormats.add(new SimpleDateFormat("dd.M.yyyy"));
         dateFormats.add(new SimpleDateFormat("M/dd/yyyy hh:mm:ss a"));
@@ -937,9 +938,9 @@ public class DataHoje {
         return dataValidaConverte(input) != null;
     }
 
-    public static String alteraDiaVencimento(int dia, String dataString) {
-        String diaString = "";
-        if(dia > 9) {
+    public static String alterDay(int dia, String dataString) {
+        String diaString;
+        if (dia > 9) {
             diaString = "" + dia;
         } else {
             diaString = "0" + dia;
@@ -951,5 +952,21 @@ public class DataHoje {
             return "";
         }
         return dataString;
+    }
+
+    /**
+     * @param hourIn H:m timestamp, i.e. [Hour in day (0-23)]:[Minute in hour (0-59)]
+     * @return total minutes after 00:00
+     */
+    public static Integer convertTimeToInteger(String hourIn) {
+        try {
+            String[] hourMin = hourIn.split(":");
+            int hour = Integer.parseInt(hourMin[0]);
+            int mins = Integer.parseInt(hourMin[1]);
+            int hoursInMins = hour * 60;
+            return hoursInMins + mins;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }
