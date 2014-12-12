@@ -103,13 +103,12 @@ public class SimplesBean implements Serializable {
             if (id == -1) {
                 cliente = SessaoCliente.get();
                 converteObjeto(sessoes[0]);
-                if (dao.existDescriptionInField(objeto.getClass().getSimpleName(), "descricao", descricao)) {
-                    Messages.warn("Validação", "Descrição já existe " + nomeRotina + " !");
-                    return;
-
-                }
                 int t = objeto.getClass().getDeclaredFields().length;
                 if (t == 2) {
+                    if (dao.existDescriptionInField(objeto.getClass().getSimpleName(), "descricao", descricao)) {
+                        Messages.warn("Validação", "Descrição já existe " + nomeRotina + " !");
+                        return;
+                    }
                     if (dao.save(objeto, true)) {
                         editaObjeto(objeto);
                         log.save("ID: " + id + " - DESCRICAO: " + descricao);

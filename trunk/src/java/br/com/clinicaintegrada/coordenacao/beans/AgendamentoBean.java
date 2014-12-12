@@ -1,9 +1,11 @@
 package br.com.clinicaintegrada.coordenacao.beans;
 
 import br.com.clinicaintegrada.coordenacao.Agendamento;
+import br.com.clinicaintegrada.coordenacao.ConfiguracaoCoordenacao;
 import br.com.clinicaintegrada.coordenacao.Contrato;
 import br.com.clinicaintegrada.coordenacao.Evento;
 import br.com.clinicaintegrada.coordenacao.dao.AgendamentoDao;
+import br.com.clinicaintegrada.coordenacao.dao.ConfiguracaoCoordenacaoDao;
 import br.com.clinicaintegrada.coordenacao.dao.EventoDao;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.seguranca.Usuario;
@@ -75,24 +77,61 @@ public class AgendamentoBean implements Serializable {
     }
 
     public void clear(int tCase) {
+        // CASO 0 - BOTÃO SALVAR / EXCLUIR
         if (tCase == 0 || tCase == 1) {
             agendamento = new Agendamento();
             index[0] = null;
             horaAgenda = DataHoje.livre(new Date(), "HH:mm");
+            listAgendamento.clear();
         }
+        // CASO 1 - BOTÃO NOVO
         if (tCase == 1) {
             Sessions.remove("agendamentoBean");
         }
     }
 
     public void save() {
+        ConfiguracaoCoordenacao cc = new ConfiguracaoCoordenacaoDao().findByCliente(SessaoCliente.get().getId());
+        if (cc == null) {
+            Messages.warn("Sistema", "Configurar Coordernação! Segurança > Configuração > Coordenação");
+            return;
+        }
         Dao dao = new Dao();
         Logger logger = new Logger();
+        if (index[0] == null) {
+            Messages.warn("Validação", "Selecionar evento!");
+            return;
+        }
         agendamento.setEvento((Evento) dao.find(new Evento(), Integer.parseInt(listSelectItem[0].get(index[0]).getDescription())));
         if (contrato.getId() == -1) {
             Messages.warn("Validação", "Pesquisar contrato!");
             return;
         }
+        if (agendamento.getDataAgendaString().isEmpty()) {
+            Messages.warn("Validação", "Informar data do agendamento!");
+            return;
+        }
+
+        // INICIA - CONFIGURAÇÃO > COORDENAÇÃO
+        DataHoje dataHoje = new DataHoje();
+        Integer dt1 = DataHoje.converteDataParaInteger(DataHoje.data());
+        Integer dt2 = DataHoje.converteDataParaInteger(agendamento.getDataAgendaString());
+        Integer dt3 = DataHoje.converteDataParaInteger(agendamento.getDataAgendaString());
+        Integer dt4 = DataHoje.converteDataParaInteger(dataHoje.incrementarMeses(cc.getAgendamentoMaxMesesAgenda(), DataHoje.data()));
+        // VERIFICA SE PERMITE AGENDAMENTO RETROATIVO
+        if (cc.getAgendamentoDataRetroativo() != null) {
+            dt2 = DataHoje.converteDataParaInteger(DataHoje.converteData(cc.getAgendamentoDataRetroativo()));
+        }
+        if (dt2 <= dt1) {
+            Messages.warn("Validação", "A data do agendamento deve ser superior a data de hoje!");
+            return;
+        }
+        // VERIFICA PERÍODO MÁXIMO DE MESES PARA AGENDAMENTO FUTURO
+        if (dt3 > dt4) {
+            Messages.warn("Validação", "A data do agendamento não deve ser superior a " + cc.getAgendamentoMaxMesesAgenda() + " mese(s)");
+            return;
+        }
+        // TERMINA - CONFIGURAÇÃO > COORDENAÇÃO
         if (horaAgenda.isEmpty()) {
             Messages.warn("Validação", "Informar horário válido!");
             return;
@@ -102,7 +141,7 @@ public class AgendamentoBean implements Serializable {
             agendamento.setAgendador((Usuario) Sessions.getObject("sessaoUsuario"));
             agendamento.setContrato(contrato);
             AgendamentoDao agendamentoDao = new AgendamentoDao();
-            if (agendamentoDao.exists(contrato.getId(), agendamento.getAgenda(), agendamento.getHoraAgenda())) {
+            if (agendamentoDao.exists(contrato.getId(), agendamento.getDataAgenda(), agendamento.getHoraAgenda())) {
                 Messages.warn("Validação", "Agendamento já cadastrado!");
                 return;
             }
@@ -111,7 +150,7 @@ public class AgendamentoBean implements Serializable {
                 logger.save(
                         "ID: " + agendamento.getId() + "]"
                         + " - Contrato: [" + agendamento.getContrato()
-                        + " - Agenda: " + agendamento.getAgendaString()
+                        + " - Agenda: " + agendamento.getDataAgendaString()
                         + " - Hora: " + agendamento.getHoraAgenda()
                 );
                 clear(0);
@@ -123,14 +162,14 @@ public class AgendamentoBean implements Serializable {
             String beforeUpdate
                     = "ID: " + a.getId() + "]"
                     + " - Contrato: [" + a.getContrato()
-                    + " - Agenda: " + a.getAgendaString()
+                    + " - Agenda: " + a.getDataAgendaString()
                     + " - Hora: " + a.getHoraAgenda();
             if (dao.update(agendamento, true)) {
                 Messages.info("Sucesso", "Registro atualizado");
                 logger.update(beforeUpdate,
                         "ID: " + agendamento.getId() + "]"
                         + " - Contrato: [" + agendamento.getContrato()
-                        + " - Agenda: " + agendamento.getAgendaString()
+                        + " - Agenda: " + agendamento.getDataAgendaString()
                         + " - Hora: " + agendamento.getHoraAgenda()
                 );
                 clear(0);
@@ -154,7 +193,7 @@ public class AgendamentoBean implements Serializable {
                 logger.delete(
                         "ID: " + a.getId() + "]"
                         + " - Contrato: [" + a.getContrato()
-                        + " - Agenda: " + a.getAgendaString()
+                        + " - Agenda: " + a.getDataAgendaString()
                         + " - Hora: " + a.getHoraAgenda()
                 );
                 clear(0);
@@ -179,7 +218,7 @@ public class AgendamentoBean implements Serializable {
     public String editConsulta(Agendamento a) {
         agendamentoEdit = a;
         agendamentoEdit.setHoraAgenda(DataHoje.livre(new Date(), "HH:mm"));
-        agendamentoEdit.setAgenda(new Date());
+        agendamentoEdit.setDataAgenda(new Date());
         for (int i = 0; i < listSelectItem[0].size(); i++) {
             if (a.getEvento().getId() == Integer.parseInt(listSelectItem[0].get(i).getDescription())) {
                 index[0] = i;

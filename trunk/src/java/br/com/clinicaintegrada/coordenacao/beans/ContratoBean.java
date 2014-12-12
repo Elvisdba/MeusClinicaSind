@@ -644,16 +644,16 @@ public class ContratoBean implements Serializable {
                     listMovimentoContrato.add(m);
                     m = new Movimento();
                 }
-                String dataVencimento = DataHoje.alteraDiaVencimento(diaVencimento, DataHoje.data());
+                String dataVencimento = DataHoje.alterDay(diaVencimento, DataHoje.data());
                 if (dataVencimento.equals("")) {
                     diaVencimento = diaVencimento - 1;
-                    dataVencimento = DataHoje.alteraDiaVencimento(diaVencimento, DataHoje.data());
+                    dataVencimento = DataHoje.alterDay(diaVencimento, DataHoje.data());
                     if (dataVencimento.equals("")) {
                         diaVencimento = diaVencimento - 1;
-                        dataVencimento = DataHoje.alteraDiaVencimento(diaVencimento, DataHoje.data());
+                        dataVencimento = DataHoje.alterDay(diaVencimento, DataHoje.data());
                         if (dataVencimento.equals("")) {
                             diaVencimento = diaVencimento - 1;
-                            dataVencimento = DataHoje.alteraDiaVencimento(diaVencimento, DataHoje.data());
+                            dataVencimento = DataHoje.alterDay(diaVencimento, DataHoje.data());
                         }
                     }
                 }

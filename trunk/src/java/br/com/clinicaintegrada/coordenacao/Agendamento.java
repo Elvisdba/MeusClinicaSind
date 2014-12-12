@@ -3,8 +3,10 @@ package br.com.clinicaintegrada.coordenacao;
 import br.com.clinicaintegrada.seguranca.Usuario;
 import br.com.clinicaintegrada.utils.DataHoje;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.persistence.*;
+import org.primefaces.event.SelectEvent;
 
 @Entity
 @Table(name = "rot_agendamento",
@@ -27,15 +29,15 @@ public class Agendamento implements Serializable {
     private Evento evento;
     @Temporal(TemporalType.DATE)
     @Column(name = "dt_lancamento", nullable = false)
-    private Date lancamento;
+    private Date dataLancamento;
     @Temporal(TemporalType.DATE)
     @Column(name = "dt_agenda", nullable = false)
-    private Date agenda;
+    private Date dataAgenda;
     @Column(name = "ds_hora_agenda", nullable = false, length = 5)
     private String horaAgenda;
     @Temporal(TemporalType.DATE)
     @Column(name = "dt_atendimento", nullable = true)
-    private Date atendimento;
+    private Date dataAtendimento;
     @Column(name = "ds_hora_atendimento", nullable = true, length = 5)
     private String horaAtendimento;
     @Column(name = "ds_obs", length = 200)
@@ -46,11 +48,11 @@ public class Agendamento implements Serializable {
         this.contrato = new Contrato();
         this.agendador = null;
         this.evento = new Evento();
-        this.lancamento = new Date();
-        this.agenda = new Date();
+        this.dataLancamento = new Date();
+        this.dataAgenda = new Date();
         this.horaAgenda = "";
         this.observacao = "";
-        this.atendimento = null;
+        this.dataAtendimento = null;
         this.horaAtendimento = "";
     }
 
@@ -59,11 +61,11 @@ public class Agendamento implements Serializable {
         this.contrato = contrato;
         this.agendador = agendador;
         this.evento = evento;
-        this.lancamento = lancamento;
-        this.agenda = agenda;
+        this.dataLancamento = lancamento;
+        this.dataAgenda = agenda;
         this.horaAgenda = horaAgenda;
         this.observacao = observacao;
-        this.atendimento = atendimento;
+        this.dataAtendimento = atendimento;
         this.horaAtendimento = horaAtendimento;
     }
 
@@ -99,36 +101,36 @@ public class Agendamento implements Serializable {
         this.evento = evento;
     }
 
-    public Date getLancamento() {
-        return lancamento;
+    public Date getDataLancamento() {
+        return dataLancamento;
     }
 
-    public void setLancamento(Date lancamento) {
-        this.lancamento = lancamento;
+    public void setDataLancamento(Date dataLancamento) {
+        this.dataLancamento = dataLancamento;
     }
 
-    public String getLancamentoString() {
-        return DataHoje.converteData(lancamento);
+    public String getDataLancamentoString() {
+        return DataHoje.converteData(dataLancamento);
     }
 
-    public void setLancamentoString(String lancamentoString) {
-        this.lancamento = DataHoje.converte(lancamentoString);
+    public void setDataLancamentoString(String lancamentoString) {
+        this.dataLancamento = DataHoje.converte(lancamentoString);
     }
 
-    public Date getAgenda() {
-        return agenda;
+    public Date getDataAgenda() {
+        return dataAgenda;
     }
 
-    public void setAgenda(Date agenda) {
-        this.agenda = agenda;
+    public void setDataAgenda(Date dataAgenda) {
+        this.dataAgenda = dataAgenda;
     }
 
-    public String getAgendaString() {
-        return DataHoje.converteData(agenda);
+    public String getDataAgendaString() {
+        return DataHoje.converteData(dataAgenda);
     }
 
-    public void setAgendaString(String agendaString) {
-        this.agenda = DataHoje.converte(agendaString);
+    public void setDataAgendaString(String agendaString) {
+        this.dataAgenda = DataHoje.converte(agendaString);
     }
 
     public String getHoraAgenda() {
@@ -147,8 +149,8 @@ public class Agendamento implements Serializable {
         this.observacao = observacao;
     }
 
-    public void setAtendimento(Date atendimento) {
-        this.atendimento = atendimento;
+    public void setDataAtendimento(Date dataAtendimento) {
+        this.dataAtendimento = dataAtendimento;
     }
 
     public String getHoraAtendimento() {
@@ -159,12 +161,27 @@ public class Agendamento implements Serializable {
         this.horaAtendimento = horaAtendimento;
     }
 
-    public String getAtendimentoString() {
-        return DataHoje.converteData(atendimento);
+    public String getDataAtendimentoString() {
+        return DataHoje.converteData(dataAtendimento);
     }
 
-    public void setAtendimentoString(String atendimentoString) {
-        this.atendimento = DataHoje.converte(atendimentoString);
+    public void setDataAtendimentoString(String dataAtendimentoString) {
+        this.dataAtendimento = DataHoje.converte(dataAtendimentoString);
+    }
+
+    public void selectedDataLancamento(SelectEvent event) {
+        SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
+        this.dataLancamento = DataHoje.converte(format.format(event.getObject()));
+    }
+
+    public void selectedDataAgenda(SelectEvent event) {
+        SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
+        this.dataAgenda = DataHoje.converte(format.format(event.getObject()));
+    }
+
+    public void selectedDataAtendimento(SelectEvent event) {
+        SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
+        this.dataAtendimento = DataHoje.converte(format.format(event.getObject()));
     }
 
 }

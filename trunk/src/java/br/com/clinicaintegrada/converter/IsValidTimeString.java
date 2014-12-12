@@ -26,10 +26,10 @@ public class IsValidTimeString implements Converter {
                 Date data = sdf.parse(dataString);
                 return value;
             } catch (ParseException e) {
-                return null;
+                return "";
             }
         }
-        return null;
+        return "";
     }
 
 }
