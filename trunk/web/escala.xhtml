@@ -1,0 +1,159 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Escala</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/Imagens/favicon.ico"/>  
+        <style type="text/css">            
+            .ui-selectonemenu {padding-right: 25px!important;}
+        </style>
+    </h:head>
+    <h:body>
+        <!-- INICIA DIV wrap e main -->
+        <div id="wrapx">
+            <div id="mainx">
+                <!-- INICIA DIV wrap e main -->  
+                <f:subview id="header">
+                    <ui:include src="templates/templatePrime.xhtml"/>
+                </f:subview>
+                <f:view>
+                    <p:panel styleClass="wrapper" style="border: 0px;">
+                        <h:outputText value="Escala" styleClass="fonteHeader" />
+                        <div class="clear"></div>
+                        <h:form id="form_a">
+                            <c:set scope="request" var="object" value="${escalaBean.escala}"/>
+                            <p:panel header="Lançamento: #{escalaBean.escala.dataLancamentoString}" id="i_p_1">
+                                <h:panelGrid columns="1">
+                                    <p:selectOneRadio value="#{escalaBean.type}" styleClass="margin-left-max">
+                                        <p:ajax event="change" update=":form_a:" listener="#{escalaBean.clear(2)}" />
+                                        <f:selectItem itemLabel="Equipe" itemValue="equipe_id"/>
+                                        <f:selectItem itemLabel="Paciente" itemValue="contrato"/>
+                                    </p:selectOneRadio>
+                                </h:panelGrid>
+                                <h:panelGrid columns="2" cellspacing="5">
+                                    <p:commandButton icon="ui-icon-search" value="Pesquisar Paciente " action="#{chamadaPaginaBean.pesquisa('pesquisaContrato')}" rendered="#{escalaBean.type eq 'contrato'}" />
+                                    <p:commandButton icon="ui-icon-search" value="Pesquisar Equipe " action="#{chamadaPaginaBean.pesquisa('pesquisaEquipe')}" rendered="#{escalaBean.type eq 'equipe_id'}" />
+                                    <h:column>
+                                        <h:panelGrid columns="4" >
+                                            <p:outputLabel value="#{escalaBean.contrato.id} - Responsável: #{escalaBean.contrato.responsavel.nome} - Paciente: #{escalaBean.contrato.paciente.nome}" rendered="#{escalaBean.type eq 'contrato'}" />
+                                            <p:outputLabel value="#{escalaBean.equipe.pessoa.nome}" rendered="#{escalaBean.type eq 'equipe_id'}" />   
+                                        </h:panelGrid>
+                                    </h:column>
+                                </h:panelGrid>
+                                <h:panelGrid columns="2">
+                                    <p:outputLabel value="Função:" />
+                                    <p:selectOneMenu value="#{escalaBean.index[0]}">
+                                        <p:ajax event="change" update="@this" />
+                                        <f:selectItem itemValue="" itemLabel="Selecionar" />
+                                        <f:selectItems value="#{escalaBean.listSelectItem[0]}" />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Data:" />
+                                    <p:inputMask mask="99/99/9999" value="#{escalaBean.escala.dataEscalaString}" converter="#{isDateString}" size="8">
+                                        <p:ajax event="change" update="@this" />
+                                    </p:inputMask>
+                                    <p:outputLabel value="Hora Inicial:" />
+                                    <h:column>
+                                        <h:panelGrid columns="3" id="i_h">
+                                            <p:inputMask mask="99:99" value="#{escalaBean.hora[0]}" size="5" converter="#{isValidTimeString}">
+                                                <p:ajax event="change" update="@this i_h" />
+                                            </p:inputMask>
+                                            <p:outputLabel value="Hora Final:" styleClass="margin-left-max"/>
+                                            <p:inputMask mask="99:99" value="#{escalaBean.hora[1]}" size="5" converter="#{isValidTimeString}">
+                                                <p:ajax event="change" update="@this i_h" />
+                                            </p:inputMask>
+                                        </h:panelGrid>
+                                    </h:column>
+                                </h:panelGrid>
+                                <f:facet name="footer">
+                                    <p:outputLabel value="Observações" /><br /><br />
+                                    <p:inputTextarea value="#{escalaBean.escala.observacao}" maxlength="200" placeholder="Observações" cols="100" rows="3" converter="#{toUpperCase}">
+                                        <p:ajax event="change" update="@this" />
+                                    </p:inputTextarea>                                    
+                                </f:facet>
+                            </p:panel>
+                            <h:panelGrid columns="4" styleClass="margin-top-max">
+                                <p:commandButton value="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.save}"/>
+                                <p:commandButton value="Novo" action="#{escalaBean.clear(0)}" update=":form_a:"/>
+                                <p:commandButton value="Excluir" onclick="PF('dlg_delete').show()" disabled="#{controleAcessoBean.delete}"/>
+                                <p:commandButton value="Consultar escalas" action="#{chamadaPaginaBean.pagina('consultaEscala', 'escalaBean')}" />
+                            </h:panelGrid>
+                            <p:panel header="Lista" styleClass="margin-top-max" rendered="#{escalaBean.filter[1]}">
+                                <h:panelGrid columns="7" id="i_p_2">
+                                    <h:outputLabel value="Período - Inicial: " styleClass="margin-left-max"/>
+                                    <p:inputMask mask="99/99/9999" value="#{escalaBean.data[0]}" converter="#{isDateString}" size="8">
+                                        <p:ajax event="change" update="@this" />
+                                    </p:inputMask>
+                                    <h:outputLabel value="Final: " />
+                                    <p:inputMask mask="99/99/9999" value="#{escalaBean.data[1]}" converter="#{isDateString}" size="8">
+                                        <p:ajax event="change" update="@this" />
+                                    </p:inputMask>
+                                    <p:commandButton icon="ui-icon-close" action="#{escalaBean.clear(1)}" update=":form_a:i_p_2 :form_a:i_datatable_fe" actionListener="#{escalaBean.listEscala.clear()}" />
+                                    <p:commandButton icon="ui-icon-search" title="Filtrar" action="#{escalaBean.listEscala.clear()}" update=":form_a:i_datatable_fe"  styleClass="margin-left-max"/>
+                                </h:panelGrid>                                
+                                <h:panelGrid id="i_datatable_fe">
+                                    <p:dataTable value="#{escalaBean.listEscala}" var="escala" scrollable="true" scrollHeight="300" emptyMessage="Nenhum registro encontrado!" styleClass="margin-top-max">
+                                        <p:column width="30">
+                                            <p:rowToggler />
+                                        </p:column>
+                                        <p:column width="30" styleClass="text-center">
+                                            <p:commandButton icon="ui-icon-link" action="#{escalaBean.edit(escala)}" update=":form_a:" />
+                                        </p:column>
+                                        <p:column headerText="Data" width="100" styleClass="text-center" sortBy="#{escala.dataEscalaString}">
+                                            #{escala.dataEscalaString}
+                                        </p:column>
+                                        <p:column headerText="H. Inicial" width="80" styleClass="text-center" sortBy="#{escala.horaInicial}">
+                                            #{escala.horaInicial}
+                                        </p:column>
+                                        <p:column headerText="H. Final" width="80" styleClass="text-center" sortBy="#{escala.horaFinal}">
+                                            #{escala.horaFinal}
+                                        </p:column>
+                                        <p:column headerText="Atendimento" width="100" styleClass="text-center" sortBy="#{escala.dataEscalaString}">
+                                            #{escala.dataEscalaString}
+                                        </p:column>
+                                        <p:column headerText="Evento" sortBy="#{escala.funcaoEscala.descricao}">
+                                            #{escala.funcaoEscala.descricao}
+                                        </p:column>               
+                                        <p:rowExpansion>
+                                            Lançamento: #{escala.dataLancamentoString} - Obs: #{escala.observacao}
+                                        </p:rowExpansion>
+                                    </p:dataTable>
+                                </h:panelGrid>
+                            </p:panel>
+                            <p:dialog id="i_dlg_save" widgetVar="dlg_save" modal="true" header="Deseja salvar/atualizar este registro?" width="400" resizable="false">
+                                <h:panelGrid columns="2">
+                                    <p:commandButton value="Sim" title="Salvar" action="#{escalaBean.save}" update=":form_a:"  oncomplete="PF('dlg_save').hide(); PF('dlg_message').show();" />
+                                    <p:commandButton value="Não" title="Cancelar" oncomplete="PF('dlg_save').hide();"/>
+                                </h:panelGrid>
+                            </p:dialog>
+                            <p:dialog id="i_dlg_delete" widgetVar="dlg_delete" modal="true" header="Deseja excluir este registro?" width="400" resizable="false">
+                                <h:panelGrid columns="2">
+                                    <p:commandButton value="Sim" title="Excluir" action="#{escalaBean.delete}" update=":form_a:" oncomplete="PF('dlg_delete').hide(); PF('dlg_message').show();" />
+                                    <p:commandButton value="Não" title="Cancelar" oncomplete="PF('dlg_delete').hide();"/>
+                                </h:panelGrid>
+                            </p:dialog>
+                            <p:dialog widgetVar="dlg_message" modal="true" header="Mensagem"  width="400" resizable="false">
+                                <p:messages autoUpdate="true" showDetail="true" showSummary="true" id="i_message"/>
+                                <f:facet name="footer">
+                                    <p:commandButton value="Ok" title="Ok" onclick="PF('dlg_message).hide();" />
+                                </f:facet>
+                            </p:dialog>                            
+                        </h:form>
+                    </p:panel>
+                </f:view>
+                <!-- FINALIZA div wrap main -->
+            </div>
+        </div>
+        <!-- FINALIZA div wrap main -->
+
+        <div id="footerx">
+            <f:subview id="footer">
+                <ui:include src="templates/templateFooter.xhtml"/>
+            </f:subview>
+        </div>                
+    </h:body>
+</ui:composition>

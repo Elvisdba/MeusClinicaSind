@@ -466,6 +466,54 @@
             <redirect/>
         </navigation-case>        
         
+        <navigation-case>
+            <from-outcome>escala</from-outcome>
+            <to-view-id>/escala.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>frequencia</from-outcome>
+            <to-view-id>/frequencia.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>notificao</from-outcome>
+            <to-view-id>/notificao.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>resgate</from-outcome>
+            <to-view-id>/resgate.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>transferencia</from-outcome>
+            <to-view-id>/transferencia.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>planilhaAvaliacao</from-outcome>
+            <to-view-id>/planilhaAvaliacao.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>configuracaoCoordenacao</from-outcome>
+            <to-view-id>/configuracaoCoordenacao.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>        
+        
+        <navigation-case>
+            <from-outcome>consultaEscala</from-outcome>
+            <to-view-id>/consultaEscala.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>          
+        
         <!-- 
         <navigation-case>
             <from-outcome>#{navigationRules.param}</from-outcome>

@@ -32,8 +32,8 @@
                             <p:panel>
                                 <h:panelGrid columns="2">
                                     <p:outputLabel value="Cadastro:" />
-                                    <p:calendar value="#{equipeBean.equipe.cadastro}" mask="99/99/9999" pattern="dd/MM/yyyy" disabled="true" size="8">
-                                        <p:ajax event="dateSelect" listener="#{equipeBean.equipe.selectedCadastro}" />
+                                    <p:calendar value="#{equipeBean.equipe.dataCadastro}" mask="99/99/9999" pattern="dd/MM/yyyy" disabled="true" size="8">
+                                        <p:ajax event="dateSelect" listener="#{equipeBean.equipe.selectedDataCadastro}" />
                                     </p:calendar>
                                     <p:commandButton action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaFisica')}" icon="ui-icon-search" value="Pesquisar Pessoa: "/>
                                     <h:column>

@@ -1,0 +1,81 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Configuração - Coordenação</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />    
+    </h:head>
+    <h:body>
+        <f:subview id="header">
+            <ui:include src="templates/templatePrime.xhtml"/>
+        </f:subview>
+        <f:view>
+            <p:panel styleClass="wrapper no-border">
+                <h:outputText value="Você não possui permissões para efetuar operações nesta rotina!" styleClass="fonteHeader" rendered="#{controleAcessoBean.save}" title="salvar / alterar / excluir"/>
+                <h:form id="form_cc" rendered="#{!controleAcessoBean.save}">
+                    <h:outputText value="Configuração - Coordenação" styleClass="fonteHeader" />
+                    <c:set scope="request" var="object" value="${configuracaoCoordenacaoBean.configuracaoCoordenacao}"/>
+                    <div style="clear: both;"></div>
+                    <p:messages id="id_messages" showDetail="true" closable="true" />
+                    <p:growl id="id_messages_growl" showDetail="true"  />
+                    <div style="clear: both;"></div>
+                    <p:panel styleClass="margin-top-max">
+                        <p:tabView>
+                            <p:ajax event="tabChange" />
+                            <p:tab title="Agendamento">
+                                <p:panelGrid columns="2" styleClass="sbb">
+                                    <p:outputLabel value="Agendamento retroativo: " />
+                                    <p:calendar value="#{configuracaoCoordenacaoBean.configuracaoCoordenacao.agendamentoDataRetroativo}" navigator="true" pattern="dd/MM/yyyy" readonlyInput="true" size="10" title="Permite agendamento retroativo até" mask="99/99/9999">
+                                        <p:ajax event="dateSelect" update=":form_cc:id_messages :form_cc:id_messages_growl" listener="#{configuracaoCoordenacaoBean.save}"/>
+                                    </p:calendar>
+                                    <p:outputLabel value="Limite mínimo agendamento:"/>
+                                    <p:column>
+                                        <h:panelGrid columns="3">
+                                            <h:column>
+                                                <p:slider for="amma" maxValue="12" minValue="0" step="1"  display="ammaOutput" style="width:200px" displayTemplate="{value} Meses(s)"> 
+                                                    <p:ajax event="slideEnd" listener="#{configuracaoCoordenacaoBean.onSlideEndAgendamento}" update=":form_cc:id_messages :form_cc:id_messages_growl"  />
+                                                </p:slider>
+                                                <h:inputHidden id="amma"  value="#{configuracaoCoordenacaoBean.configuracaoCoordenacao.agendamentoMaxMesesAgenda}" />
+                                            </h:column>
+                                            <h:outputText id="ammaOutput" value="#{configuracaoCoordenacaoBean.configuracaoCoordenacao.agendamentoMaxMesesAgenda} Meses(s)"/>
+                                        </h:panelGrid>
+                                    </p:column>                                
+                                </p:panelGrid>
+                            </p:tab>                            
+                            <p:tab title="Escala">
+                                <p:panelGrid columns="2" styleClass="sbb">
+                                    <p:outputLabel value="Escala retroativa: " />
+                                    <p:calendar value="#{configuracaoCoordenacaoBean.configuracaoCoordenacao.escalaDataRetroativo}" navigator="true" pattern="dd/MM/yyyy" readonlyInput="true" size="10" title="Permite agendamento retroativo até" mask="99/99/9999">
+                                        <p:ajax event="dateSelect" update=":form_cc:id_messages :form_cc:id_messages_growl" listener="#{configuracaoCoordenacaoBean.save}"/>
+                                    </p:calendar>
+                                    <p:outputLabel value="Limite mínimo escala"/>
+                                    <p:column>
+                                        <h:panelGrid columns="3">
+                                            <h:column>
+                                                <p:slider for="amma2" maxValue="12" minValue="0" step="1"  display="amma2Output" style="width:200px" displayTemplate="{value} Meses(s)"> 
+                                                    <p:ajax event="slideEnd" listener="#{configuracaoCoordenacaoBean.onSlideEndEscala}" update=":form_cc:id_messages :form_cc:id_messages_growl" />
+                                                </p:slider>
+                                                <h:inputHidden id="amma2"  value="#{configuracaoCoordenacaoBean.configuracaoCoordenacao.escalaMaxMesesEscala}" />
+                                            </h:column>
+                                            <h:outputText id="amma2Output" value="#{configuracaoCoordenacaoBean.configuracaoCoordenacao.escalaMaxMesesEscala} Meses(s)"/>
+                                        </h:panelGrid>
+                                    </p:column>                                
+                                </p:panelGrid>                               
+                            </p:tab>                            
+                        </p:tabView>
+                    </p:panel>
+                    <div style="clear: both;"></div>
+                    <p:panelGrid columns="1" styleClass="sbb">
+                        <p:column>
+                            <p:commandButton action="#{configuracaoCoordenacaoBean.save}" disabled="#{controleAcessoBean.save}" styleClass="margin-top-max" value="Salvar" update="id_messages_growl id_messages"/>
+                        </p:column>
+                    </p:panelGrid>                    
+                </h:form>
+            </p:panel>
+        </f:view>
+    </h:body>
+</ui:composition>

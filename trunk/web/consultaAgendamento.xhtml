@@ -37,10 +37,10 @@
                                         <f:selectItem itemValue="atendimento" itemLabel="Período de atendimento" />
                                     </p:selectOneMenu>
                                     <h:column rendered="#{
-                                                          (agendamentoBean.by ne 'hoje') and 
-                                                          (agendamentoBean.by ne 'periodo') and
-                                                          (agendamentoBean.by ne 'atendimento') and 
-                                                          (agendamentoBean.by ne 'lancamento')
+                                              (agendamentoBean.by ne 'hoje') and 
+                                                  (agendamentoBean.by ne 'periodo') and
+                                                  (agendamentoBean.by ne 'atendimento') and 
+                                                  (agendamentoBean.by ne 'lancamento')
                                     }">
                                         <p:inputText value="#{agendamentoBean.description}" styleClass="margin-left-max" size="40"/>
                                     </h:column>
@@ -88,9 +88,9 @@
                                             <p:row>
                                                 <p:column />
                                                 <p:column />
-                                                <p:column headerText="Data" sortBy="#{agendamento.agendaString}"/>
+                                                <p:column headerText="Data" sortBy="#{agendamento.dataAgendaString}"/>
                                                 <p:column headerText="Horário" sortBy="#{agendamento.horaAgenda}"/>
-                                                <p:column headerText="Data" sortBy="#{agendamento.atendimentoString}"/>
+                                                <p:column headerText="Data" sortBy="#{agendamento.dataAtendimentoString}"/>
                                                 <p:column headerText="Horário" sortBy="#{agendamento.horaAtendimento}"/>
                                                 <p:column headerText="Contrato" sortBy="#{agendamento.contrato.id}"/>
                                                 <p:column headerText="Paciente" sortBy="#{agendamento.contrato.paciente.nome}"/>
@@ -104,13 +104,13 @@
                                             <p:commandButton icon="ui-icon-link" action="#{agendamentoBean.editConsulta(agendamento)}" update=":form_a:i_edit" oncomplete="PF('dlg_edit').show()" disabled="true"/>
                                         </p:column>
                                         <p:column styleClass="text-center">
-                                            #{agendamento.agendaString}
+                                            #{agendamento.dataAgendaString}
                                         </p:column>
                                         <p:column styleClass="text-center">
                                             #{agendamento.horaAgenda}
                                         </p:column>
                                         <p:column styleClass="text-center">
-                                            #{agendamento.atendimentoString}
+                                            #{agendamento.dataAtendimentoString}
                                         </p:column>
                                         <p:column styleClass="text-center">
                                             #{agendamento.horaAtendimento}
@@ -125,7 +125,7 @@
                                             #{agendamento.evento.descricao}
                                         </p:column>                                        
                                         <p:rowExpansion>
-                                            Lançamento: #{agendamento.lancamentoString} - Obs: #{agendamento.observacao}
+                                            Lançamento: #{agendamento.dataLancamentoString} - Obs: #{agendamento.observacao}
                                         </p:rowExpansion>
                                         <f:facet name="footer">
                                             Hrs = Horário
