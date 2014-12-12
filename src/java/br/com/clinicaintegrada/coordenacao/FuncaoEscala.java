@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ROT_FUNCAO_ESCALA",
+@Table(name = "rot_funcao_escala",
         uniqueConstraints = @UniqueConstraint(columnNames = {"id_cliente", "ds_descricao"})
 )
 @NamedQueries({

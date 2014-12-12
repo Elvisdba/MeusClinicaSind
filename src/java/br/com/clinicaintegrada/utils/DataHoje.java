@@ -955,18 +955,67 @@ public class DataHoje {
     }
 
     /**
-     * @param hourIn H:m timestamp, i.e. [Hour in day (0-23)]:[Minute in hour (0-59)]
+     * @param time
+     * @param addMinutes
      * @return total minutes after 00:00
      */
-    public static Integer convertTimeToInteger(String hourIn) {
+    public static String addHour(String time, Integer addMinutes) {
         try {
-            String[] hourMin = hourIn.split(":");
+            String newHour = "";
+            String[] hourMin = time.split(":");
+            int hour = Integer.parseInt(hourMin[0]);
+            int mins = Integer.parseInt(hourMin[1]);
+            int hoursInMins = hour * 60 + addMinutes;
+            int total = hoursInMins + mins;
+            if (total > 1440) {
+                newHour = convertMinutesToTime(addMinutes + mins);
+            } else {
+                newHour = convertMinutesToTime(hoursInMins + mins + addMinutes);
+            }
+            return newHour;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /**
+     * @param time H:m timestamp, i.e. [Hour in day (0-23)]:[Minute in hour
+     * (0-59)]
+     * @return total minutes after 00:00
+     */
+    public static Integer convertTimeToInteger(String time) {
+        try {
+            String[] hourMin = time.split(":");
             int hour = Integer.parseInt(hourMin[0]);
             int mins = Integer.parseInt(hourMin[1]);
             int hoursInMins = hour * 60;
             return hoursInMins + mins;
         } catch (Exception e) {
             return 0;
+        }
+    }
+
+    /**
+     * @param minutesIn H:m timestamp, i.e. [Hour in day (0-23)]:[Minute in hour
+     * (0-59)]
+     * @return total minutes after 00:00
+     */
+    public static String convertMinutesToTime(Integer minutesIn) {
+        try {
+            String hourString = "";
+            int hours = minutesIn / 60;
+            int minutes = minutesIn % 60;
+            if (hours < 10) {
+                hourString += "0";
+            }
+            hourString += "" + hours + ":";
+            if (minutes < 10) {
+                hourString += "0";
+            }
+            hourString += "" + minutes;
+            return hourString;
+        } catch (Exception e) {
+            return "";
         }
     }
 }

@@ -3,7 +3,7 @@ package br.com.clinicaintegrada.coordenacao.dao;
 import br.com.clinicaintegrada.coordenacao.Agendamento;
 import br.com.clinicaintegrada.principal.DB;
 import br.com.clinicaintegrada.utils.AnaliseString;
-import br.com.clinicaintegrada.utils.DataHoje;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,9 +12,16 @@ import javax.persistence.TemporalType;
 
 public class AgendamentoDao extends DB {
 
+    /**
+     *
+     * @param idContrato
+     * @param date
+     * @param hora
+     * @return
+     */
     public boolean exists(Integer idContrato, Date date, String hora) {
         try {
-            Query query = getEntityManager().createQuery("SELECT A FROM Agendamento AS A WHERE A.contrato.id = :contrato AND A.agenda = :dataAgenda AND A.horaAgenda = :horaAgenda");
+            Query query = getEntityManager().createQuery("SELECT A FROM Agendamento AS A WHERE A.contrato.id = :contrato AND A.dataAgenda = :dataAgenda AND A.horaAgenda = :horaAgenda");
             query.setParameter("contrato", idContrato);
             query.setParameter("dataAgenda", date, TemporalType.DATE);
             query.setParameter("horaAgenda", hora);
@@ -29,6 +36,12 @@ public class AgendamentoDao extends DB {
         return false;
     }
 
+    /**
+     *
+     * @param idContrato
+     * @param actives
+     * @return
+     */
     public List findAllByContrato(Integer idContrato, Boolean actives) {
         try {
             String queryString = " "
@@ -72,6 +85,7 @@ public class AgendamentoDao extends DB {
             String f = "";
             switch (startFinish) {
                 case "I":
+                    s = "";
                     f = "%";
                     break;
                 case "P":
@@ -89,10 +103,10 @@ public class AgendamentoDao extends DB {
                     + " INNER JOIN pes_pessoa       AS PC ON PC.id              = C.id_paciente     ";
             switch (by) {
                 case "paciente":
-                    queryString += " WHERE UPPER(func_translate(PC.ds_nome)) LIKE '" + s + AnaliseString.removerAcentos(description.toUpperCase()) + s + "' ";
+                    queryString += " WHERE UPPER(func_translate(PC.ds_nome)) LIKE '" + s + AnaliseString.removerAcentos(description.toUpperCase()) + f + "' ";
                     break;
                 case "responsavel":
-                    queryString += " WHERE UPPER(func_translate(PR.ds_nome)) LIKE '" + f + AnaliseString.removerAcentos(description.toUpperCase()) + f + "' ";
+                    queryString += " WHERE UPPER(func_translate(PR.ds_nome)) LIKE '" + s + AnaliseString.removerAcentos(description.toUpperCase()) + f + "' ";
                     break;
                 case "contrato":
                     queryString += " WHERE C.id = " + description;
@@ -126,8 +140,6 @@ public class AgendamentoDao extends DB {
                     order = " A.dt_agenda, A.ds_hora_agenda, ";
                     break;
                 case "ontem":
-                    DataHoje dh = new DataHoje();
-                    // dh.decrementarMeses(qtd, f)
                     queryString += " WHERE A.dt_agenda = '" + dataStart + "'";
                     order = " A.dt_agenda, A.ds_hora_agenda, ";
                     break;
