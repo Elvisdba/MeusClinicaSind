@@ -43,7 +43,11 @@
                                         <p:menuitem value="Consulta"            action="#{chamadaPaginaBean.pagina('consultaEscala')}" />
                                     </p:submenu>
                                     <p:menuitem value="Frequência"              action="#{chamadaPaginaBean.pagina('frequencia')}" />
-                                    <p:menuitem value="Notificação"             action="#{chamadaPaginaBean.pagina('notificao')}" />
+                                    <p:submenu label="Notificação" icon="ui-icon-document" style="margin-right: 15px">
+                                        <p:menuitem value="Manutenção"          action="#{chamadaPaginaBean.pagina('notificacao')}" />
+                                        <p:menuitem value="Consulta"            action="#{chamadaPaginaBean.pagina('consultaNotificacao')}" />
+                                        <p:menuitem value="Tipo"                action="#{chamadaPaginaBean.paginaSimples('Notificao', 'Notificação')}" />
+                                    </p:submenu>
                                     <p:menuitem value="Resgate"                 action="#{chamadaPaginaBean.pagina('resgate')}" />
                                     <p:menuitem value="Transferência"           action="#{chamadaPaginaBean.pagina('transferencia')}" />
                                     <p:menuitem value="Planilha de Avaliação"   action="#{chamadaPaginaBean.pagina('planilhaAvaliacao')}" />
