@@ -479,8 +479,8 @@
         </navigation-case>
         
         <navigation-case>
-            <from-outcome>notificao</from-outcome>
-            <to-view-id>/notificao.jsf</to-view-id>
+            <from-outcome>notificacao</from-outcome>
+            <to-view-id>/notificacao.jsf</to-view-id>
             <redirect/>
         </navigation-case>
         
@@ -511,6 +511,12 @@
         <navigation-case>
             <from-outcome>consultaEscala</from-outcome>
             <to-view-id>/consultaEscala.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>          
+        
+        <navigation-case>
+            <from-outcome>consultaNotificacao</from-outcome>
+            <to-view-id>/consultaNotificacao.jsf</to-view-id>
             <redirect/>
         </navigation-case>          
         

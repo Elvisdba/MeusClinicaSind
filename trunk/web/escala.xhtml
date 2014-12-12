@@ -47,11 +47,14 @@
                                 </h:panelGrid>
                                 <h:panelGrid columns="2">
                                     <p:outputLabel value="Função:" />
-                                    <p:selectOneMenu value="#{escalaBean.index[0]}">
-                                        <p:ajax event="change" update="@this" />
-                                        <f:selectItem itemValue="" itemLabel="Selecionar" />
-                                        <f:selectItems value="#{escalaBean.listSelectItem[0]}" />
-                                    </p:selectOneMenu>
+                                    <h:column>
+                                        <p:selectOneMenu value="#{agendamentoBean.index[0]}" rendered="#{not empty escalaBean.listSelectItem[0]}">
+                                            <p:ajax event="change" update="@this" />
+                                            <f:selectItem itemValue="" itemLabel="Selecionar" />
+                                            <f:selectItems value="#{escalaBean.listSelectItem[0]}" />
+                                        </p:selectOneMenu>
+                                        <p:commandLink value="Cadastre a primeira" action="#{chamadaPaginaBean.paginaSimples('FuncaoEscala', 'Funçao Escala')}" rendered="#{empty escalaBean.listSelectItem[0]}"/>
+                                    </h:column>
                                     <p:outputLabel value="Data:" />
                                     <p:inputMask mask="99/99/9999" value="#{escalaBean.escala.dataEscalaString}" converter="#{isDateString}" size="8">
                                         <p:ajax event="change" update="@this" />
