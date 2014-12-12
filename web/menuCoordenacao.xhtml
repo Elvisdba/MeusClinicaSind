@@ -31,7 +31,6 @@
                                     <p:menuitem value="Função Profissional"     action="#{chamadaPaginaBean.pagina('tipoDocumentoProfissao')}" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}"/>
                                     <p:menuitem value="Função Escala"           action="#{chamadaPaginaBean.paginaSimples('FuncaoEscala', 'Função Escala')}" />
                                     <p:menuitem value="Cronôgrama"              action="#{chamadaPaginaBean.pagina('cronograma')}" />
-                                    <p:menuitem value="Planilha de Avaliação"    />
                                 </p:submenu>
                                 <p:submenu label="Movimento" icon="ui-icon-document" style="margin-right: 15px">
                                     <p:menuitem value="Pertence"                action="#{chamadaPaginaBean.pagina('pertence')}" />
@@ -39,11 +38,15 @@
                                         <p:menuitem value="Manutenção"          action="#{chamadaPaginaBean.pagina('agendamento')}" />
                                         <p:menuitem value="Consulta"            action="#{chamadaPaginaBean.pagina('consultaAgendamento')}" />
                                     </p:submenu>
-                                    <p:menuitem value="Escala"                  />
-                                    <p:menuitem value="Frequência"              />
-                                    <p:menuitem value="Notificação"             />
-                                    <p:menuitem value="Resgate"                 />
-                                    <p:menuitem value="Transferência"           />
+                                    <p:submenu label="Escala" icon="ui-icon-document" style="margin-right: 15px">
+                                        <p:menuitem value="Manutenção"          action="#{chamadaPaginaBean.pagina('escala')}" />
+                                        <p:menuitem value="Consulta"            action="#{chamadaPaginaBean.pagina('consultaEscala')}" />
+                                    </p:submenu>
+                                    <p:menuitem value="Frequência"              action="#{chamadaPaginaBean.pagina('frequencia')}" />
+                                    <p:menuitem value="Notificação"             action="#{chamadaPaginaBean.pagina('notificao')}" />
+                                    <p:menuitem value="Resgate"                 action="#{chamadaPaginaBean.pagina('resgate')}" />
+                                    <p:menuitem value="Transferência"           action="#{chamadaPaginaBean.pagina('transferencia')}" />
+                                    <p:menuitem value="Planilha de Avaliação"   action="#{chamadaPaginaBean.pagina('planilhaAvaliacao')}" />
                                 </p:submenu>
                                 <p:submenu label="Relatório" icon="ui-icon-document" style="margin-right: 15px">
                                     <p:menuitem value="Frequência"     action="#{chamadaPaginaBean.pagina('relatorioFrequencia')}"/>
