@@ -77,7 +77,7 @@ public class Resgate implements Serializable {
     @JoinColumn(name = "id_veiculo", referencedColumnName = "id", nullable = true)
     @OneToOne
     private Veiculo veiculo;
-    @Column(name = "nr_km_rodado", columnDefinition = "double default 0")
+    @Column(name = "nr_km_rodado", columnDefinition = "double precision default 0")
     private Float kmRodado;
 
     public Resgate() {
