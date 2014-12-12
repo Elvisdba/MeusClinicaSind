@@ -4,7 +4,6 @@ import br.com.clinicaintegrada.coordenacao.ConfiguracaoCoordenacao;
 import br.com.clinicaintegrada.coordenacao.Escala;
 import br.com.clinicaintegrada.coordenacao.Contrato;
 import br.com.clinicaintegrada.coordenacao.FuncaoEscala;
-import br.com.clinicaintegrada.coordenacao.dao.AgendamentoDao;
 import br.com.clinicaintegrada.coordenacao.dao.ConfiguracaoCoordenacaoDao;
 import br.com.clinicaintegrada.coordenacao.dao.EscalaDao;
 import br.com.clinicaintegrada.logSistema.Logger;
@@ -174,7 +173,7 @@ public class EscalaBean implements Serializable {
             } else {
                 id = escala.getPaciente().getId();
             }
-            if (escalaDao.exists(id, type, escala.getDataEscala())) {
+            if (escalaDao.exists(type, id, escala.getDataEscala())) {
                 Messages.warn("Validação", "Escala já cadastrado!");
                 return;
             }

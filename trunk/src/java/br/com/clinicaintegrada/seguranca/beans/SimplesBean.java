@@ -12,6 +12,7 @@ import br.com.clinicaintegrada.agenda.GrupoAgenda;
 import br.com.clinicaintegrada.coordenacao.FuncaoEscala;
 import br.com.clinicaintegrada.coordenacao.GrupoEvento;
 import br.com.clinicaintegrada.coordenacao.PertenceGrupo;
+import br.com.clinicaintegrada.coordenacao.TipoNotificacao;
 import br.com.clinicaintegrada.endereco.Bairro;
 import br.com.clinicaintegrada.endereco.DescricaoEndereco;
 import br.com.clinicaintegrada.endereco.Logradouro;
@@ -340,6 +341,9 @@ public class SimplesBean implements Serializable {
             case "GrupoEvento":
                 o = (GrupoEvento) new GrupoEvento(id, descricao);
                 break;
+            case "TipoNotificacao":
+                o = (TipoNotificacao) new TipoNotificacao(id, descricao);
+                break;
 
             // SIMPLES COM ID CLIENTE
             case "Bairro":
@@ -423,6 +427,9 @@ public class SimplesBean implements Serializable {
             case "PertenceGrupo":
                 ((PertenceGrupo) objeto).setDescricao(descricao);
                 break;
+            case "TipoNotificacao":
+                ((TipoNotificacao) objeto).setDescricao(descricao);
+                break;
         }
     }
 
@@ -497,6 +504,10 @@ public class SimplesBean implements Serializable {
             case "GrupoEvento":
                 descricao = ((GrupoEvento) obj).getDescricao();
                 id = ((GrupoEvento) objeto).getId();
+                break;
+            case "TipoNotificacao":
+                descricao = ((TipoNotificacao) obj).getDescricao();
+                id = ((TipoNotificacao) objeto).getId();
                 break;
 
             // SIMPLES COM GRUPO EVENTO    
@@ -624,6 +635,11 @@ public class SimplesBean implements Serializable {
                 break;
             case "PertenceGrupo":
                 if (((PertenceGrupo) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "TipoNotificacao":
+                if (((TipoNotificacao) obj).getDescricao().contains(pesquisaLista)) {
                     return true;
                 }
                 break;
