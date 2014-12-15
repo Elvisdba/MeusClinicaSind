@@ -78,7 +78,7 @@ public class Resgate implements Serializable {
     private Veiculo veiculo;
     @Column(name = "nr_km_rodado")
     private Float kmRodado;
-    @Column(name = "is_resgatado", columnDefinition = "default boolean false")
+    @Column(name = "is_resgatado", columnDefinition = "boolean default false")
     private Boolean resgatado;
     @Column(name = "ds_obs", length = 3000)
     private String observacao;
