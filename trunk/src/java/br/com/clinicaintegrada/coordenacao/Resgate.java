@@ -6,6 +6,7 @@ import br.com.clinicaintegrada.pessoa.Pessoa;
 import br.com.clinicaintegrada.seguranca.Usuario;
 import br.com.clinicaintegrada.sistema.Veiculo;
 import br.com.clinicaintegrada.utils.DataHoje;
+import br.com.clinicaintegrada.utils.Moeda;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,9 +16,7 @@ import org.primefaces.event.SelectEvent;
 @Entity
 @Table(name = "rot_resgate",
         uniqueConstraints = {
-            @UniqueConstraint(columnNames = {"", "", "", "", "", "", "", "", ""}),
-            @UniqueConstraint(columnNames = {"", "", "", "", "", "", "", "", ""}),
-            @UniqueConstraint(columnNames = {"", "", "", "", "", "", "", "", ""}),}
+            @UniqueConstraint(columnNames = {"id_paciente", "dt_saida"})}
 )
 public class Resgate implements Serializable {
 
@@ -41,7 +40,7 @@ public class Resgate implements Serializable {
     private String numero;
     @Column(name = "ds_complemento", length = 50)
     private String complemento;
-    @JoinColumn(name = "id_equipe", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "id_motorista", referencedColumnName = "id", nullable = false)
     @OneToOne
     private Equipe motorista;
     @JoinColumn(name = "id_tecnico", referencedColumnName = "id", nullable = false)
@@ -50,21 +49,21 @@ public class Resgate implements Serializable {
     @JoinColumn(name = "id_apoio1", referencedColumnName = "id", nullable = false)
     @OneToOne
     private Escala apoio1;
-    @JoinColumn(name = "id_apoio2", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "id_apoio2", referencedColumnName = "id")
     @OneToOne
     private Escala apoio2;
-    @JoinColumn(name = "id_apoio3", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "id_apoio3", referencedColumnName = "id")
     @OneToOne
     private Escala apoio3;
-    @JoinColumn(name = "id_apoio4", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "id_apoio4", referencedColumnName = "id")
     @OneToOne
     private Escala apoio4;
     @Temporal(TemporalType.DATE)
     @Column(name = "dt_saida")
     private Date dataSaida;
-    @JoinColumn(name = "id_evento", referencedColumnName = "id", nullable = false)
-    @OneToOne
-    private Evento evento;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "dt_retorno")
+    private Date dataRetorno;
     @Column(name = "ds_hora_agenda", nullable = false, length = 5)
     private String horaAgenda;
     @Column(name = "ds_hora_saida", nullable = false, length = 5)
@@ -77,8 +76,12 @@ public class Resgate implements Serializable {
     @JoinColumn(name = "id_veiculo", referencedColumnName = "id", nullable = true)
     @OneToOne
     private Veiculo veiculo;
-    @Column(name = "nr_km_rodado", columnDefinition = "double precision default 0")
+    @Column(name = "nr_km_rodado")
     private Float kmRodado;
+    @Column(name = "is_resgatado", columnDefinition = "default boolean false")
+    private Boolean resgatado;
+    @Column(name = "ds_obs", length = 3000)
+    private String observacao;
 
     public Resgate() {
         this.id = -1;
@@ -94,17 +97,19 @@ public class Resgate implements Serializable {
         this.apoio2 = null;
         this.apoio3 = null;
         this.apoio4 = null;
-        this.dataSaida = DataHoje.dataHoje();
-        this.evento = null;
+        this.dataSaida = null;
+        this.dataRetorno = null;
         this.horaAgenda = "";
         this.horaSaida = "";
         this.horaRetorno = "";
         this.usuario = null;
         this.veiculo = null;
         this.kmRodado = new Float(0);
+        this.resgatado = false;
+        this.observacao = "";
     }
 
-    public Resgate(Integer id, Date dataEmissao, Pessoa solicitante, Pessoa paciente, Endereco endereco, String numero, String complemento, Equipe motorista, Equipe tecnico, Escala apoio1, Escala apoio2, Escala apoio3, Escala apoio4, Date dataSaida, Evento evento, String horaAgenda, String horaSaida, String horaRetorno, Usuario usuario, Veiculo veiculo, Float kmRodado) {
+    public Resgate(Integer id, Date dataEmissao, Pessoa solicitante, Pessoa paciente, Endereco endereco, String numero, String complemento, Equipe motorista, Equipe tecnico, Escala apoio1, Escala apoio2, Escala apoio3, Escala apoio4, Date dataSaida, Date dataRetorno, String horaAgenda, String horaSaida, String horaRetorno, Usuario usuario, Veiculo veiculo, Float kmRodado, Boolean resgatado, String observacao) {
         this.id = id;
         this.dataEmissao = dataEmissao;
         this.solicitante = solicitante;
@@ -119,13 +124,15 @@ public class Resgate implements Serializable {
         this.apoio3 = apoio3;
         this.apoio4 = apoio4;
         this.dataSaida = dataSaida;
-        this.evento = evento;
+        this.dataRetorno = dataRetorno;
         this.horaAgenda = horaAgenda;
         this.horaSaida = horaSaida;
         this.horaRetorno = horaRetorno;
         this.usuario = usuario;
         this.veiculo = veiculo;
         this.kmRodado = kmRodado;
+        this.resgatado = resgatado;
+        this.observacao = observacao;
     }
 
     public Integer getId() {
@@ -256,12 +263,20 @@ public class Resgate implements Serializable {
         this.dataSaida = DataHoje.converte(dataSaidaString);
     }
 
-    public Evento getEvento() {
-        return evento;
+    public Date getDataRetorno() {
+        return dataRetorno;
     }
 
-    public void setEvento(Evento evento) {
-        this.evento = evento;
+    public void setDataRetorno(Date dataRetorno) {
+        this.dataRetorno = dataRetorno;
+    }
+
+    public String getDataRetornoString() {
+        return DataHoje.converteData(dataRetorno);
+    }
+
+    public void setDataRetornoString(String dataRetornoString) {
+        this.dataRetorno = DataHoje.converte(dataRetornoString);
     }
 
     public String getHoraAgenda() {
@@ -312,9 +327,51 @@ public class Resgate implements Serializable {
         this.kmRodado = kmRodado;
     }
 
+    public String getKmRodadoString() {
+        return "" + kmRodado;
+    }
+
+    public void setKmRodadoString(String kmRodadoString) {
+        try {
+            this.kmRodado = Moeda.substituiVirgulaFloat(kmRodadoString);
+        } catch (Exception e) {
+        }
+    }
+
+    public Boolean getResgatado() {
+        return resgatado;
+    }
+
+    public void setResgatado(Boolean resgatado) {
+        this.resgatado = resgatado;
+    }
+
+    public String getObservacao() {
+        return observacao;
+    }
+
+    public void setObservacao(String observacao) {
+        this.observacao = observacao;
+    }
+
+    public void selectedDataEmissao(SelectEvent event) {
+        SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
+        this.dataEmissao = DataHoje.converte(format.format(event.getObject()));
+    }
+
+    public void selectedDataSaida(SelectEvent event) {
+        SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
+        this.dataSaida = DataHoje.converte(format.format(event.getObject()));
+    }
+
+    public void selectedDataRetorno(SelectEvent event) {
+        SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
+        this.dataRetorno = DataHoje.converte(format.format(event.getObject()));
+    }
+
     @Override
     public int hashCode() {
-        int hash = 7;
+        int hash = 5;
         return hash;
     }
 
@@ -332,16 +389,7 @@ public class Resgate implements Serializable {
 
     @Override
     public String toString() {
-        return "Resgate{" + "id=" + id + ", dataEmissao=" + dataEmissao + ", solicitante=" + solicitante + ", paciente=" + paciente + ", endereco=" + endereco + ", numero=" + numero + ", complemento=" + complemento + ", motorista=" + motorista + ", tecnico=" + tecnico + ", apoio1=" + apoio1 + ", apoio2=" + apoio2 + ", apoio3=" + apoio3 + ", apoio4=" + apoio4 + ", dataSaida=" + dataSaida + ", evento=" + evento + ", horaAgenda=" + horaAgenda + ", horaSaida=" + horaSaida + ", horaRetorno=" + horaRetorno + ", usuario=" + usuario + ", veiculo=" + veiculo + ", kmRodado=" + kmRodado + '}';
+        return "Resgate{" + "id=" + id + ", dataEmissao=" + dataEmissao + ", solicitante=" + solicitante + ", paciente=" + paciente + ", endereco=" + endereco + ", numero=" + numero + ", complemento=" + complemento + ", motorista=" + motorista + ", tecnico=" + tecnico + ", apoio1=" + apoio1 + ", apoio2=" + apoio2 + ", apoio3=" + apoio3 + ", apoio4=" + apoio4 + ", dataSaida=" + dataSaida + ", dataRetorno=" + dataRetorno + ", horaAgenda=" + horaAgenda + ", horaSaida=" + horaSaida + ", horaRetorno=" + horaRetorno + ", usuario=" + usuario + ", veiculo=" + veiculo + ", kmRodado=" + kmRodado + ", resgatado=" + resgatado + ", observacao=" + observacao + '}';
     }
 
-    public void selectedDataEmissao(SelectEvent event) {
-        SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
-        this.dataEmissao = DataHoje.converte(format.format(event.getObject()));
-    }
-
-    public void selectedDataSaida(SelectEvent event) {
-        SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
-        this.dataSaida = DataHoje.converte(format.format(event.getObject()));
-    }
 }
