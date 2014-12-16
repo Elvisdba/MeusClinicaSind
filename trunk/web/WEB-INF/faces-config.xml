@@ -518,6 +518,12 @@
             <from-outcome>consultaNotificacao</from-outcome>
             <to-view-id>/consultaNotificacao.jsf</to-view-id>
             <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>consultaResgate</from-outcome>
+            <to-view-id>/consultaResgate.jsf</to-view-id>
+            <redirect/>
         </navigation-case>          
         
         <!-- 

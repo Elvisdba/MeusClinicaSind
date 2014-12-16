@@ -48,7 +48,7 @@
                                 <h:panelGrid columns="2">
                                     <p:outputLabel value="Função:" />
                                     <h:column>
-                                        <p:selectOneMenu value="#{agendamentoBean.index[0]}" rendered="#{not empty escalaBean.listSelectItem[0]}">
+                                        <p:selectOneMenu value="#{escalaBean.index[0]}" rendered="#{not empty escalaBean.listSelectItem[0]}" disabled="#{escalaBean.disabled}">
                                             <p:ajax event="change" update="@this" />
                                             <f:selectItem itemValue="" itemLabel="Selecionar" />
                                             <f:selectItems value="#{escalaBean.listSelectItem[0]}" />
