@@ -4,7 +4,6 @@ import br.com.clinicaintegrada.coordenacao.Evento;
 import br.com.clinicaintegrada.coordenacao.GrupoEvento;
 import br.com.clinicaintegrada.coordenacao.dao.EventoDao;
 import br.com.clinicaintegrada.logSistema.Logger;
-import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.Messages;
 import br.com.clinicaintegrada.utils.Sessions;
@@ -54,11 +53,10 @@ public class EventoBean implements Serializable {
         Logger logger = new Logger();
         if (evento.getId() == -1) {
             EventoDao eventoDao = new EventoDao();
-            if (eventoDao.exists(evento.getGrupoEvento().getId(), evento.getDescricao(), SessaoCliente.get().getId())) {
+            if (eventoDao.exists(evento.getGrupoEvento().getId(), evento.getDescricao())) {
                 Messages.warn("Validação", "Evento já cadastrada para esta função!");
                 return;
             }
-            evento.setCliente(SessaoCliente.get());
             if (dao.save(evento, true)) {
                 Messages.info("Sucesso", "Registro adicionado");
                 logger.save(
@@ -140,7 +138,7 @@ public class EventoBean implements Serializable {
     public List<Evento> getListEvento() {
         if (listEvento.isEmpty()) {
             EventoDao eventoDao = new EventoDao();
-            listEvento = eventoDao.findAllByCliente(SessaoCliente.get().getId());
+            listEvento = eventoDao.findAll();
         }
         return listEvento;
     }
