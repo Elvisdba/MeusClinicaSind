@@ -76,8 +76,10 @@ public class Resgate implements Serializable {
     @JoinColumn(name = "id_veiculo", referencedColumnName = "id", nullable = true)
     @OneToOne
     private Veiculo veiculo;
-    @Column(name = "nr_km_rodado")
-    private Float kmRodado;
+    @Column(name = "nr_km_inicial")
+    private Float kmInicial;
+    @Column(name = "nr_km_final")
+    private Float kmFinal;
     @Column(name = "is_resgatado", columnDefinition = "boolean default false")
     private Boolean resgatado;
     @Column(name = "ds_obs", length = 3000)
@@ -104,12 +106,13 @@ public class Resgate implements Serializable {
         this.horaRetorno = "";
         this.usuario = null;
         this.veiculo = null;
-        this.kmRodado = new Float(0);
-        this.resgatado = false;
+        this.kmInicial = new Float(0);
+        this.kmFinal = new Float(0);
+        this.resgatado = true;
         this.observacao = "";
     }
 
-    public Resgate(Integer id, Date dataEmissao, Pessoa solicitante, Pessoa paciente, Endereco endereco, String numero, String complemento, Equipe motorista, Equipe tecnico, Escala apoio1, Escala apoio2, Escala apoio3, Escala apoio4, Date dataSaida, Date dataRetorno, String horaAgenda, String horaSaida, String horaRetorno, Usuario usuario, Veiculo veiculo, Float kmRodado, Boolean resgatado, String observacao) {
+    public Resgate(Integer id, Date dataEmissao, Pessoa solicitante, Pessoa paciente, Endereco endereco, String numero, String complemento, Equipe motorista, Equipe tecnico, Escala apoio1, Escala apoio2, Escala apoio3, Escala apoio4, Date dataSaida, Date dataRetorno, String horaAgenda, String horaSaida, String horaRetorno, Usuario usuario, Veiculo veiculo, Float kmInicial, Float kmFinal, Boolean resgatado, String observacao) {
         this.id = id;
         this.dataEmissao = dataEmissao;
         this.solicitante = solicitante;
@@ -130,7 +133,8 @@ public class Resgate implements Serializable {
         this.horaRetorno = horaRetorno;
         this.usuario = usuario;
         this.veiculo = veiculo;
-        this.kmRodado = kmRodado;
+        this.kmInicial = kmInicial;
+        this.kmFinal = kmFinal;
         this.resgatado = resgatado;
         this.observacao = observacao;
     }
@@ -319,21 +323,43 @@ public class Resgate implements Serializable {
         this.veiculo = veiculo;
     }
 
-    public Float getKmRodado() {
-        return kmRodado;
+    public Float getKmInicial() {
+        return kmInicial;
     }
 
-    public void setKmRodado(Float kmRodado) {
-        this.kmRodado = kmRodado;
+    public void setKmInicial(Float kmInicial) {
+        this.kmInicial = kmInicial;
     }
 
-    public String getKmRodadoString() {
-        return "" + kmRodado;
+    public String getKmInicialString() {
+        return "" + kmInicial;
     }
 
-    public void setKmRodadoString(String kmRodadoString) {
+    public void setKmInicialString(String kmInicialString) {
         try {
-            this.kmRodado = Moeda.substituiVirgulaFloat(kmRodadoString);
+            this.kmInicial = Moeda.substituiVirgulaFloat(kmInicialString);
+        } catch (Exception e) {
+        }
+    }
+
+    public Float getKmFinal() {
+        return kmFinal;
+    }
+
+    public void setKmFinal(Float kmFinal) {
+        this.kmFinal = kmFinal;
+    }
+
+    public String getKmFinalString() {
+        return "" + kmFinal;
+    }
+
+    public void setKmFinalString(String kmFinalString) {
+        try {
+            this.kmFinal = Moeda.substituiVirgulaFloat(kmFinalString);
+            if (this.kmFinal < this.kmInicial) {
+                this.kmFinal = this.kmInicial;
+            }
         } catch (Exception e) {
         }
     }
@@ -371,7 +397,7 @@ public class Resgate implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 5;
+        int hash = 3;
         return hash;
     }
 
@@ -389,7 +415,7 @@ public class Resgate implements Serializable {
 
     @Override
     public String toString() {
-        return "Resgate{" + "id=" + id + ", dataEmissao=" + dataEmissao + ", solicitante=" + solicitante + ", paciente=" + paciente + ", endereco=" + endereco + ", numero=" + numero + ", complemento=" + complemento + ", motorista=" + motorista + ", tecnico=" + tecnico + ", apoio1=" + apoio1 + ", apoio2=" + apoio2 + ", apoio3=" + apoio3 + ", apoio4=" + apoio4 + ", dataSaida=" + dataSaida + ", dataRetorno=" + dataRetorno + ", horaAgenda=" + horaAgenda + ", horaSaida=" + horaSaida + ", horaRetorno=" + horaRetorno + ", usuario=" + usuario + ", veiculo=" + veiculo + ", kmRodado=" + kmRodado + ", resgatado=" + resgatado + ", observacao=" + observacao + '}';
+        return "Resgate{" + "id=" + id + ", dataEmissao=" + dataEmissao + ", solicitante=" + solicitante + ", paciente=" + paciente + ", endereco=" + endereco + ", numero=" + numero + ", complemento=" + complemento + ", motorista=" + motorista + ", tecnico=" + tecnico + ", apoio1=" + apoio1 + ", apoio2=" + apoio2 + ", apoio3=" + apoio3 + ", apoio4=" + apoio4 + ", dataSaida=" + dataSaida + ", dataRetorno=" + dataRetorno + ", horaAgenda=" + horaAgenda + ", horaSaida=" + horaSaida + ", horaRetorno=" + horaRetorno + ", usuario=" + usuario + ", veiculo=" + veiculo + ", kmInicial=" + kmInicial + ", kmFinal=" + kmFinal + ", resgatado=" + resgatado + ", observacao=" + observacao + '}';
     }
 
 }

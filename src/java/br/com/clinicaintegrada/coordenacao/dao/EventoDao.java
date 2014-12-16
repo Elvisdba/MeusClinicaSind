@@ -53,4 +53,19 @@ public class EventoDao extends DB {
         return new ArrayList();
     }
 
+    public List findAllByGrupoEventoAndCliente(int idGrupoEvento, int idCliente) {
+        try {
+            Query query = getEntityManager().createQuery("SELECT E FROM Evento AS E WHERE E.grupoEvento.id = :grupoEvento AND E.cliente.id = :cliente ORDER BY E.descricao ASC");
+            query.setParameter("grupoEvento", idGrupoEvento);
+            query.setParameter("cliente", idCliente);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+
+        }
+        return new ArrayList();
+    }
+
 }

@@ -1,10 +1,8 @@
 package br.com.clinicaintegrada.coordenacao.dao;
 
-import br.com.clinicaintegrada.coordenacao.Agendamento;
 import br.com.clinicaintegrada.coordenacao.Escala;
 import br.com.clinicaintegrada.principal.DB;
-import br.com.clinicaintegrada.utils.AnaliseString;
-import br.com.clinicaintegrada.utils.DataHoje;
+import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -139,7 +137,7 @@ public class EscalaDao extends DB {
             if (idFuncaoEscala != null) {
                 whereString += " AND E.id_funcao_escala = " + idFuncaoEscala;
             }
-            if(dataStart != null) {
+            if (dataStart != null) {
                 isFiltroData = true;
             }
             if (isFiltroData) {
@@ -161,6 +159,33 @@ public class EscalaDao extends DB {
             }
             queryString += whereString;
             queryString += " ORDER BY E." + columnDataString + " , E.ds_hora_inicial, E.ds_hora_final ";
+            Query query = getEntityManager().createNativeQuery(queryString, Escala.class);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+            return new ArrayList();
+        }
+        return new ArrayList();
+    }
+
+    public List findAllForResgate(String date, String h1, String inIdEscalas) {
+        try {
+            String queryString = ""
+                    + "    SELECT E.*                                                                         "
+                    + "      FROM rot_escala AS E                                                             "
+                    + "INNER JOIN pes_equipe AS PE ON PE.id = E.id_equipe AND PE.id_cliente = " + SessaoCliente.get().getId()
+                    + "     WHERE dt_escala >= '" + date + "'                                                 "
+                    + "       AND '" + h1 + "' BETWEEN E.ds_hora_inicial AND E.ds_hora_final                  "
+                    + "       AND id_paciente IS NULL                                                         "
+                    + "       AND E.id NOT IN( SELECT id_apoio1 FROM rot_resgate WHERE dt_saida = '" + date + "') "
+                    + "       AND E.id NOT IN( SELECT id_apoio2 FROM rot_resgate WHERE dt_saida = '" + date + "') "
+                    + "       AND E.id NOT IN( SELECT id_apoio3 FROM rot_resgate WHERE dt_saida = '" + date + "') "
+                    + "       AND E.id NOT IN( SELECT id_apoio4 FROM rot_resgate WHERE dt_saida = '" + date + "') ";
+            if (!inIdEscalas.isEmpty()) {
+                queryString += " AND E.id NOT IN (" + inIdEscalas + ") ";
+            }
             Query query = getEntityManager().createNativeQuery(queryString, Escala.class);
             List list = query.getResultList();
             if (!list.isEmpty()) {
