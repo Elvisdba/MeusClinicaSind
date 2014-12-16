@@ -321,9 +321,8 @@ public class EquipeBean implements Serializable {
             listTipoDocumentoProfissao.clear();
             TipoDocumentoProfissaoDao tipoDocumentoProfissaoDao = new TipoDocumentoProfissaoDao();
             List list = (List) tipoDocumentoProfissaoDao.pesquisaTipoDocumentoProfissaoPorEquipeAgrupado();
-            int i = 0;
             listTipoDocumentoProfissao.add(new SelectItem("Nome", "Nome", "ds_nome"));
-            for (i = 0; i < list.size(); i++) {
+            for (int i = 0; i < list.size(); i++) {
                 listTipoDocumentoProfissao.add(new SelectItem(list.get(i).toString(), list.get(i).toString(), "" + list.get(i).toString()));
             }
         }
@@ -349,10 +348,10 @@ public class EquipeBean implements Serializable {
                     TipoDocumentoProfissaoDao tipoDocumentoProfissaoDao = new TipoDocumentoProfissaoDao();
                     TipoDocumentoProfissao tdp1 = tipoDocumentoProfissaoDao.pesquisaTipoDocumentoProfissaoPorDescricao(porPesquisa);
                     if (tipoDocumentoProfissao != null) {
-                        if(tdp1 != null) {
-                            maskTipoAtendimento = tdp1.getMascara();                            
+                        if (tdp1 != null) {
+                            maskTipoAtendimento = tdp1.getMascara();
                         }
-                            maskTipoAtendimento = "";
+                        maskTipoAtendimento = "";
                     } else {
                         maskTipoAtendimento = "";
                     }

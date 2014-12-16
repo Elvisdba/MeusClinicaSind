@@ -41,7 +41,7 @@ public class EscalaBean implements Serializable {
     private Boolean[] filter;
     private String by;
     private String description;
-    private Boolean actives;
+    private Boolean disabled;
     private String startFinish;
 
     @PostConstruct
@@ -71,6 +71,7 @@ public class EscalaBean implements Serializable {
         by = "hoje";
         description = "";
         startFinish = "";
+        disabled = false;
     }
 
     @PreDestroy
@@ -137,7 +138,7 @@ public class EscalaBean implements Serializable {
             return;
         }
         escala.setFuncaoEscala(((FuncaoEscala) dao.find(new FuncaoEscala(), Integer.parseInt(listSelectItem[0].get(index[0]).getDescription()))));
-        if (type.equals("equipe")) {
+        if (type.equals("equipe_id")) {
             if (equipe.getId() == -1) {
                 Messages.warn("Validação", "Pesquisar equipe!");
                 return;
@@ -168,7 +169,7 @@ public class EscalaBean implements Serializable {
         if (escala.getId() == -1) {
             int id;
             EscalaDao escalaDao = new EscalaDao();
-            if (type.equals("equipe")) {
+            if (type.equals("equipe_id")) {
                 id = escala.getEquipe().getId();
             } else {
                 id = escala.getPaciente().getId();
@@ -499,6 +500,29 @@ public class EscalaBean implements Serializable {
 
     public void setListEscalaConsulta(List<Escala> listEscalaConsulta) {
         this.listEscalaConsulta = listEscalaConsulta;
+    }
+
+    /**
+     * @param idFuncaoEscala
+     */
+    public void defineFuncaoEscala(Integer idFuncaoEscala) {
+        if (!getListSelectItem()[0].isEmpty()) {
+            disabled = true;
+            for (int i = 0; i < listSelectItem[0].size(); i++) {
+                if (Integer.parseInt(listSelectItem[0].get(i).getDescription()) == idFuncaoEscala) {
+                    index[1] = i;
+                    break;
+                }
+            }
+        }
+    }
+
+    public Boolean getDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
     }
 
 }

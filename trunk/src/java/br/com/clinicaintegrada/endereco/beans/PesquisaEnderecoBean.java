@@ -57,7 +57,7 @@ public class PesquisaEnderecoBean implements Serializable {
             case "resgate":
                 Sessions.put("enderecoPesquisa", e);
                 PF.closeDialog("dlg_pesquisa_endereco");
-                PF.update("formPessoaJuridica:");
+                PF.update("form_r:");
         }
         return TCase;
     }

@@ -67,16 +67,17 @@ public class ResgateBean implements Serializable {
         hora = new String[2];
         hora[0] = DataHoje.livre(new Date(), "HH:mm");
         hora[1] = "";
-        type = "equipe_id";
-        filterType = "equipe_id";
+        type = "hoje";
+        filterType = "hoje";
         filter = new Boolean[2];
         filter[0] = false;
         filter[1] = false;
-        rendered = new Boolean[4];
+        rendered = new Boolean[5];
         rendered[0] = false;
         rendered[1] = false;
         rendered[2] = false;
         rendered[3] = false;
+        rendered[4] = false;
         by = "hoje";
         description = "";
         startFinish = "";
@@ -302,6 +303,7 @@ public class ResgateBean implements Serializable {
                 }
             }
         } else {
+            index[1] = null;
             rendered[0] = false;
         }
         if (resgate.getApoio2() != null) {
@@ -313,6 +315,7 @@ public class ResgateBean implements Serializable {
                 }
             }
         } else {
+            index[2] = null;
             rendered[1] = false;
         }
         if (resgate.getApoio3() != null) {
@@ -324,6 +327,7 @@ public class ResgateBean implements Serializable {
                 }
             }
         } else {
+            index[3] = null;
             rendered[2] = false;
         }
         if (resgate.getApoio4() != null) {
@@ -335,10 +339,11 @@ public class ResgateBean implements Serializable {
                 }
             }
         } else {
+            index[4] = null;
             rendered[3] = false;
         }
-
-        return null;
+        Sessions.put("linkClicado", true);
+        return "resgate";
     }
 
     /**
@@ -436,11 +441,28 @@ public class ResgateBean implements Serializable {
 
     public List<Resgate> getListResgate() {
         if (listResgate.isEmpty()) {
-            Integer id = null;
-            switch (type) {
+            getListSelectItem();
+            Integer idVeiculo = null;
+            Boolean filtroData = false;
+            switch (by) {
+                case "evento":
+                    if (index[1] != null) {
+                        idVeiculo = Integer.parseInt(listSelectItem[0].get(index[1]).getDescription());
+                    }
+                    break;
+                case "hoje":
+                    data[0] = DataHoje.data();
+                    data[1] = "";
+                    filtroData = true;
+                    break;
+                case "emissao":
+                case "saida":
+                case "entrada":
+                    filtroData = true;
+                    break;
             }
             ResgateDao resgateDao = new ResgateDao();
-            listResgate = resgateDao.findAll(SessaoCliente.get().getId(), id, type, data[0], data[1]);
+            listResgate = resgateDao.findAll(SessaoCliente.get().getId(), null, data[0], data[1], startFinish, by, description, idVeiculo, filtroData);
         }
         return listResgate;
     }
@@ -607,12 +629,26 @@ public class ResgateBean implements Serializable {
         Sessions.put("typeSearch", tCase);
     }
 
+    public void listenerEdit() {
+        rendered[4] = true;
+    }
+
     public Boolean[] getRendered() {
         return rendered;
     }
 
     public void setRendered(Boolean[] rendered) {
         this.rendered = rendered;
+    }
+
+    public String getKmTotal() {
+        if (resgate.getKmInicial() != 0 && resgate.getKmFinal() != 0) {
+            if (resgate.getKmFinal() > resgate.getKmInicial()) {
+                Float t = resgate.getKmFinal() - resgate.getKmInicial();
+                return "" + t;
+            }
+        }
+        return "0";
     }
 
 }
