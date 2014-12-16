@@ -215,7 +215,7 @@ public class CronogramaBean implements Serializable {
     public List<Evento> getListEventos() {
         if (listEventos.isEmpty()) {
             EventoDao eventoDao = new EventoDao();
-            listEventos = eventoDao.findAllByCliente(SessaoCliente.get().getId());
+            listEventos = eventoDao.findAll();
             if (listEventos.isEmpty()) {
                 Messages.warn("Notificação", "- Cadastrar eventos");
             } else {

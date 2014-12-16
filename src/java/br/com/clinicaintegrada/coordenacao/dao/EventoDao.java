@@ -7,13 +7,12 @@ import javax.persistence.Query;
 
 public class EventoDao extends DB {
 
-    public boolean exists(int grupoEvento, String descricao, int cliente) {
+    public boolean exists(int grupoEvento, String descricao) {
         descricao = descricao.toUpperCase();
         try {
-            Query query = getEntityManager().createQuery("SELECT E FROM Evento AS E WHERE E.grupoEvento.id = :grupoEvento AND UPPER(E.descricao) = :descricao AND E.cliente.id = :cliente");
+            Query query = getEntityManager().createQuery("SELECT E FROM Evento AS E WHERE E.grupoEvento.id = :grupoEvento AND UPPER(E.descricao) = :descricao ");
             query.setParameter("grupoEvento", grupoEvento);
             query.setParameter("descricao", descricao);
-            query.setParameter("cliente", cliente);
             query.setMaxResults(1);
             List list = query.getResultList();
             if (!list.isEmpty()) {
@@ -25,10 +24,9 @@ public class EventoDao extends DB {
         return false;
     }
 
-    public List findAllByCliente(int cliente) {
+    public List findAll() {
         try {
-            Query query = getEntityManager().createQuery("SELECT E FROM Evento AS E WHERE E.cliente.id = :cliente");
-            query.setParameter("cliente", cliente);
+            Query query = getEntityManager().createQuery("SELECT E FROM Evento AS E");
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;
@@ -43,21 +41,6 @@ public class EventoDao extends DB {
         try {
             Query query = getEntityManager().createQuery("SELECT E FROM Evento AS E WHERE E.grupoEvento.id = :grupoEvento ORDER BY E.descricao ASC");
             query.setParameter("grupoEvento", idGrupoEvento);
-            List list = query.getResultList();
-            if (!list.isEmpty()) {
-                return list;
-            }
-        } catch (Exception e) {
-
-        }
-        return new ArrayList();
-    }
-
-    public List findAllByGrupoEventoAndCliente(int idGrupoEvento, int idCliente) {
-        try {
-            Query query = getEntityManager().createQuery("SELECT E FROM Evento AS E WHERE E.grupoEvento.id = :grupoEvento AND E.cliente.id = :cliente ORDER BY E.descricao ASC");
-            query.setParameter("grupoEvento", idGrupoEvento);
-            query.setParameter("cliente", idCliente);
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;

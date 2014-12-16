@@ -248,7 +248,7 @@ public class AgendamentoBean implements Serializable {
     public List<SelectItem>[] getListSelectItem() {
         if (listSelectItem[0].isEmpty()) {
             EventoDao eventoDao = new EventoDao();
-            List<Evento> list = eventoDao.findAllByGrupoEventoAndCliente(2, SessaoCliente.get().getId());
+            List<Evento> list = eventoDao.findAllByGrupoEvento(2);
             for (int i = 0; i < list.size(); i++) {
                 if (i == 0) {
                     index[0] = i;
