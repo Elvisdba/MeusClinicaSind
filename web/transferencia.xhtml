@@ -1,0 +1,186 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Transferência</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/Imagens/favicon.ico"/>  
+        <style type="text/css">            
+            .ui-selectonemenu {padding-right: 25px!important;}
+        </style>
+    </h:head>
+    <h:body>
+        <!-- INICIA DIV wrap e main -->
+        <div id="wrapx">
+            <div id="mainx">
+                <!-- INICIA DIV wrap e main -->  
+                <f:subview id="header">
+                    <ui:include src="templates/templatePrime.xhtml"/>
+                </f:subview>
+                <f:view>
+                    <p:panel styleClass="wrapper" style="border: 0px;">
+                        <h:outputText value="Transferência" styleClass="fonteHeader" />
+                        <div class="clear"></div>
+                        <h:form id="form_t">
+                            <p:messages autoUpdate="true" showDetail="true" showSummary="true" />
+                            <c:set scope="request" var="object" value="${transferenciaBean.transferencia}"/>
+                            <p:panel header="Paciente">
+                                <h:panelGrid columns="2" cellspacing="5">
+                                    <p:commandButton icon="ui-icon-search" value="Pesquisar" action="#{chamadaPaginaBean.pesquisa('pesquisaContrato')}" title="Pesquisar contrato"/>
+                                    <h:column>
+                                        <p:outputLabel value="#{transferenciaBean.transferencia.contrato.paciente.nome}" rendered="#{transferenciaBean.transferencia.contrato.paciente != null}"/>
+                                        <p:outputLabel value="PESQUISAR CONTRATO" rendered="#{transferenciaBean.transferencia.contrato.paciente == null}"/>
+                                    </h:column>
+                                </h:panelGrid>
+                            </p:panel>
+                            <p:panel header="Equipe" styleClass="margin-top-max">
+                                <h:panelGrid columns="2" cellspacing="5">
+                                    <p:commandButton icon="ui-icon-search" value="Pesquisar" action="#{chamadaPaginaBean.pesquisa('pesquisaEquipe')}" title="Pesquisar equipe"/>
+                                    <h:column>
+                                        <p:outputLabel value="#{transferenciaBean.transferencia.equipe.pessoa.nome}" rendered="#{transferenciaBean.transferencia.equipe != null}"/>
+                                        <p:outputLabel value="PESQUISAR EQUIPE" rendered="#{transferenciaBean.transferencia.equipe == null}"/>
+                                    </h:column>
+                                </h:panelGrid>
+                            </p:panel>
+                            <p:panel styleClass="margin-top-max">
+                                <h:panelGrid columns="5" id="i_p_1" cellspacing="5" styleClass="margin-top-max" columnClasses="text-center">
+                                    <h:column>
+                                        <h:panelGrid columns="1">
+                                            <p:outputLabel value="Filial Atual:" />
+                                            <p:selectOneMenu value="#{transferenciaBean.index[0]}" rendered="#{not empty transferenciaBean.listSelectItem[0]}" style="width: 420px">
+                                                <p:ajax event="change" update="@this i_p_1" listener="#{transferenciaBean.clear(1)}"/>
+                                                <f:selectItem itemValue="" itemLabel="Selecionar" />
+                                                <f:selectItems value="#{transferenciaBean.listSelectItem[0]}" />
+                                            </p:selectOneMenu>
+                                        </h:panelGrid>
+                                    </h:column>
+                                    <h:column>
+                                        <h:panelGrid columns="1" styleClass="margin-top-max">
+                                            <p:commandButton icon="ui-icon-transferthick-e-w" title="Transferir" actionListener="#{transferenciaBean.transferFilial}" update="i_p_1"/>
+                                        </h:panelGrid>
+                                    </h:column>
+                                    <h:column>
+                                        <h:panelGrid columns="1">
+                                            <p:outputLabel value="Filial Destino:" />
+                                            <p:selectOneMenu value="#{transferenciaBean.index[1]}" rendered="#{not empty transferenciaBean.listSelectItem[1]}" style="width: 420px">
+                                                <p:ajax event="change" update="@this i_p_1" />
+                                                <f:selectItem itemValue="" itemLabel="Selecionar" />
+                                                <f:selectItems value="#{transferenciaBean.listSelectItem[1]}" />
+                                            </p:selectOneMenu>
+                                        </h:panelGrid>
+                                    </h:column>
+                                </h:panelGrid>
+                                <h:panelGrid columns="4" id="i_p_2" cellspacing="5" styleClass="margin-top-max">                                  
+                                    <p:outputLabel value="Saída:" />
+                                    <p:inputMask mask="99/99/9999" value="#{transferenciaBean.transferencia.dataSaidaString}" size="8" >
+                                        <p:ajax event="change" update="@this i_p_2" listener="#{transferenciaBean.clear(2)}"/>
+                                    </p:inputMask>
+                                    <p:outputLabel value="Hora Saída:" />
+                                    <p:inputMask mask="99:99" value="#{transferenciaBean.hora[0]}" size="2" converter="#{isValidTimeString}">
+                                        <p:ajax event="change" update="@this i_p_2" />
+                                    </p:inputMask>
+                                    <p:outputLabel value="Chegada:" />
+                                    <p:inputMask mask="99/99/9999" value="#{transferenciaBean.transferencia.dataChegadaString}" converter="#{isDateString}" size="8">
+                                        <p:ajax event="change" update="@this i_p_2" listener="#{transferenciaBean.clear(2)}"/>
+                                    </p:inputMask>
+                                    <p:outputLabel value="Hora Chegada:" />
+                                    <p:inputMask mask="99:99" value="#{transferenciaBean.hora[1]}" size="2" converter="#{isValidTimeString}" readonly="#{empty transferenciaBean.transferencia.dataChegadaString}" title="Digite a hora de chegada para liberar este campo">
+                                        <p:ajax event="change" update="@this i_p_2" />
+                                    </p:inputMask>
+                                </h:panelGrid>
+                                <h:panelGrid styleClass="margin-top-max">
+                                    <p:outputLabel value="Observação:" />
+                                    <p:inputTextarea value="#{transferenciaBean.transferencia.observacao}" cols="100" placeholder="Observação"></p:inputTextarea>
+                                </h:panelGrid>                                
+                            </p:panel>
+                            <h:panelGrid columns="4" styleClass="margin-top-max">                                
+                                <p:commandButton value="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.save}"/>
+                                <p:commandButton value="Novo" action="#{transferenciaBean.clear(0)}" update=":form_t:"/>
+                                <p:commandButton value="Excluir" onclick="PF('dlg_delete').show()" disabled="#{controleAcessoBean.delete}"/>
+                                <p:commandButton value="Consultar transferencias" action="#{chamadaPaginaBean.pesquisa('consultaTransferencia')}" />
+                            </h:panelGrid>
+                            <p:panel header="Lista" styleClass="margin-top-max" rendered="#{transferenciaBean.filter[0]}">
+                                <h:panelGrid columns="7" id="i_p_3">
+                                    <h:outputLabel value="Período - Inicial: " styleClass="margin-left-max"/>
+                                    <p:inputMask mask="99/99/9999" value="#{transferenciaBean.data[0]}" converter="#{isDateString}" size="8">
+                                        <p:ajax event="change" update="@this" />
+                                    </p:inputMask>
+                                    <h:outputLabel value="Final: " />
+                                    <p:inputMask mask="99/99/9999" value="#{transferenciaBean.data[1]}" converter="#{isDateString}" size="8">
+                                        <p:ajax event="change" update="@this" />
+                                    </p:inputMask>
+                                    <p:commandButton icon="ui-icon-close" action="#{transferenciaBean.clear(1)}" update=":form_t:i_p_3 :form_t:i_datatable_fe" actionListener="#{transferenciaBean.listEscala.clear()}" />
+                                    <p:commandButton icon="ui-icon-search" title="Filtrar" action="#{transferenciaBean.listTransferencia.clear()}" update=":form_t:i_datatable_fe"  styleClass="margin-left-max"/>
+                                </h:panelGrid>                                
+                                <h:panelGrid id="i_datatable_fe">
+                                    <p:dataTable value="#{transferenciaBean.listTransferencia}" var="transferencia" scrollable="true" scrollHeight="300" emptyMessage="Nenhum registro encontrado!" styleClass="margin-top-max">
+                                        <p:column width="30">
+                                            <p:rowToggler />
+                                        </p:column>
+                                        <p:column width="30" styleClass="text-center">
+                                            <p:commandButton icon="ui-icon-link" action="#{transferenciaBean.edit(transferencia)}" update=":form_t:" />
+                                        </p:column>
+                                        <p:column headerText="Saída" width="80" styleClass="text-center" sortBy="#{transferencia.dataSaidaString}">
+                                            #{transferencia.dataSaidaString}
+                                        </p:column>
+                                        <p:column headerText="H. Saída" width="80" styleClass="text-center" sortBy="#{transferencia.horaSaida}">
+                                            #{transferencia.horaSaida}
+                                        </p:column>
+                                        <p:column headerText="Chegada" width="80" styleClass="text-center" sortBy="#{transferencia.dataChegadaString}">
+                                            #{transferencia.dataChegadaString}
+                                        </p:column>
+                                        <p:column headerText="H. Chegada" width="80" styleClass="text-center" sortBy="#{transferencia.horaChegada}">
+                                            #{transferencia.horaChegada}
+                                        </p:column>
+                                        <p:column headerText="Filial Atual" sortBy="#{transferencia.filialAtual.filial.pessoa.nome}">
+                                            #{transferencia.filialAtual.filial.pessoa.nome}
+                                        </p:column>
+                                        <p:column headerText="Filial Destino" sortBy="#{transferencia.filialDestino.filial.pessoa.nome}">
+                                            #{transferencia.filialDestino.filial.pessoa.nome}
+                                        </p:column>                                        
+                                        <p:column headerText="Equipe" sortBy="#{transferencia.equipe.pessoa.nome}">
+                                            #{transferencia.equipe.pessoa.nome}
+                                        </p:column>                                        
+                                        <p:rowExpansion>
+                                            Lançamento: #{transferencia.dataLancamentoString} - Obs: #{transferencia.observacao}
+                                        </p:rowExpansion>
+                                    </p:dataTable>
+                                </h:panelGrid>
+                            </p:panel>                            
+                            <p:dialog id="i_dlg_save" widgetVar="dlg_save" modal="true" header="Deseja salvar/atualizar este registro?" width="400" resizable="false">
+                                <h:panelGrid columns="2">
+                                    <p:commandButton value="Sim" title="Salvar" action="#{transferenciaBean.save}" update=":form_t:"  oncomplete="PF('dlg_save').hide(); PF('dlg_message').show();" />
+                                    <p:commandButton value="Não" title="Cancelar" oncomplete="PF('dlg_save').hide();"/>
+                                </h:panelGrid>
+                            </p:dialog>
+                            <p:dialog id="i_dlg_delete" widgetVar="dlg_delete" modal="true" header="Deseja excluir este registro?" width="400" resizable="false">
+                                <h:panelGrid columns="2">
+                                    <p:commandButton value="Sim" title="Excluir" action="#{transferenciaBean.delete}" update=":form_t:" oncomplete="PF('dlg_delete').hide(); PF('dlg_message').show();" />
+                                    <p:commandButton value="Não" title="Cancelar" oncomplete="PF('dlg_delete').hide();"/>
+                                </h:panelGrid>
+                            </p:dialog>
+                            <p:dialog widgetVar="dlg_message" modal="true" header="Mensagem"  width="400" resizable="false">
+                                <p:messages autoUpdate="true" showDetail="true" showSummary="true" id="i_message"/>
+                                <f:facet name="footer">
+                                    <p:commandButton value="Ok" title="Ok" onclick="PF('dlg_message).hide();" />
+                                </f:facet>
+                            </p:dialog>
+                        </h:form>
+                    </p:panel>
+                </f:view>
+                <!-- FINALIZA div wrap main -->
+            </div>
+        </div>
+        <!-- FINALIZA div wrap main -->
+
+        <div id="footerx">
+            <f:subview id="footer">
+                <ui:include src="templates/templateFooter.xhtml"/>
+            </f:subview>
+        </div>                
+    </h:body>
+</ui:composition>
