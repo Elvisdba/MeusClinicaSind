@@ -90,10 +90,22 @@
                                         </p:selectOneMenu>
                                         <p:commandLink value="Cadastre o primeiro" action="#{chamadaPaginaBean.paginaSimples('Veiculo', 'Veículo')}" rendered="#{empty resgateBean.listSelectItem[0]}"/>
                                     </h:column>
-                                    <p:outputLabel value="Kilometragem:" styleClass="margin-left-max"/>
-                                    <p:inputText value="#{resgateBean.resgate.kmRodadoString}">
-                                        <p:ajax event="change" update="@this" />
+                                    <h:column />
+                                    <h:column />
+                                    <p:outputLabel value="Km Saída:"/>
+                                    <p:inputText value="#{resgateBean.resgate.kmInicialString}">
+                                        <p:ajax event="change" update="@this i_km_total" />
                                     </p:inputText>
+                                    <p:outputLabel value="Km Retorno:" styleClass="margin-left-max"/>
+                                    <h:column>
+                                        <h:panelGrid columns="4" id="i_km_total">
+                                            <p:inputText value="#{resgateBean.resgate.kmFinalString}" disabled="#{empty resgateBean.resgate.dataRetornoString}">
+                                                <p:ajax event="change" update="@this i_km_total" />
+                                            </p:inputText>
+                                            <p:outputLabel value="Km Total:" styleClass="margin-left-max"/>
+                                            <p:inputText value="#{resgateBean.kmTotal}" readonly="true" />
+                                        </h:panelGrid>
+                                    </h:column>
                                     <p:outputLabel value="Saída:" />
                                     <p:inputMask mask="99/99/9999" value="#{resgateBean.resgate.dataSaidaString}" size="8" >
                                         <p:ajax event="change" update="@this i_p_e" listener="#{resgateBean.clear(8)}"/>
@@ -166,7 +178,7 @@
                                 <p:commandButton value="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.save}"/>
                                 <p:commandButton value="Novo" action="#{resgateBean.clear(0)}" update=":form_r:"/>
                                 <p:commandButton value="Excluir" onclick="PF('dlg_delete').show()" disabled="#{controleAcessoBean.delete}"/>
-                                <p:commandButton value="Consultar resgates" action="#{chamadaPaginaBean.pesquisa('consultaResgate')}" />
+                                <p:commandButton value="Consultar resgates" action="#{chamadaPaginaBean.pesquisa('consultaResgate')}" actionListener="#{resgateBean.listenerEdit()}" />
                             </h:panelGrid>
                             <p:dialog id="i_dlg_save" widgetVar="dlg_save" modal="true" header="Deseja salvar/atualizar este registro?" width="400" resizable="false">
                                 <h:panelGrid columns="2">

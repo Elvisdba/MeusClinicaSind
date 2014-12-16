@@ -48,7 +48,10 @@
                                         <p:menuitem value="Consulta"            action="#{chamadaPaginaBean.pagina('consultaNotificacao')}" />
                                         <p:menuitem value="Tipo"                action="#{chamadaPaginaBean.paginaSimples('Notificao', 'Notificação')}" />
                                     </p:submenu>
-                                    <p:menuitem value="Resgate"                 action="#{chamadaPaginaBean.pagina('resgate')}" />
+                                    <p:submenu label="Resgate" icon="ui-icon-document" style="margin-right: 15px">
+                                        <p:menuitem value="Manutenção"          action="#{chamadaPaginaBean.pagina('resgate')}" />
+                                        <p:menuitem value="Consulta resgate"    action="#{chamadaPaginaBean.pagina('consultaResgate', 'resgateBean')}" />
+                                    </p:submenu>
                                     <p:menuitem value="Transferência"           action="#{chamadaPaginaBean.pagina('transferencia')}" />
                                     <p:menuitem value="Planilha de Avaliação"   action="#{chamadaPaginaBean.pagina('planilhaAvaliacao')}" />
                                 </p:submenu>
