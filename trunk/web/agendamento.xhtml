@@ -44,14 +44,28 @@
                                 <h:panelGrid columns="6" cellspacing="5" styleClass="margin-top-max" id="i_p_1">
                                     <p:commandLink value="Evento:" />
                                     <h:column>
-                                        <h:panelGrid columns="3">
+                                        <h:panelGrid columns="7">
                                             <h:selectOneMenu value="#{agendamentoBean.index[0]}" rendered="#{not empty agendamentoBean.listSelectItem[0]}">
-                                                <p:ajax event="change" update="@this" />
+                                                <p:ajax event="change" update="@this i_fe" />
                                                 <f:selectItem itemValue="" itemLabel="Selecionar" />
                                                 <f:selectItems value="#{agendamentoBean.listSelectItem[0]}" />
                                             </h:selectOneMenu>
                                             <p:commandButton icon="ui-icon-plus" action="#{chamadaPaginaBean.pagina('evento')}" title="Cadastrar novo" rendered="#{not empty notificacaoBean.listSelectItem[0]}" actionListener="#{agendamentoBean.listSelectItem[0].clear()}" />
                                             <p:commandLink value="Cadastre o primeiro" action="#{chamadaPaginaBean.pagina('evento')}" rendered="#{empty agendamentoBean.listSelectItem[0]}"/>
+                                            <h:column>
+                                                <h:panelGrid id="i_fe">
+                                                    <h:panelGrid columns="7" rendered="#{agendamentoBean.habilitaFuncaoEquipe}">
+                                                        <p:commandLink value="Evento:" styleClass="margin-left-max"/>
+                                                        <h:selectOneMenu value="#{agendamentoBean.index[3]}" rendered="#{not empty agendamentoBean.listSelectItem[1]}">
+                                                            <p:ajax event="change" update="@this" />
+                                                            <f:selectItem itemValue="" itemLabel="Selecionar" />
+                                                            <f:selectItems value="#{agendamentoBean.listSelectItem[1]}" />
+                                                        </h:selectOneMenu>
+                                                        <p:commandButton icon="ui-icon-plus" action="#{chamadaPaginaBean.pagina('funcaoEquipe')}" title="Cadastrar novo" rendered="#{not empty notificacaoBean.listSelectItem[1]}" actionListener="#{agendamentoBean.listSelectItem[1].clear()}" />
+                                                        <p:commandLink value="Cadastre o primeiro" action="#{chamadaPaginaBean.pagina('funcaoEquipe')}" rendered="#{empty agendamentoBean.listSelectItem[1]}"/>
+                                                    </h:panelGrid>
+                                                </h:panelGrid>
+                                            </h:column>
                                         </h:panelGrid>
                                     </h:column>
                                     <p:commandLink value="Data:" />
@@ -102,6 +116,9 @@
                                         </p:column>
                                         <p:column headerText="Evento" sortBy="#{agendamento.evento.descricao}">
                                             #{agendamento.evento.descricao}
+                                        </p:column>                                        
+                                        <p:column headerText="Função Equipe" sortBy="#{agendamento.funcaoEquipe.tipoAtendimento.descricao}">
+                                            #{agendamento.funcaoEquipe.tipoAtendimento.descricao}
                                         </p:column>                                        
                                         <p:rowExpansion>
                                             Lançamento: #{agendamento.dataLancamentoString} - Obs: #{agendamento.observacao}
