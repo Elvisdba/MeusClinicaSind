@@ -83,7 +83,7 @@
                                                 <p:column colspan="2" width="80" />
                                                 <p:column colspan="2" headerText="Agendado" />
                                                 <p:column colspan="2" headerText="Atendimento"/>
-                                                <p:column colspan="3" headerText="Informações"/>
+                                                <p:column colspan="4" headerText="Informações"/>
                                             </p:row>                                        
                                             <p:row>
                                                 <p:column />
@@ -95,6 +95,7 @@
                                                 <p:column headerText="Contrato" sortBy="#{agendamento.contrato.id}"/>
                                                 <p:column headerText="Paciente" sortBy="#{agendamento.contrato.paciente.nome}"/>
                                                 <p:column headerText="Evento" sortBy="#{agendamento.evento.descricao}"/>
+                                                <p:column headerText="Função Equipe" sortBy="#{agendamento.funcaoEquipe.tipoAtendimento.descricao}"/>
                                             </p:row>                                        
                                         </p:columnGroup>
                                         <p:column width="30" styleClass="text-center">
@@ -123,7 +124,10 @@
                                         </p:column>
                                         <p:column>
                                             #{agendamento.evento.descricao}
-                                        </p:column>                                        
+                                        </p:column>
+                                        <p:column>
+                                            #{agendamento.funcaoEquipe.tipoAtendimento.descricao}
+                                        </p:column>                                          
                                         <p:rowExpansion>
                                             Lançamento: #{agendamento.dataLancamentoString} - Obs: #{agendamento.observacao}
                                         </p:rowExpansion>
