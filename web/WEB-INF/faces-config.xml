@@ -536,6 +536,12 @@
             <from-outcome>avaliacao</from-outcome>
             <to-view-id>/avaliacao.jsf</to-view-id>
             <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>avaliacaoEquipe</from-outcome>
+            <to-view-id>/avaliacaoEquipe.jsf</to-view-id>
+            <redirect/>
         </navigation-case>          
         
         <!-- 
