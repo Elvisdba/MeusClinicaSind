@@ -532,6 +532,12 @@
             <redirect/>
         </navigation-case>          
         
+        <navigation-case>
+            <from-outcome>avaliacao</from-outcome>
+            <to-view-id>/avaliacao.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>          
+        
         <!-- 
         <navigation-case>
             <from-outcome>#{navigationRules.param}</from-outcome>
