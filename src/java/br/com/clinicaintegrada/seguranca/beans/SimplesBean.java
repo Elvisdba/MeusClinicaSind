@@ -10,9 +10,11 @@ import br.com.clinicaintegrada.administrativo.TipoDesligamento;
 import br.com.clinicaintegrada.administrativo.TipoInternacao;
 import br.com.clinicaintegrada.agenda.GrupoAgenda;
 import br.com.clinicaintegrada.coordenacao.FuncaoEscala;
+import br.com.clinicaintegrada.coordenacao.GrupoAvaliacao;
 import br.com.clinicaintegrada.coordenacao.GrupoEvento;
 import br.com.clinicaintegrada.coordenacao.PertenceGrupo;
 import br.com.clinicaintegrada.coordenacao.TipoNotificacao;
+import br.com.clinicaintegrada.coordenacao.TiposAvaliacao;
 import br.com.clinicaintegrada.endereco.Bairro;
 import br.com.clinicaintegrada.endereco.DescricaoEndereco;
 import br.com.clinicaintegrada.endereco.Logradouro;
@@ -344,6 +346,12 @@ public class SimplesBean implements Serializable {
             case "TipoNotificacao":
                 o = (TipoNotificacao) new TipoNotificacao(id, descricao);
                 break;
+            case "GrupoAvaliacao":
+                o = (GrupoAvaliacao) new GrupoAvaliacao(id, descricao);
+                break;
+            case "TiposAvaliacao":
+                o = (TiposAvaliacao) new TiposAvaliacao(id, descricao);
+                break;
 
             // SIMPLES COM ID CLIENTE
             case "Bairro":
@@ -430,6 +438,12 @@ public class SimplesBean implements Serializable {
             case "TipoNotificacao":
                 ((TipoNotificacao) objeto).setDescricao(descricao);
                 break;
+            case "TiposAvaliacao":
+                ((TiposAvaliacao) objeto).setDescricao(descricao);
+                break;
+            case "GrupoAvaliacao":
+                ((GrupoAvaliacao) objeto).setDescricao(descricao);
+                break;
         }
     }
 
@@ -508,6 +522,14 @@ public class SimplesBean implements Serializable {
             case "TipoNotificacao":
                 descricao = ((TipoNotificacao) obj).getDescricao();
                 id = ((TipoNotificacao) objeto).getId();
+                break;
+            case "GrupoAvaliacao":
+                descricao = ((GrupoAvaliacao) obj).getDescricao();
+                id = ((GrupoAvaliacao) objeto).getId();
+                break;
+            case "TiposAvaliacao":
+                descricao = ((TiposAvaliacao) obj).getDescricao();
+                id = ((TiposAvaliacao) objeto).getId();
                 break;
 
             // SIMPLES COM GRUPO EVENTO    
@@ -640,6 +662,16 @@ public class SimplesBean implements Serializable {
                 break;
             case "TipoNotificacao":
                 if (((TipoNotificacao) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "TiposAvaliacao":
+                if (((TiposAvaliacao) obj).getDescricao().contains(pesquisaLista)) {
+                    return true;
+                }
+                break;
+            case "GrupoAvaliacao":
+                if (((GrupoAvaliacao) obj).getDescricao().contains(pesquisaLista)) {
                     return true;
                 }
                 break;
