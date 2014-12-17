@@ -55,7 +55,7 @@
                                             <h:column>
                                                 <h:panelGrid id="i_fe">
                                                     <h:panelGrid columns="7" rendered="#{agendamentoBean.habilitaFuncaoEquipe}">
-                                                        <p:commandLink value="Evento:" styleClass="margin-left-max"/>
+                                                        <p:commandLink value="Função: " styleClass="margin-left-max"/>
                                                         <h:selectOneMenu value="#{agendamentoBean.index[3]}" rendered="#{not empty agendamentoBean.listSelectItem[1]}">
                                                             <p:ajax event="change" update="@this" />
                                                             <f:selectItem itemValue="" itemLabel="Selecionar" />
