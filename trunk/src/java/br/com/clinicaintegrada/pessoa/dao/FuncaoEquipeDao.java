@@ -149,4 +149,19 @@ public class FuncaoEquipeDao extends DB {
         return false;
     }
 
+    public List findAllByClienteAndInTipoAtendimento(Integer cliente, String inTipoAtendimento) {
+        try {
+            String queryString = "SELECT FE FROM FuncaoEquipe AS FE WHERE FE.cliente.id = :cliente AND FE.tipoAtendimento.id IN(" + inTipoAtendimento + ") ORDER BY FE.profissao.profissao ASC, FE.tipoDocumentoProfissao.descricao ASC";
+            Query query = getEntityManager().createQuery(queryString);
+            query.setParameter("cliente", cliente);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+            return new ArrayList();
+        }
+        return new ArrayList();
+    }
+
 }

@@ -116,11 +116,14 @@ public class EscalaBean implements Serializable {
         DataHoje dataHoje = new DataHoje();
         Integer dt1 = DataHoje.converteDataParaInteger(DataHoje.data());
         Integer dt2 = DataHoje.converteDataParaInteger(escala.getDataEscalaString());
-        Integer dt3 = DataHoje.converteDataParaInteger(escala.getDataEscalaString());
+        Integer dt3 = dt2;
         Integer dt4 = DataHoje.converteDataParaInteger(dataHoje.incrementarMeses(cc.getEscalaMaxMesesEscala(), DataHoje.data()));
         // VERIFICA SE PERMITE ESCALA RETROATIVO
-        if (cc.getEscalaDataRetroativo() != null) {
-            dt2 = DataHoje.converteDataParaInteger(DataHoje.converteData(cc.getEscalaDataRetroativo()));
+        if (cc.getAgendamentoDataRetroativo() != null) {
+            dt2 = DataHoje.converteDataParaInteger(DataHoje.converteData(cc.getAgendamentoDataRetroativo()));
+            if (dt2 < dt1) {
+                dt2 = dt3;
+            }
         }
         if (dt2 <= dt1) {
             Messages.warn("Validação", "A data da escala não deve ser superior a data de hoje!");
