@@ -36,7 +36,7 @@ public class AgendaContato implements BaseEntity, Serializable {
     @Temporal(TemporalType.DATE)
     @Column(name = "dt_nascimento")
     private Date nascimento;
-    @Column(name = "is_notifica_aniversario", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "is_notifica_aniversario", columnDefinition = "boolean default false")
     private boolean notificaAniversario;
 
     public AgendaContato() {

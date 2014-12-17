@@ -35,9 +35,9 @@ public class Registro implements Serializable {
     @JoinColumn(name = "id_email_protocolo", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     private SisEmailProtocolo sisEmailProtocolo;
-    @Column(name = "sis_is_email_marketing", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "sis_is_email_marketing", columnDefinition = "boolean default false")
     private boolean sisEmailMarketing;
-    @Column(name = "sis_is_email_autenticado", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "sis_is_email_autenticado", columnDefinition = "boolean default false")
     private boolean sisEmailAutenticado;
     @JoinColumn(name = "id_filial", referencedColumnName = "id", nullable = true)
     @ManyToOne(fetch = FetchType.EAGER)

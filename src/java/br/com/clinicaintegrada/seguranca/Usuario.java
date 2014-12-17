@@ -25,13 +25,13 @@ public class Usuario implements Serializable {
     private String login;
     @Column(name = "ds_senha", length = 6, nullable = false)
     private String senha;
-    @Column(name = "is_ativo", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "is_ativo", columnDefinition = "boolean default false")
     private boolean ativo;
     @Column(name = "ds_email", length = 255)
     private String email;
-    @Column(name = "is_administrador", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "is_administrador", columnDefinition = "boolean default false")
     private boolean administrador;
-    @Column(name = "is_acesso_externo", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "is_acesso_externo", columnDefinition = "boolean default false")
     private boolean acessoExterno;
 
     public Usuario() {
