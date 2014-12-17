@@ -1,5 +1,6 @@
 package br.com.clinicaintegrada.coordenacao;
 
+import br.com.clinicaintegrada.pessoa.FuncaoEquipe;
 import br.com.clinicaintegrada.seguranca.Usuario;
 import br.com.clinicaintegrada.utils.DataHoje;
 import java.io.Serializable;
@@ -24,6 +25,9 @@ public class Agendamento implements Serializable {
     @JoinColumn(name = "id_agendador", referencedColumnName = "id", nullable = true)
     @OneToOne
     private Usuario agendador;
+    @JoinColumn(name = "id_funcao_equipe", referencedColumnName = "id", nullable = true)
+    @OneToOne
+    private FuncaoEquipe funcaoEquipe;
     @JoinColumn(name = "id_evento", referencedColumnName = "id", nullable = false)
     @OneToOne
     private Evento evento;
@@ -47,6 +51,7 @@ public class Agendamento implements Serializable {
         this.id = -1;
         this.contrato = new Contrato();
         this.agendador = null;
+        this.funcaoEquipe = null;
         this.evento = new Evento();
         this.dataLancamento = new Date();
         this.dataAgenda = new Date();
@@ -56,10 +61,11 @@ public class Agendamento implements Serializable {
         this.horaAtendimento = "";
     }
 
-    public Agendamento(int id, Contrato contrato, Usuario agendador, Evento evento, Date lancamento, Date agenda, String horaAgenda, String observacao, Date atendimento, String horaAtendimento) {
+    public Agendamento(int id, Contrato contrato, Usuario agendador, FuncaoEquipe funcaoEquipe, Evento evento, Date lancamento, Date agenda, String horaAgenda, String observacao, Date atendimento, String horaAtendimento) {
         this.id = id;
         this.contrato = contrato;
         this.agendador = agendador;
+        this.funcaoEquipe = funcaoEquipe;
         this.evento = evento;
         this.dataLancamento = lancamento;
         this.dataAgenda = agenda;
@@ -169,6 +175,14 @@ public class Agendamento implements Serializable {
         this.dataAtendimento = DataHoje.converte(dataAtendimentoString);
     }
 
+    public FuncaoEquipe getFuncaoEquipe() {
+        return funcaoEquipe;
+    }
+
+    public void setFuncaoEquipe(FuncaoEquipe funcaoEquipe) {
+        this.funcaoEquipe = funcaoEquipe;
+    }
+
     public void selectedDataLancamento(SelectEvent event) {
         SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
         this.dataLancamento = DataHoje.converte(format.format(event.getObject()));
@@ -182,6 +196,29 @@ public class Agendamento implements Serializable {
     public void selectedDataAtendimento(SelectEvent event) {
         SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
         this.dataAtendimento = DataHoje.converte(format.format(event.getObject()));
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Agendamento other = (Agendamento) obj;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Agendamento{" + "id=" + id + ", contrato=" + contrato + ", agendador=" + agendador + ", funcaoEquipe=" + funcaoEquipe + ", evento=" + evento + ", dataLancamento=" + dataLancamento + ", dataAgenda=" + dataAgenda + ", horaAgenda=" + horaAgenda + ", dataAtendimento=" + dataAtendimento + ", horaAtendimento=" + horaAtendimento + ", observacao=" + observacao + '}';
     }
 
 }
