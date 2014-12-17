@@ -42,9 +42,9 @@ public class Juridica implements Serializable {
     @Temporal(TemporalType.DATE)
     @Column(name = "dt_fechamento")
     private Date dtFechamento;
-    @Column(name = "is_email_escritorio", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "is_email_escritorio", columnDefinition = "boolean default false")
     private boolean emailEscritorio;
-    @Column(name = "is_email_cobranca_escritorio", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "is_email_cobranca_escritorio", columnDefinition = "boolean default false")
     private boolean cobrancaEscritorio;
 
     public Juridica() {

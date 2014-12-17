@@ -34,9 +34,9 @@ public class Email implements Serializable {
     private String assunto;
     @Column(name = "ds_mensagem", length = 255, nullable = true)
     private String mensagem;
-    @Column(name = "is_confirma_recebimento", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "is_confirma_recebimento", columnDefinition = "boolean default false")
     private boolean confirmaRecebimento;
-    @Column(name = "is_rascunho", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "is_rascunho", columnDefinition = "boolean default false")
     private boolean rascunho;
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
     @ManyToOne

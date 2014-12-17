@@ -23,7 +23,7 @@ public class Rotina implements Serializable {
     private String pagina;
     @Column(name = "ds_classe", length = 100)
     private String classe;
-    @Column(name = "is_ativo", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "is_ativo", columnDefinition = "boolean default false")
     private boolean ativo;
 
     public Rotina() {

@@ -22,7 +22,7 @@ public class UsuarioAcesso implements Serializable {
     @JoinColumn(name = "id_permissao", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Permissao permissao;
-    @Column(name = "is_permite", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "is_permite", columnDefinition = "boolean default false")
     private boolean permite;
 
     public UsuarioAcesso() {
