@@ -8,6 +8,8 @@ import br.com.clinicaintegrada.coordenacao.dao.AgendamentoDao;
 import br.com.clinicaintegrada.coordenacao.dao.ConfiguracaoCoordenacaoDao;
 import br.com.clinicaintegrada.coordenacao.dao.EventoDao;
 import br.com.clinicaintegrada.logSistema.Logger;
+import br.com.clinicaintegrada.pessoa.FuncaoEquipe;
+import br.com.clinicaintegrada.pessoa.dao.FuncaoEquipeDao;
 import br.com.clinicaintegrada.seguranca.Usuario;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import br.com.clinicaintegrada.utils.Dao;
@@ -49,13 +51,14 @@ public class AgendamentoBean implements Serializable {
         listAgendamento = new ArrayList<>();
         listAgendamentoConsulta = new ArrayList<>();
         contrato = new Contrato();
-        index = new Integer[3];
         data = new String[2];
         data[0] = DataHoje.data();
         data[1] = DataHoje.data();
+        index = new Integer[4];
         index[0] = null;
         index[1] = null;
         index[2] = null;
+        index[3] = null;
         listSelectItem = new ArrayList[2];
         listSelectItem[0] = new ArrayList<>();
         listSelectItem[1] = new ArrayList<>();
@@ -103,6 +106,17 @@ public class AgendamentoBean implements Serializable {
             return;
         }
         agendamento.setEvento((Evento) dao.find(new Evento(), Integer.parseInt(listSelectItem[0].get(index[0]).getDescription())));
+        if (getHabilitaFuncaoEquipe()) {
+            if (listSelectItem[1].isEmpty()) {
+                Messages.warn("Validação", "Nenhuma função encontrada!");
+                return;
+            }
+            if (index[3] == null) {
+                Messages.warn("Validação", "Selecionar função equipe!");
+                return;
+            }
+            agendamento.setFuncaoEquipe((FuncaoEquipe) dao.find(new FuncaoEquipe(), Integer.parseInt(listSelectItem[1].get(index[3]).getDescription())));
+        }
         if (contrato.getId() == -1) {
             Messages.warn("Validação", "Pesquisar contrato!");
             return;
@@ -116,11 +130,14 @@ public class AgendamentoBean implements Serializable {
         DataHoje dataHoje = new DataHoje();
         Integer dt1 = DataHoje.converteDataParaInteger(DataHoje.data());
         Integer dt2 = DataHoje.converteDataParaInteger(agendamento.getDataAgendaString());
-        Integer dt3 = DataHoje.converteDataParaInteger(agendamento.getDataAgendaString());
+        Integer dt3 = dt2;
         Integer dt4 = DataHoje.converteDataParaInteger(dataHoje.incrementarMeses(cc.getAgendamentoMaxMesesAgenda(), DataHoje.data()));
         // VERIFICA SE PERMITE AGENDAMENTO RETROATIVO
         if (cc.getAgendamentoDataRetroativo() != null) {
             dt2 = DataHoje.converteDataParaInteger(DataHoje.converteData(cc.getAgendamentoDataRetroativo()));
+            if (dt2 < dt1) {
+                dt2 = dt3;
+            }
         }
         if (dt2 <= dt1) {
             Messages.warn("Validação", "A data do agendamento deve ser superior a data de hoje!");
@@ -212,6 +229,14 @@ public class AgendamentoBean implements Serializable {
                 break;
             }
         }
+        if (agendamento.getFuncaoEquipe() != null) {
+            for (int i = 0; i < listSelectItem[1].size(); i++) {
+                if (a.getFuncaoEquipe().getId() == Integer.parseInt(listSelectItem[1].get(i).getDescription())) {
+                    index[3] = i;
+                    break;
+                }
+            }
+        }
         return null;
     }
 
@@ -254,6 +279,18 @@ public class AgendamentoBean implements Serializable {
                     index[0] = i;
                 }
                 listSelectItem[0].add(new SelectItem(i, list.get(i).getDescricao(), "" + list.get(i).getId()));
+            }
+        }
+        if (getHabilitaFuncaoEquipe()) {
+            if (listSelectItem[1].isEmpty()) {
+                FuncaoEquipeDao funcaoEquipeDao = new FuncaoEquipeDao();
+                List<FuncaoEquipe> list = funcaoEquipeDao.findAllByClienteAndInTipoAtendimento(SessaoCliente.get().getId(), "1,2");
+                for (int i = 0; i < list.size(); i++) {
+                    if (i == 0) {
+                        index[3] = i;
+                    }
+                    listSelectItem[1].add(new SelectItem(i, list.get(i).getProfissao().getProfissao(), "" + list.get(i).getId()));
+                }
             }
         }
         return listSelectItem;
@@ -391,6 +428,17 @@ public class AgendamentoBean implements Serializable {
 
     public void setData(String[] data) {
         this.data = data;
+    }
+
+    public Boolean getHabilitaFuncaoEquipe() {
+        if (index[0] != null) {
+            Integer id = Integer.parseInt(listSelectItem[0].get(index[0]).getDescription());
+            if (id == 26) {
+                return true;
+            }
+        }
+        index[3] = null;
+        return false;
     }
 
 }
