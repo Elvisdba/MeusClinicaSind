@@ -23,15 +23,15 @@ public class TaxasBean implements Serializable {
 
     private Taxas taxas;
     private List<Taxas> listTaxas;
-    private List<SelectItem> listServicos;
-    private Integer idServicos;
+    private List<SelectItem> listSelectItem;
+    private Integer index;
 
     @PostConstruct
     public void init() {
         taxas = new Taxas();
         listTaxas = new ArrayList<>();
-        listServicos = new ArrayList<>();
-        idServicos = 0;
+        listSelectItem = new ArrayList<>();
+        index = 0;
     }
 
     @PreDestroy
@@ -44,12 +44,12 @@ public class TaxasBean implements Serializable {
     }
 
     public void save() {
-        if (listServicos.isEmpty()) {
+        if (listSelectItem.isEmpty()) {
             Messages.warn("Validação", "Cadastrar serviços!");
             return;
         }
         Dao dao = new Dao();
-        taxas.setServicos((Servicos) dao.find(new Servicos(), Integer.parseInt(listServicos.get(idServicos).getDescription())));
+        taxas.setServicos((Servicos) dao.find(new Servicos(), Integer.parseInt(listSelectItem.get(index).getDescription())));
         Logger logger = new Logger();
         if (taxas.getId() == -1) {
             taxas.setCliente(SessaoCliente.get());
@@ -65,9 +65,9 @@ public class TaxasBean implements Serializable {
                         + " - Valor: " + taxas.getValorString()
                 );
                 listTaxas.clear();
-                listServicos.clear();
+                listSelectItem.clear();
                 taxas = new Taxas();
-                idServicos = 0;
+                index = 0;
                 Messages.info("Sucesso", "Registro inserido!");
             } else {
                 Messages.warn("Erro", "Erro ao inserir registro!");
@@ -86,9 +86,9 @@ public class TaxasBean implements Serializable {
                         + " - Valor: " + taxas.getValorString()
                 );
                 listTaxas.clear();
-                listServicos.clear();
+                listSelectItem.clear();
                 taxas = new Taxas();
-                idServicos = 0;
+                index = 0;
             } else {
                 Messages.warn("Erro", "Erro ao atualizar registro!");
             }
@@ -97,15 +97,15 @@ public class TaxasBean implements Serializable {
     }
 
     public void edit(Taxas t) {
-        listServicos.clear();
-        idServicos = 0;
-        getListServicos();
+        listSelectItem.clear();
+        index = 0;
+        getListSelectItem();
         taxas = new Taxas();
         taxas = t;
-        listServicos.add(new SelectItem(listServicos.size(), taxas.getServicos().getDescricao(), "" + taxas.getServicos().getId()));
-        for (int j = 0; j < listServicos.size(); j++) {
-            if (taxas.getServicos().getId() == Integer.parseInt(listServicos.get(j).getDescription())) {
-                idServicos = j;
+        listSelectItem.add(new SelectItem(listSelectItem.size(), taxas.getServicos().getDescricao(), "" + taxas.getServicos().getId()));
+        for (int j = 0; j < listSelectItem.size(); j++) {
+            if (taxas.getServicos().getId() == Integer.parseInt(listSelectItem.get(j).getDescription())) {
+                index = j;
                 break;
             }
         }
@@ -127,8 +127,8 @@ public class TaxasBean implements Serializable {
             );
             Messages.info("Sucesso", "Registro removido!");
             taxas = new Taxas();
-            listServicos.clear();
-            idServicos = 0;
+            listSelectItem.clear();
+            index = 0;
             listTaxas.clear();
         } else {
             Messages.warn("Erro", "Erro ao remover registro!");
@@ -156,27 +156,31 @@ public class TaxasBean implements Serializable {
         this.listTaxas = listTaxas;
     }
 
-    public List<SelectItem> getListServicos() {
-        if (listServicos.isEmpty()) {
+    /**
+     * Serviços
+     * @return 
+     */
+    public List<SelectItem> getListSelectItem() {
+        if (listSelectItem.isEmpty()) {
             TaxasDao taxasDao = new TaxasDao();
             List<Servicos> list = taxasDao.findServicos(SessaoCliente.get().getId());
             for (int i = 0; i < list.size(); i++) {
-                listServicos.add(new SelectItem(i, list.get(i).getDescricao(), "" + list.get(i).getId()));
+                listSelectItem.add(new SelectItem(i, list.get(i).getDescricao(), "" + list.get(i).getId()));
             }
         }
-        return listServicos;
+        return listSelectItem;
     }
 
-    public void setListServicos(List<SelectItem> listServicos) {
-        this.listServicos = listServicos;
+    public void setListSelectItem(List<SelectItem> listSelectItem) {
+        this.listSelectItem = listSelectItem;
     }
 
-    public Integer getIdServicos() {
-        return idServicos;
+    public Integer getIndex() {
+        return index;
     }
 
-    public void setIdServicos(Integer idServicos) {
-        this.idServicos = idServicos;
+    public void setIndex(Integer index) {
+        this.index = index;
     }
 
 }
