@@ -15,7 +15,7 @@ public class FuncaoEquipe implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_tipo_atendimento", referencedColumnName = "id")
     @OneToOne(fetch = FetchType.EAGER)
     private TipoAtendimento tipoAtendimento;
@@ -37,7 +37,7 @@ public class FuncaoEquipe implements Serializable {
         this.cliente = new Cliente();
     }
 
-    public FuncaoEquipe(int id, TipoAtendimento tipoAtendimento, TipoDocumentoProfissao tipoDocumentoProfissao, Profissao profissao, Cliente cliente) {
+    public FuncaoEquipe(Integer id, TipoAtendimento tipoAtendimento, TipoDocumentoProfissao tipoDocumentoProfissao, Profissao profissao, Cliente cliente) {
         this.id = id;
         this.tipoAtendimento = tipoAtendimento;
         this.tipoDocumentoProfissao = tipoDocumentoProfissao;
@@ -45,11 +45,11 @@ public class FuncaoEquipe implements Serializable {
         this.cliente = cliente;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

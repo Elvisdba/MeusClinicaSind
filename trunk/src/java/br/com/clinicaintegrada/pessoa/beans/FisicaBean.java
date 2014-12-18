@@ -511,7 +511,10 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         }
     }
 
-    public String edit(Fisica f) {
+    public String edit(Object o) {
+        Fisica f = (Fisica) o;
+        Dao dao = new Dao();
+        fisica = (Fisica) dao.rebind(o);
         if (fisica.getId() != f.getId()) {
             FacesContext context = FacesContext.getCurrentInstance();
             File fExiste = new File(((ServletContext) context.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/Fotos/fotoTemp.jpg"));

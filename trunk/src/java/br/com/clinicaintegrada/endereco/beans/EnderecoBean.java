@@ -189,8 +189,9 @@ public class EnderecoBean implements Serializable {
         return edit(e);
     }
 
-    public String edit(Endereco e) {
-        endereco = e;
+    public String edit(Object o) {
+        Dao dao = new Dao();
+        endereco = (Endereco) dao.rebind(o);
         for (int i = 0; i < (getListLogradouro().size()); i++) {
             if (Integer.parseInt(getListLogradouro().get(i).getDescription()) == endereco.getLogradouro().getId()) {
                 index[2] = i;

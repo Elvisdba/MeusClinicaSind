@@ -1,5 +1,6 @@
 package br.com.clinicaintegrada.coordenacao.beans;
 
+import br.com.clinicaintegrada.coordenacao.Agendamento;
 import br.com.clinicaintegrada.coordenacao.Contrato;
 import br.com.clinicaintegrada.coordenacao.PertenceEntrada;
 import br.com.clinicaintegrada.coordenacao.PertenceGrupo;
@@ -83,7 +84,7 @@ public class PertenceBean implements Serializable {
             pertenceEntrada = new PertenceEntrada();
             index[0] = null;
             listSelectItem.clear();
-            modal = false;            
+            modal = false;
         } else if (tCase == 4) {
             modal = false;
             pertenceSaida = new PertenceSaida();
@@ -271,8 +272,9 @@ public class PertenceBean implements Serializable {
 
     }
 
-    public String edit(ListPertence lp) {
-        pertenceEntrada = lp.getPertenceEntrada();
+    public String edit(ListPertence o) {
+        Dao dao = new Dao();
+        pertenceEntrada = (PertenceEntrada) dao.rebind(o.getPertenceEntrada());
         contrato = pertenceEntrada.getContrato();
         responsavelEntrada = pertenceEntrada.getResponsavel();
         if (pertenceEntrada.getPertenceGrupo() != null) {
@@ -386,8 +388,8 @@ public class PertenceBean implements Serializable {
                     pertenceDao.setPertenceGrupo(null);
                 }
                 List<PertenceEntrada> list = pertenceDao.findAllByContrato(contrato.getId());
-                int saida = 0;
-                int saldo = 0;
+                int saida;
+                int saldo;
                 for (int i = 0; i < list.size(); i++) {
                     saida = pertenceDao.countPertenceSaida(list.get(i).getId());
                     saldo = list.get(i).getQuantidade() - saida;

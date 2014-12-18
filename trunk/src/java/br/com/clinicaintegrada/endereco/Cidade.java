@@ -25,7 +25,7 @@ public class Cidade implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Column(name = "ds_cidade", length = 50, nullable = false)
     private String cidade;
     @Column(name = "ds_uf", length = 2, nullable = false)
@@ -37,17 +37,17 @@ public class Cidade implements Serializable {
         this.uf = "";
     }
 
-    public Cidade(int id, String cidade, String uf) {
+    public Cidade(Integer id, String cidade, String uf) {
         this.id = id;
         this.cidade = cidade;
         this.uf = uf;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

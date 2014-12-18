@@ -14,7 +14,7 @@ public class Usuario implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
     @OneToOne(fetch = FetchType.EAGER)
     private Cliente cliente;
@@ -26,13 +26,13 @@ public class Usuario implements Serializable {
     @Column(name = "ds_senha", length = 6, nullable = false)
     private String senha;
     @Column(name = "is_ativo", columnDefinition = "boolean default false")
-    private boolean ativo;
+    private Boolean ativo;
     @Column(name = "ds_email", length = 255)
     private String email;
     @Column(name = "is_administrador", columnDefinition = "boolean default false")
-    private boolean administrador;
+    private Boolean administrador;
     @Column(name = "is_acesso_externo", columnDefinition = "boolean default false")
-    private boolean acessoExterno;
+    private Boolean acessoExterno;
 
     public Usuario() {
         this.id = -1;
@@ -46,7 +46,7 @@ public class Usuario implements Serializable {
         this.acessoExterno = false;
     }
 
-    public Usuario(int id, Cliente cliente, Pessoa pessoa, String login, String senha, boolean ativo, String email, boolean administrador, boolean acessoExterno) {
+    public Usuario(Integer id, Cliente cliente, Pessoa pessoa, String login, String senha, Boolean ativo, String email, Boolean administrador, Boolean acessoExterno) {
         this.id = id;
         this.cliente = cliente;
         this.pessoa = pessoa;
@@ -58,11 +58,11 @@ public class Usuario implements Serializable {
         this.acessoExterno = acessoExterno;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -98,11 +98,11 @@ public class Usuario implements Serializable {
         this.senha = senha;
     }
 
-    public boolean getAtivo() {
+    public Boolean getAtivo() {
         return ativo;
     }
 
-    public void setAtivo(boolean ativo) {
+    public void setAtivo(Boolean ativo) {
         this.ativo = ativo;
     }
 
@@ -119,19 +119,19 @@ public class Usuario implements Serializable {
         this.email = email;
     }
 
-    public boolean isAdministrador() {
+    public Boolean getAdministrador() {
         return administrador;
     }
 
-    public void setAdministrador(boolean administrador) {
+    public void setAdministrador(Boolean administrador) {
         this.administrador = administrador;
     }
 
-    public boolean isAcessoExterno() {
+    public Boolean getAcessoExterno() {
         return acessoExterno;
     }
 
-    public void setAcessoExterno(boolean acessoExterno) {
+    public void setAcessoExterno(Boolean acessoExterno) {
         this.acessoExterno = acessoExterno;
     }
 }

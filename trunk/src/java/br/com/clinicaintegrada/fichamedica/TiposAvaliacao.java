@@ -1,6 +1,5 @@
-package br.com.clinicaintegrada.coordenacao;
+package br.com.clinicaintegrada.fichamedica;
 
-import br.com.clinicaintegrada.seguranca.Cliente;
 import java.io.Serializable;
 import javax.persistence.*;
 
@@ -15,8 +14,8 @@ public class TiposAvaliacao implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
-    @Column(name = "ds_descricao", length = 30, nullable = true, unique = true)
+    private Integer id;
+    @Column(name = "ds_descricao", length = 30, nullable = true, unique = true, updatable = true)
     private String descricao;
 
     public TiposAvaliacao() {
@@ -24,16 +23,16 @@ public class TiposAvaliacao implements Serializable {
         this.descricao = "";
     }
 
-    public TiposAvaliacao(int id, String descricao) {
+    public TiposAvaliacao(Integer id, String descricao) {
         this.id = id;
         this.descricao = descricao;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

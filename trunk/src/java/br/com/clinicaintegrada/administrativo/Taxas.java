@@ -25,7 +25,7 @@ public class Taxas implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_servicos", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Servicos servicos;
@@ -33,19 +33,19 @@ public class Taxas implements Serializable {
     @ManyToOne
     private Cliente cliente;
     @Column(name = "nr_valor", length = 10, nullable = false)
-    private float valor;
+    private Float valor;
     @Column(name = "is_oculta_contrato", columnDefinition = "boolean default false")
-    private boolean ocultaContrato;
+    private Boolean ocultaContrato;
 
     public Taxas() {
         this.id = -1;
         this.servicos = new Servicos();
         this.cliente = new Cliente();
-        this.valor = 0;
+        this.valor = new Float(0);
         this.ocultaContrato = false;
     }
 
-    public Taxas(int id, Servicos servicos, Cliente cliente, float valor, boolean ocultaContrato) {
+    public Taxas(Integer id, Servicos servicos, Cliente cliente, Float valor, Boolean ocultaContrato) {
         this.id = id;
         this.servicos = servicos;
         this.cliente = cliente;
@@ -77,11 +77,11 @@ public class Taxas implements Serializable {
         this.cliente = cliente;
     }
 
-    public float getValor() {
+    public Float getValor() {
         return valor;
     }
 
-    public void setValor(float valor) {
+    public void setValor(Float valor) {
         this.valor = valor;
     }
 
@@ -93,11 +93,11 @@ public class Taxas implements Serializable {
         this.valor = Moeda.converteUS$(valorString);
     }
 
-    public boolean isOcultaContrato() {
+    public Boolean getOcultaContrato() {
         return ocultaContrato;
     }
 
-    public void setOcultaContrato(boolean ocultaContrato) {
+    public void setOcultaContrato(Boolean ocultaContrato) {
         this.ocultaContrato = ocultaContrato;
     }
 }

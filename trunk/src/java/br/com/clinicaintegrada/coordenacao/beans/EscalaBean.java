@@ -266,7 +266,7 @@ public class EscalaBean implements Serializable {
         }
     }
 
-    public String edit(Escala e) {
+    public String edit(Object o) {
         if (escala.getPaciente() != null) {
             contrato = escala.getPaciente();
             type = "contrato";
@@ -274,11 +274,12 @@ public class EscalaBean implements Serializable {
             equipe = escala.getEquipe();
             type = "equipe_id";
         }
-        escala = e;
-        hora[0] = e.getHoraInicial();
-        hora[1] = e.getHoraFinal();
+        Dao dao = new Dao();
+        escala = (Escala) dao.rebind(o);
+        hora[0] = escala.getHoraInicial();
+        hora[1] = escala.getHoraFinal();
         for (int i = 0; i < listSelectItem[0].size(); i++) {
-            if (e.getFuncaoEscala().getId() == Integer.parseInt(listSelectItem[0].get(i).getDescription())) {
+            if (escala.getFuncaoEscala().getId() == Integer.parseInt(listSelectItem[0].get(i).getDescription())) {
                 index[0] = i;
                 break;
             }

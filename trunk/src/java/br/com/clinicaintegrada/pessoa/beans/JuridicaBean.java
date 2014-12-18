@@ -679,25 +679,28 @@ public class JuridicaBean implements Serializable {
         return null;
     }
 
-    public String edit(Juridica j) {
-        juridica = j;
+    public String edit(Object o) {
+        Dao dao = new Dao();
+        juridica = (Juridica) dao.rebind(o);
         String url = (String) Sessions.getString("urlRetorno");
         Sessions.put("linkClicado", true);
         descPesquisa = "";
         porPesquisa = "nome";
         comoPesquisa = "";
         if (!getListTipoDocumento().isEmpty()) {
-            for (int o = 0; o < listTipoDocumento.size(); o++) {
-                if (Integer.parseInt(listTipoDocumento.get(o).getDescription()) == juridica.getPessoa().getTipoDocumento().getId()) {
-                    idTipoDocumento = o;
+            for (int i = 0; i < listTipoDocumento.size(); i++) {
+                if (Integer.parseInt(listTipoDocumento.get(i).getDescription()) == juridica.getPessoa().getTipoDocumento().getId()) {
+                    idTipoDocumento = i;
+                    break;
                 }
             }
         }
 
         if (!getListPorte().isEmpty()) {
-            for (int o = 0; o < listPorte.size(); o++) {
-                if (Integer.parseInt(listPorte.get(o).getDescription()) == juridica.getPorte().getId()) {
-                    idPorte = o;
+            for (int i = 0; i < listPorte.size(); i++) {
+                if (Integer.parseInt(listPorte.get(i).getDescription()) == juridica.getPorte().getId()) {
+                    idPorte = i;
+                    break;
                 }
             }
         }
@@ -931,7 +934,7 @@ public class JuridicaBean implements Serializable {
     public void verificarEndContabilidade() {
         PessoaEnderecoDao pessoaEnderecoDao = new PessoaEnderecoDao();
         if (juridica.getId() != -1) {
-            if (juridica.isCobrancaEscritorio() && (juridica.getContabilidade() != null && juridica.getContabilidade().getId() != -1)) {
+            if (juridica.getCobrancaEscritorio() && (juridica.getContabilidade() != null && juridica.getContabilidade().getId() != -1)) {
                 PessoaEndereco pesEndCon = pessoaEnderecoDao.pesquisaPessoaEnderecoPorPessoaTipo(juridica.getContabilidade().getPessoa().getId(), 3);
                 if ((!listEnd.isEmpty()) && pesEndCon != null) {
                     pessoaEndereco = (PessoaEndereco) listEnd.get(1);

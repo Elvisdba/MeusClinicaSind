@@ -30,7 +30,7 @@ public class ClienteBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        listCliente = new ArrayList<Cliente>();
+        listCliente = new ArrayList<>();
         cliente = new Cliente();
         descricaoPesquisa = "";
         juridica = new Juridica();
@@ -109,8 +109,9 @@ public class ClienteBean implements Serializable {
         }
     }
 
-    public String edit(Cliente c) {
-        cliente = c;        
+    public String edit(Object o) {
+        Dao dao = new Dao();
+        cliente = (Cliente) dao.rebind(o);
         Sessions.put("linkClicado", true);
         Sessions.put("clientePesquisa", cliente);
         return (String) Sessions.getString("urlRetorno");

@@ -11,7 +11,7 @@ public class TipoDocumentoProfissao implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_profissao", referencedColumnName = "id", nullable = false, unique = true)
     @OneToOne(fetch = FetchType.EAGER)
     private Profissao profissao;
@@ -27,18 +27,18 @@ public class TipoDocumentoProfissao implements Serializable {
         this.mascara = "";
     }
 
-    public TipoDocumentoProfissao(int id, Profissao profissao, String descricao, String mascara) {
+    public TipoDocumentoProfissao(Integer id, Profissao profissao, String descricao, String mascara) {
         this.id = id;
         this.profissao = profissao;
         this.descricao = descricao;
         this.mascara = mascara;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

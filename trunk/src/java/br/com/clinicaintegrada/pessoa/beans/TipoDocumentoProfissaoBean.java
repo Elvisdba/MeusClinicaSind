@@ -111,8 +111,9 @@ public class TipoDocumentoProfissaoBean implements Serializable {
         }
     }
 
-    public void edit(TipoDocumentoProfissao tdp) {
-        tipoDocumentoProfissao = tdp;
+    public void edit(Object o) {
+        Dao dao = new Dao();
+        tipoDocumentoProfissao = (TipoDocumentoProfissao) dao.rebind(o);
         for (int i = 0; i < listProfissao.size(); i++) {
             if (tipoDocumentoProfissao.getProfissao().getId() == Integer.parseInt(getListProfissao().get(i).getDescription())) {
                 idProfissao = i;

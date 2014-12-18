@@ -15,7 +15,7 @@ public class TipoDesligamento implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Column(name = "ds_descricao", length = 30, nullable = true, unique = true)
     private String descricao;
 
@@ -24,16 +24,16 @@ public class TipoDesligamento implements Serializable {
         this.descricao = "";
     }
 
-    public TipoDesligamento(int id, String descricao) {
+    public TipoDesligamento(Integer id, String descricao) {
         this.id = id;
         this.descricao = descricao;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

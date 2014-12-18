@@ -1,4 +1,4 @@
-package br.com.clinicaintegrada.coordenacao.dao;
+package br.com.clinicaintegrada.fichamedica.dao;
 
 import br.com.clinicaintegrada.principal.DB;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class AvaliacaoDao extends DB {
      */
     public List findAllByGrupo(Integer idGrupoAvaliacao) {
         try {
-            Query query = getEntityManager().createQuery("SELECT A FROM Avaliacao AS A WHERE A.grupoAvaliacao.id = :grupoAvaliacao ORDER BY A.tiposAvaliacao.descricao");
+            Query query = getEntityManager().createQuery("SELECT A FROM Avaliacao AS A WHERE A.grupoAvaliacao.id = :grupoAvaliacao ORDER BY A.id");
             query.setParameter("grupoAvaliacao", idGrupoAvaliacao);
             List list = query.getResultList();
             if (!list.isEmpty()) {

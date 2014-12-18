@@ -1,4 +1,4 @@
-package br.com.clinicaintegrada.coordenacao;
+package br.com.clinicaintegrada.fichamedica;
 
 import br.com.clinicaintegrada.pessoa.FuncaoEquipe;
 import java.io.Serializable;

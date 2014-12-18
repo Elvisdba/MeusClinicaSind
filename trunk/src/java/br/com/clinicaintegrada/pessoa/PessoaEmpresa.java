@@ -16,7 +16,7 @@ public class PessoaEmpresa implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_fisica", referencedColumnName = "id", nullable = true)
     @ManyToOne(fetch = FetchType.EAGER)
     private Fisica fisica;
@@ -35,7 +35,7 @@ public class PessoaEmpresa implements Serializable {
     @Column(name = "ds_setor", length = 30, nullable = false)
     private String setor;
     @Column(name = "aviso_trabalhado", nullable = true)
-    private boolean avisoTrabalhado;
+    private Boolean avisoTrabalhado;
 
     public PessoaEmpresa() {
         this.id = -1;
@@ -48,7 +48,7 @@ public class PessoaEmpresa implements Serializable {
         this.avisoTrabalhado = true;
     }
 
-    public PessoaEmpresa(int id, Fisica fisica, Juridica juridica, Profissao funcao, String admissao, String demissao, String setor, boolean avisoTrabalhado) {
+    public PessoaEmpresa(Integer id, Fisica fisica, Juridica juridica, Profissao funcao, String admissao, String demissao, String setor, Boolean avisoTrabalhado) {
         this.id = id;
         this.fisica = fisica;
         this.juridica = juridica;
@@ -59,11 +59,11 @@ public class PessoaEmpresa implements Serializable {
         this.avisoTrabalhado = avisoTrabalhado;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -143,11 +143,11 @@ public class PessoaEmpresa implements Serializable {
         this.setor = setor;
     }
 
-    public boolean isAvisoTrabalhado() {
+    public Boolean getAvisoTrabalhado() {
         return avisoTrabalhado;
     }
 
-    public void setAvisoTrabalhado(boolean avisoTrabalhado) {
+    public void setAvisoTrabalhado(Boolean avisoTrabalhado) {
         this.avisoTrabalhado = avisoTrabalhado;
     }
 

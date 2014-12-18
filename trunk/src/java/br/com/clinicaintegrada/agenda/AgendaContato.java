@@ -21,7 +21,7 @@ public class AgendaContato implements BaseEntity, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_agenda", referencedColumnName = "id")
     @ManyToOne
     private Agenda agenda;
@@ -62,7 +62,7 @@ public class AgendaContato implements BaseEntity, Serializable {
     }
 
     @Override
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

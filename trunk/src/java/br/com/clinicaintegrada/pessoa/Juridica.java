@@ -13,7 +13,7 @@ public class Juridica implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_pessoa", referencedColumnName = "id", nullable = false, unique = true)
     @OneToOne
     private Pessoa pessoa;
@@ -43,9 +43,9 @@ public class Juridica implements Serializable {
     @Column(name = "dt_fechamento")
     private Date dtFechamento;
     @Column(name = "is_email_escritorio", columnDefinition = "boolean default false")
-    private boolean emailEscritorio;
+    private Boolean emailEscritorio;
     @Column(name = "is_email_cobranca_escritorio", columnDefinition = "boolean default false")
-    private boolean cobrancaEscritorio;
+    private Boolean cobrancaEscritorio;
 
     public Juridica() {
         this.id = -1;
@@ -64,7 +64,7 @@ public class Juridica implements Serializable {
         this.cobrancaEscritorio = false;
     }
 
-    public Juridica(int id, Pessoa pessoa, String fantasia, Cnae cnae, Juridica contabilidade, String inscricaoEstadual, String inscricaoMunicipal, String contato, String responsavel, Porte porte, String abertura, String fechamento, boolean emailEscritorio, boolean cobrancaEscritorio) {
+    public Juridica(Integer id, Pessoa pessoa, String fantasia, Cnae cnae, Juridica contabilidade, String inscricaoEstadual, String inscricaoMunicipal, String contato, String responsavel, Porte porte, String abertura, String fechamento, Boolean emailEscritorio, Boolean cobrancaEscritorio) {
         this.id = id;
         this.pessoa = pessoa;
         this.fantasia = fantasia;
@@ -81,11 +81,11 @@ public class Juridica implements Serializable {
         this.cobrancaEscritorio = cobrancaEscritorio;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -205,19 +205,19 @@ public class Juridica implements Serializable {
         this.contabilidade = contabilidade;
     }
 
-    public boolean isEmailEscritorio() {
+    public Boolean getEmailEscritorio() {
         return emailEscritorio;
     }
 
-    public void setEmailEscritorio(boolean emailEscritorio) {
+    public void setEmailEscritorio(Boolean emailEscritorio) {
         this.emailEscritorio = emailEscritorio;
     }
 
-    public boolean isCobrancaEscritorio() {
+    public Boolean getCobrancaEscritorio() {
         return cobrancaEscritorio;
     }
 
-    public void setCobrancaEscritorio(boolean cobrancaEscritorio) {
+    public void setCobrancaEscritorio(Boolean cobrancaEscritorio) {
         this.cobrancaEscritorio = cobrancaEscritorio;
     }
 

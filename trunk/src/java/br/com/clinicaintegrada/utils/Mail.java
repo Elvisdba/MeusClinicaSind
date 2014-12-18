@@ -100,7 +100,7 @@ public class Mail extends MailTemplate implements Serializable {
                 for (int i = 0; i < emailPessoas.size(); i++) {
                     try {
                         Session session;
-                        if (registro.isSisEmailMarketing()) {
+                        if (registro.getSisEmailMarketing()) {
                             session = configureSession(EmailMarketing.getHOSTNAME(), EmailMarketing.getPORT(), EmailMarketing.getLOGIN(), EmailMarketing.getPASSWORD(), EmailMarketing.isAUTH(), EmailMarketing.getPROTOCOL());
                         } else {
                             session = configureSession(getRegistro().getSisSmtp(), registro.getSisEmailPorta(), registro.getSisEmail(), registro.getSisSenha(), true, registro.getSisEmailProtocolo().getId());
@@ -110,7 +110,7 @@ public class Mail extends MailTemplate implements Serializable {
                         }
                         MimeMessage msg = new MimeMessage(session);
                         InternetAddress internetAddress = new InternetAddress();
-                        if (registro.isSisEmailMarketing()) {
+                        if (registro.getSisEmailMarketing()) {
                             msg.setFrom(new InternetAddress(registro.getSisEmailResposta(), personal));
                         } else {
                             if (!registro.getSisEmailResposta().isEmpty()) {

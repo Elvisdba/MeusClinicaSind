@@ -12,7 +12,7 @@ public class PessoaProfissao implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_fisica", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Fisica fisica;
@@ -26,17 +26,17 @@ public class PessoaProfissao implements Serializable {
         this.profissao = new Profissao();
     }
 
-    public PessoaProfissao(int id, Fisica fisica, Profissao profissao) {
+    public PessoaProfissao(Integer id, Fisica fisica, Profissao profissao) {
         this.id = id;
         this.fisica = fisica;
         this.profissao = profissao;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

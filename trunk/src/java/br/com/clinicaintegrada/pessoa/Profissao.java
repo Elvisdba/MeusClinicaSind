@@ -17,7 +17,7 @@ public class Profissao implements BaseEntity, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Column(name = "ds_profissao", length = 200, nullable = false)
     private String profissao;
     @Column(name = "ds_cbo", length = 10, nullable = true)
@@ -29,18 +29,18 @@ public class Profissao implements BaseEntity, Serializable {
         this.cbo = "";
     }
 
-    public Profissao(int id, String profissao, String cbo) {
+    public Profissao(int Integer, String profissao, String cbo) {
         this.id = id;
         this.profissao = profissao;
         this.profissao = cbo;
     }
 
     @Override
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

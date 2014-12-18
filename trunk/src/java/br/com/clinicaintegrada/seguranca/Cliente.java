@@ -19,7 +19,7 @@ public class Cliente implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Column(name = "ds_nome_cliente", length = 300)
     private String nomeCliente;
     @Column(name = "ds_persistence", length = 200)
@@ -29,14 +29,14 @@ public class Cliente implements Serializable {
     @Column(name = "ds_identifica", length = 100, unique = true)
     private String identifica;
     @Column(name = "id_juridica")
-    private int idJuridica;
+    private Integer idJuridica;
     @Column(name = "nr_acesso")
-    private int acessos;
+    private Integer acessos;
     @Column(name = "dt_cadastro")
     @Temporal(TemporalType.DATE)
     private Date cadastro;
     @Column(name = "is_ativo")
-    private boolean ativo;
+    private Boolean ativo;
     @Column(name = "ds_host", length = 300)
     private String host;
     @Column(name = "ds_senha", length = 300)
@@ -56,7 +56,7 @@ public class Cliente implements Serializable {
         this.senha = "";
     }
 
-    public Cliente(int id, String nomeCliente, String persistence, String caminhoSistema, String identifica, int idJuridica, int acessos, Date cadastro, boolean ativo, String host, String senha) {
+    public Cliente(int Integer, String nomeCliente, String persistence, String caminhoSistema, String identifica, Integer idJuridica, Integer acessos, Date cadastro, Boolean ativo, String host, String senha) {
         this.id = id;
         this.nomeCliente = nomeCliente;
         this.persistence = persistence;
@@ -70,11 +70,11 @@ public class Cliente implements Serializable {
         this.senha = senha;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -110,19 +110,19 @@ public class Cliente implements Serializable {
         this.identifica = identifica;
     }
 
-    public int getIdJuridica() {
+    public Integer getIdJuridica() {
         return idJuridica;
     }
 
-    public void setJuridica(int idJuridica) {
+    public void setJuridica(Integer idJuridica) {
         this.idJuridica = idJuridica;
     }
 
-    public int getAcessos() {
+    public Integer getAcessos() {
         return acessos;
     }
 
-    public void setAcessos(int acessos) {
+    public void setAcessos(Integer acessos) {
         this.acessos = acessos;
     }
 
@@ -134,11 +134,11 @@ public class Cliente implements Serializable {
         this.cadastro = cadastro;
     }
 
-    public boolean isAtivo() {
+    public Boolean getAtivo() {
         return ativo;
     }
 
-    public void setAtivo(boolean ativo) {
+    public void setAtivo(Boolean ativo) {
         this.ativo = ativo;
     }
 

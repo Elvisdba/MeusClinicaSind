@@ -144,8 +144,9 @@ public class EquipeBean implements Serializable {
 
     }
 
-    public String edit(Equipe e) {
-        equipe = e;
+    public String edit(Object o) {
+        Dao dao = new Dao();
+        equipe = (Equipe) dao.rebind(o);
         for (int i = 0; i < listFuncaoEquipe.size(); i++) {
             if (equipe.getFuncaoEquipe().getId() == Integer.parseInt(listFuncaoEquipe.get(i).getDescription())) {
                 idFuncaoEquipe = i;

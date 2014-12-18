@@ -233,25 +233,25 @@ public class TransferenciaBean implements Serializable {
         clear(0);
     }
 
-    public void delete(Transferencia t) {
+    public void delete(Transferencia o) {
         Dao dao = new Dao();
         Logger logger = new Logger();
-        if (t.getId() != -1) {
+        if (o.getId() != -1) {
             dao.openTransaction();
-            if (dao.delete(t)) {
-                t.getContrato().setFilialAtual(t.getFilialAtual());
-                if (dao.update(t.getContrato())) {
+            if (dao.delete(o)) {
+                o.getContrato().setFilialAtual(o.getFilialAtual());
+                if (dao.update(o.getContrato())) {
                     dao.commit();
                     Messages.info("Sucesso", "Registro removido");
                     logger.delete(
-                            "ID: [" + t.getId() + "]"
-                            + " - Filial Atual: [" + t.getFilialAtual().getId() + "] - " + t.getFilialAtual().getFilial().getPessoa().getNome()
-                            + " - Filial Destino: [" + t.getFilialDestino().getId() + "] - " + t.getFilialDestino().getFilial().getPessoa().getNome()
-                            + " - Data Saída: " + t.getDataSaidaString()
-                            + " - Horário: " + t.getHoraSaida()
-                            + " - Data Chegada: " + t.getDataChegadaString()
-                            + " - Horário: " + t.getHoraChegada()
-                            + " - Contrato (Filial Atual):[ " + t.getContrato().getFilialAtual().getId() + "] - " + t.getContrato().getFilialAtual().getFilial().getPessoa().getNome()
+                            "ID: [" + o.getId() + "]"
+                            + " - Filial Atual: [" + o.getFilialAtual().getId() + "] - " + o.getFilialAtual().getFilial().getPessoa().getNome()
+                            + " - Filial Destino: [" + o.getFilialDestino().getId() + "] - " + o.getFilialDestino().getFilial().getPessoa().getNome()
+                            + " - Data Saída: " + o.getDataSaidaString()
+                            + " - Horário: " + o.getHoraSaida()
+                            + " - Data Chegada: " + o.getDataChegadaString()
+                            + " - Horário: " + o.getHoraChegada()
+                            + " - Contrato (Filial Atual):[ " + o.getContrato().getFilialAtual().getId() + "] - " + o.getContrato().getFilialAtual().getFilial().getPessoa().getNome()
                     );
                 } else {
                     dao.rollback();
@@ -265,8 +265,9 @@ public class TransferenciaBean implements Serializable {
         }
     }
 
-    public String edit(Transferencia t) {
-        transferencia = t;
+    public String edit(Object o) {
+        Dao dao = new Dao();
+        transferencia = (Transferencia) dao.rebind(o);
         for (int i = 0; i < listSelectItem[0].size(); i++) {
             if (transferencia.getFilialAtual().getId() == Integer.parseInt(listSelectItem[0].get(i).getDescription())) {
                 index[0] = i;

@@ -11,7 +11,7 @@ public class Mes implements BaseEntity, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Column(name = "ds_descricao", length = 15, unique = true)
     private String descricao;
 
@@ -20,12 +20,13 @@ public class Mes implements BaseEntity, Serializable {
         this.descricao = "";
     }
 
-    public Mes(int id, String descricao) {
+    public Mes(Integer id, String descricao) {
         this.id = id;
         this.descricao = descricao;
     }
 
-    public int getId() {
+    @Override
+    public Integer getId() {
         return id;
     }
 

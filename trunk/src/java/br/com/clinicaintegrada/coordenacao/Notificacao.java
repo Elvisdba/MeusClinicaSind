@@ -18,7 +18,7 @@ public class Notificacao implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_contrato", referencedColumnName = "id")
     @OneToOne
     private Contrato contrato;
@@ -43,7 +43,7 @@ public class Notificacao implements Serializable {
         this.motivo = "";
     }
 
-    public Notificacao(int id, Contrato contrato, Equipe equipe, TipoNotificacao tipoNotificacao, Date dataLancamento, String motivo) {
+    public Notificacao(Integer id, Contrato contrato, Equipe equipe, TipoNotificacao tipoNotificacao, Date dataLancamento, String motivo) {
         this.id = id;
         this.contrato = contrato;
         this.equipe = equipe;
@@ -52,11 +52,11 @@ public class Notificacao implements Serializable {
         this.motivo = motivo;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

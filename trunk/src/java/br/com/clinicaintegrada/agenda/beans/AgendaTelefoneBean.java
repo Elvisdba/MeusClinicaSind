@@ -7,6 +7,7 @@ import br.com.clinicaintegrada.agenda.AgendaTelefone;
 import br.com.clinicaintegrada.agenda.GrupoAgenda;
 import br.com.clinicaintegrada.agenda.TipoTelefone;
 import br.com.clinicaintegrada.agenda.dao.AgendaTelefoneDao;
+import br.com.clinicaintegrada.coordenacao.Contrato;
 import br.com.clinicaintegrada.endereco.Endereco;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.Pessoa;
@@ -421,9 +422,10 @@ public class AgendaTelefoneBean implements Serializable {
         listAgendas.clear();
     }
 
-    public void edit(Agenda a) {
+    public void edit(Object o) {
+        Dao dao = new Dao();
+        agenda = (Agenda) dao.rebind(o);
         visibility = true;
-        agenda = a;
         pessoa = new Pessoa();
         endereco = new Endereco();
         if (agenda.getGrupoAgenda() != null) {
@@ -456,10 +458,11 @@ public class AgendaTelefoneBean implements Serializable {
         PF.update("form_agenda_telefone:i_panel_adicionar");
     }
 
-    public void view(AgendaTelefone at) {
+    public void view(Object o) {
         pessoa = new Pessoa();
         endereco = new Endereco();
-        agendaTelefone = at;
+        Dao dao = new Dao();
+        agendaTelefone = (AgendaTelefone) dao.rebind(o);
         if (agendaTelefone.getAgenda().getEndereco() != null) {
             endereco = agendaTelefone.getAgenda().getEndereco();
         }
@@ -544,8 +547,9 @@ public class AgendaTelefoneBean implements Serializable {
         return null;
     }
 
-    public String editAgendaTelefone(AgendaTelefone at) {
-        agendaTelefone = at;
+    public String editAgendaTelefone(Object o) {
+        Dao dao = new Dao();
+        agendaTelefone = (AgendaTelefone) dao.rebind(o);
         for (int i = 0; i < getListTipoTelefones().size(); i++) {
             if (Integer.valueOf(getListTipoTelefones().get(i).getDescription()) == agendaTelefone.getTipoTelefone().getId()) {
                 indice[1] = i;

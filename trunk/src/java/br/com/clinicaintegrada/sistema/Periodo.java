@@ -16,11 +16,11 @@ public class Periodo implements BaseEntity, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Column(name = "ds_descricao", length = 20, unique = true)
     private String descricao;
     @Column(name = "nr_dias")
-    private int dias;
+    private Integer dias;
 
     public Periodo() {
         this.id = -1;
@@ -28,18 +28,18 @@ public class Periodo implements BaseEntity, Serializable {
         this.dias = 0;
     }
 
-    public Periodo(int id, String descricao, int dias) {
+    public Periodo(Integer id, String descricao, Integer dias) {
         this.id = id;
         this.descricao = descricao;
         this.dias = dias;
     }
 
     @Override
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -51,11 +51,11 @@ public class Periodo implements BaseEntity, Serializable {
         this.descricao = descricao;
     }
 
-    public int getDias() {
+    public Integer getDias() {
         return dias;
     }
 
-    public void setDias(int dias) {
+    public void setDias(Integer dias) {
         this.dias = dias;
     }
 

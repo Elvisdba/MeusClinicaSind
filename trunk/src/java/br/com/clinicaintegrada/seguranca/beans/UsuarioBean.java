@@ -296,8 +296,9 @@ public class UsuarioBean implements Serializable {
         }
     }
 
-    public String edit(Usuario usu) {
-        usuario = usu;
+    public String edit(Object o) {
+        Dao dao = new Dao();
+        usuario = (Usuario) dao.rebind(o);
         Sessions.put("pessoaPesquisa", usuario.getPessoa());
         Sessions.put("usuarioPesquisa", usuario);
         Sessions.put("linkClicado", true);
@@ -688,14 +689,14 @@ public class UsuarioBean implements Serializable {
         DaoInterface di = new Dao();
         di.openTransaction();
         Logger logger = new Logger();
-        String beforeUpdate = "Usuário Acesso - ID: " + ua.getId() + " - Usuário (" + ua.getUsuario().getId() + ") " + ua.getUsuario().getLogin() + " - Permissão (" + ua.getPermissao().getId() + ") [Módulo: " + ua.getPermissao().getModulo().getDescricao() + " - Rotina: " + ua.getPermissao().getRotina().getRotina() + " - Evento: " + ua.getPermissao().getSegEvento().getDescricao() + "] - Permite:" + ua.isPermite();
-        if (ua.isPermite()) {
+        String beforeUpdate = "Usuário Acesso - ID: " + ua.getId() + " - Usuário (" + ua.getUsuario().getId() + ") " + ua.getUsuario().getLogin() + " - Permissão (" + ua.getPermissao().getId() + ") [Módulo: " + ua.getPermissao().getModulo().getDescricao() + " - Rotina: " + ua.getPermissao().getRotina().getRotina() + " - Evento: " + ua.getPermissao().getSegEvento().getDescricao() + "] - Permite:" + ua.getPermite();
+        if (ua.getPermite()) {
             ua.setPermite(false);
         } else {
             ua.setPermite(true);
         }
         if (di.update(ua)) {
-            logger.update(beforeUpdate, "Usuário Acesso - ID: " + ua.getId() + " - Usuário (" + ua.getUsuario().getId() + ") " + ua.getUsuario().getLogin() + " - Permissão (" + ua.getPermissao().getId() + ") [Módulo: " + ua.getPermissao().getModulo().getDescricao() + " - Rotina: " + ua.getPermissao().getRotina().getRotina() + " - Evento: " + ua.getPermissao().getSegEvento().getDescricao() + "] - Permite:" + ua.isPermite());
+            logger.update(beforeUpdate, "Usuário Acesso - ID: " + ua.getId() + " - Usuário (" + ua.getUsuario().getId() + ") " + ua.getUsuario().getLogin() + " - Permissão (" + ua.getPermissao().getId() + ") [Módulo: " + ua.getPermissao().getModulo().getDescricao() + " - Rotina: " + ua.getPermissao().getRotina().getRotina() + " - Evento: " + ua.getPermissao().getSegEvento().getDescricao() + "] - Permite:" + ua.getPermite());
             di.commit();
             Messages.info("Sucesso", "Permissão de acesso atualizada");
             listUsuarioAcesso.clear();

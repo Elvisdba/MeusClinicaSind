@@ -144,8 +144,9 @@ public class FuncaoEquipeBean implements Serializable {
         delete();
     }
 
-    public void edit(FuncaoEquipe fe) {
-        funcaoEquipe = fe;
+    public void edit(Object o) {
+        Dao dao = new Dao();
+        funcaoEquipe = (FuncaoEquipe) dao.rebind(o);
         for (int i = 0; i < listProfissao.size(); i++) {
             if (funcaoEquipe.getProfissao().getId() == Integer.parseInt(listProfissao.get(i).getDescription())) {
                 idProfissao = i;

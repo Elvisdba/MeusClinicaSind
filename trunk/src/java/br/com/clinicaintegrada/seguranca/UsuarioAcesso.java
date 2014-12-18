@@ -12,7 +12,7 @@ public class UsuarioAcesso implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
     @OneToOne(fetch = FetchType.EAGER)
     private Cliente cliente;
@@ -23,7 +23,7 @@ public class UsuarioAcesso implements Serializable {
     @ManyToOne
     private Permissao permissao;
     @Column(name = "is_permite", columnDefinition = "boolean default false")
-    private boolean permite;
+    private Boolean permite;
 
     public UsuarioAcesso() {
         this.id = -1;
@@ -33,7 +33,7 @@ public class UsuarioAcesso implements Serializable {
         this.permite = false;
     }
 
-    public UsuarioAcesso(int id, Cliente cliente, Usuario usuario, Permissao permissao, boolean permite) {
+    public UsuarioAcesso(Integer id, Cliente cliente, Usuario usuario, Permissao permissao, Boolean permite) {
         this.id = id;
         this.cliente = cliente;
         this.usuario = usuario;
@@ -41,11 +41,11 @@ public class UsuarioAcesso implements Serializable {
         this.permite = permite;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -65,11 +65,11 @@ public class UsuarioAcesso implements Serializable {
         this.permissao = permissao;
     }
 
-    public boolean isPermite() {
+    public Boolean getPermite() {
         return permite;
     }
 
-    public void setPermite(boolean permite) {
+    public void setPermite(Boolean permite) {
         this.permite = permite;
     }
 

@@ -14,7 +14,7 @@ public class Fisica implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_pessoa", referencedColumnName = "id", nullable = false, unique = true)
     @OneToOne(fetch = FetchType.EAGER)
     private Pessoa pessoa;
@@ -83,7 +83,7 @@ public class Fisica implements Serializable {
         tipoCadastro = new TipoCadastro();
     }
 
-    public Fisica(int id, Pessoa pessoa, String rg, String carteira, String serie, String sexo, Date dtNascimento, String nacionalidade,
+    public Fisica(Integer id, Pessoa pessoa, String rg, String carteira, String serie, String sexo, Date dtNascimento, String nacionalidade,
             String naturalidade, String orgaoEmissaoRG, String ufEmissaoRG, String estadoCivil, String pai, String mae, String nit,
             String pis, String aposentadoria, String recadastro, String dataFoto, TipoCadastro tipoCadastro) {
         this.id = id;
@@ -108,11 +108,11 @@ public class Fisica implements Serializable {
         this.tipoCadastro = tipoCadastro;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
