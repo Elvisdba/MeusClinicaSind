@@ -49,7 +49,7 @@ public class RotinaBean implements Serializable {
                     di.openTransaction();
                     if (di.save(rotina)) {
                         di.commit();
-                        logger.save("ID: " + rotina.getId() + " - Rotina: " + rotina.getRotina() + " - Página: " + rotina.getRotina() + " - Ativa: " + rotina.isAtivo());
+                        logger.save("ID: " + rotina.getId() + " - Rotina: " + rotina.getRotina() + " - Página: " + rotina.getRotina() + " - Ativa: " + rotina.getAtivo());
                         message = "Registro salvo com sucesso";
                         listRotina.clear();
                         descricaoPesquisa = "";
@@ -63,10 +63,10 @@ public class RotinaBean implements Serializable {
             }
         } else {
             Rotina r = (Rotina) di.find(rotina);
-            String beforeUpdate = "ID: " + r.getId() + " - Rotina: " + r.getRotina() + " - Página: " + r.getRotina() + " - Ativa: " + r.isAtivo();
+            String beforeUpdate = "ID: " + r.getId() + " - Rotina: " + r.getRotina() + " - Página: " + r.getRotina() + " - Ativa: " + r.getAtivo();
             di.openTransaction();
             if (di.update(rotina)) {
-                logger.update(beforeUpdate, "ID: " + rotina.getId() + " - Rotina: " + rotina.getRotina() + " - Página: " + rotina.getRotina() + " - Ativa: " + rotina.isAtivo());
+                logger.update(beforeUpdate, "ID: " + rotina.getId() + " - Rotina: " + rotina.getRotina() + " - Página: " + rotina.getRotina() + " - Ativa: " + rotina.getAtivo());
                 di.commit();
                 listRotina.clear();
                 descricaoPesquisa = "";
@@ -88,7 +88,7 @@ public class RotinaBean implements Serializable {
         if (rotina.getId() != -1) {
             di.openTransaction();
             if (di.delete(rotina)) {
-                logger.delete("ID: " + rotina.getId() + " - Rotina: " + rotina.getRotina() + " - Página: " + rotina.getRotina() + " - Ativa: " + rotina.isAtivo());
+                logger.delete("ID: " + rotina.getId() + " - Rotina: " + rotina.getRotina() + " - Página: " + rotina.getRotina() + " - Ativa: " + rotina.getAtivo());
                 di.commit();
                 descricaoPesquisa = "";
                 listRotina.clear();
@@ -101,10 +101,10 @@ public class RotinaBean implements Serializable {
         rotina = new Rotina();
     }
 
-    public String edit(Rotina r) {
+    public String edit(Object o) {
         DaoInterface di = new Dao();
         rotina = new Rotina();
-        rotina = (Rotina) di.rebind(r);
+        rotina = (Rotina) di.rebind(o);
         Sessions.put("rotinaPesquisa", rotina);
         Sessions.put("linkClicado", true);
         if (Sessions.exists("urlRetorno")) {

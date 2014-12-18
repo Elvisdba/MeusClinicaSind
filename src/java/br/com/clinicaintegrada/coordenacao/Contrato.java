@@ -22,7 +22,7 @@ public class Contrato implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_cliente", referencedColumnName = "id")
     @OneToOne
     private Cliente cliente;
@@ -53,22 +53,22 @@ public class Contrato implements Serializable {
     @OneToOne
     private TipoInternacao tipoInternacao;
     @Column(name = "nr_previsao_dias", nullable = true)
-    private int previsaoDias;
+    private Integer previsaoDias;
     @JoinColumn(name = "id_tipo_desligamento", referencedColumnName = "id")
     @OneToOne
     private TipoDesligamento tipoDesligamento;
     @Column(name = "ds_obs", length = 255, nullable = true)
     private String observacao;
     @Column(name = "nr_valor_total", nullable = true)
-    private float valorTotal;
+    private Float valorTotal;
     @Column(name = "nr_entrada", nullable = true)
-    private float valorEntrada;
+    private Float valorEntrada;
     @Column(name = "nr_qtde_parcelas", nullable = true)
-    private int quantidadeParcelas;
+    private Integer quantidadeParcelas;
     @Column(name = "ds_obs_rescisao", length = 255, nullable = true)
     private String observacaoRescisao;
     @Column(name = "is_impresso")
-    private boolean impresso;
+    private Boolean impresso;
 
     public Contrato() {
         this.id = -1;
@@ -85,14 +85,14 @@ public class Contrato implements Serializable {
         this.previsaoDias = 30;
         this.tipoDesligamento = new TipoDesligamento();
         this.observacao = "";
-        this.valorTotal = 0;
-        this.valorEntrada = 0;
+        this.valorTotal = new Float(0);
+        this.valorEntrada = new Float(0);
         this.quantidadeParcelas = 1;
         this.observacaoRescisao = "";
         this.impresso = false;
     }
 
-    public Contrato(int id, Cliente cliente, Filial filial, Filial filialAtual, String senha, Date dataCadastro, Date dataInternacao, Date dataRescisao, Pessoa responsavel, Pessoa paciente, TipoInternacao tipoInternacao, int previsaoDias, TipoDesligamento tipoDesligamento, String observacao, float valorTotal, float valorEntrada, int quantidadeParcelas, String observacaoRescisao, boolean impresso) {
+    public Contrato(Integer id, Cliente cliente, Filial filial, Filial filialAtual, String senha, Date dataCadastro, Date dataInternacao, Date dataRescisao, Pessoa responsavel, Pessoa paciente, TipoInternacao tipoInternacao, int previsaoDias, TipoDesligamento tipoDesligamento, String observacao, Float valorTotal, Float valorEntrada, Integer quantidadeParcelas, String observacaoRescisao, Boolean impresso) {
         this.id = id;
         this.cliente = cliente;
         this.filial = filial;
@@ -114,11 +114,11 @@ public class Contrato implements Serializable {
         this.impresso = impresso;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -226,11 +226,11 @@ public class Contrato implements Serializable {
         this.tipoInternacao = tipoInternacao;
     }
 
-    public int getPrevisaoDias() {
+    public Integer getPrevisaoDias() {
         return previsaoDias;
     }
 
-    public void setPrevisaoDias(int previsaoDias) {
+    public void setPrevisaoDias(Integer previsaoDias) {
         this.previsaoDias = previsaoDias;
     }
 
@@ -258,7 +258,7 @@ public class Contrato implements Serializable {
         this.observacao = observacao;
     }
 
-    public float getValorTotal() {
+    public Float getValorTotal() {
         return valorTotal;
     }
 
@@ -282,11 +282,11 @@ public class Contrato implements Serializable {
         this.valorEntrada = Moeda.converteUS$(valorEntradaString);
     }
 
-    public int getQuantidadeParcelas() {
+    public Integer getQuantidadeParcelas() {
         return quantidadeParcelas;
     }
 
-    public void setQuantidadeParcelas(int quantidadeParcelas) {
+    public void setQuantidadeParcelas(Integer quantidadeParcelas) {
         if (quantidadeParcelas < 0) {
             quantidadeParcelas = 0;
         }
@@ -309,11 +309,11 @@ public class Contrato implements Serializable {
         this.observacaoRescisao = observacaoRescisao;
     }
 
-    public float getValorEntrada() {
+    public Float getValorEntrada() {
         return valorEntrada;
     }
 
-    public void setValorEntrada(float valorEntrada) {
+    public void setValorEntrada(Float valorEntrada) {
         this.valorEntrada = valorEntrada;
     }
 
@@ -332,11 +332,11 @@ public class Contrato implements Serializable {
         this.dataRescisao = DataHoje.converte(format.format(event.getObject()));
     }
 
-    public boolean isImpresso() {
+    public Boolean getImpresso() {
         return impresso;
     }
 
-    public void setImpresso(boolean impresso) {
+    public void setImpresso(Boolean impresso) {
         this.impresso = impresso;
     }
 

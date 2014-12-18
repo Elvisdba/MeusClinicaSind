@@ -71,8 +71,9 @@ public class CnaeBean implements Serializable {
         Sessions.remove("cnaeBean");
     }
 
-    public String edit(Cnae c) {
-        cnae = c;
+    public String edit(Object o) {
+        Dao dao = new Dao();
+        cnae = (Cnae) dao.rebind(o);
         String url = (String) Sessions.getString("urlRetorno");
         Sessions.put("linkClicado", true);
         Sessions.put("cnaePesquisa", cnae);

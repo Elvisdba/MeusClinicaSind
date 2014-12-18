@@ -104,8 +104,9 @@ public class CombustivelBean implements Serializable {
         }
     }
 
-    public void edit(Combustivel c) {
-        combustivel = c;
+    public void edit(Object o) {
+        Dao dao = new Dao();
+        combustivel = (Combustivel) dao.rebind(o);
     }
 
     public Combustivel getCombustivel() {

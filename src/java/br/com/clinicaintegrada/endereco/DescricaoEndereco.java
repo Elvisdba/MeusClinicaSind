@@ -17,7 +17,7 @@ public class DescricaoEndereco implements java.io.Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = true)
     @ManyToOne
     private Cliente cliente;
@@ -30,17 +30,17 @@ public class DescricaoEndereco implements java.io.Serializable {
         this.descricao = "";
     }
 
-    public DescricaoEndereco(int id, Cliente cliente, String descricao) {
+    public DescricaoEndereco(Integer id, Cliente cliente, String descricao) {
         this.id = id;
         this.cliente = new Cliente();
         this.descricao = descricao;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

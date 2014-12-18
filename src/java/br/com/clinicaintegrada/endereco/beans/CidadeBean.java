@@ -1,6 +1,7 @@
 package br.com.clinicaintegrada.endereco.beans;
 
 import br.com.clinicaintegrada.endereco.Cidade;
+import br.com.clinicaintegrada.endereco.Endereco;
 import br.com.clinicaintegrada.endereco.dao.CidadeDao;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.PessoaEndereco;
@@ -34,12 +35,12 @@ public class CidadeBean implements Serializable {
         cidade = new Cidade();
         message = "";
         comoPesquisa = "";
-        listCidade = new ArrayList<Cidade>();
+        listCidade = new ArrayList<>();
         descricaoCidadePesquisa = "";
         descricaoUFPesquisa = "";
         PessoaEnderecoDao pessoaEnderecoDao = new PessoaEnderecoDao();
         PessoaEndereco pessoaEndereco = pessoaEnderecoDao.pesquisaPessoaEnderecoPorPessoaTipo(1, 3);
-        if(pessoaEndereco != null) {
+        if (pessoaEndereco != null) {
             cidade.setUf(pessoaEndereco.getEndereco().getCidade().getUf());
         }
     }
@@ -140,14 +141,16 @@ public class CidadeBean implements Serializable {
         di.commit();
     }
 
-    public String editPagina(Cidade ci) {
-        cidade = ci;
+    public String editPagina(Object o) {
+        Dao dao = new Dao();
+        cidade = (Cidade) dao.rebind(o);
         return null;
     }
 
-    public String edit(Cidade ci) {
+    public String edit(Object o) {
+        Dao dao = new Dao();
+        cidade = (Cidade) dao.rebind(o);
         String urlRetorno = null;
-        cidade = ci;
         Sessions.put("cidadePesquisa", cidade);
         Sessions.put("linkClicado", true);
         if (Sessions.exists("urlRetorno")) {

@@ -14,7 +14,7 @@ public class Evento implements Serializable, BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_grupo_evento", referencedColumnName = "id", nullable = false)
     @OneToOne
     private GrupoEvento grupoEvento;
@@ -33,7 +33,7 @@ public class Evento implements Serializable, BaseEntity {
         this.web = false;
     }
 
-    public Evento(int id, GrupoEvento grupoEvento, String descricao, String sigla, boolean web) {
+    public Evento(Integer id, GrupoEvento grupoEvento, String descricao, String sigla, boolean web) {
         this.id = id;
         this.grupoEvento = grupoEvento;
         this.descricao = descricao;
@@ -42,11 +42,11 @@ public class Evento implements Serializable, BaseEntity {
     }
 
     @Override
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

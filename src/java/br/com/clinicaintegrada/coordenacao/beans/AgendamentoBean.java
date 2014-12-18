@@ -201,17 +201,17 @@ public class AgendamentoBean implements Serializable {
         clear(0);
     }
 
-    public void delete(Agendamento a) {
+    public void delete(Agendamento o) {
         Dao dao = new Dao();
         Logger logger = new Logger();
-        if (a.getId() != -1) {
-            if (dao.delete(a, true)) {
+        if (o.getId() != -1) {
+            if (dao.delete(o, true)) {
                 Messages.info("Sucesso", "Registro removido");
                 logger.delete(
-                        "ID: " + a.getId() + "]"
-                        + " - Contrato: [" + a.getContrato()
-                        + " - Agenda: " + a.getDataAgendaString()
-                        + " - Hora: " + a.getHoraAgenda()
+                        "ID: " + o.getId() + "]"
+                        + " - Contrato: [" + o.getContrato()
+                        + " - Agenda: " + o.getDataAgendaString()
+                        + " - Hora: " + o.getHoraAgenda()
                 );
                 clear(0);
             } else {
@@ -220,18 +220,19 @@ public class AgendamentoBean implements Serializable {
         }
     }
 
-    public String edit(Agendamento a) {
-        agendamento = a;
-        horaAgenda = a.getHoraAgenda();
+    public String edit(Object o) {
+        Dao dao = new Dao();
+        agendamento = (Agendamento) dao.rebind(o);
+        horaAgenda = agendamento.getHoraAgenda();
         for (int i = 0; i < listSelectItem[0].size(); i++) {
-            if (a.getEvento().getId() == Integer.parseInt(listSelectItem[0].get(i).getDescription())) {
+            if (agendamento.getEvento().getId() == Integer.parseInt(listSelectItem[0].get(i).getDescription())) {
                 index[0] = i;
                 break;
             }
         }
         if (agendamento.getFuncaoEquipe() != null) {
             for (int i = 0; i < listSelectItem[1].size(); i++) {
-                if (a.getFuncaoEquipe().getId() == Integer.parseInt(listSelectItem[1].get(i).getDescription())) {
+                if (agendamento.getFuncaoEquipe().getId() == Integer.parseInt(listSelectItem[1].get(i).getDescription())) {
                     index[3] = i;
                     break;
                 }
@@ -240,12 +241,13 @@ public class AgendamentoBean implements Serializable {
         return null;
     }
 
-    public String editConsulta(Agendamento a) {
-        agendamentoEdit = a;
+    public String editConsulta(Agendamento o) {
+        Dao dao = new Dao();
+        agendamentoEdit = (Agendamento) dao.rebind(o);
         agendamentoEdit.setHoraAgenda(DataHoje.livre(new Date(), "HH:mm"));
         agendamentoEdit.setDataAgenda(new Date());
         for (int i = 0; i < listSelectItem[0].size(); i++) {
-            if (a.getEvento().getId() == Integer.parseInt(listSelectItem[0].get(i).getDescription())) {
+            if (o.getEvento().getId() == Integer.parseInt(listSelectItem[0].get(i).getDescription())) {
                 index[0] = i;
                 break;
             }

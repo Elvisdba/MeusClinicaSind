@@ -12,7 +12,7 @@ public class Permissao implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Cliente cliente;
@@ -34,7 +34,7 @@ public class Permissao implements Serializable {
         this.segEvento = new SegEvento();
     }
 
-    public Permissao(int id, Cliente cliente, Modulo modulo, Rotina rotina, SegEvento segEvento) {
+    public Permissao(Integer id, Cliente cliente, Modulo modulo, Rotina rotina, SegEvento segEvento) {
         this.id = id;
         this.cliente = cliente;
         this.modulo = modulo;
@@ -42,11 +42,11 @@ public class Permissao implements Serializable {
         this.segEvento = segEvento;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

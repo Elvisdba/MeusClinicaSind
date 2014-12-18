@@ -17,7 +17,7 @@ public class ModeloContrato implements java.io.Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Column(name = "ds_titulo", length = 100)
     private String titulo;
     @Column(name = "ds_descricao", length = 15000)
@@ -45,7 +45,7 @@ public class ModeloContrato implements java.io.Serializable {
         this.cliente = new Cliente();
     }
 
-    public ModeloContrato(int id, String titulo, String descricao, String dataCadastro, String dataAtualizado, Modulo modulo, Cliente cliente) {
+    public ModeloContrato(Integer id, String titulo, String descricao, String dataCadastro, String dataAtualizado, Modulo modulo, Cliente cliente) {
         this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
@@ -55,11 +55,11 @@ public class ModeloContrato implements java.io.Serializable {
         this.cliente = cliente;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

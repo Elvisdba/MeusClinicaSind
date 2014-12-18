@@ -17,7 +17,7 @@ public class FuncaoEscala implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
     @OneToOne
     private Cliente cliente;
@@ -30,17 +30,17 @@ public class FuncaoEscala implements Serializable {
         this.descricao = "";
     }
 
-    public FuncaoEscala(int id, Cliente cliente, String descricao) {
+    public FuncaoEscala(Integer id, Cliente cliente, String descricao) {
         this.id = id;
         this.cliente = cliente;
         this.descricao = descricao;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

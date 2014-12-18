@@ -15,7 +15,7 @@ public class PertenceGrupo implements Serializable, BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
     @OneToOne
     private Cliente cliente;
@@ -28,18 +28,18 @@ public class PertenceGrupo implements Serializable, BaseEntity {
         this.descricao = "";
     }
 
-    public PertenceGrupo(int id, Cliente cliente, String descricao) {
+    public PertenceGrupo(Integer id, Cliente cliente, String descricao) {
         this.id = id;
         this.cliente = cliente;
         this.descricao = descricao;
     }
 
     @Override
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

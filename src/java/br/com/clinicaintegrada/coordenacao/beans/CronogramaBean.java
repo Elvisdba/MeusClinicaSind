@@ -1,5 +1,6 @@
 package br.com.clinicaintegrada.coordenacao.beans;
 
+import br.com.clinicaintegrada.coordenacao.Agendamento;
 import br.com.clinicaintegrada.coordenacao.Evento;
 import br.com.clinicaintegrada.coordenacao.Cronograma;
 import br.com.clinicaintegrada.coordenacao.dao.EventoDao;
@@ -142,9 +143,10 @@ public class CronogramaBean implements Serializable {
         }
     }
 
-    public void edit(Cronograma g) {
+    public void edit(Object o) {
         grade = new Cronograma();
-        grade = g;
+        Dao dao = new Dao();
+        grade = (Cronograma) dao.rebind(o);
         if (grade.getSemana() != null) {
             isSemana = true;
             semana = grade.getSemana();

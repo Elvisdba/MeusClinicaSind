@@ -1,5 +1,6 @@
 package br.com.clinicaintegrada.endereco;
 
+import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
@@ -8,12 +9,12 @@ import javax.persistence.*;
     @NamedQuery(name = "Logradouro.findAll", query = "SELECT LOGR FROM Logradouro AS LOGR ORDER BY LOGR.descricao ASC "),
     @NamedQuery(name = "Logradouro.findName", query = "SELECT LOGR FROM Logradouro AS LOGR WHERE UPPER(LOGR.descricao) LIKE :pdescricao ORDER BY LOGR.descricao ASC ")
 })
-public class Logradouro implements java.io.Serializable {
+public class Logradouro implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Column(name = "ds_descricao", length = 50, nullable = false, unique = true)
     private String descricao;
 
@@ -22,16 +23,16 @@ public class Logradouro implements java.io.Serializable {
         this.descricao = "";
     }
 
-    public Logradouro(int id, String descricao) {
+    public Logradouro(Integer id, String descricao) {
         this.id = id;
         this.descricao = descricao;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

@@ -14,7 +14,7 @@ public class AgendaTelefone implements BaseEntity, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_agenda", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Agenda agenda;
@@ -40,7 +40,7 @@ public class AgendaTelefone implements BaseEntity, Serializable {
         this.contato = "";
     }
 
-    public AgendaTelefone(int id, Agenda agenda, TipoTelefone tipoTelefone, String ddi, String ddd, String telefone, String contato) {
+    public AgendaTelefone(Integer id, Agenda agenda, TipoTelefone tipoTelefone, String ddi, String ddd, String telefone, String contato) {
         this.id = id;
         this.agenda = agenda;
         this.tipoTelefone = tipoTelefone;
@@ -51,11 +51,11 @@ public class AgendaTelefone implements BaseEntity, Serializable {
     }
 
     @Override
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

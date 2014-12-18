@@ -15,7 +15,7 @@ public class MacFilial implements java.io.Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_departamento", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Departamento departamento;
@@ -25,7 +25,7 @@ public class MacFilial implements java.io.Serializable {
     @Column(name = "ds_mac", nullable = false)
     private String mac;
     @Column(name = "nr_mesa")
-    private int mesa;
+    private Integer mesa;
     @JoinColumn(name = "id_caixa", referencedColumnName = "id")
     @ManyToOne
     private Caixa caixa;
@@ -39,7 +39,7 @@ public class MacFilial implements java.io.Serializable {
         this.caixa = new Caixa();
     }
 
-    public MacFilial(int id, Departamento departamento, Filial filial, String mac, int mesa, Caixa caixa) {
+    public MacFilial(Integer id, Departamento departamento, Filial filial, String mac, Integer mesa, Caixa caixa) {
         this.id = id;
         this.departamento = departamento;
         this.filial = filial;
@@ -48,11 +48,11 @@ public class MacFilial implements java.io.Serializable {
         this.caixa = caixa;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -80,11 +80,11 @@ public class MacFilial implements java.io.Serializable {
         this.mac = mac;
     }
 
-    public int getMesa() {
+    public Integer getMesa() {
         return mesa;
     }
 
-    public void setMesa(int mesa) {
+    public void setMesa(Integer mesa) {
         this.mesa = mesa;
     }
 

@@ -13,7 +13,7 @@ public class PertenceSaida implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_pertence_entrada", referencedColumnName = "id", nullable = false)
     @OneToOne
     private PertenceEntrada pertenceEntrada;
@@ -24,7 +24,7 @@ public class PertenceSaida implements Serializable {
     @Column(name = "dt_saida", nullable = false)
     private Date saida;
     @Column(name = "nr_qtde", nullable = false)
-    private int quantidade;
+    private Integer quantidade;
     @Column(name = "ds_obs", length = 255)
     private String observacao;
 
@@ -37,7 +37,7 @@ public class PertenceSaida implements Serializable {
         this.observacao = "";
     }
 
-    public PertenceSaida(int id, PertenceEntrada pertenceEntrada, Equipe responsavel, Date saida, int quantidade, String observacao) {
+    public PertenceSaida(Integer id, PertenceEntrada pertenceEntrada, Equipe responsavel, Date saida, Integer quantidade, String observacao) {
         this.id = id;
         this.pertenceEntrada = pertenceEntrada;
         this.responsavel = responsavel;
@@ -46,11 +46,11 @@ public class PertenceSaida implements Serializable {
         this.observacao = observacao;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -86,11 +86,11 @@ public class PertenceSaida implements Serializable {
         this.saida = DataHoje.converte(saidaString);
     }
 
-    public int getQuantidade() {
+    public Integer getQuantidade() {
         return quantidade;
     }
 
-    public void setQuantidade(int quantidade) {
+    public void setQuantidade(Integer quantidade) {
         this.quantidade = quantidade;
     }
 

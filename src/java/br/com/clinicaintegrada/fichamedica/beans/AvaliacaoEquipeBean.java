@@ -1,8 +1,9 @@
-package br.com.clinicaintegrada.coordenacao.beans;
+package br.com.clinicaintegrada.fichamedica.beans;
 
-import br.com.clinicaintegrada.coordenacao.Avaliacao;
-import br.com.clinicaintegrada.coordenacao.AvaliacaoEquipe;
-import br.com.clinicaintegrada.coordenacao.dao.AvaliacaoEquipeDao;
+import br.com.clinicaintegrada.fichamedica.Avaliacao;
+import br.com.clinicaintegrada.fichamedica.AvaliacaoEquipe;
+import br.com.clinicaintegrada.coordenacao.ConfiguracaoCoordenacao;
+import br.com.clinicaintegrada.fichamedica.dao.AvaliacaoEquipeDao;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.FuncaoEquipe;
 import br.com.clinicaintegrada.pessoa.dao.FuncaoEquipeDao;
@@ -164,8 +165,9 @@ public class AvaliacaoEquipeBean implements Serializable {
     }
 
     // CAMPO DESABILITADO - SOMENTE NO POSTGRESSQL 
-    public String edit(AvaliacaoEquipe ae) {
-        avaliacaoEquipe = ae;
+    public String edit(Object o) {
+        Dao dao = new Dao();
+        avaliacaoEquipe = (AvaliacaoEquipe) dao.rebind(o);
         for (int i = 0; i < listSelectItem[0].size(); i++) {
             if (avaliacaoEquipe.getAvaliacao().getId() == Integer.parseInt(listSelectItem[0].get(i).getDescription())) {
                 index[0] = i;

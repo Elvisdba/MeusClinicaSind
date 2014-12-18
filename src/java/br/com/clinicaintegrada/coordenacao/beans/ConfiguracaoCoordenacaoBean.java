@@ -1,5 +1,6 @@
 package br.com.clinicaintegrada.coordenacao.beans;
 
+import br.com.clinicaintegrada.agenda.AgendaTelefone;
 import br.com.clinicaintegrada.coordenacao.ConfiguracaoCoordenacao;
 import br.com.clinicaintegrada.coordenacao.dao.ConfiguracaoCoordenacaoDao;
 import br.com.clinicaintegrada.logSistema.Logger;
@@ -26,6 +27,9 @@ public class ConfiguracaoCoordenacaoBean implements Serializable {
         configuracaoCoordenacao = new ConfiguracaoCoordenacaoDao().findByCliente(SessaoCliente.get().getId());
         if (configuracaoCoordenacao == null) {
             configuracaoCoordenacao = new ConfiguracaoCoordenacao();
+        } else {
+            Dao dao = new Dao();
+            configuracaoCoordenacao = (ConfiguracaoCoordenacao) dao.rebind(configuracaoCoordenacao);
         }
     }
 

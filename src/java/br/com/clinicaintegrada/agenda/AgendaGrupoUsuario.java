@@ -30,7 +30,7 @@ public class AgendaGrupoUsuario implements BaseEntity, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Cliente cliente;
@@ -47,18 +47,18 @@ public class AgendaGrupoUsuario implements BaseEntity, Serializable {
         this.usuario = new Usuario();
     }
 
-    public AgendaGrupoUsuario(int id, GrupoAgenda grupoAgenda, Usuario usuario) {
+    public AgendaGrupoUsuario(Integer id, GrupoAgenda grupoAgenda, Usuario usuario) {
         this.id = id;
         this.grupoAgenda = grupoAgenda;
         this.usuario = usuario;
     }
 
     @Override
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

@@ -61,7 +61,7 @@ public class ControleUsuarioBean implements Serializable {
         Logger log = new Logger();
         if (usuario != null) {
             Cliente c = usuario.getCliente();
-            if (!c.isAtivo()) {
+            if (!c.getAtivo()) {
                 msgErro = "@ Cliente inátivo.";
                 return pagina;
             }

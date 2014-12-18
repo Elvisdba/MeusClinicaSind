@@ -14,7 +14,7 @@ public class PessoaEndereco implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_endereco", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Endereco endereco;
@@ -38,7 +38,7 @@ public class PessoaEndereco implements Serializable {
         this.complemento = "";
     }
 
-    public PessoaEndereco(int id, Endereco endereco, TipoEndereco tipoEndereco, Pessoa pessoa, String numero, String complemento) {
+    public PessoaEndereco(Integer id, Endereco endereco, TipoEndereco tipoEndereco, Pessoa pessoa, String numero, String complemento) {
         this.id = id;
         this.endereco = endereco;
         this.tipoEndereco = tipoEndereco;
@@ -47,11 +47,11 @@ public class PessoaEndereco implements Serializable {
         this.complemento = complemento;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

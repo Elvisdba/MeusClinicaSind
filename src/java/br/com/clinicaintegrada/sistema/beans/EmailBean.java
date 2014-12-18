@@ -148,7 +148,9 @@ public class EmailBean implements Serializable {
         }
     }
 
-    public void edit(EmailPessoa ep) {
+    public void edit(Object o) {
+        Dao dao = new Dao();
+        EmailPessoa ep = (EmailPessoa) dao.rebind(o);
         email = ep.getEmail();
         for (int i = 0; i < getListEmailPrioridades().size(); i++) {
             if (Integer.parseInt(getListEmailPrioridades().get(i).getDescription()) == email.getEmailPrioridade().getId()) {

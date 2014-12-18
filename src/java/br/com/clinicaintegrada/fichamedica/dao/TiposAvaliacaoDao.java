@@ -1,4 +1,4 @@
-package br.com.clinicaintegrada.coordenacao.dao;
+package br.com.clinicaintegrada.fichamedica.dao;
 
 import br.com.clinicaintegrada.principal.DB;
 import java.util.ArrayList;

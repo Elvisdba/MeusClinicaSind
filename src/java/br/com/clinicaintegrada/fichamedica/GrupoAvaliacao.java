@@ -1,4 +1,4 @@
-package br.com.clinicaintegrada.coordenacao;
+package br.com.clinicaintegrada.fichamedica;
 
 import java.io.Serializable;
 import javax.persistence.*;

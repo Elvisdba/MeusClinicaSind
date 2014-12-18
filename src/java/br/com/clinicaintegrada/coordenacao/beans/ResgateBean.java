@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
@@ -267,14 +268,14 @@ public class ResgateBean implements Serializable {
         clear(0);
     }
 
-    public void delete(Resgate r) {
+    public void delete(Resgate o) {
         Dao dao = new Dao();
         Logger logger = new Logger();
-        if (r.getId() != -1) {
-            if (dao.delete(r, true)) {
+        if (o.getId() != -1) {
+            if (dao.delete(o, true)) {
                 Messages.info("Sucesso", "Registro removido");
                 logger.delete(
-                        "ID: [" + r.getId() + "]"
+                        "ID: [" + o.getId() + "]"
                 );
                 clear(0);
             } else {
@@ -283,11 +284,12 @@ public class ResgateBean implements Serializable {
         }
     }
 
-    public String edit(Resgate r) {
-        resgate = r;
-        endereco = r.getEndereco();
-        hora[0] = r.getHoraSaida();
-        hora[1] = r.getHoraRetorno();
+    public String edit(Object o) {
+        Dao dao = new Dao();
+        resgate = (Resgate) dao.rebind(o);
+        endereco = resgate.getEndereco();
+        hora[0] = resgate.getHoraSaida();
+        hora[1] = resgate.getHoraRetorno();
         for (int i = 0; i < listSelectItem[0].size(); i++) {
             if (resgate.getVeiculo().getId() == Integer.parseInt(listSelectItem[0].get(i).getDescription())) {
                 index[0] = i;
@@ -513,7 +515,7 @@ public class ResgateBean implements Serializable {
                         resgate.setSolicitante(((Fisica) Sessions.getObject("fisicaPesquisa", true)).getPessoa());
                         if (resgate.getPaciente() != null && resgate.getPaciente().getId() != -1) {
                             if (resgate.getSolicitante() != null && resgate.getSolicitante().getId() != -1) {
-                                if (resgate.getPaciente().getId() == resgate.getSolicitante().getId()) {
+                                if (Objects.equals(resgate.getPaciente().getId(), resgate.getSolicitante().getId())) {
                                     resgate.setSolicitante(null);
                                     Messages.warn("Validação", "O solicitante não pode ser igual ao paciente!");
                                 }

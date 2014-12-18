@@ -17,7 +17,7 @@ public class Cnae implements BaseEntity, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Column(name = "ds_cnae", length = 1000, nullable = false)
     private String cnae;
     @Column(name = "ds_numero", length = 50, nullable = false)
@@ -29,18 +29,18 @@ public class Cnae implements BaseEntity, Serializable {
         this.numero = "";
     }
 
-    public Cnae(int id, String cnae, String numero) {
+    public Cnae(Integer id, String cnae, String numero) {
         this.id = id;
         this.cnae = cnae;
         this.numero = numero;
     }
 
     @Override
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

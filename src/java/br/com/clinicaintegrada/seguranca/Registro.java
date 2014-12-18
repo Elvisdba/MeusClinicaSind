@@ -14,7 +14,7 @@ public class Registro implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
     @ManyToOne(fetch = FetchType.EAGER)
     private Cliente cliente;
@@ -27,7 +27,7 @@ public class Registro implements Serializable {
     @Column(name = "sis_ds_url_path", length = 50)
     private String sisUrlPath;
     @Column(name = "sis_is_enviar_email_anexo")
-    private boolean enviarEmailAnexo;
+    private Boolean enviarEmailAnexo;
     @Column(name = "sis_email_resposta", length = 50)
     private String sisEmailResposta;
     @Column(name = "sis_email_porta")
@@ -36,9 +36,9 @@ public class Registro implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     private SisEmailProtocolo sisEmailProtocolo;
     @Column(name = "sis_is_email_marketing", columnDefinition = "boolean default false")
-    private boolean sisEmailMarketing;
+    private Boolean sisEmailMarketing;
     @Column(name = "sis_is_email_autenticado", columnDefinition = "boolean default false")
-    private boolean sisEmailAutenticado;
+    private Boolean sisEmailAutenticado;
     @JoinColumn(name = "id_filial", referencedColumnName = "id", nullable = true)
     @ManyToOne(fetch = FetchType.EAGER)
     private Juridica filial;
@@ -59,7 +59,7 @@ public class Registro implements Serializable {
         this.filial = new Juridica();
     }
 
-    public Registro(int id, Cliente cliente, String sisEmail, String sisSenha, String sisSmtp, String sisUrlPath, boolean enviarEmailAnexo, String sisEmailResposta, int sisEmailPorta, SisEmailProtocolo sisEmailProtocolo, boolean sisEmailMarketing, boolean sisEmailAutenticado, Juridica filial) {
+    public Registro(Integer id, Cliente cliente, String sisEmail, String sisSenha, String sisSmtp, String sisUrlPath, Boolean enviarEmailAnexo, String sisEmailResposta, int sisEmailPorta, SisEmailProtocolo sisEmailProtocolo, Boolean sisEmailMarketing, Boolean sisEmailAutenticado, Juridica filial) {
         this.id = id;
         this.cliente = cliente;
         this.sisEmail = sisEmail;
@@ -75,11 +75,11 @@ public class Registro implements Serializable {
         this.filial = filial;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -123,11 +123,11 @@ public class Registro implements Serializable {
         this.sisUrlPath = sisUrlPath;
     }
 
-    public boolean isEnviarEmailAnexo() {
+    public Boolean getEnviarEmailAnexo() {
         return enviarEmailAnexo;
     }
 
-    public void setEnviarEmailAnexo(boolean enviarEmailAnexo) {
+    public void setEnviarEmailAnexo(Boolean enviarEmailAnexo) {
         this.enviarEmailAnexo = enviarEmailAnexo;
     }
 
@@ -155,19 +155,19 @@ public class Registro implements Serializable {
         this.sisEmailProtocolo = sisEmailProtocolo;
     }
 
-    public boolean isSisEmailMarketing() {
+    public Boolean getSisEmailMarketing() {
         return sisEmailMarketing;
     }
 
-    public void setSisEmailMarketing(boolean sisEmailMarketing) {
+    public void setSisEmailMarketing(Boolean sisEmailMarketing) {
         this.sisEmailMarketing = sisEmailMarketing;
     }
 
-    public boolean isSisEmailAutenticado() {
+    public Boolean getSisEmailAutenticado() {
         return sisEmailAutenticado;
     }
 
-    public void setSisEmailAutenticado(boolean sisEmailAutenticado) {
+    public void setSisEmailAutenticado(Boolean sisEmailAutenticado) {
         this.sisEmailAutenticado = sisEmailAutenticado;
     }
 

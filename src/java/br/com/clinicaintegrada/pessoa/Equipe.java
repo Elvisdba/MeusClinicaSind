@@ -17,7 +17,7 @@ public class Equipe implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
     @OneToOne(fetch = FetchType.EAGER)
     private Cliente cliente;
@@ -33,7 +33,7 @@ public class Equipe implements Serializable {
     @Column(name = "ds_documento", length = 50, nullable = false)
     private String documento;
     @Column(name = "is_ativo", columnDefinition = "boolean default false")
-    private boolean ativo;
+    private Boolean ativo;
 
     public Equipe() {
         this.id = -1;
@@ -45,7 +45,7 @@ public class Equipe implements Serializable {
         this.ativo = false;
     }
 
-    public Equipe(int id, Cliente cliente, FuncaoEquipe funcaoEquipe, Date dataCadastro, Pessoa pessoa, String documento, boolean ativo) {
+    public Equipe(Integer id, Cliente cliente, FuncaoEquipe funcaoEquipe, Date dataCadastro, Pessoa pessoa, String documento, Boolean ativo) {
         this.id = id;
         this.cliente = cliente;
         this.funcaoEquipe = funcaoEquipe;
@@ -55,11 +55,11 @@ public class Equipe implements Serializable {
         this.ativo = ativo;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -103,11 +103,11 @@ public class Equipe implements Serializable {
         this.documento = documento;
     }
 
-    public boolean getAtivo() {
+    public Boolean getAtivo() {
         return ativo;
     }
 
-    public void setAtivo(boolean ativo) {
+    public void setAtivo(Boolean ativo) {
         this.ativo = ativo;
     }
 

@@ -1,10 +1,10 @@
-package br.com.clinicaintegrada.coordenacao.beans;
+package br.com.clinicaintegrada.fichamedica.beans;
 
-import br.com.clinicaintegrada.coordenacao.dao.AvaliacaoDao;
-import br.com.clinicaintegrada.coordenacao.Avaliacao;
-import br.com.clinicaintegrada.coordenacao.GrupoAvaliacao;
-import br.com.clinicaintegrada.coordenacao.TiposAvaliacao;
-import br.com.clinicaintegrada.coordenacao.dao.TiposAvaliacaoDao;
+import br.com.clinicaintegrada.fichamedica.dao.AvaliacaoDao;
+import br.com.clinicaintegrada.fichamedica.Avaliacao;
+import br.com.clinicaintegrada.fichamedica.GrupoAvaliacao;
+import br.com.clinicaintegrada.fichamedica.TiposAvaliacao;
+import br.com.clinicaintegrada.fichamedica.dao.TiposAvaliacaoDao;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.Messages;
@@ -152,16 +152,16 @@ public class AvaliacaoBean implements Serializable {
     }
 
     // ATUALIZA SOMENTE O HISTÓRICO
-    public void update(Avaliacao a) {
+    public void update(Avaliacao o) {
         Dao dao = new Dao();
         Logger logger = new Logger();
-        if (a.getId() != -1) {
-            if (dao.update(a, true)) {
+        if (o.getId() != -1) {
+            if (dao.update(o, true)) {
                 logger.update("",
-                        "ID: [" + a.getId() + "]"
-                        + " - Grupo Avaliação : [" + a.getGrupoAvaliacao().getId() + "] - " + a.getGrupoAvaliacao().getDescricao()
-                        + " - Tipo Avaliação : [" + a.getTiposAvaliacao().getId() + "] - " + a.getTiposAvaliacao().getDescricao()
-                        + " - Histórico: " + a.getHistorico()
+                        "ID: [" + o.getId() + "]"
+                        + " - Grupo Avaliação : [" + o.getGrupoAvaliacao().getId() + "] - " + o.getGrupoAvaliacao().getDescricao()
+                        + " - Tipo Avaliação : [" + o.getTiposAvaliacao().getId() + "] - " + o.getTiposAvaliacao().getDescricao()
+                        + " - Histórico: " + o.getHistorico()
                 );
             }
             listAvaliacao.clear();
@@ -169,8 +169,9 @@ public class AvaliacaoBean implements Serializable {
     }
 
     // NÃO EDITA (CAMPOS FIXOS) - SOMENTE NO POSTGRESQL
-    public String edit(Avaliacao a) {
-        avaliacao = a;
+    public String edit(Object o) {
+        Dao dao = new Dao();
+        avaliacao = (Avaliacao) dao.rebind(o);
         for (int i = 0; i < listSelectItem[0].size(); i++) {
             if (avaliacao.getGrupoAvaliacao().getId() == Integer.parseInt(listSelectItem[0].get(i).getDescription())) {
                 index[0] = i;
@@ -224,7 +225,8 @@ public class AvaliacaoBean implements Serializable {
     }
 
     /**
-     * 0 - Grupo de Avaliação - 1 Tipos de Avaliação (NOT IN --> Somente as disponíveis)
+     * 0 - Grupo de Avaliação - 1 Tipos de Avaliação (NOT IN --> Somente as
+     * disponíveis)
      *
      * @return
      */
@@ -238,7 +240,8 @@ public class AvaliacaoBean implements Serializable {
 
     /**
      * Traz somente as avaliações conforme grupo selecionado.
-     * @return 
+     *
+     * @return
      */
     public List<Avaliacao> getListAvaliacao() {
         if (listAvaliacao.isEmpty()) {

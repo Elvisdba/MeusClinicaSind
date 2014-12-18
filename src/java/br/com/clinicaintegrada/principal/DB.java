@@ -4,7 +4,6 @@ import br.com.clinicaintegrada.seguranca.Cliente;
 import br.com.clinicaintegrada.utils.Request;
 import br.com.clinicaintegrada.utils.Strings;
 import br.com.clinicaintegrada.utils.Sessions;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import javax.persistence.EntityManager;
@@ -16,11 +15,10 @@ import oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider;
 
 public class DB {
 
-    private EntityManager entidade;
-    private Statement statement;
+    private EntityManager entidadeEntity;
 
     public EntityManager getEntityManager() {
-        if (entidade == null) {
+        if (entidadeEntity == null) {
             if (!Sessions.exists("conexao")) {
                 String clienteString = ((Cliente) Sessions.getObject("sessaoCliente")).getIdentifica();
                 Cliente cliente = servidor(clienteString);
@@ -41,7 +39,7 @@ public class DB {
                     if (!createTable.equals("criar")) {
                         properties.put(EntityManagerFactoryProvider.DDL_GENERATION, EntityManagerFactoryProvider.CREATE_ONLY);
                     }
-                    entidade = emf.createEntityManager();
+                    entidadeEntity = emf.createEntityManager();
                     Sessions.put("conexao", emf);
                 } catch (Exception e) {
                     return null;
@@ -49,13 +47,13 @@ public class DB {
             } else {
                 try {
                     EntityManagerFactory emf = (EntityManagerFactory) Sessions.getObject("conexao");
-                    entidade = emf.createEntityManager();                     
+                    entidadeEntity = emf.createEntityManager();
                 } catch (Exception e) {
                     return null;
                 }
             }
         }
-        return entidade;
+        return entidadeEntity;
     }
 
     public Cliente servidor(String clienteString) {

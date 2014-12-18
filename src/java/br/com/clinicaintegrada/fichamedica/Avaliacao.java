@@ -1,5 +1,7 @@
-package br.com.clinicaintegrada.coordenacao;
+package br.com.clinicaintegrada.fichamedica;
 
+import br.com.clinicaintegrada.fichamedica.GrupoAvaliacao;
+import br.com.clinicaintegrada.fichamedica.TiposAvaliacao;
 import java.io.Serializable;
 import javax.persistence.*;
 

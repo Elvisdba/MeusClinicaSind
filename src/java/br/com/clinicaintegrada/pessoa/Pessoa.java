@@ -19,7 +19,7 @@ public class Pessoa implements BaseEntity, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
     @OneToOne
     private Cliente cliente;
@@ -73,7 +73,7 @@ public class Pessoa implements BaseEntity, Serializable {
         this.senha = "";
     }
 
-    public Pessoa(int id, Cliente cliente, String nome, TipoDocumento tipoDocumento, String obs, String site, Date criacao,
+    public Pessoa(Integer id, Cliente cliente, String nome, TipoDocumento tipoDocumento, String obs, String site, Date criacao,
             String telefone1, String telefone2, String telefone3, String email1, String email2, String email3, String documento, String login, String senha) {
         this.id = id;
         this.cliente = cliente;
@@ -94,7 +94,7 @@ public class Pessoa implements BaseEntity, Serializable {
     }
 
     @Override
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

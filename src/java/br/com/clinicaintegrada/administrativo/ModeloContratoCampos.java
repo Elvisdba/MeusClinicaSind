@@ -26,7 +26,7 @@ public class ModeloContratoCampos implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_modulo", referencedColumnName = "id")
     @ManyToOne
     private Modulo modulo;
@@ -45,7 +45,7 @@ public class ModeloContratoCampos implements Serializable {
         this.observacao = "";
     }
 
-    public ModeloContratoCampos(int id, Modulo modulo, String campo, String variavel, String observacao) {
+    public ModeloContratoCampos(Integer id, Modulo modulo, String campo, String variavel, String observacao) {
         this.id = id;
         this.modulo = modulo;
         this.campo = campo;
@@ -53,11 +53,11 @@ public class ModeloContratoCampos implements Serializable {
         this.observacao = observacao;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

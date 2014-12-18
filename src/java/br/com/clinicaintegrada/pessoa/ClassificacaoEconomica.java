@@ -16,13 +16,13 @@ public class ClassificacaoEconomica implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Column(name = "ds_descricao", nullable = false)
     private String descricao;
     @Column(name = "nr_salario_minimo_inicial", columnDefinition = "INTEGER DEFAULT 0", nullable = true)
-    private int salarioMinimoInicial;
+    private Integer salarioMinimoInicial;
     @Column(name = "nr_salario_minimo_final", columnDefinition = "INTEGER DEFAULT 0", nullable = true)
-    private int salarioMinimoFinal;
+    private Integer salarioMinimoFinal;
     @Temporal(TemporalType.DATE)
     @Column(name = "dt_atualizado")
     private Date atualizado;
@@ -35,7 +35,7 @@ public class ClassificacaoEconomica implements Serializable {
         this.atualizado = new Date();
     }
 
-    public ClassificacaoEconomica(int id, String descricao, int salarioMinimoInicial, int salarioMinimoFinal, Date atualizado) {
+    public ClassificacaoEconomica(Integer id, String descricao, Integer salarioMinimoInicial, Integer salarioMinimoFinal, Date atualizado) {
         this.id = id;
         this.descricao = descricao;
         this.salarioMinimoInicial = salarioMinimoInicial;
@@ -43,11 +43,11 @@ public class ClassificacaoEconomica implements Serializable {
         this.atualizado = atualizado;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -59,19 +59,19 @@ public class ClassificacaoEconomica implements Serializable {
         this.descricao = descricao;
     }
 
-    public int getSalarioMinimoInicial() {
+    public Integer getSalarioMinimoInicial() {
         return salarioMinimoInicial;
     }
 
-    public void setSalarioMinimoInicial(int salarioMinimoInicial) {
+    public void setSalarioMinimoInicial(Integer salarioMinimoInicial) {
         this.salarioMinimoInicial = salarioMinimoInicial;
     }
 
-    public int getSalarioMinimoFinal() {
+    public Integer getSalarioMinimoFinal() {
         return salarioMinimoFinal;
     }
 
-    public void setSalarioMinimoFinal(int salarioMinimoFinal) {
+    public void setSalarioMinimoFinal(Integer salarioMinimoFinal) {
         this.salarioMinimoFinal = salarioMinimoFinal;
     }
 

@@ -1,6 +1,7 @@
 package br.com.clinicaintegrada.sistema.beans;
 
 import br.com.clinicaintegrada.logSistema.Logger;
+import br.com.clinicaintegrada.seguranca.Usuario;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import br.com.clinicaintegrada.sistema.Combustivel;
 import br.com.clinicaintegrada.sistema.Veiculo;
@@ -125,8 +126,9 @@ public class VeiculoBean implements Serializable {
         }
     }
 
-    public void edit(Veiculo v) {
-        veiculo = v;
+    public void edit(Object o) {
+        Dao dao = new Dao();
+        veiculo = (Veiculo) dao.rebind(o);
         for (int i = 0; i < listCombustivel.size(); i++) {
             if (veiculo.getCombustivel().getId() == Integer.parseInt(listCombustivel.get(i).getDescription())) {
                 idCombustivel = i;

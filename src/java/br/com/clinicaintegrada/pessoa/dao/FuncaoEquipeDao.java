@@ -163,5 +163,20 @@ public class FuncaoEquipeDao extends DB {
         }
         return new ArrayList();
     }
+    
+    public List findAllByClienteAndInAvaliacao(Integer cliente, Integer idAvaliacao) {
+        try {
+            String queryString = "SELECT FE FROM FuncaoEquipe AS FE WHERE FE.cliente.id = :cliente AND FE.id NOT IN (SELECT AE.funcaoEquipe.id FROM AvaliacaoEquipe AS AE WHERE AE.avaliacao.id = " + idAvaliacao + " ) ORDER BY FE.profissao.profissao ASC, FE.tipoDocumentoProfissao.descricao ASC";
+            Query query = getEntityManager().createQuery(queryString);
+            query.setParameter("cliente", cliente);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+            return new ArrayList();
+        }
+        return new ArrayList();
+    }    
 
 }

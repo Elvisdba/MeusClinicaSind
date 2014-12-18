@@ -298,10 +298,11 @@ public class ContratoBean implements Serializable {
 
     }
 
-    public String edit(Contrato c) {
+    public String edit(Object o) {
         contrato = new Contrato();
+        Dao dao = new Dao();
+        contrato = (Contrato) dao.rebind(o);
         listContratos.clear();
-        contrato = c;
         for (int i = 0; i < listFilial.size(); i++) {
             if (contrato.getFilial().getId() == Integer.parseInt(listFilial.get(i).getDescription())) {
                 idFilial = i;
@@ -320,7 +321,7 @@ public class ContratoBean implements Serializable {
                 break;
             }
         }
-        if(contrato.getTipoDesligamento() != null) {
+        if (contrato.getTipoDesligamento() != null) {
             for (int i = 0; i < listTipoDesligamento.size(); i++) {
                 if (contrato.getTipoDesligamento().getId() == Integer.parseInt(listTipoDesligamento.get(i).getDescription())) {
                     idTipoDesligamento = i;
@@ -600,7 +601,7 @@ public class ContratoBean implements Serializable {
                 Messages.warn("Validação", "Informar número de parcelas maior que 0, Ex. 1");
                 return;
             }
-            int addDias = 0;
+            int addDias;
             try {
                 addDias = Integer.parseInt(adicionarDias);
             } catch (Exception e) {
@@ -931,8 +932,6 @@ public class ContratoBean implements Serializable {
                 Messages.warn("Sistema", "Não é possível gerar um contrato para este serviço. Para gerar um contrato acesse: Menu Escola > Suporte > Modelo Contrato.");
                 return;
             }
-            String horaInicial;
-            String horaFinal;
             FisicaDao fisicaDao = new FisicaDao();
             Fisica responsavelFisica = fisicaDao.pesquisaFisicaPorPessoa(contrato.getResponsavel().getId());
             Fisica pacienteFisica = fisicaDao.pesquisaFisicaPorPessoa(contrato.getResponsavel().getId());
@@ -1125,7 +1124,7 @@ public class ContratoBean implements Serializable {
                 for (l = 0; l < listTaxas.size(); l++) {
                     t = (Taxas) dao.find(new Taxas(), Integer.parseInt(listTaxas.get(l).getDescription()));
                     if (listaMovimento.getServicos().getId() == t.getServicos().getId()) {
-                        if (!t.isOcultaContrato()) {
+                        if (!t.getOcultaContrato()) {
                             valorTaxaString += " - Vencimento: " + listaMovimento.getVencimentoString() + " - " + listaMovimento.getServicos().getDescricao() + " - R$ " + listaMovimento.getValorString() + "; <br /><br />";
                             valorTotalTaxas += listaMovimento.getValor();
                             break;

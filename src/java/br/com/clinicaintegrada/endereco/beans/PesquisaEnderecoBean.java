@@ -1,7 +1,9 @@
 package br.com.clinicaintegrada.endereco.beans;
 
+import br.com.clinicaintegrada.fichamedica.Avaliacao;
 import br.com.clinicaintegrada.endereco.Endereco;
 import br.com.clinicaintegrada.endereco.dao.EnderecoDao;
+import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.PF;
 import br.com.clinicaintegrada.utils.Sessions;
 import java.io.Serializable;
@@ -44,18 +46,24 @@ public class PesquisaEnderecoBean implements Serializable {
         TCase = t;
     }
 
-    public String put(Endereco e) {
+    /**
+     * @param o Endereco
+     * @return
+     */
+    public String put(Object o) {
+        Dao dao = new Dao();
+        o = (Endereco) dao.rebind(o);
         switch (TCase) {
             case "pessoaFisica":
-                Sessions.put("enderecoPesquisa", e);
+                Sessions.put("enderecoPesquisa", o);
                 PF.closeDialog("dlg_pesquisa_endereco");
                 PF.update("form_pessoa_fisica:");
             case "pessoaJuridica":
-                Sessions.put("enderecoPesquisa", e);
+                Sessions.put("enderecoPesquisa", o);
                 PF.closeDialog("dlg_pesquisa_endereco");
                 PF.update("formPessoaJuridica:");
             case "resgate":
-                Sessions.put("enderecoPesquisa", e);
+                Sessions.put("enderecoPesquisa", o);
                 PF.closeDialog("dlg_pesquisa_endereco");
                 PF.update("form_r:");
         }

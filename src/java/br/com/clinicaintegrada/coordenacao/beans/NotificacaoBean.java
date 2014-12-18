@@ -2,6 +2,7 @@ package br.com.clinicaintegrada.coordenacao.beans;
 
 import br.com.clinicaintegrada.coordenacao.Notificacao;
 import br.com.clinicaintegrada.coordenacao.Contrato;
+import br.com.clinicaintegrada.coordenacao.PertenceEntrada;
 import br.com.clinicaintegrada.coordenacao.TipoNotificacao;
 import br.com.clinicaintegrada.coordenacao.dao.NotificacaoDao;
 import br.com.clinicaintegrada.logSistema.Logger;
@@ -155,18 +156,18 @@ public class NotificacaoBean implements Serializable {
         clear(0);
     }
 
-    public void delete(Notificacao n) {
+    public void delete(Notificacao o) {
         Dao dao = new Dao();
         Logger logger = new Logger();
-        if (n.getId() != -1) {
-            if (dao.delete(n, true)) {
+        if (o.getId() != -1) {
+            if (dao.delete(o, true)) {
                 Messages.info("Sucesso", "Registro removido");
                 logger.delete(
-                        "ID: [" + n.getId() + "]"
-                        + " - Contrato: [" + n.getContrato().getId() + "]" + n.getContrato().getPaciente().getNome()
-                        + " - Equipe: [" + n.getEquipe().getId() + "]" + n.getEquipe().getPessoa().getNome()
-                        + " - Tipo Notificação: [" + n.getTipoNotificacao().getId() + "]" + n.getTipoNotificacao().getDescricao()
-                        + " - Data Notificacao: " + n.getDataLancamentoString()
+                        "ID: [" + o.getId() + "]"
+                        + " - Contrato: [" + o.getContrato().getId() + "]" + o.getContrato().getPaciente().getNome()
+                        + " - Equipe: [" + o.getEquipe().getId() + "]" + o.getEquipe().getPessoa().getNome()
+                        + " - Tipo Notificação: [" + o.getTipoNotificacao().getId() + "]" + o.getTipoNotificacao().getDescricao()
+                        + " - Data Notificacao: " + o.getDataLancamentoString()
                 );
                 clear(0);
             } else {
@@ -175,12 +176,13 @@ public class NotificacaoBean implements Serializable {
         }
     }
 
-    public String edit(Notificacao n) {
-        notificacao = n;
+    public String edit(Object o) {
+        Dao dao = new Dao();
+        notificacao = (Notificacao) dao.rebind(o);
         contrato = notificacao.getContrato();
         equipe = notificacao.getEquipe();
         for (int i = 0; i < listSelectItem[0].size(); i++) {
-            if (n.getTipoNotificacao().getId() == Integer.parseInt(listSelectItem[0].get(i).getDescription())) {
+            if (notificacao.getTipoNotificacao().getId() == Integer.parseInt(listSelectItem[0].get(i).getDescription())) {
                 index[0] = i;
                 break;
             }
@@ -352,6 +354,14 @@ public class NotificacaoBean implements Serializable {
 
     public void setListNotificacaoConsulta(List<Notificacao> listNotificacaoConsulta) {
         this.listNotificacaoConsulta = listNotificacaoConsulta;
+    }
+
+    public Contrato getContrato() {
+        return contrato;
+    }
+
+    public void setContrato(Contrato contrato) {
+        this.contrato = contrato;
     }
 
 }

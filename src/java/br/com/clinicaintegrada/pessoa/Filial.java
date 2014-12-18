@@ -27,7 +27,7 @@ public class Filial implements BaseEntity, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_matriz", referencedColumnName = "id", nullable = false)
     @OneToOne(fetch = FetchType.EAGER)
     private Juridica matriz;
@@ -35,7 +35,7 @@ public class Filial implements BaseEntity, Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     private Juridica filial;
     @Column(name = "nr_centro_custo")
-    private int centroCusto;
+    private Integer centroCusto;
 
     public Filial() {
         this.id = -1;
@@ -44,7 +44,7 @@ public class Filial implements BaseEntity, Serializable {
         this.centroCusto = 0;
     }
 
-    public Filial(int id, Juridica matriz, Juridica filial, int centroCusto) {
+    public Filial(Integer id, Juridica matriz, Juridica filial, Integer centroCusto) {
         this.id = id;
         this.matriz = matriz;
         this.filial = filial;
@@ -52,11 +52,11 @@ public class Filial implements BaseEntity, Serializable {
     }
 
     @Override
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -76,11 +76,11 @@ public class Filial implements BaseEntity, Serializable {
         this.filial = filial;
     }
 
-    public int getCentroCusto() {
+    public Integer getCentroCusto() {
         return centroCusto;
     }
 
-    public void setCentroCusto(int centroCusto) {
+    public void setCentroCusto(Integer centroCusto) {
         this.centroCusto = centroCusto;
     }
 

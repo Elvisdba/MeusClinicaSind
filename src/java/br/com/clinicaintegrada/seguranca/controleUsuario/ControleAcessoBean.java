@@ -167,7 +167,7 @@ public class ControleAcessoBean implements Serializable {
         PermissaoDao permissaoDao = new PermissaoDao();
         Dao dao = new Dao();
         Usuario u = (Usuario) Sessions.getObject("sessaoUsuario");
-        if (!urlDestino.equals("/ClinicaIntegrada/menuPrincipal.jsf") && (u.getId() != 1 && !u.isAdministrador())) {
+        if (!urlDestino.equals("/ClinicaIntegrada/menuPrincipal.jsf") && (u.getId() != 1 && !u.getAdministrador())) {
 
             //PESQUISA DE MODULOS-------------------------------------------------------------------------------------------
             if (Sessions.exists("idModulo")) {
@@ -233,7 +233,7 @@ public class ControleAcessoBean implements Serializable {
                     UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
                     UsuarioAcesso usuarioAcesso = usuarioAcessoDao.pesquisaUsuarioAcesso(user.getId(), permissao.getId(), SessaoCliente.get().getId());
                     if (usuarioAcesso != null) {
-                        if (usuarioAcesso.isPermite()) {
+                        if (usuarioAcesso.getPermite()) {
                             retorno = true;
                         } else {
                             retorno = false;
@@ -247,7 +247,7 @@ public class ControleAcessoBean implements Serializable {
                 return retorno;
             }
         } else {
-            if (u.getId() != 1 || !u.isAdministrador()) {
+            if (u.getId() != 1 || !u.getAdministrador()) {
                 Sessions.remove("idModulo");
             }
             modulo = new Modulo();
@@ -279,7 +279,7 @@ public class ControleAcessoBean implements Serializable {
         PermissaoDao permissaoDao = new PermissaoDao();
         if (user != null) {
             int idEvento;
-            if (user.getId() != 1 && !user.isAdministrador()) {
+            if (user.getId() != 1 && !user.getAdministrador()) {
                 Permissao permissao;
                 idModulo = modulo.getId();
                 if (id == -1) {
@@ -362,7 +362,7 @@ public class ControleAcessoBean implements Serializable {
         PermissaoDao permissaoDao = new PermissaoDao();
         if (user != null) {
             int idEvento;
-            if (user.getId() != 1 && !user.isAdministrador()) {
+            if (user.getId() != 1 && !user.getAdministrador()) {
                 Permissao permissao;
                 idModulo = m.getId();
                 if (id == -1) {
@@ -398,7 +398,7 @@ public class ControleAcessoBean implements Serializable {
                     UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
                     UsuarioAcesso usuarioAcesso = usuarioAcessoDao.pesquisaUsuarioAcesso(user.getId(), permissao.getId(), SessaoCliente.get().getId());
                     if (usuarioAcesso != null) {
-                        if (usuarioAcesso.isPermite()) {
+                        if (usuarioAcesso.getPermite()) {
                             retorno = false;
                         } else {
                             retorno = true;
@@ -432,7 +432,7 @@ public class ControleAcessoBean implements Serializable {
 //            Permissao permissao;
 //            Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
 //
-//            if (user.getId() == 1 || user.isAdministrador()) {
+//            if (user.getId() == 1 || user.getAdministrador()) {
 //                return false;
 //            }
 //            PermissaoDao permissaoDao = new PermissaoDao();
@@ -486,7 +486,7 @@ public class ControleAcessoBean implements Serializable {
 //            Permissao permissao;
 //            Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
 //
-//            if (user.getId() == 1 && user.isAdministrador()) {
+//            if (user.getId() == 1 && user.getAdministrador()) {
 //                return false;
 //            }
 //            PermissaoDao permissaoDao = new PermissaoDao();
@@ -533,7 +533,7 @@ public class ControleAcessoBean implements Serializable {
 //            Permissao permissao;
 //            Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
 //
-//            if (user.getId() == 1 && user.isAdministrador()) {
+//            if (user.getId() == 1 && user.getAdministrador()) {
 //                return false;
 //            }
 //            PermissaoDao permissaoDao = new PermissaoDao();
@@ -629,7 +629,7 @@ public class ControleAcessoBean implements Serializable {
      */
     public boolean verificaPermissao(String pageName, int idEvento) {
         Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
-        if (user.getId() == 1 || user.isAdministrador()) {
+        if (user.getId() == 1 || user.getAdministrador()) {
             return false;
         }        
         RotinaDao rotinaDao = new RotinaDao();
@@ -667,7 +667,7 @@ public class ControleAcessoBean implements Serializable {
             Permissao permissao;
             Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
             int idCliente = SessaoCliente.get().getId();
-            if (user.getId() == 1 || user.isAdministrador()) {
+            if (user.getId() == 1 || user.getAdministrador()) {
                 return false;
             }
             if (idModulo == 0) {
@@ -698,7 +698,7 @@ public class ControleAcessoBean implements Serializable {
                 UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
                 UsuarioAcesso usuarioAcesso = usuarioAcessoDao.pesquisaUsuarioAcesso(user.getId(), permissao.getId(), idCliente);
                 if (usuarioAcesso != null) {
-                    if (usuarioAcesso.isPermite()) {
+                    if (usuarioAcesso.getPermite()) {
                         retorno = false;
                     } else {
                         retorno = true;

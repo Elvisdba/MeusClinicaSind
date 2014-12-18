@@ -15,7 +15,7 @@ public class ConfiguracaoCoordenacao implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false, unique = true)
     @OneToOne
     private Cliente cliente;
@@ -39,7 +39,7 @@ public class ConfiguracaoCoordenacao implements Serializable {
         this.escalaMaxMesesEscala = 0;
     }
 
-    public ConfiguracaoCoordenacao(int id, Cliente cliente, Date agendamentoDataRetroativo, Integer agendamentoMaxMesesAgenda, Date escalaDataRetroativo, Integer escalaMaxMesesEscala) {
+    public ConfiguracaoCoordenacao(Integer id, Cliente cliente, Date agendamentoDataRetroativo, Integer agendamentoMaxMesesAgenda, Date escalaDataRetroativo, Integer escalaMaxMesesEscala) {
         this.id = id;
         this.cliente = cliente;
         this.agendamentoDataRetroativo = agendamentoDataRetroativo;
@@ -58,11 +58,11 @@ public class ConfiguracaoCoordenacao implements Serializable {
         this.escalaDataRetroativo = DataHoje.converte(format.format(event.getObject()));
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

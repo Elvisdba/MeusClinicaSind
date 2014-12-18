@@ -116,8 +116,9 @@ public class EventoBean implements Serializable {
 
     }
 
-    public String edit(Evento e) {
-        evento = e;
+    public String edit(Object o) {
+        Dao dao = new Dao();
+        evento = (Evento) dao.rebind(o);
         for (int i = 0; i < listGrupoEvento.size(); i++) {
             if (evento.getGrupoEvento().getId() == Integer.parseInt(listGrupoEvento.get(i).getDescription())) {
                 idGrupoEvento = i;

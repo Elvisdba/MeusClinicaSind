@@ -30,7 +30,7 @@ public class Escala implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Temporal(TemporalType.DATE)
     @Column(name = "dt_lancamento", nullable = false)
     private Date dataLancamento;
@@ -65,7 +65,7 @@ public class Escala implements Serializable {
         this.observacao = "";
     }
 
-    public Escala(int id, Date dataLancamento, Date dataEscala, String horaInicial, String horaFinal, Contrato paciente, Equipe equipe, FuncaoEscala funcaoEscala, String observacao) {
+    public Escala(Integer id, Date dataLancamento, Date dataEscala, String horaInicial, String horaFinal, Contrato paciente, Equipe equipe, FuncaoEscala funcaoEscala, String observacao) {
         this.id = id;
         this.dataLancamento = dataLancamento;
         this.dataEscala = dataEscala;
@@ -77,11 +77,11 @@ public class Escala implements Serializable {
         this.observacao = observacao;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

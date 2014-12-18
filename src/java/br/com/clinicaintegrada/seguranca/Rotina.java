@@ -16,7 +16,7 @@ public class Rotina implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Column(name = "ds_rotina", length = 50, nullable = false)
     private String rotina;
     @Column(name = "ds_nome_pagina", length = 100, nullable = false)
@@ -24,7 +24,7 @@ public class Rotina implements Serializable {
     @Column(name = "ds_classe", length = 100)
     private String classe;
     @Column(name = "is_ativo", columnDefinition = "boolean default false")
-    private boolean ativo;
+    private Boolean ativo;
 
     public Rotina() {
         this.id = -1;
@@ -34,7 +34,7 @@ public class Rotina implements Serializable {
         this.ativo = false;
     }
 
-    public Rotina(int id, String rotina, String pagina, String classe, boolean ativo) {
+    public Rotina(Integer id, String rotina, String pagina, String classe, Boolean ativo) {
         this.id = id;
         this.rotina = rotina;
         this.pagina = pagina;
@@ -43,11 +43,11 @@ public class Rotina implements Serializable {
 
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -75,11 +75,11 @@ public class Rotina implements Serializable {
         this.classe = classe;
     }
 
-    public boolean isAtivo() {
+    public Boolean getAtivo() {
         return ativo;
     }
 
-    public void setAtivo(boolean ativo) {
+    public void setAtivo(Boolean ativo) {
         this.ativo = ativo;
     }
 }

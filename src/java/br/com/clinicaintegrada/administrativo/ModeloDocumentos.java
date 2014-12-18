@@ -11,7 +11,7 @@ public class ModeloDocumentos implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Column(name = "ds_descricao", length = 15000)
     private String descricao;
     @JoinColumn(name = "id_modelo_contrato", referencedColumnName = "id")
@@ -28,18 +28,18 @@ public class ModeloDocumentos implements Serializable {
         this.rotina = new Rotina();
     }
 
-    public ModeloDocumentos(int id, String descricao, ModeloContrato modeloContrato, Rotina rotina) {
+    public ModeloDocumentos(Integer id, String descricao, ModeloContrato modeloContrato, Rotina rotina) {
         this.id = id;
         this.descricao = descricao;
         this.modeloContrato = modeloContrato;
         this.rotina = rotina;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

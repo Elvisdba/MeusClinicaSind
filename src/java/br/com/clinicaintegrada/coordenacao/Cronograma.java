@@ -20,7 +20,7 @@ public class Cronograma implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
     @OneToOne
     private Cliente cliente;
@@ -55,7 +55,7 @@ public class Cronograma implements Serializable {
         this.dataEvento = new Date();
     }
 
-    public Cronograma(int id, Cliente cliente, Evento evento, Filial filial, Semana semana, String horaInicio, String horaFim, String observacao, Date dataEvento) {
+    public Cronograma(Integer id, Cliente cliente, Evento evento, Filial filial, Semana semana, String horaInicio, String horaFim, String observacao, Date dataEvento) {
         this.id = id;
         this.cliente = cliente;
         this.evento = evento;
@@ -67,11 +67,11 @@ public class Cronograma implements Serializable {
         this.dataEvento = dataEvento;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

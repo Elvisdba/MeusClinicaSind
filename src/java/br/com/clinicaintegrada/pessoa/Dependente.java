@@ -16,7 +16,7 @@ public class Dependente implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_pessoa", referencedColumnName = "id", nullable = false)
     @OneToOne
     private Pessoa pessoa;
@@ -40,7 +40,7 @@ public class Dependente implements Serializable {
         this.nascimento = new Date();
     }
 
-    public Dependente(int id, Pessoa pessoa, GrauParentesco grauParentesco, String nome, String sexo, Date nascimento) {
+    public Dependente(Integer id, Pessoa pessoa, GrauParentesco grauParentesco, String nome, String sexo, Date nascimento) {
         this.id = id;
         this.pessoa = pessoa;
         this.grauParentesco = grauParentesco;
@@ -49,11 +49,11 @@ public class Dependente implements Serializable {
         this.nascimento = nascimento;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
