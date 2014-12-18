@@ -29,7 +29,7 @@ public class FilialBean implements Serializable {
     private Filial filial;
     private List<Filial> listaFilial;
     private String renderAdicionar;
-    private int idFilial;
+    private Integer idFilial;
     private List<DataObject> listaCidade;
     private boolean adicionarLista;
     private List<SelectItem> result;
@@ -219,11 +219,11 @@ public class FilialBean implements Serializable {
         return renderAdicionar;
     }
 
-    public int getIdFilial() {
+    public Integer getIdFilial() {
         return idFilial;
     }
 
-    public void setIdFilial(int idFilial) {
+    public void setIdFilial(Integer idFilial) {
         this.idFilial = idFilial;
     }
 
