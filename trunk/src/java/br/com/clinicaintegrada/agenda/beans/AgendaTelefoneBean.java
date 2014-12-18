@@ -7,7 +7,6 @@ import br.com.clinicaintegrada.agenda.AgendaTelefone;
 import br.com.clinicaintegrada.agenda.GrupoAgenda;
 import br.com.clinicaintegrada.agenda.TipoTelefone;
 import br.com.clinicaintegrada.agenda.dao.AgendaTelefoneDao;
-import br.com.clinicaintegrada.coordenacao.Contrato;
 import br.com.clinicaintegrada.endereco.Endereco;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.Pessoa;
