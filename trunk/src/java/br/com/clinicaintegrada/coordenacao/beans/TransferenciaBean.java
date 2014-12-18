@@ -22,6 +22,11 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.model.SelectItem;
 
+/**
+ * Transfere pacientes entre unidades
+ *
+ * @author rtools2
+ */
 @ManagedBean
 @SessionScoped
 public class TransferenciaBean implements Serializable {
@@ -82,12 +87,18 @@ public class TransferenciaBean implements Serializable {
     }
 
     public void clear(int tCase) {
+        // TUDO
         if (tCase == 0) {
             Sessions.remove("transferenciaBean");
         }
+        // FILIAL DESTINO
         if (tCase == 1) {
             listSelectItem[1].clear();
         }
+        /**
+         * VERIFICA SE DATA E HORÁRIO (CHEGADA) DISPONÍVEL É IGUAL OU SUPERIOR A
+         * DATA DE SAÍDA, CASO NÃO LIMPA OU DEIXA IGUAL AO DA SAÍDA
+         */
         if (tCase == 2) {
             if (!transferencia.getDataSaidaString().isEmpty()) {
                 if (transferencia.getDataChegadaString().isEmpty()) {
@@ -103,6 +114,10 @@ public class TransferenciaBean implements Serializable {
         }
     }
 
+    /**
+     * Salva e atualiza. Ao atualizar também altera a filial atual do contrato.
+     * Não permite duas transfeências para o mesmo dia e contrato.
+     */
     public void save() {
         if (transferencia.getContrato() == null) {
             Messages.warn("Validação", "Pesquisar contrato!");
@@ -269,7 +284,8 @@ public class TransferenciaBean implements Serializable {
     }
 
     /**
-     * 0 - Filial Atual - 1 Filial Destino
+     * 0 - Filial Atual - 1 Filial Destino (Remove o item selecionado da filial
+     * atual)
      *
      * @return
      */
@@ -340,6 +356,11 @@ public class TransferenciaBean implements Serializable {
         this.index = index;
     }
 
+    /**
+     * Traz todas as transferências específicas do contrato
+     *
+     * @return
+     */
     public List<Transferencia> getListTransferencia() {
         if (listTransferencia.isEmpty()) {
             if (transferencia.getContrato() != null) {
@@ -457,6 +478,9 @@ public class TransferenciaBean implements Serializable {
         this.startFinish = startFinish;
     }
 
+    /**
+     * Troca de filial nas combos (Atual <> Destino)
+     */
     public void transferFilial() {
         if (index[0] != null && index[1] != null) {
             idTransfer[0] = Integer.parseInt(listSelectItem[0].get(index[0]).getDescription());
@@ -476,6 +500,11 @@ public class TransferenciaBean implements Serializable {
         this.transfer = transfer;
     }
 
+    /**
+     * Se falso não mostra a lista de transferências
+     *
+     * @return
+     */
     public Boolean[] getFilter() {
         try {
             filter[0] = transferencia.getContrato() != null && transferencia.getContrato().getId() != -1;
@@ -489,6 +518,11 @@ public class TransferenciaBean implements Serializable {
         this.filter = filter;
     }
 
+    /**
+     * Lista usada somente na tela de consultas
+     *
+     * @return
+     */
     public List<Transferencia> getListTransferenciaConsulta() {
         if (listTransferencia.isEmpty()) {
             getListSelectItem();
