@@ -54,7 +54,7 @@ public class EmailBean implements Serializable {
     private List<EmailPessoa> showEmailPessoas;
     private List<EmailArquivo> emailArquivos;
     private List<File> files;
-    private boolean openModal;
+    private Boolean openModal;
     private String html;
     private String assunto;
     private String emailString;
@@ -368,11 +368,11 @@ public class EmailBean implements Serializable {
         this.files = files;
     }
 
-    public boolean isOpenModal() {
+    public Boolean getOpenModal() {
         return openModal;
     }
 
-    public void setOpenModal(boolean openModal) {
+    public void setOpenModal(Boolean openModal) {
         this.openModal = openModal;
     }
 

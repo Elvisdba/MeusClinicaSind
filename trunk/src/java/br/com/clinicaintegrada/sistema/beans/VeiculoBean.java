@@ -1,7 +1,6 @@
 package br.com.clinicaintegrada.sistema.beans;
 
 import br.com.clinicaintegrada.logSistema.Logger;
-import br.com.clinicaintegrada.seguranca.Usuario;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import br.com.clinicaintegrada.sistema.Combustivel;
 import br.com.clinicaintegrada.sistema.Veiculo;
@@ -24,15 +23,15 @@ public class VeiculoBean implements Serializable {
 
     private Veiculo veiculo;
     private List<Veiculo> listVeiculo;
-    private List<SelectItem> listCombustivel;
-    private int idCombustivel;
+    private List<SelectItem> listSelectItem;
+    private Integer index;
 
     @PostConstruct
     public void init() {
         veiculo = new Veiculo();
         listVeiculo = new ArrayList<>();
-        listCombustivel = new ArrayList<>();
-        setIdCombustivel(0);
+        listSelectItem = new ArrayList<>();
+        index = 0;
     }
 
     @PreDestroy
@@ -47,11 +46,11 @@ public class VeiculoBean implements Serializable {
 
     public void save() {
         Dao dao = new Dao();
-        if (listCombustivel.isEmpty()) {
+        if (listSelectItem.isEmpty()) {
             Messages.warn("Validação", "Cadastrar combustíveis!");
             return;
         }
-        veiculo.setCombustivel((Combustivel) dao.find(new Combustivel(), Integer.parseInt(listCombustivel.get(idCombustivel).getDescription())));
+        veiculo.setCombustivel((Combustivel) dao.find(new Combustivel(), Integer.parseInt(listSelectItem.get(index).getDescription())));
         if (veiculo.getDescricao().isEmpty()) {
             Messages.warn("Validação", "Informar nome do veículo (Modelo/Ano/Marca) (Ex. Fusca/2014/Volkswagen)!");
             return;
@@ -129,9 +128,9 @@ public class VeiculoBean implements Serializable {
     public void edit(Object o) {
         Dao dao = new Dao();
         veiculo = (Veiculo) dao.rebind(o);
-        for (int i = 0; i < listCombustivel.size(); i++) {
-            if (veiculo.getCombustivel().getId() == Integer.parseInt(listCombustivel.get(i).getDescription())) {
-                idCombustivel = i;
+        for (int i = 0; i < listSelectItem.size(); i++) {
+            if (veiculo.getCombustivel().getId() == Integer.parseInt(listSelectItem.get(i).getDescription())) {
+                index = i;
                 break;
             }
         }
@@ -157,27 +156,27 @@ public class VeiculoBean implements Serializable {
         this.listVeiculo = listVeiculo;
     }
 
-    public List<SelectItem> getListCombustivel() {
-        if (listCombustivel.isEmpty()) {
+    public List<SelectItem> getListSelectItem() {
+        if (listSelectItem.isEmpty()) {
             Dao dao = new Dao();
             List<Combustivel> list = (List<Combustivel>) dao.list(new Combustivel(), true);
             for (int i = 0; i < list.size(); i++) {
-                listCombustivel.add(new SelectItem(i, list.get(i).getDescricao() + " - Valor litro: (R$) " + list.get(i).getValorLitroString(), "" + list.get(i).getId()));
+                listSelectItem.add(new SelectItem(i, list.get(i).getDescricao() + " - Valor litro: (R$) " + list.get(i).getValorLitroString(), "" + list.get(i).getId()));
             }
         }
-        return listCombustivel;
+        return listSelectItem;
     }
 
-    public void setListCombustivel(List<SelectItem> listCombustivel) {
-        this.listCombustivel = listCombustivel;
+    public void setListSelectItem(List<SelectItem> listSelectItem) {
+        this.listSelectItem = listSelectItem;
     }
 
-    public int getIdCombustivel() {
-        return idCombustivel;
+    public Integer getIndex() {
+        return index;
     }
 
-    public void setIdCombustivel(int idCombustivel) {
-        this.idCombustivel = idCombustivel;
+    public void setIndex(int index) {
+        this.index = index;
     }
 
 }
