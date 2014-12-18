@@ -1,6 +1,5 @@
 package br.com.clinicaintegrada.endereco.beans;
 
-import br.com.clinicaintegrada.fichamedica.Avaliacao;
 import br.com.clinicaintegrada.endereco.Endereco;
 import br.com.clinicaintegrada.endereco.dao.EnderecoDao;
 import br.com.clinicaintegrada.utils.Dao;

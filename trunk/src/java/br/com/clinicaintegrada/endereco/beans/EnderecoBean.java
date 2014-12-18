@@ -35,9 +35,9 @@ public class EnderecoBean implements Serializable {
 
     private Cidade cidadeBase;
     private Endereco endereco;
-    private boolean blDetalhada;
-    private boolean pesquisar;
-    private boolean btnCadastrar;
+    private Boolean blDetalhada;
+    private Boolean pesquisar;
+    private Boolean btnCadastrar;
     private List<Endereco> listEndereco;
     private List<SelectItem>[] listSelectItem;
     /**
@@ -404,16 +404,12 @@ public class EnderecoBean implements Serializable {
         this.listEndereco = listEndereco;
     }
 
-    public boolean isBlDetalhada() {
-        if (msgDetalhada.isEmpty()) {
-            blDetalhada = false;
-        } else {
-            blDetalhada = true;
-        }
+    public Boolean getBlDetalhada() {
+        blDetalhada = !msgDetalhada.isEmpty();
         return blDetalhada;
     }
 
-    public void setBlDetalhada(boolean blDetalhada) {
+    public void setBlDetalhada(Boolean blDetalhada) {
         this.blDetalhada = blDetalhada;
     }
 
@@ -441,7 +437,7 @@ public class EnderecoBean implements Serializable {
         Sessions.put("cadastrarEndereco", true);
     }
 
-    public boolean isBtnCadastrar() {
+    public Boolean getBtnCadastrar() {
         if (Sessions.exists("cadastrarEndereco")) {
             Sessions.remove("cadastrarEndereco");
             btnCadastrar = true;
@@ -449,7 +445,7 @@ public class EnderecoBean implements Serializable {
         return btnCadastrar;
     }
 
-    public void setBtnCadastrar(boolean btnCadastrar) {
+    public void setBtnCadastrar(Boolean btnCadastrar) {
         this.btnCadastrar = btnCadastrar;
     }
 

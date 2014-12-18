@@ -1,7 +1,6 @@
 package br.com.clinicaintegrada.endereco.beans;
 
 import br.com.clinicaintegrada.endereco.Cidade;
-import br.com.clinicaintegrada.endereco.Endereco;
 import br.com.clinicaintegrada.endereco.dao.CidadeDao;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.PessoaEndereco;
