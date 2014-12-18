@@ -24,7 +24,7 @@ public class TaxasBean implements Serializable {
     private Taxas taxas;
     private List<Taxas> listTaxas;
     private List<SelectItem> listServicos;
-    private int idServicos;
+    private Integer idServicos;
 
     @PostConstruct
     public void init() {
@@ -171,11 +171,11 @@ public class TaxasBean implements Serializable {
         this.listServicos = listServicos;
     }
 
-    public int getIdServicos() {
+    public Integer getIdServicos() {
         return idServicos;
     }
 
-    public void setIdServicos(int idServicos) {
+    public void setIdServicos(Integer idServicos) {
         this.idServicos = idServicos;
     }
 
