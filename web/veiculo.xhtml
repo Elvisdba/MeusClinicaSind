@@ -48,10 +48,10 @@
                                         <f:ajax event="blur" render="@this" />
                                     </p:inputText>
                                     <p:outputLabel value="Combustível:" />
-                                    <h:selectOneMenu value="#{veiculoBean.idCombustivel}">
+                                    <h:selectOneMenu value="#{veiculoBean.index}">
                                         <p:ajax event="change" update="@this" />
                                         <f:selectItem itemValue="" itemLabel="Selecionar" itemDisabled="true" />
-                                        <f:selectItems value="#{veiculoBean.listCombustivel}" />
+                                        <f:selectItems value="#{veiculoBean.listSelectItem}" />
                                     </h:selectOneMenu>
                                 </h:panelGrid>
                             </p:panel>
