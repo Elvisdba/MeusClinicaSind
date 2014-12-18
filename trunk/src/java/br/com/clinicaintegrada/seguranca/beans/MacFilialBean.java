@@ -34,9 +34,9 @@ import javax.servlet.http.HttpSession;
 public class MacFilialBean implements Serializable {
 
     private MacFilial macFilial;
-    private int idFilial;
-    private int idDepartamento;
-    private int idCaixa = 0;
+    private Integer idFilial;
+    private Integer idDepartamento;
+    private Integer idCaixa = 0;
     private List<MacFilial> listaMacs;
     public List<SelectItem> listaFiliais;
     public List<SelectItem> listaDepartamentos;
@@ -125,10 +125,10 @@ public class MacFilialBean implements Serializable {
 
     public void delete(MacFilial mf) {
         macFilial = mf;
-        DaoInterface di = new Dao();
+        Dao dao = new Dao();
         Logger logger = new Logger();
-        di.openTransaction();
-        if (di.delete(macFilial)) {
+        dao.openTransaction();
+        if (dao.delete(macFilial)) {
             logger.delete(
                     "ID: " + macFilial.getId()
                     + " - Filial: (" + macFilial.getFilial().getId() + ") " + macFilial.getFilial().getFilial().getPessoa().getNome()
@@ -136,11 +136,11 @@ public class MacFilialBean implements Serializable {
                     + " - Mesa: " + macFilial.getMesa()
                     + " - Mac: " + macFilial.getMac()
             );
-            di.commit();
+            dao.commit();
             Messages.info("Sucesso", "Este Registro excluído com sucesso!");
             listaMacs.clear();
         } else {
-            di.rollback();
+            dao.rollback();
             Messages.info("Sucesso", "Erro ao excluir computador!");
 
         }
@@ -182,19 +182,19 @@ public class MacFilialBean implements Serializable {
         this.macFilial = macFilial;
     }
 
-    public int getIdFilial() {
+    public Integer getIdFilial() {
         return idFilial;
     }
 
-    public void setIdFilial(int idFilial) {
+    public void setIdFilial(Integer idFilial) {
         this.idFilial = idFilial;
     }
 
-    public int getIdDepartamento() {
+    public Integer getIdDepartamento() {
         return idDepartamento;
     }
 
-    public void setIdDepartamento(int idDepartamento) {
+    public void setIdDepartamento(Integer idDepartamento) {
         this.idDepartamento = idDepartamento;
     }
 
@@ -212,11 +212,11 @@ public class MacFilialBean implements Serializable {
         this.listaMacs = listaMacs;
     }
 
-    public int getIdCaixa() {
+    public Integer getIdCaixa() {
         return idCaixa;
     }
 
-    public void setIdCaixa(int idCaixa) {
+    public void setIdCaixa(Integer idCaixa) {
         this.idCaixa = idCaixa;
     }
 

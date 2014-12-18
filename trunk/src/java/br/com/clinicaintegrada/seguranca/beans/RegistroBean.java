@@ -42,8 +42,8 @@ public class RegistroBean implements Serializable {
     private String confirmaSenha;
     private String mensagem;
     private String emailTeste;
-    private int codigoModulo;
-    private int idSisEmailProtocolo;
+    private Integer codigoModulo;
+    private Integer idSisEmailProtocolo;
     private List<SelectItem> listaDataVencimento;
 
     @PostConstruct
@@ -201,7 +201,7 @@ public class RegistroBean implements Serializable {
         this.senha = senha;
     }
 
-    public int getCodigoModulo() {
+    public Integer getCodigoModulo() {
         String urlDestino = ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getRequestURI();
         codigoModulo = 0;
         if (!urlDestino.equals("/Sindical/menuPrincipal.jsf")) {
@@ -212,7 +212,7 @@ public class RegistroBean implements Serializable {
         return codigoModulo;
     }
 
-    public void setCodigoModulo(int codigoModulo) {
+    public void setCodigoModulo(Integer codigoModulo) {
         this.codigoModulo = codigoModulo;
     }
 
@@ -237,11 +237,11 @@ public class RegistroBean implements Serializable {
         this.listaDataVencimento = listaDataVencimento;
     }
 
-    public int getIdSisEmailProtocolo() {
+    public Integer getIdSisEmailProtocolo() {
         return idSisEmailProtocolo;
     }
 
-    public void setIdSisEmailProtocolo(int idSisEmailProtocolo) {
+    public void setIdSisEmailProtocolo(Integer idSisEmailProtocolo) {
         this.idSisEmailProtocolo = idSisEmailProtocolo;
     }
 

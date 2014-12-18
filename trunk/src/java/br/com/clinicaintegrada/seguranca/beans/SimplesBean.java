@@ -60,8 +60,8 @@ public class SimplesBean implements Serializable {
     private String descricao;
     private Cliente cliente;
     private String[] sessoes;
-    private int id;
-    private int idRotina;
+    private Integer id;
+    private Integer idRotina;
 
     public SimplesBean() {
         String a = "";
@@ -212,11 +212,11 @@ public class SimplesBean implements Serializable {
         this.listaRotina = listaRotina;
     }
 
-    public int getIdRotina() {
+    public Integer getIdRotina() {
         return idRotina;
     }
 
-    public void setIdRotina(int idRotina) {
+    public void setIdRotina(Integer idRotina) {
         this.idRotina = idRotina;
     }
 

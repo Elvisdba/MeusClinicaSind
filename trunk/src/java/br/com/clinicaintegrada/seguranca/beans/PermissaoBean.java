@@ -48,12 +48,12 @@ public class PermissaoBean implements Serializable {
     private List<SelectItem> listEventos;
     private List<SelectItem> listDepartamentos;
     private List<SelectItem> listNiveis;
-    private int idModulo;
-    private int idRotina;
-    private int idEvento;
-    private int idDepartamento;
-    private int idNivel;
-    private int idIndex;
+    private Integer idModulo;
+    private Integer idRotina;
+    private Integer idEvento;
+    private Integer idDepartamento;
+    private Integer idNivel;
+    private Integer idIndex;
 
     @PostConstruct
     public void init() {
@@ -422,27 +422,27 @@ public class PermissaoBean implements Serializable {
         this.msgConfirma = msgConfirma;
     }
 
-    public int getIdModulo() {
+    public Integer getIdModulo() {
         return idModulo;
     }
 
-    public void setIdModulo(int idModulo) {
+    public void setIdModulo(Integer idModulo) {
         this.idModulo = idModulo;
     }
 
-    public int getIdRotina() {
+    public Integer getIdRotina() {
         return idRotina;
     }
 
-    public void setIdRotina(int idRotina) {
+    public void setIdRotina(Integer idRotina) {
         this.idRotina = idRotina;
     }
 
-    public int getIdEvento() {
+    public Integer getIdEvento() {
         return idEvento;
     }
 
-    public void setIdEvento(int idEvento) {
+    public void setIdEvento(Integer idEvento) {
         this.idEvento = idEvento;
     }
 
@@ -462,19 +462,19 @@ public class PermissaoBean implements Serializable {
         this.tabDisabled = tabDisabled;
     }
 
-    public int getIdDepartamento() {
+    public Integer getIdDepartamento() {
         return idDepartamento;
     }
 
-    public void setIdDepartamento(int idDepartamento) {
+    public void setIdDepartamento(Integer idDepartamento) {
         this.idDepartamento = idDepartamento;
     }
 
-    public int getIdNivel() {
+    public Integer getIdNivel() {
         return idNivel;
     }
 
-    public void setIdNivel(int idNivel) {
+    public void setIdNivel(Integer idNivel) {
         this.idNivel = idNivel;
     }
 
@@ -486,17 +486,17 @@ public class PermissaoBean implements Serializable {
         this.permissaoDepartamento = permissaoDepartamento;
     }
 
-    public int getIdIndex() {
+    public Integer getIdIndex() {
         return idIndex;
     }
 
-    public void setIdIndex(int idIndex) {
+    public void setIdIndex(Integer idIndex) {
         this.idIndex = idIndex;
     }
 
     public List<SelectItem> getListModulos() {
         if (listModulos.isEmpty()) {
-            DaoInterface di = new Dao();
+            Dao di = new Dao();
             List modulos = di.list(new Modulo(), true);
             for (int i = 0; i < modulos.size(); i++) {
                 listModulos.add(new SelectItem(i,
@@ -531,7 +531,7 @@ public class PermissaoBean implements Serializable {
 
     public List<SelectItem> getListEventos() {
         if (listEventos.isEmpty()) {
-            DaoInterface di = new Dao();
+            Dao di = new Dao();
             List segEventos = di.list(new SegEvento(), true);
             for (int i = 0; i < segEventos.size(); i++) {
                 listEventos.add(new SelectItem(i, ((SegEvento) segEventos.get(i)).getDescricao(), Integer.toString(((SegEvento) segEventos.get(i)).getId())));
