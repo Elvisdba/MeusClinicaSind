@@ -28,10 +28,10 @@ public class FuncaoEquipeBean implements Serializable {
     private List<SelectItem> listTipoAtendimento;
     private List<SelectItem> listTipoDocumentoProfissao;
     private List<SelectItem> listProfissao;
-    private int idTipoAtendimento;
-    private int idTipoFuncaEquipe;
-    private int idTipoDocumentoProfissao;
-    private int idProfissao;
+    private Integer idTipoAtendimento;
+    private Integer idTipoFuncaEquipe;
+    private Integer idTipoDocumentoProfissao;
+    private Integer idProfissao;
 
     @PostConstruct
     public void init() {
@@ -241,35 +241,35 @@ public class FuncaoEquipeBean implements Serializable {
         this.listProfissao = listProfissao;
     }
 
-    public int getIdTipoAtendimento() {
+    public Integer getIdTipoAtendimento() {
         return idTipoAtendimento;
     }
 
-    public void setIdTipoAtendimento(int idTipoAtendimento) {
+    public void setIdTipoAtendimento(Integer idTipoAtendimento) {
         this.idTipoAtendimento = idTipoAtendimento;
     }
 
-    public int getIdTipoFuncaEquipe() {
+    public Integer getIdTipoFuncaEquipe() {
         return idTipoFuncaEquipe;
     }
 
-    public void setIdTipoFuncaEquipe(int idTipoFuncaEquipe) {
+    public void setIdTipoFuncaEquipe(Integer idTipoFuncaEquipe) {
         this.idTipoFuncaEquipe = idTipoFuncaEquipe;
     }
 
-    public int getIdTipoDocumentoProfissao() {
+    public Integer getIdTipoDocumentoProfissao() {
         return idTipoDocumentoProfissao;
     }
 
-    public void setIdTipoDocumentoProfissao(int idTipoDocumentoProfissao) {
+    public void setIdTipoDocumentoProfissao(Integer idTipoDocumentoProfissao) {
         this.idTipoDocumentoProfissao = idTipoDocumentoProfissao;
     }
 
-    public int getIdProfissao() {
+    public Integer getIdProfissao() {
         return idProfissao;
     }
 
-    public void setIdProfissao(int idProfissao) {
+    public void setIdProfissao(Integer idProfissao) {
         this.idProfissao = idProfissao;
     }
 

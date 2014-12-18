@@ -30,8 +30,8 @@ public class EquipeBean implements Serializable {
     private Equipe equipe;
     private List<Equipe> listEquipe;
     private List<SelectItem> listFuncaoEquipe;
-    private int idTipoAtendimento;
-    private int idFuncaoEquipe;
+    private Integer idTipoAtendimento;
+    private Integer idFuncaoEquipe;
     private String documento;
     private String descricaoPesquisa;
     private String porPesquisa;
@@ -39,7 +39,7 @@ public class EquipeBean implements Serializable {
     private String tipoDocumentoProfissao;
     private String tipoAtendimento;
     private List<SelectItem> listTipoDocumentoProfissao;
-    private int idTipoDocumentoProfissao;
+    private Integer idTipoDocumentoProfissao;
     private String maskTipoAtendimento;
 
     @PostConstruct
@@ -203,11 +203,11 @@ public class EquipeBean implements Serializable {
         this.listFuncaoEquipe = listFuncaoEquipe;
     }
 
-    public int getIdFuncaoEquipe() {
+    public Integer getIdFuncaoEquipe() {
         return idFuncaoEquipe;
     }
 
-    public void setIdFuncaoEquipe(int idFuncaoEquipe) {
+    public void setIdFuncaoEquipe(Integer idFuncaoEquipe) {
         this.idFuncaoEquipe = idFuncaoEquipe;
     }
 
@@ -223,11 +223,11 @@ public class EquipeBean implements Serializable {
         return "";
     }
 
-    public int getIdTipoAtendimento() {
+    public Integer getIdTipoAtendimento() {
         return idTipoAtendimento;
     }
 
-    public void setIdTipoAtendimento(int idTipoAtendimento) {
+    public void setIdTipoAtendimento(Integer idTipoAtendimento) {
         this.idTipoAtendimento = idTipoAtendimento;
     }
 
@@ -334,11 +334,11 @@ public class EquipeBean implements Serializable {
         this.listTipoDocumentoProfissao = listTipoDocumentoProfissao;
     }
 
-    public int getIdTipoDocumentoProfissao() {
+    public Integer getIdTipoDocumentoProfissao() {
         return idTipoDocumentoProfissao;
     }
 
-    public void setIdTipoDocumentoProfissao(int idTipoDocumentoProfissao) {
+    public void setIdTipoDocumentoProfissao(Integer idTipoDocumentoProfissao) {
         this.idTipoDocumentoProfissao = idTipoDocumentoProfissao;
     }
 
