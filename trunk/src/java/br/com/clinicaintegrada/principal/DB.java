@@ -27,7 +27,10 @@ public class DB {
                 try {
                     Map<String, String> properties = new HashMap<>();
                     String jdbc_user = TopLinkProperties.JDBC_USER;
-                    properties.put(TopLinkProperties.CACHE_TYPE_DEFAULT, CacheType.Full);
+                    // UTILIZAR ESTA OPÇÃO QUANDO O SISTEMA ESTIVER APERFEIÇOADO
+                    //properties.put(TopLinkProperties.CACHE_TYPE_DEFAULT, CacheType.Full);
+                    // UTILIZAR ESTA OPÇÃO EM FASE DE PRODUÇÃO
+                    properties.put(TopLinkProperties.CACHE_TYPE_DEFAULT, CacheType.NONE);
                     properties.put(jdbc_user, "postgres");
                     properties.put(TopLinkProperties.TRANSACTION_TYPE, "RESOURCE_LOCAL");
                     properties.put(TopLinkProperties.JDBC_DRIVER, "org.postgresql.Driver");
@@ -46,7 +49,7 @@ public class DB {
             } else {
                 try {
                     EntityManagerFactory emf = (EntityManagerFactory) Sessions.getObject("conexao");
-                    entidade = emf.createEntityManager();
+                    entidade = emf.createEntityManager();                     
                 } catch (Exception e) {
                     return null;
                 }
