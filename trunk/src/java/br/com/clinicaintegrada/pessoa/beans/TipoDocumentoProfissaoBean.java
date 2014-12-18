@@ -22,7 +22,7 @@ public class TipoDocumentoProfissaoBean implements Serializable {
     private TipoDocumentoProfissao tipoDocumentoProfissao;
     private List<TipoDocumentoProfissao> listTipoDocumentoProfissao;
     private List<SelectItem> listProfissao;
-    private int idProfissao;
+    private Integer idProfissao;
 
     @PostConstruct
     public void init() {
@@ -145,11 +145,11 @@ public class TipoDocumentoProfissaoBean implements Serializable {
         this.listProfissao = listProfissao;
     }
 
-    public int getIdProfissao() {
+    public Integer getIdProfissao() {
         return idProfissao;
     }
 
-    public void setIdProfissao(int idProfissao) {
+    public void setIdProfissao(Integer idProfissao) {
         this.idProfissao = idProfissao;
     }
 
