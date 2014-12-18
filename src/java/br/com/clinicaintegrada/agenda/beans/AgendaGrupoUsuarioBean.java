@@ -12,6 +12,7 @@ import br.com.clinicaintegrada.utils.Sessions;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
@@ -58,8 +59,8 @@ public class AgendaGrupoUsuarioBean implements Serializable {
         agp.setGrupoAgenda(grupoAgenda);
         agp.setUsuario(usuario);
         for (int i = 0; i < agendaGrupoUsuarios.size(); i++) {
-            if (agp.getGrupoAgenda().getId() == agendaGrupoUsuarios.get(i).getGrupoAgenda().getId()
-                    && agp.getUsuario().getId() == agendaGrupoUsuarios.get(i).getUsuario().getId()) {
+            if (Objects.equals(agp.getGrupoAgenda().getId(), agendaGrupoUsuarios.get(i).getGrupoAgenda().getId())
+                    && Objects.equals(agp.getUsuario().getId(), agendaGrupoUsuarios.get(i).getUsuario().getId())) {
                 Messages.warn("Validação", "Grupo e usuário ja cadastrado!");
                 return;
             }
