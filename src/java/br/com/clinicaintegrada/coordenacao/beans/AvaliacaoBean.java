@@ -49,21 +49,26 @@ public class AvaliacaoBean implements Serializable {
     }
 
     public void clear(int tCase) {
+        // TUDO
         if (tCase == 0) {
             Sessions.remove("avaliacaoBean");
         }
+        // SOMENTE COMBO DOS TIPOS DE AVALIAÇÃO [1]
         if (tCase == 1) {
             listSelectItem[1].clear();
         }
+        // NOVO CADASTRO
         if (tCase == 2) {
             avaliacao = new Avaliacao();
         }
+        // COMBO DOS TIPOS DE AVALIAÇÃO [1] E LISTA DAS AVALIAÇÕES
         if (tCase == 2 || tCase == 3) {
             listAvaliacao.clear();
             listSelectItem[1].clear();
         }
     }
 
+    // NÃO ATUALIZA (CAMPOS FIXOS) - SOMENTE NO POSTGRESQL
     public void save() {
         Dao dao = new Dao();
         Logger logger = new Logger();
@@ -126,6 +131,7 @@ public class AvaliacaoBean implements Serializable {
         clear(0);
     }
 
+    // NÃO DELETA (CAMPOS FIXOS) - SOMENTE NO POSTGRESQL
     public void delete(Avaliacao a) {
         Dao dao = new Dao();
         Logger logger = new Logger();
@@ -145,6 +151,24 @@ public class AvaliacaoBean implements Serializable {
         }
     }
 
+    // ATUALIZA SOMENTE O HISTÓRICO
+    public void update(Avaliacao a) {
+        Dao dao = new Dao();
+        Logger logger = new Logger();
+        if (a.getId() != -1) {
+            if (dao.update(a, true)) {
+                logger.update("",
+                        "ID: [" + a.getId() + "]"
+                        + " - Grupo Avaliação : [" + a.getGrupoAvaliacao().getId() + "] - " + a.getGrupoAvaliacao().getDescricao()
+                        + " - Tipo Avaliação : [" + a.getTiposAvaliacao().getId() + "] - " + a.getTiposAvaliacao().getDescricao()
+                        + " - Histórico: " + a.getHistorico()
+                );
+            }
+            listAvaliacao.clear();
+        }
+    }
+
+    // NÃO EDITA (CAMPOS FIXOS) - SOMENTE NO POSTGRESQL
     public String edit(Avaliacao a) {
         avaliacao = a;
         for (int i = 0; i < listSelectItem[0].size(); i++) {
@@ -163,7 +187,7 @@ public class AvaliacaoBean implements Serializable {
     }
 
     /**
-     * 0 - Grupo - 1 Tipo
+     * 0 - Grupo de Avaliação - 1 Tipos de Avaliação
      *
      * @return
      */
@@ -184,7 +208,7 @@ public class AvaliacaoBean implements Serializable {
                     TiposAvaliacaoDao tiposAvaliacaoDao = new TiposAvaliacaoDao();
                     List<TiposAvaliacao> list = tiposAvaliacaoDao.findAllByGrupoForAvaliacao(Integer.parseInt(listSelectItem[0].get(index[0]).getDescription()));
                     for (int i = 0; i < list.size(); i++) {
-                        if(i == 0) {
+                        if (i == 0) {
                             index[1] = i;
                         }
                         listSelectItem[1].add(new SelectItem(i, list.get(i).getDescricao(), "" + list.get(i).getId()));
@@ -200,7 +224,7 @@ public class AvaliacaoBean implements Serializable {
     }
 
     /**
-     * 0 - Grupo - 1 Tipo
+     * 0 - Grupo de Avaliação - 1 Tipos de Avaliação (NOT IN --> Somente as disponíveis)
      *
      * @return
      */
@@ -212,10 +236,16 @@ public class AvaliacaoBean implements Serializable {
         this.index = index;
     }
 
+    /**
+     * Traz somente as avaliações conforme grupo selecionado.
+     * @return 
+     */
     public List<Avaliacao> getListAvaliacao() {
         if (listAvaliacao.isEmpty()) {
-            AvaliacaoDao avaliacaoDao = new AvaliacaoDao();
-            listAvaliacao = avaliacaoDao.findAllByGrupo(Integer.parseInt(listSelectItem[0].get(index[0]).getDescription()));
+            if (index[0] != null) {
+                AvaliacaoDao avaliacaoDao = new AvaliacaoDao();
+                listAvaliacao = avaliacaoDao.findAllByGrupo(Integer.parseInt(listSelectItem[0].get(index[0]).getDescription()));
+            }
         }
         return listAvaliacao;
     }
