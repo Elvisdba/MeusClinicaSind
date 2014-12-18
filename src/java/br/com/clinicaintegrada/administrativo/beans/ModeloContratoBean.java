@@ -43,13 +43,13 @@ public class ModeloContratoBean implements Serializable {
     private List<SelectItem> listModulos;
     private List<SelectItem> listModulos2;
     private List listaArquivos;
-    private int idIndexServicos;
-    private int idIndex;
+    private Integer idIndexServicos;
+    private Integer idIndex;
     private Modulo modulo;
-    private int idModulo;
-    private int idModulo2;
-    private int idServicos;
-    private int quantidadeAnexo;
+    private Integer idModulo;
+    private Integer idModulo2;
+    private Integer idServicos;
+    private Integer quantidadeAnexo;
     private Servicos servicos;
     private String descricaoPesquisa;
     private String msgServico;
@@ -347,11 +347,11 @@ public class ModeloContratoBean implements Serializable {
         this.modeloContrato = modeloContrato;
     }
 
-    public int getIdIndex() {
+    public Integer getIdIndex() {
         return idIndex;
     }
 
-    public void setIdIndex(int idIndex) {
+    public void setIdIndex(Integer idIndex) {
         this.idIndex = idIndex;
     }
 
@@ -370,11 +370,11 @@ public class ModeloContratoBean implements Serializable {
         this.modeloContratos = modeloContratos;
     }
 
-    public int getIdServicos() {
+    public Integer getIdServicos() {
         return idServicos;
     }
 
-    public void setIdServicos(int idServicos) {
+    public void setIdServicos(Integer idServicos) {
         this.idServicos = idServicos;
     }
 
@@ -487,19 +487,19 @@ public class ModeloContratoBean implements Serializable {
         this.listModulos = listModulos;
     }
 
-    public int getIdModulo() {
+    public Integer getIdModulo() {
         return idModulo;
     }
 
-    public void setIdModulo(int idModulo) {
+    public void setIdModulo(Integer idModulo) {
         this.idModulo = idModulo;
     }
 
-    public int getIdModulo2() {
+    public Integer getIdModulo2() {
         return idModulo2;
     }
 
-    public void setIdModulo2(int idModulo2) {
+    public void setIdModulo2(Integer idModulo2) {
         this.idModulo2 = idModulo2;
     }
 
@@ -538,7 +538,7 @@ public class ModeloContratoBean implements Serializable {
         }
     }
 
-    public void excluirArquivo(int index) {
+    public void excluirArquivo(Integer index) {
         if (Dirs.remove("Arquivos/contrato/" + modeloContrato.getId() + "/" + (String) ((DataObject) listaArquivos.get(index)).getArgumento1())) {
             listaArquivos.remove(index);
             listaArquivos.clear();
@@ -564,11 +564,11 @@ public class ModeloContratoBean implements Serializable {
         this.listaArquivos = listaArquivos;
     }
 
-    public int getQuantidadeAnexo() {
+    public Integer getQuantidadeAnexo() {
         return quantidadeAnexo;
     }
 
-    public void setQuantidadeAnexo(int quantidadeAnexo) {
+    public void setQuantidadeAnexo(Integer quantidadeAnexo) {
         this.quantidadeAnexo = quantidadeAnexo;
     }
 

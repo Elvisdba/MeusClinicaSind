@@ -5,7 +5,6 @@ import br.com.clinicaintegrada.administrativo.ModeloDocumentos;
 import br.com.clinicaintegrada.administrativo.dao.ModeloContratoDao;
 import br.com.clinicaintegrada.administrativo.dao.ModeloDocumentosDao;
 import br.com.clinicaintegrada.seguranca.Rotina;
-import br.com.clinicaintegrada.utils.AnaliseString;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.Messages;
 import br.com.clinicaintegrada.utils.Sessions;
