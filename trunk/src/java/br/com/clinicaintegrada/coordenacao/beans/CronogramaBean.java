@@ -34,8 +34,8 @@ public class CronogramaBean implements Serializable {
     private List<Filial> listFiliais;
     private List<Semana> listSemanas;
     private List<Evento> listEventos;
-    private boolean blockPanel;
-    private boolean isSemana;
+    private Boolean blockPanel;
+    private Boolean isSemana;
 
     @PostConstruct
     public void init() {
@@ -231,11 +231,11 @@ public class CronogramaBean implements Serializable {
         this.listEventos = listEventos;
     }
 
-    public boolean isBlockPanel() {
+    public Boolean getBlockPanel() {
         return blockPanel;
     }
 
-    public void setBlockPanel(boolean blockPanel) {
+    public void setBlockPanel(Boolean blockPanel) {
         this.blockPanel = blockPanel;
     }
 
@@ -275,11 +275,11 @@ public class CronogramaBean implements Serializable {
         this.evento = evento;
     }
 
-    public boolean isIsSemana() {
+    public Boolean getIsSemana() {
         return isSemana;
     }
 
-    public void setIsSemana(boolean isSemana) {
+    public void setIsSemana(Boolean isSemana) {
         this.isSemana = isSemana;
     }
 

@@ -23,7 +23,7 @@ public class EventoBean implements Serializable {
     private Evento evento;
     private List<Evento> listEvento;
     private List<SelectItem> listGrupoEvento;
-    private int idGrupoEvento;
+    private Integer idGrupoEvento;
 
     @PostConstruct
     public void init() {
@@ -163,11 +163,11 @@ public class EventoBean implements Serializable {
         this.listGrupoEvento = listGrupoEvento;
     }
 
-    public int getIdGrupoEvento() {
+    public Integer getIdGrupoEvento() {
         return idGrupoEvento;
     }
 
-    public void setIdGrupoEvento(int idGrupoEvento) {
+    public void setIdGrupoEvento(Integer idGrupoEvento) {
         this.idGrupoEvento = idGrupoEvento;
     }
 

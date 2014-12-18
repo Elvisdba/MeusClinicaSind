@@ -1,6 +1,5 @@
 package br.com.clinicaintegrada.coordenacao.beans;
 
-import br.com.clinicaintegrada.coordenacao.Agendamento;
 import br.com.clinicaintegrada.coordenacao.Contrato;
 import br.com.clinicaintegrada.coordenacao.PertenceEntrada;
 import br.com.clinicaintegrada.coordenacao.PertenceGrupo;
