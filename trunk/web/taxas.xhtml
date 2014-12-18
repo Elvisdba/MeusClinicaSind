@@ -34,10 +34,10 @@
                             <p:panel styleClass="fundoCinza margin-top-max">
                                 <h:panelGrid columns="2">
                                     <p:outputLabel value="Serviços:" />
-                                    <h:selectOneMenu value="#{taxasBean.idServicos}">
+                                    <h:selectOneMenu value="#{taxasBean.index}">
                                         <p:ajax event="change" update="@this :form_taxas:" />
                                         <f:selectItem itemValue="" itemLabel="Selecionar" noSelectionOption="true" itemDisabled="true"/>
-                                        <f:selectItems value="#{taxasBean.listServicos}" />
+                                        <f:selectItems value="#{taxasBean.listSelectItem}" />
                                     </h:selectOneMenu>
                                     <p:outputLabel value="Valor:" />
                                     <p:inputText value="#{taxasBean.taxas.valorString}" converter="#{toCurrency}">
@@ -48,7 +48,7 @@
                                 </h:panelGrid>
                             </p:panel>                                
                             <h:panelGrid columns="3" styleClass="margin-top-max">
-                                <p:commandButton action="#{taxasBean.save}" value="Salvar" update=":form_taxas:" disabled="#{controleAcessoBean.save}" rendered="#{taxasBean.listServicos.size() > 0}"/>
+                                <p:commandButton action="#{taxasBean.save}" value="Salvar" update=":form_taxas:" disabled="#{controleAcessoBean.save}" rendered="#{taxasBean.listSelectItem.size() > 0}"/>
                                 <p:commandButton action="#{taxasBean.clear}" value="Novo" update=":form_taxas:"/>
                                 <p:commandButton action="#{taxasBean.delete}" value="Excluir" update=":form_taxas:" disabled="#{controleAcessoBean.delete}" rendered="#{taxasBean.taxas.id != -1}"/>
                             </h:panelGrid>
