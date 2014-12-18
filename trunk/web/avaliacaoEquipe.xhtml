@@ -6,7 +6,7 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <h:head>
-        <title>Avaliação</title>
+        <title>Avaliação Equipe</title>
         <meta http-equiv="X-UA-Compatible" content="IE=9" />
         <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/Imagens/favicon.ico"/>  
         <style type="text/css">
@@ -25,42 +25,42 @@
                 </f:subview>
                 <f:view>
                     <p:panel styleClass="wrapper" style="border: 0px;">
-                        <h:outputText value="Avaliação" styleClass="fonteHeader" />
+                        <h:outputText value="Avaliação Equipe" styleClass="fonteHeader" />
                         <div class="clear"></div>
                         <h:form id="form_a">
-                            <c:set scope="request" var="object" value="${avaliacaoBean.avaliacao}"/>
+                            <c:set scope="request" var="object" value="${avaliacaoEquipeBean.avaliacaoEquipe}"/>
                             <p:messages autoUpdate="true" showDetail="true" showSummary="true" id="i_message"/>
                             <p:panel styleClass="margin-top-max">
                                 <h:panelGrid columns="8" id="i_p_1">
-                                    <p:outputLabel value="Grupo:" />
-                                    <h:selectOneMenu value="#{avaliacaoBean.index[0]}">
-                                        <p:ajax event="change" update="@this i_p_1 i_datatable" listener="#{avaliacaoBean.clear(3)}" />
+                                    <p:outputLabel value="Avaliação:" />
+                                    <h:selectOneMenu value="#{avaliacaoEquipeBean.index[0]}">
+                                        <p:ajax event="change" update="@this i_p_1 i_datatable" listener="#{avaliacaoEquipeBean.clear(3)}" />
                                         <f:selectItem itemValue="" itemLabel="Selecionar" />
-                                        <f:selectItems value="#{avaliacaoBean.listSelectItem[0]}" />
+                                        <f:selectItems value="#{avaliacaoEquipeBean.listSelectItem[0]}" />
                                     </h:selectOneMenu>
-                                    <p:outputLabel value="Tipo" styleClass="margin-left-max"/>
-                                    <h:selectOneMenu value="#{avaliacaoBean.index[1]}">
+                                    <p:outputLabel value="Função Equipe:" styleClass="margin-left-max"/>
+                                    <h:selectOneMenu value="#{avaliacaoEquipeBean.index[1]}">
                                         <p:ajax event="change" update="@this" />
                                         <f:selectItem itemValue="" itemLabel="Selecionar" itemDisabled="true" />
-                                        <f:selectItems value="#{avaliacaoBean.listSelectItem[1]}" />
+                                        <f:selectItems value="#{avaliacaoEquipeBean.listSelectItem[1]}" />
                                     </h:selectOneMenu>
-                                    <p:selectBooleanCheckbox itemLabel="Histórico"  value="#{avaliacaoBean.avaliacao.historico}" styleClass="margin-left-max"/>
-                                    <p:commandButton value="#{(avaliacaoBean.avaliacao.id == -1) ? 'Adicionar' : 'Atualizar'}" action="#{avaliacaoBean.save}" disabled="#{controleAcessoBean.save}" update=":form_a:" styleClass="margin-left-max"/>
-                                    <p:commandButton value="Novo" action="#{avaliacaoBean.clear}" update=":form_a:" />
+                                    <p:commandButton value="#{(avaliacaoEquipeBean.avaliacaoEquipe.id == -1) ? 'Adicionar' : 'Atualizar'}" action="#{avaliacaoEquipeBean.save}" disabled="#{controleAcessoBean.save}" update=":form_a:" styleClass="margin-left-max"/>
+                                    <p:commandButton value="Novo" action="#{avaliacaoEquipeBean.clear}" update=":form_a:" />
                                 </h:panelGrid>
                             </p:panel>
                             <p:panel styleClass="margin-top-max" id="i_datatable">
-                                <p:dataTable value="#{avaliacaoBean.listAvaliacao}" var="avaliacao" scrollable="true" scrollHeight="300" emptyMessage="Nenhum registro encontrado!">                                  
-                                    <p:column headerText="Tipo Avaliação">
-                                        <p:outputLabel value="#{avaliacao.tiposAvaliacao.descricao}" />                                        
+                                <p:dataTable value="#{avaliacaoEquipeBean.listAvaliacaoEquipe}" var="avaliacaoEquipe" scrollable="true" scrollHeight="300" emptyMessage="Nenhum registro encontrado!">                                 
+                                    <p:column headerText="Grupo">
+                                        <p:outputLabel value="#{avaliacaoEquipe.avaliacao.grupoAvaliacao.descricao}" />
+                                    </p:column>
+                                    <p:column headerText="Tipo">
+                                        <p:outputLabel value="#{avaliacaoEquipe.funcaoEquipe.tipoAtendimento.descricao}" />
                                     </p:column>
                                     <p:column headerText="Histórico" styleClass="text-center" width="60">
-                                        <p:selectBooleanCheckbox value="#{avaliacao.historico}">
-                                            <p:ajax event="change" update="@this :form_a:i_datatable" listener="#{avaliacaoBean.update(avaliacao)}" disabled="#{controleAcessoBean.save}"/>
-                                        </p:selectBooleanCheckbox>
+                                        <p:selectBooleanCheckbox value="#{avaliacaoEquipe.avaliacao.historico}" disabled="true"></p:selectBooleanCheckbox>
                                     </p:column>
                                     <p:column width="30">
-                                        <p:commandButton icon="ui-icon-trash" action="#{avaliacaoBean.delete(avaliacao)}" update=":form_a:"  disabled="true" oncomplete="PF('dlg_message').show()"/>
+                                        <p:commandButton icon="ui-icon-trash" action="#{avaliacaoEquipeBean.delete(avaliacaoEquipe)}" update=":form_a:"  disabled="#{controleAcessoBean.delete}" oncomplete="PF('dlg_message').show()"/>
                                     </p:column>
                                 </p:dataTable>
                             </p:panel>                           

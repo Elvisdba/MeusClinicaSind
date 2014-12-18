@@ -32,11 +32,11 @@
                                     <p:menuitem value="Função Escala"           action="#{chamadaPaginaBean.paginaSimples('FuncaoEscala', 'Função Escala')}" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}"/>
                                     <p:menuitem value="Cronôgrama"              action="#{chamadaPaginaBean.pagina('cronograma')}" />
                                     <p:submenu label="Avaliação" icon="ui-icon-document" style="margin-right: 15px" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}">
-                                        <p:menuitem value="Manutenção"              action="#{chamadaPaginaBean.pagina('avaliacao')}" />
-                                        <p:menuitem value="Tipos de Avaliação"           action="#{chamadaPaginaBean.paginaSimples('TiposAvaliacao', 'Tipos de Avaliação')}" />
-                                        <p:menuitem value="Grupo de Avaliação"           action="#{chamadaPaginaBean.paginaSimples('GrupoAvaliacao', 'Grupos de Avaliação')}" />
-                                    </p:submenu>
-                                    
+                                        <p:menuitem value="Manutenção"          action="#{chamadaPaginaBean.pagina('avaliacao')}" />
+                                        <p:menuitem value="Avaliação Equipe"    action="#{chamadaPaginaBean.pagina('avaliacaoEquipe')}" />
+                                        <p:menuitem value="Tipos de Avaliação"  action="#{chamadaPaginaBean.paginaSimples('TiposAvaliacao', 'Tipos de Avaliação')}" />
+                                        <p:menuitem value="Grupo de Avaliação"  action="#{chamadaPaginaBean.paginaSimples('GrupoAvaliacao', 'Grupos de Avaliação')}" />
+                                    </p:submenu>                                    
                                 </p:submenu>
                                 <p:submenu label="Movimento" icon="ui-icon-document" style="margin-right: 15px">
                                     <p:menuitem value="Pertence"                action="#{chamadaPaginaBean.pagina('pertence')}" />
