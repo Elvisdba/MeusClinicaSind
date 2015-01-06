@@ -87,7 +87,7 @@ public class FuncaoEquipeBean implements Serializable {
             Messages.warn("Validação", "Função equipe já cadastrada!");
             return;
         }
-        if (funcaoEquipe.getId() == -1) {
+        if (funcaoEquipe.getId() == null) {
             funcaoEquipe.setCliente(SessaoCliente.get());
             if (dao.save(funcaoEquipe, true)) {
                 Messages.info("Sucesso", "Registro adicionado");
@@ -112,6 +112,29 @@ public class FuncaoEquipeBean implements Serializable {
                         " ID: " + funcaoEquipe.getId()
                         + " - Profissão: [" + funcaoEquipe.getProfissao().getId() + "]" + funcaoEquipe.getProfissao().getProfissao()
                         + " - Tipo Documento: [" + funcaoEquipe.getTipoDocumentoProfissao().getId() + "]" + funcaoEquipe.getTipoDocumentoProfissao().getDescricao()
+                );
+                clear();
+            } else {
+                Messages.warn("Erro", "Erro ao atualizar registro!");
+            }
+        }
+    }
+
+    public void update(FuncaoEquipe fe) {
+        if (fe.getId() != null) {
+            Logger logger = new Logger();
+            Dao dao = new Dao();
+            FuncaoEquipe fe2 = (FuncaoEquipe) dao.find(fe);
+            String beforeUpdate = ""
+                    + " ID: " + fe2.getId()
+                    + " - Profissão: [" + fe2.getProfissao().getId() + "]" + fe2.getProfissao().getProfissao()
+                    + " - Tipo Documento: [" + fe2.getTipoDocumentoProfissao().getId() + "]" + fe2.getTipoDocumentoProfissao().getDescricao();
+            if (dao.update(fe, true)) {
+                Messages.info("Sucesso", "Registro atualizado");
+                logger.update(beforeUpdate,
+                        " ID: " + fe.getId()
+                        + " - Profissão: [" + fe.getProfissao().getId() + "]" + fe.getProfissao().getProfissao()
+                        + " - Tipo Documento: [" + fe.getTipoDocumentoProfissao().getId() + "]" + fe.getTipoDocumentoProfissao().getDescricao()
                 );
                 clear();
             } else {

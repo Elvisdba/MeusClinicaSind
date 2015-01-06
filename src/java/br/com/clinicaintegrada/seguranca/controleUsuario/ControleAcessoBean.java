@@ -152,12 +152,6 @@ public class ControleAcessoBean implements Serializable {
             return true;
         } else if (conv.equals("menuPrincipalAcessoWeb") || conv.equals("webConfiguracoes")) {
             return true;
-        } else if ((tipo == 1) && (conv.equals("webContribuinte") || conv.equals("webAgendamentoContribuinte") || conv.equals("webSolicitaREPIS"))) {
-            return true;
-        } else if ((tipo == 2) && (conv.equals("webContabilidade") || conv.equals("webAgendamentoContabilidade") || conv.equals("webSolicitaREPIS"))) {
-            return true;
-        } else if ((tipo == 3) && (conv.equals("webLiberacaoREPIS"))) {
-            return true;
         }
         return false;
     }
@@ -179,7 +173,7 @@ public class ControleAcessoBean implements Serializable {
 
             //PESQUISA DE ROTINAS-------------------------------------------------------------------------------------------
             RotinaDao rotinaDao = new RotinaDao();
-            rotina = rotinaDao.pesquisaRotinaPermissao(urlDestino);
+            rotina = rotinaDao.pesquisaRotinaPermissao(converteURL(urlDestino) + ".jsf");
 
             if (rotina == null) {
                 rotina = new Rotina();
@@ -282,7 +276,7 @@ public class ControleAcessoBean implements Serializable {
             if (user.getId() != 1 && !user.getAdministrador()) {
                 Permissao permissao;
                 idModulo = modulo.getId();
-                if (id == -1) {
+                if (id == null || id == -1) {
                     if (modulo.getId() != -1) {
                         idEvento = 1;
                     } else {

@@ -55,8 +55,27 @@ public class AvaliacaoEquipeDao extends DB {
      */
     public List findAllByFuncaoEquipe(Integer idFuncaoEquipe) {
         try {
-            Query query = getEntityManager().createQuery("SELECT AE FROM AvaliacaoEquipe AS AE WHERE AE.funcaoEquipe.id = :funcaoEquipe");
+            Query query = getEntityManager().createQuery("SELECT AE FROM AvaliacaoEquipe AS AE WHERE AE.funcaoEquipe.id = :funcaoEquipe ORDER BY AE.avaliacao.grupoAvaliacao.descricao");
             query.setParameter("funcaoEquipe", idFuncaoEquipe);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+            return new ArrayList();
+        }
+        return new ArrayList();
+    }
+
+    /**
+     *
+     * @param idAvaliacao
+     * @return
+     */
+    public List findAllByGrupoAvaliacao(Integer idAvaliacao) {
+        try {
+            Query query = getEntityManager().createQuery("SELECT AE FROM AvaliacaoEquipe AS AE WHERE AE.avaliacao.grupoAvaliacao.id = :grupoAvaliacao ORDER BY AE.avaliacao.id ASC ");
+            query.setParameter("grupoAvaliacao", idAvaliacao);
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;
