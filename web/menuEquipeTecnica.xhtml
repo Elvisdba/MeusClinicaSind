@@ -20,7 +20,7 @@
                 </f:subview>
 
                 <f:view>
-                    <h:form id="formMenuPrincipal">
+                    <h:form id="form_menu_equipe_tecnica">
                         <p:panel style="border: 0px; width: 1024px; margin: 0 auto">
                             <p:menubar>
                                 <p:submenu label="Cadastro" icon="ui-icon-document" style="margin-right: 15px">  
@@ -36,20 +36,68 @@
                                 </p:submenu>
                             </p:menubar> 
                             <p:panel styleClass="margin-top-max">
-                                <p:tabView>
-                                    <p:tab title="Agendamento">
-                                        <p:dataTable emptyMessage="Nenhum atendamento disponível">
-                                            <p:column headerText="Paciente"></p:column>
-                                            <p:column headerText="Horário"></p:column>
-                                        </p:dataTable>
-                                    </p:tab>
-                                    <p:tab title="Em atendimento">
-                                    </p:tab>
-                                    <p:tab title="Concluído">
-                                    </p:tab>
-                                    <p:tab title="Consultar">
-                                    </p:tab>
-                                </p:tabView>
+                                <p:selectOneButton value="#{menuEquipeTecnicaBean.indexStatus}">
+                                    <p:ajax event="change" listener="#{menuEquipeTecnicaBean.listAgendamento.clear()}" update="@this :form_menu_equipe_tecnica:i_tbl"/> 
+                                    <f:selectItem itemLabel="Agendado" itemValue="1" itemDisabled="#{!menuEquipeTecnicaBean.enfermaria}"/>
+                                    <f:selectItem itemLabel="Enfermaria" itemValue="6" itemDisabled="#{menuEquipeTecnicaBean.enfermaria}"/>
+                                    <f:selectItem itemLabel="Em atendimento" itemValue="2" />
+                                    <f:selectItem itemLabel="Concluído" itemValue="3" />
+                                    <f:selectItem itemLabel="Cancelado" itemValue="4" />
+                                    <f:selectItem itemLabel="Faltou" itemValue="5" />
+                                    <f:selectItem itemLabel="Todos" itemValue="0" />
+                                </p:selectOneButton>
+                                <p:panel id="i_tbl" styleClass="margin-top-max no-border" >
+                                    <h:panelGrid columns="12" rendered="#{menuEquipeTecnicaBean.indexStatus != 2}">
+                                        <h:outputLabel value="Período Inicial : " />
+                                        <p:inputMask mask="99/99/9999" value="#{menuEquipeTecnicaBean.data[0]}" converter="#{isDateString}" size="8">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:inputMask>
+                                        <h:outputLabel value="Final: " styleClass="margin-left-max"/>
+                                        <p:inputMask mask="99/99/9999" value="#{menuEquipeTecnicaBean.data[1]}" converter="#{isDateString}" size="8">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:inputMask>
+                                        <h:outputLabel value="Paciente: " styleClass="margin-left-max" />
+                                        <p:inputText value="#{menuEquipeTecnicaBean.description}" size="50"/>
+                                        <p:commandButton icon="ui-icon-close" action="#{menuEquipeTecnicaBean.clear(1)}" update=":form_menu_equipe_tecnica:i_tbl" styleClass="margin-left-max" title="Limpar" />
+                                        <p:commandButton action="#{menuEquipeTecnicaBean.searchInit()}" update=":form_menu_equipe_tecnica:i_tbl" styleClass="margin-left-max" value="Inicial" />
+                                        <p:commandButton action="#{menuEquipeTecnicaBean.searchFinish()}" update=":form_menu_equipe_tecnica:i_tbl" value="Parcial" />
+                                    </h:panelGrid>
+                                    <p:dataTable emptyMessage="Nenhum atendimento disponível" value="#{menuEquipeTecnicaBean.listAgendamento}" var="agendamento" styleClass="margin-top-max">
+                                        <p:column width="30" styleClass="text-center">
+                                            <p:rowToggler />
+                                        </p:column>
+                                        <p:column width="30" styleClass="text-center">
+                                            <p:commandButton icon="ui-icon-link" action="#{chamadaPaginaBean.pesquisa('avaliacaoTecnica')}" actionListener="#{avaliacaoTecnicaBean.select(agendamento)}" rendered="#{(!menuEquipeTecnicaBean.enfermaria)}" title="Avaliação Técnica" />
+                                            <p:commandButton icon="ui-icon-link" action="#{chamadaPaginaBean.pesquisa('enfermaria')}" actionListener="#{avaliacaoTecnicaBean.select(agendamento, true)}" rendered="#{(menuEquipeTecnicaBean.enfermaria and agendamento.funcaoEquipe.enfermaria)}" title="Enfermaria" />
+                                        </p:column>
+                                        <p:column headerText="Data agenda" width="90" styleClass="text-center" sortBy="#{agendamento.dataAgendaString}">#{agendamento.dataAgendaString}</p:column>
+                                        <p:column headerText="Horário" width="50" styleClass="text-center" sortBy="#{agendamento.horaAgenda}">#{agendamento.horaAgenda}</p:column>
+                                        <p:column headerText="Data atendimento" width="90" styleClass="text-center" sortBy="#{agendamento.dataAtendimentoString}" rendered="#{menuEquipeTecnicaBean.indexStatus == 3}">
+                                            #{agendamento.dataAtendimentoString}
+                                        </p:column>
+                                        <p:column headerText="Horário" width="50" styleClass="text-center" sortBy="#{agendamento.horaAtendimento}" rendered="#{menuEquipeTecnicaBean.indexStatus == 3}">
+                                            #{agendamento.horaAtendimento}
+                                        </p:column>
+                                        <p:column headerText="Status"  styleClass="text-center" sortBy="#{agendamento.status.descricao}" rendered="#{menuEquipeTecnicaBean.indexStatus == 0}">
+                                            #{agendamento.status.descricao}
+                                        </p:column>
+                                        <p:column headerText="Paciente" sortBy="#{agendamento.contrato.paciente.nome}">#{agendamento.contrato.paciente.nome}</p:column>
+                                        <p:column headerText="Especialidade" styleClass="text-center" sortBy="#{agendamento.funcaoEquipe.profissao.profissao}">#{agendamento.funcaoEquipe.profissao.profissao}</p:column>
+                                        <p:rowExpansion>
+                                            <ul style="list-style: none; margin-top: 10px">
+                                                <li>
+                                                    <p:outputLabel value="Contrato: #{agendamento.contrato.id}" />
+                                                </li>
+                                                <li>
+                                                    <p:outputLabel value="Agendador: #{agendamento.agendador.pessoa.nome}" />
+                                                </li>
+                                                <li>
+                                                    <p:outputLabel value="Status: #{agendamento.status.descricao}" />
+                                                </li>
+                                            </ul>
+                                        </p:rowExpansion>
+                                    </p:dataTable>                                
+                                </p:panel>                                
                             </p:panel>
                         </p:panel>
                     </h:form>

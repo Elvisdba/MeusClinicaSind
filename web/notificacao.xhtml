@@ -65,7 +65,7 @@
                                 <p:commandButton value="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.save}"/>
                                 <p:commandButton value="Novo" action="#{notificacaoBean.clear(0)}" update=":form_n:"/>
                                 <p:commandButton value="Excluir" onclick="PF('dlg_delete').show()" disabled="#{controleAcessoBean.delete}"/>
-                                <p:commandButton value="Consultar notificações" action="#{chamadaPaginaBean.pagina('consultaNotificacao', 'notificacaoBean')}" />
+                                <p:commandButton value="Consultar notificações" action="#{chamadaPaginaBean.pagina('consultaNotificacao')}" />
                                 <p:commandButton value="Formulário" icon="ui-icon-print" ajax="false" title="Modelo - Formulário de notificação em branco" disabled="true"/>
                             </h:panelGrid>
                             <p:panel header="Lista" styleClass="margin-top-max" rendered="#{notificacaoBean.filter[1]}">

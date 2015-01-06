@@ -68,7 +68,7 @@
                                 <p:commandButton value="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.save}"/>
                                 <p:commandButton value="Novo" action="#{agendamentoBean.clear(0)}" update=":form_a:"/>
                                 <p:commandButton value="Excluir" onclick="PF('dlg_delete').show()" disabled="#{controleAcessoBean.delete}"/>
-                                <p:commandButton value="Consultar agendamentos" action="#{chamadaPaginaBean.pagina('consultaAgendamento', 'agendamentoBean')}" />
+                                <p:commandButton value="Consultar agendamentos" action="#{chamadaPaginaBean.pagina('consultaEscala')}" />
                             </h:panelGrid>
                             <p:panel header="Lista" styleClass="margin-top-max">
                                 <p:selectBooleanCheckbox value="#{agendamentoBean.actives}" itemLabel="Somente não atendidos">

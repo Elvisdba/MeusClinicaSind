@@ -81,6 +81,7 @@
                                         <p:columnGroup type="header">
                                             <p:row>
                                                 <p:column colspan="2" width="80" />
+                                                <p:column colspan="1" />
                                                 <p:column colspan="2" headerText="Agendado" />
                                                 <p:column colspan="2" headerText="Atendimento"/>
                                                 <p:column colspan="4" headerText="Informações"/>
@@ -88,6 +89,7 @@
                                             <p:row>
                                                 <p:column />
                                                 <p:column />
+                                                <p:column headerText="Status" sortBy="#{agendamento.status.descricao}"/>
                                                 <p:column headerText="Data" sortBy="#{agendamento.dataAgendaString}"/>
                                                 <p:column headerText="Horário" sortBy="#{agendamento.horaAgenda}"/>
                                                 <p:column headerText="Data" sortBy="#{agendamento.dataAtendimentoString}"/>
@@ -103,6 +105,9 @@
                                         </p:column>
                                         <p:column width="30" styleClass="text-center">
                                             <p:commandButton icon="ui-icon-link" action="#{agendamentoBean.editConsulta(agendamento)}" update=":form_a:i_edit" oncomplete="PF('dlg_edit').show()" disabled="true"/>
+                                        </p:column>                                        
+                                        <p:column styleClass="text-center">
+                                            #{agendamento.status.descricao}
                                         </p:column>
                                         <p:column styleClass="text-center">
                                             #{agendamento.dataAgendaString}

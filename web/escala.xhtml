@@ -83,7 +83,7 @@
                                 <p:commandButton value="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.save}"/>
                                 <p:commandButton value="Novo" action="#{escalaBean.clear(0)}" update=":form_a:"/>
                                 <p:commandButton value="Excluir" onclick="PF('dlg_delete').show()" disabled="#{controleAcessoBean.delete}"/>
-                                <p:commandButton value="Consultar escalas" action="#{chamadaPaginaBean.pagina('consultaEscala', 'escalaBean')}" />
+                                <p:commandButton value="Consultar escalas" action="#{chamadaPaginaBean.pagina('consultarEscala')}" />
                             </h:panelGrid>
                             <p:panel header="Lista" styleClass="margin-top-max" rendered="#{escalaBean.filter[1]}">
                                 <h:panelGrid columns="7" id="i_p_2">
