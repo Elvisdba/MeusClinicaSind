@@ -1,11 +1,10 @@
 package br.com.clinicaintegrada.fichamedica;
 
-import br.com.clinicaintegrada.coordenacao.*;
 import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ate_atendimento",
+@Table(name = "ate_atendimento_avaliacao",
         uniqueConstraints = @UniqueConstraint(columnNames = {"id_atendimento", "id_avaliacao"})
 )
 public class AtendimentoAvaliacao implements Serializable {

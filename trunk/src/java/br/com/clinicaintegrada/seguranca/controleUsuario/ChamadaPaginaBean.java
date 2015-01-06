@@ -25,23 +25,23 @@ import javax.servlet.http.HttpServletRequest;
 @SuppressWarnings("unchecked")
 public class ChamadaPaginaBean implements Serializable {
 
-    private HttpServletRequest paginaRequerida = null;
-    private boolean carregaPg = true;
-    private boolean linkClicado = false;
-    private String urlAtual = "";
+    private static HttpServletRequest paginaRequerida = null;
+    private static Boolean carregaPagina = true;
+    private Boolean linkClicado = false;
+    private static String urlAtual = "";
     private String penultimoLink = "";
     private String paginaDestino;
     private List<MenuLinks> menuLinks = new ArrayList<>();
-    private int nivelLink = 0;
-    private int fimURL;
-    private int iniURL;
-    private int tipoPagina = 0;
-    private final int SEGURANCA = 1;
-    private final int CADASTRO = 2;
-    private final int ADMINISTRATIVO = 3;
-    private final int FICHA_TECNICA = 4;
-    private final int COORDENACAO = 5;
-    private final int FINANCEIRO = 6;
+    private Integer nivelLink = 0;
+    private Integer fimURL;
+    private Integer iniURL;
+    private static Integer tipoPagina = 0;
+    private final Integer SEGURANCA = 1;
+    private final Integer CADASTRO = 2;
+    private final Integer ADMINISTRATIVO = 3;
+    private final Integer FICHA_TECNICA = 4;
+    private final Integer COORDENACAO = 5;
+    private final Integer FINANCEIRO = 6;
 
     private boolean renderPesquisa = true;
     private List<Rotina> listRotina = new ArrayList<>();
@@ -60,6 +60,7 @@ public class ChamadaPaginaBean implements Serializable {
     }
 
     public synchronized String pesquisa(String pagina, String bean) throws IOException {
+        Sessions.remove(bean);
         Sessions.remove(pagina + "Bean");
         return metodoGenerico(1, pagina);
     }
@@ -100,6 +101,50 @@ public class ChamadaPaginaBean implements Serializable {
      * @throws java.io.IOException
      */
     public synchronized String pagina(String pagina, String bean) throws IOException {
+        Sessions.remove(bean);
+        Sessions.remove(bean + "Bean");
+        String redirect = metodoGenerico(2, pagina);
+        return redirect;
+    }
+
+    /**
+     * <p>
+     * <strong>Página</strong></p>
+     * <p>
+     * <strong>Exemplo:</strong> pagina("pesquisaAgendaTelefone"); Não é
+     * necessário no Bean espefícar o nome completo.</p>
+     *
+     * @param pagina (Nome da página)
+     * @param tStatic (Quando estático)
+     *
+     * @author Bruno
+     *
+     * @return List
+     * @throws java.io.IOException
+     */
+    public synchronized static String pagina(String pagina, Boolean tStatic) throws IOException {
+        Sessions.remove(pagina + "Bean");
+        String redirect = metodoGenerico(2, pagina);
+        return redirect;
+    }
+
+    /**
+     * <p>
+     * <strong>Página</strong></p>
+     * <p>
+     * <strong>Exemplo:</strong> pagina("pagina", "agendaTelefone"); Não é
+     * necessário no Bean espefícar o nome completo.</p>
+     *
+     * @param pagina (Nome da página)
+     * @param bean (Bean)
+     *
+     * @author Bruno
+     * @param tStatic (Quando estático)
+     *
+     * @return List
+     * @throws java.io.IOException
+     */
+    public synchronized static String pagina(String pagina, String bean, Boolean tStatic) throws IOException {
         Sessions.remove(bean);
         Sessions.remove(bean + "Bean");
         String redirect = metodoGenerico(2, pagina);
@@ -215,12 +260,12 @@ public class ChamadaPaginaBean implements Serializable {
         return object;
     }
 
-    public String metodoGenerico(int tipo, String pagina) {
+    public static String metodoGenerico(int tipo, String pagina) {
         paginaRequerida = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         urlAtual = converteURL(paginaRequerida.getRequestURI());
         Sessions.put("urlRetorno", urlAtual);
         Sessions.put("linkClicado", true);
-        carregaPg = true;
+        carregaPagina = true;
         tipoPagina = tipo;
         //atualizaAcessos('"' + "/ClinicaIntegrada/" + pagina + ".jsf" + '"');
         String cliente = ((Cliente) Sessions.getObject("sessaoCliente")).getIdentifica();
@@ -372,7 +417,7 @@ public class ChamadaPaginaBean implements Serializable {
         return nomePagina;
     }
 
-    public String converteURL(String urlDest) {
+    public static String converteURL(String urlDest) {
         return urlDest.substring(urlDest.lastIndexOf("/") + 1, urlDest.lastIndexOf("."));
     }
 
@@ -401,24 +446,24 @@ public class ChamadaPaginaBean implements Serializable {
                 linkTeste = "";
             }
             if (linkAtual.equals("acessoNegado") || !Sessions.exists("indicaAcesso")) {
-                carregaPg = false;
+                carregaPagina = false;
                 return;
             }
             if (linkAtual.equals("sessaoExpirou") || !Sessions.exists("indicaAcesso")) {
-                carregaPg = false;
+                carregaPagina = false;
                 return;
             }
             if (linkAtual.equals("menuPrincipal") || linkAtual.equals("menuPrincipalAcessoWeb") || linkAtual.equals("menuPrincipalSuporteWeb")) {
-                carregaPg = true;
+                carregaPagina = true;
                 nivelLink = 0;
             }
-            if (carregaPg) {
+            if (carregaPagina) {
                 linkClicado = false;
                 boolean isNivel = false;
                 boolean acessoCadastro = (Boolean) Sessions.getBoolean("acessoCadastro");
                 if (nivelLink >= 0 && nivelLink <= 9) {
                     isNivel = true;
-                    carregaPg = false;
+                    carregaPagina = false;
                 }
                 if (nivelLink >= 3 && nivelLink <= 9) {
                     Sessions.put("acessoCadastro", false);
@@ -581,7 +626,7 @@ public class ChamadaPaginaBean implements Serializable {
         this.listRotina = listaRotina;
     }
 
-    public boolean isRenderPesquisa() {
+    public Boolean isRenderPesquisa() {
         paginaRequerida = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         urlAtual = converteURL(paginaRequerida.getRequestURI());
         if (urlAtual.equals("menuPrincipalAcessoWeb")) {
@@ -590,7 +635,7 @@ public class ChamadaPaginaBean implements Serializable {
         return renderPesquisa;
     }
 
-    public void setRenderPesquisa(boolean renderPesquisa) {
+    public void setRenderPesquisa(Boolean renderPesquisa) {
         this.renderPesquisa = renderPesquisa;
     }
 
@@ -631,7 +676,7 @@ public class ChamadaPaginaBean implements Serializable {
     }
 
     public void setUrlAtual(String urlAtual) {
-        this.urlAtual = urlAtual;
+        ChamadaPaginaBean.urlAtual = urlAtual;
     }
 
     public String getPenultimoLink() {
@@ -646,5 +691,12 @@ public class ChamadaPaginaBean implements Serializable {
 
     public void setPenultimoLink(String penultimoLink) {
         this.penultimoLink = penultimoLink;
+    }
+
+    /**
+     * Link Clicado
+     */
+    public static void link() {
+        Sessions.put("linkClicado", true);
     }
 }

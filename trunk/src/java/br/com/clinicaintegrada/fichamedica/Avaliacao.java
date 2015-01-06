@@ -1,7 +1,5 @@
 package br.com.clinicaintegrada.fichamedica;
 
-import br.com.clinicaintegrada.fichamedica.GrupoAvaliacao;
-import br.com.clinicaintegrada.fichamedica.TiposAvaliacao;
 import java.io.Serializable;
 import javax.persistence.*;
 
@@ -9,6 +7,7 @@ import javax.persistence.*;
 @Table(name = "ate_avaliacao",
         uniqueConstraints = @UniqueConstraint(columnNames = {"id_grupo_avaliacao", "id_tipo_avaliacao"})
 )
+@NamedQuery(name = "findAll", query = "SELECT A FROM Avaliacao AS A ORDER BY A.grupoAvaliacao.descricao, A.tiposAvaliacao.descricao ")
 public class Avaliacao implements Serializable {
 
     @Id

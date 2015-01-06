@@ -15,7 +15,10 @@ public class ThisNumber implements Converter {
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        return (value != null) ? value.replaceAll("[^0-9]", "") : null;
+        try {
+            return (value != null) ? value.replaceAll("[^0-9]", "") : null;
+        } catch (Exception e) {
+            return "0";
+        }
     }
-
 }

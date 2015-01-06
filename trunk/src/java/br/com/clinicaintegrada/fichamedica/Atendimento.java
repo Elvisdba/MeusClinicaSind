@@ -14,25 +14,21 @@ public class Atendimento implements Serializable {
     private Integer id;
     @JoinColumn(name = "id_agendamento", referencedColumnName = "id", unique = true, nullable = false)
     @OneToOne
-    private Agendamento agendamento;    
+    private Agendamento agendamento;
     @Column(name = "ds_historico", length = 200, updatable = true)
     private String historico;
 
     public Atendimento() {
-        this.id = -1;
+        this.id = null;
         this.agendamento = null;
         this.historico = "";
     }
-    
-    
 
     public Atendimento(Integer id, Agendamento agendamento, String historico) {
         this.id = id;
         this.agendamento = agendamento;
         this.historico = historico;
     }
-    
-    
 
     public Integer getId() {
         return id;
