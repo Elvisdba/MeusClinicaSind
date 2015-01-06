@@ -1,0 +1,181 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Prontuário / Ficha Médica</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/Imagens/favicon.ico"/>  
+        <style type="text/css">            
+            .ui-selectonemenu {padding-right: 25px!important;}
+        </style>
+    </h:head>
+    <h:body>
+        <!-- INICIA DIV wrap e main -->
+        <div id="wrapx">
+            <div id="mainx">
+                <!-- INICIA DIV wrap e main -->  
+                <f:subview id="header">
+                    <ui:include src="templates/templatePrime.xhtml"/>
+                </f:subview>
+                <f:view>
+                    <p:panel styleClass="wrapper" style="border: 0px;">
+                        <h:outputText value="Prontuário / Ficha Médica" styleClass="fonteHeader" />
+                        <div class="clear"></div>
+                        <h:form id="form_a">
+                            <p:growl showDetail="true" showSummary="true" autoUpdate="true" escape="true"/>
+                            <p:messages showDetail="true" showSummary="true" autoUpdate="true" escape="true"/>
+                            <c:set scope="request" var="object" value="${avaliacaoTecnicaBean.atendimento}" />
+                            <p:commandButton value="Paciente com pré-atendimento" onclick="PF('dlg_enfermaria').show()" rendered="#{avaliacaoTecnicaBean.enfermaria.id != null}" styleClass="font-color-red bold margin-top-max" title="Ver" />
+                            <p:panel header="Atendimento" styleClass="margin-top-max">
+                                <h:panelGrid columns="2" cellspacing="5">
+                                    <p:outputLabel value="Status: " />
+                                    <p:outputLabel value="#{avaliacaoTecnicaBean.agendamento.status.descricao}" styleClass="font-color-red bold" style="text-decoration: underline;"/>
+                                    <p:outputLabel value="Data:" />
+                                    <h:column>
+                                        <h:panelGrid columns="10">
+                                            <p:inputText value="#{avaliacaoTecnicaBean.agendamento.dataAtendimentoString}" readonly="true" size="8" />
+                                            <p:outputLabel value=" ás " />
+                                            <p:inputText value="#{avaliacaoTecnicaBean.agendamento.horaAtendimento}"  readonly="true" size="2"/>
+                                            <p:outputLabel value="Hr(s)" />
+                                            <p:outputLabel value="Agendado em:" style="margin-left: 130px!important;"/>
+                                            <p:inputText value="#{avaliacaoTecnicaBean.agendamento.dataAgendaString} " readonly="true" size="8"/>
+                                            <p:outputLabel value=" ás " />
+                                            <p:inputText value="#{avaliacaoTecnicaBean.agendamento.horaAgenda}"  readonly="true" size="2"/>
+                                            <p:outputLabel value="Hr(s)" />
+                                        </h:panelGrid>
+                                    </h:column>
+                                    <p:outputLabel value="Tipo de atendimento:" />
+                                    <p:inputText value="#{avaliacaoTecnicaBean.agendamento.funcaoEquipe.tipoAtendimento.descricao}" styleClass="bold font-color-red"  readonly="true" size="80"/>
+                                    <p:outputLabel value="Paciente:" />
+                                    <p:inputText value="#{avaliacaoTecnicaBean.agendamento.contrato.paciente.nome}" readonly="true" size="80" styleClass="bold"/>
+                                    <p:outputLabel value="Profissional:" />
+                                    <p:inputText value="#{avaliacaoTecnicaBean.agendamento.equipe.pessoa.nome}" readonly="true" size="80" styleClass="bold"/>
+                                    <p:outputLabel value="Especialidade:" />
+                                    <p:inputText value="#{avaliacaoTecnicaBean.agendamento.funcaoEquipe.profissao.profissao}" readonly="true" size="80" styleClass="bold"/>
+                                </h:panelGrid>
+                                <h:panelGrid columns="1" cellspacing="5" styleClass="margin-top-max bold">
+                                    <p:outputLabel value="Observações:" />
+                                    <p:inputTextarea value="#{avaliacaoTecnicaBean.atendimento.historico}" cols="115" rows="8" placeholder="Histórico"/>
+                                </h:panelGrid>
+                            </p:panel>
+                            <p:panel styleClass="margin-top-max">
+                                <f:facet name="header">
+                                    <p:outputLabel value="Planinha de avaliação" style="size: 18pt!important"/>
+                                </f:facet>
+                                <p:dataGrid emptyMessage="Nenhum registro encontrado" value="#{avaliacaoTecnicaBean.listAtendimentoAvaliacao}" var="atendimentoAvaliacao" columns="1" rowIndexVar="index">
+                                    <p:panel header="#{index+1} - #{atendimentoAvaliacao.avaliacao.grupoAvaliacao.descricao}" >
+                                        <h:panelGrid columns="1" columnClasses="verticalAlignTop, verticalAlignTop">
+                                            <p:selectOneMenu value="#{avaliacaoTecnicaBean.selectedAtendimentoAvaliacao[index]}">
+                                                <p:ajax event="change" update="@this :form_a:" listener="#{avaliacaoTecnicaBean.defineHistorico(index, false)}"/>
+                                                <f:selectItems value="#{avaliacaoTecnicaBean.listSelectItem[index]}" /> 
+                                            </p:selectOneMenu>
+                                            <p:inputTextarea value="#{avaliacaoTecnicaBean.historico[index]}" rendered="#{avaliacaoTecnicaBean.isHistorico[index]}" cols="100" styleClass="margin-top-med" placeholder="Histórico - Mínino 5 caracteres"/>
+                                        </h:panelGrid>
+                                    </p:panel>
+                                </p:dataGrid>
+                            </p:panel>
+                            <h:panelGrid columns="6" styleClass="margin-top-max">
+                                <p:commandButton value="Gravar" action="#{avaliacaoTecnicaBean.save}" disabled="#{controleAcessoBean.save}" update=":form_a:" rendered="#{(avaliacaoTecnicaBean.atendimento.agendamento.status.id != 4 or avaliacaoTecnicaBean.atendimento.agendamento.status.id != 5)}" />
+                                <p:commandButton value="Voltar" action="#{avaliacaoTecnicaBean.back()}" />
+                                <p:commandButton value="Cancelar" onclick="PF('dlg_cancel').show()" rendered="#{(avaliacaoTecnicaBean.atendimento.id == -1 or avaliacaoTecnicaBean.atendimento.agendamento.status.id != 5)}" disabled="#{controleAcessoBean.delete}"/>
+                                <p:commandButton value="Sair deste atendimento" onclick="PF('dlg_exit').show()" rendered="#{(avaliacaoTecnicaBean.atendimento.agendamento.status.id != 2)}"/>
+                                <p:commandButton value="Paciente faltou" onclick="PF('dlg_missed').show()" />                                
+                            </h:panelGrid>
+                            <p:dialog widgetVar="dlg_cancel" header="Deseja cancelar esta avaliação?" resizable="false" width="400" modal="true" closeOnEscape="true">
+                                <f:facet name="footer">
+                                    <h:panelGrid columns="2">
+                                        <p:commandButton value="Sim" action="#{avaliacaoTecnicaBean.cancel()}" title="Confirmar" oncomplete="PF('dlg_cancel').close()" update=":form_a:"/>
+                                        <p:commandButton  value="Não" onclick="PF('dlg_cancel').close()" title="Cancelar"/>
+                                    </h:panelGrid>
+                                </f:facet>
+                            </p:dialog>
+                            <p:dialog widgetVar="dlg_missed" header="Este paciente faltou?" resizable="false" width="400" modal="true" closeOnEscape="true">
+                                <f:facet name="footer">
+                                    <h:panelGrid columns="2">
+                                        <p:commandButton value="Sim" action="#{avaliacaoTecnicaBean.missed()}" title="Confirmar" oncomplete="PF('dlg_faltou').close()" update=":form_a:"/>
+                                        <p:commandButton  value="Não" onclick="PF('dlg_missed').close()" title="Cancelar"/>
+                                    </h:panelGrid>
+                                </f:facet>
+                            </p:dialog>
+                            <p:dialog widgetVar="dlg_exit" header="Deseja realmente sair deste atendimento?" resizable="false" width="400" modal="true" closeOnEscape="true">
+                                <f:facet name="footer">
+                                    <h:panelGrid columns="2">
+                                        <p:commandButton value="Sim" action="#{avaliacaoTecnicaBean.exit()}" title="Confirmar" />
+                                        <p:commandButton  value="Não" onclick="PF('dlg_exit').close()" title="Cancelar"/>
+                                    </h:panelGrid>
+                                </f:facet>
+                            </p:dialog>
+                            <p:dialog widgetVar="dlg_enfermaria" header="Pré-Atendimento" resizable="false" width="1024" modal="true" closeOnEscape="true">
+                                <h:panelGrid columns="1" cellspacing="5" styleClass="margin-top-max">
+                                    <h:outputLabel value="Enfermeira: #{avaliacaoTecnicaBean.enfermaria.equipe.pessoa.nome}" />
+                                    <h:outputLabel value="Horário: #{avaliacaoTecnicaBean.enfermaria.hora}" />
+                                </h:panelGrid>
+                                <h:panelGrid columns="1" cellspacing="5" styleClass="margin-top-max bold">
+                                    <p:outputLabel value="Observações:" />
+                                    <p:inputTextarea value="#{avaliacaoTecnicaBean.enfermaria.observacao}" cols="115" rows="8" placeholder="Observações" readonly="true"/>
+                                </h:panelGrid>
+                                <p:panel header="Avaliação" styleClass="margin-top-max">
+                                    <p:panelGrid columns="10" id="i_panel_pre">
+                                        <p:outputLabel value="Peso (kg)" />
+                                        <p:outputLabel value="Altura (m)" />
+                                        <p:outputLabel value="IMC" />
+                                        <p:outputLabel value="P.A. Mín." />
+                                        <p:outputLabel value="P.A. Máx." />
+                                        <p:outputLabel value="Temperatura (ºC)" />
+                                        <p:outputLabel value="FC (bpm)" />
+                                        <p:outputLabel value="SpO2 (%)" />
+                                        <p:outputLabel value="FR (mrm)" />
+                                        <p:outputLabel value="HGT (mg/dl)" />
+                                        <p:inputText value="#{avaliacaoTecnicaBean.enfermaria.pesoString}" size="5" styleClass="bold" converter="#{toCurrency}">
+                                            <p:ajax event="change" update="@this i_panel_pre" />
+                                        </p:inputText>
+                                        <p:inputText value="#{avaliacaoTecnicaBean.enfermaria.alturaString}" size="5" styleClass="bold" converter="#{toCurrency}">
+                                            <p:ajax event="change" update="@this i_panel_pre" />
+                                        </p:inputText>
+                                        <p:inputText value="#{avaliacaoTecnicaBean.imc}" size="5" styleClass="bold" readonly="true" style="color: blue!important"/>
+                                        <p:inputText value="#{avaliacaoTecnicaBean.enfermaria.pressaoArterialMinimaString}" size="5" styleClass="bold" converter="#{toPercent}">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:inputText>
+                                        <p:inputText size="5" styleClass="bold">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:inputText>
+                                        <p:inputText value="#{avaliacaoTecnicaBean.enfermaria.temperaturaString}" size="5" styleClass="bold" converter="#{toCurrency}">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:inputText>
+                                        <p:inputText value="#{avaliacaoTecnicaBean.enfermaria.frequenciaCardiacaString}" size="5" styleClass="bold" converter="#{thisNumber}">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:inputText>
+                                        <p:inputText value="#{avaliacaoTecnicaBean.enfermaria.saturacaoString}" size="5" styleClass="bold" converter="#{toPercent}">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:inputText>
+                                        <p:inputText value="#{avaliacaoTecnicaBean.enfermaria.frequenciaRespiratoriaString}" size="5" styleClass="bold" converter="#{thisNumber}">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:inputText>                      
+                                        <p:inputText value="#{avaliacaoTecnicaBean.enfermaria.glicosimetriaString}" size="5" styleClass="bold" converter="#{toPercent}">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:inputText>
+                                    </p:panelGrid>                                
+                                </p:panel>
+                                <f:facet name="footer">
+                                    <p:commandButton value="Atualizar" action="#{avaliacaoTecnicaBean.saveEnfermaria}" disabled="#{controleAcessoBean.save}" update=":form_a:" rendered="#{(avaliacaoTecnicaBean.atendimento.agendamento.status.id != 4 or avaliacaoTecnicaBean.atendimento.agendamento.status.id != 5)}" />
+                                </f:facet>
+                            </p:dialog>
+                        </h:form>
+                    </p:panel>
+                </f:view>
+                <!-- FINALIZA div wrap main -->
+            </div>
+        </div>
+        <!-- FINALIZA div wrap main -->
+
+        <div id="footerx">
+            <f:subview id="footer">
+                <ui:include src="templates/templateFooter.xhtml"/>
+            </f:subview>
+        </div>                
+    </h:body>
+</ui:composition>

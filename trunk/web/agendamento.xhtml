@@ -88,7 +88,7 @@
                                 <p:commandButton value="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.save}"/>
                                 <p:commandButton value="Novo" action="#{agendamentoBean.clear(0)}" update=":form_a:"/>
                                 <p:commandButton value="Excluir" onclick="PF('dlg_delete').show()" disabled="#{controleAcessoBean.delete}"/>
-                                <p:commandButton value="Consultar agendamentos" action="#{chamadaPaginaBean.pagina('consultaAgendamento', 'agendamentoBean')}" />
+                                <p:commandButton value="Consultar agendamentos" action="#{chamadaPaginaBean.pagina('consultaAgendamento')}" />
                             </h:panelGrid>
                             <p:panel header="Lista" styleClass="margin-top-max">
                                 <p:selectBooleanCheckbox value="#{agendamentoBean.actives}" itemLabel="Somente não atendidos">
@@ -101,6 +101,9 @@
                                         </p:column>
                                         <p:column width="30" styleClass="text-center">
                                             <p:commandButton icon="ui-icon-link" action="#{agendamentoBean.edit(agendamento)}" update=":form_a:" />
+                                        </p:column>
+                                        <p:column headerText="Status" styleClass="text-center" sortBy="#{agendamento.status.descricao}">
+                                            #{agendamento.status.descricao}
                                         </p:column>
                                         <p:column headerText="Data" width="100" styleClass="text-center" sortBy="#{agendamento.dataAgendaString}">
                                             #{agendamento.dataAgendaString}
@@ -119,7 +122,7 @@
                                         </p:column>                                        
                                         <p:column headerText="Função Equipe" sortBy="#{agendamento.funcaoEquipe.tipoAtendimento.descricao}">
                                             #{agendamento.funcaoEquipe.tipoAtendimento.descricao}
-                                        </p:column>                                        
+                                        </p:column>
                                         <p:rowExpansion>
                                             Lançamento: #{agendamento.dataLancamentoString} - Obs: #{agendamento.observacao}
                                         </p:rowExpansion>

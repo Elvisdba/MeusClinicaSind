@@ -544,6 +544,18 @@
             <redirect/>
         </navigation-case>          
         
+        <navigation-case>
+            <from-outcome>avaliacaoTecnica</from-outcome>
+            <to-view-id>/avaliacaoTecnica.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>enfermaria</from-outcome>
+            <to-view-id>/enfermaria.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>          
+        
         <!-- 
         <navigation-case>
             <from-outcome>#{navigationRules.param}</from-outcome>

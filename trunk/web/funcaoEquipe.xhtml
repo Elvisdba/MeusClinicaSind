@@ -52,6 +52,10 @@
                                         <p:ajax event="change" update="@this" />
                                         <f:selectItems value="#{funcaoEquipeBean.listTipoAtendimento}" />
                                     </h:selectOneMenu>
+                                    <p:outputLabel value="Enfermaria:" />
+                                    <p:selectBooleanCheckbox value="#{funcaoEquipeBean.funcaoEquipe.enfermaria}">
+                                        <p:ajax event="change" update="@this" />
+                                    </p:selectBooleanCheckbox>
                                 </h:panelGrid>
                             </p:panel>
                             <h:panelGrid columns="4" styleClass="margin-top-max">
@@ -74,6 +78,11 @@
                                     </p:column>
                                     <p:column headerText="Tipo Atendimento">
                                         <p:outputLabel value="#{funcaoEquipe.tipoAtendimento.descricao}" />
+                                    </p:column>
+                                    <p:column headerText="Enfermaria" styleClass="text-center" width="75">
+                                        <p:selectBooleanCheckbox value="#{funcaoEquipe.enfermaria}" disabled="#{controleAcessoBean.save}">
+                                            <p:ajax event="change" update=":form_fe:" listener="#{funcaoEquipeBean.update(funcaoEquipe)}" />
+                                        </p:selectBooleanCheckbox>
                                     </p:column>
                                     <p:column width="30">
                                         <p:commandButton icon="ui-icon-trash" action="#{funcaoEquipeBean.delete(funcaoEquipe)}" update=":form_fe:"  disabled="#{controleAcessoBean.delete}" oncomplete="PF('dlg_message').show()"/>
