@@ -68,8 +68,7 @@ public class BancoDoBrasil extends Cobranca {
 
     @Override
     public String codigoBarras() {
-        String codigoBarras = "";
-        codigoBarras = boleto.getContaCobranca().getContaBanco().getBanco().getNumero() + boleto.getContaCobranca().getMoeda(); // banco + moeda
+        String codigoBarras = boleto.getContaCobranca().getContaBanco().getBanco().getNumero() + boleto.getContaCobranca().getMoeda(); // banco + moeda
         codigoBarras += fatorVencimento(movimento.getVencimento());   // fator de vencimento
         int i = 0;
 

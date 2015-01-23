@@ -3,11 +3,17 @@ package br.com.clinicaintegrada.financeiro.dao;
 import br.com.clinicaintegrada.financeiro.Boleto;
 import br.com.clinicaintegrada.financeiro.FormaPagamento;
 import br.com.clinicaintegrada.financeiro.Movimento;
+import br.com.clinicaintegrada.pessoa.dao.FilialDao;
 import br.com.clinicaintegrada.principal.DB;
+import br.com.clinicaintegrada.seguranca.Registro;
+import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
+import br.com.clinicaintegrada.utils.DataHoje;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import javax.persistence.Query;
+import oracle.toplink.essentials.exceptions.EJBQLException;
 
 public class MovimentoDao extends DB {
 
@@ -138,5 +144,30 @@ public class MovimentoDao extends DB {
             return new ArrayList<>();
         }
         return new ArrayList<>();
+    }
+
+    public List<Movimento> findByDocumento(String numero, Date vencimento, int idContaCobranca) {
+        String queryString = ""
+                + "  SELECT M                                   "
+                + "    FROM Movimento   AS M,                   "
+                + "         Boleto      AS B                    "
+                + "   WHERE M.nrCtrBoleto = B.nrCtrBoleto       "
+                + "     AND M.baixa IS NULL                     "
+                + "     AND M.ativo = true                      "
+                + "     AND B.boletoComposto = '" + numero + "' ";
+        if (DataHoje.converteData(vencimento).equals("11/11/1111")) {
+            queryString += " AND B.contaCobranca.id = " + idContaCobranca;
+        } else {
+            queryString += " AND B.contaCobranca.id = " + idContaCobranca
+                    + " AND M.vencimento = '" + DataHoje.converteData(vencimento) + "'";
+        }
+        try {
+            Query query = getEntityManager().createQuery(queryString);
+            return query.getResultList();
+        } catch (EJBQLException e) {
+
+        }
+        return new ArrayList();
+
     }
 }
