@@ -144,6 +144,28 @@ public class AnaliseString {
         return conteudo.substring(inicio - 1, fim);
     }
 
+    public static String removeDiff(String string, int length, boolean isWhites) {
+        if (string.isEmpty()) {
+            return string;
+        }
+        if (string.length() > length) {
+            string = string.substring(length);
+        }
+        if (isWhites) {
+            if (string.length() < length) {
+                int diff = length - string.length();
+                for (int i = 0; i < diff; i++) {
+                    string += " ";
+                }
+            }
+        }
+        return string;
+    }
+
+    public static String removeDiff(String string, Integer length) {
+        return AnaliseString.removeDiff(string, length, false);
+    }
+
     public static String removerAcentos(final String s) {
         String acentuado = "çÇáéíóúýÁÉÍÓÚÝàèìòùÀÈÌÒÙãõñäëïöüÿÄËÏÖÜÃÕÑâêîôûÂÊÎÔÛ";
         String semAcento = "cCaeiouyAEIOUYaeiouAEIOUaonaeiouyAEIOUAONaeiouAEIOU";
@@ -261,5 +283,12 @@ public class AnaliseString {
         }
         // only got here if we didn't return false
         return true;
+    }
+
+    public static String limpaDocumento(String doc) {
+        doc = doc.replace(".", "");
+        doc = doc.replace("/", "");
+        doc = doc.replace("-", "");
+        return doc;
     }
 }
