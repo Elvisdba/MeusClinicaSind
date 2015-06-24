@@ -15,20 +15,43 @@
         </f:subview>
         <f:view>
             <h:form id="form_pe">
-                <p:panel id="i_tbl" styleClass="no-border">
-                    <p:dataTable value="#{contratoBean.listContratos}" var="contrato" scrollable="true" scrollHeight="400" emptyMessage="Nenhum registro encontrado!" styleClass="margin" rows="10" paginator="true">
-                        <p:column width="25">
-                            <p:commandButton icon="ui-icon-link" action="#{contratoBean.edit(contrato)}" title="Editar: #{contrato.id}" />
-                        </p:column>
-                        <p:column headerText="Paciente">
-                            <h:outputText value="#{contrato.paciente.nome}"/>
-                        </p:column>
-                        <p:column headerText="Responsável">
-                            <h:outputText value="#{contrato.responsavel.nome}"/>
-                        </p:column>
-                    </p:dataTable>
+                <p:panel styleClass="wrapper" style="border: 0px;">
+                    <p:panel id="i_panel_pesquisa" styleClass="fundoCinza">
+                        <h:panelGrid columns="5">
+                            <p:inputMask mask="#{contratoBean.mask}" id="id_desc_pesquisa" value="#{contratoBean.descricaoPesquisa}" size="50" autocomplete="false">
+                                <p:ajax event="change" update="@this" />
+                            </p:inputMask>
+                            <p:selectOneMenu value="#{contratoBean.porPesquisa}" style="padding-right: 20px">
+                                <p:ajax event="change" update="i_panel_pesquisa i_tbl" />                                
+                                <f:selectItem itemValue="paciente_nome"         itemLabel="Paciente > Nome"/>
+                                <f:selectItem itemValue="paciente_documento"    itemLabel="Paciente > Documento"/>
+                                <f:selectItem itemValue="responsavel_nome"      itemLabel="Responsável > Nome"/>
+                                <f:selectItem itemValue="responsavel_documento" itemLabel="Responsável > Documento"/>
+                                <f:selectItem itemValue="contrato"              itemLabel="Contrato"/>
+                            </p:selectOneMenu>                        
+                            <p:commandButton value="Pesquisar" action="#{contratoBean.acaoPesquisaInicial}" update="i_tbl" rendered="#{contratoBean.porPesquisa eq 'contrato'}"/>
+                            <p:commandButton value="Inicial" action="#{contratoBean.acaoPesquisaInicial}" update="i_tbl" rendered="#{contratoBean.porPesquisa ne 'contrato'}"/>
+                            <p:commandButton value="Parcial" action="#{contratoBean.acaoPesquisaParcial}" update="i_tbl" rendered="#{contratoBean.porPesquisa ne 'contrato'}"/>
+                        </h:panelGrid>
+                        <p:focus for="i_panel_pesquisa" />
+                    </p:panel>                        
+                    <h:panelGrid id="i_tbl" styleClass="no-border margin-top-max">
+                        <p:dataTable value="#{contratoBean.listContratos}" var="contrato" scrollable="true" scrollHeight="400" emptyMessage="Nenhum registro encontrado!" styleClass="margin" rows="10" paginator="true">
+                            <p:column width="25">
+                                <p:commandButton icon="ui-icon-link" action="#{contratoBean.edit(contrato)}" title="Editar: #{contrato.id}" />
+                            </p:column>
+                            <p:column headerText="Contrato" width="60" styleClass="text-center">
+                                <h:outputText value="#{contrato.id}"/>
+                            </p:column>
+                            <p:column headerText="Responsável">
+                                <h:outputText value="#{contrato.responsavel.nome}"/>
+                            </p:column>
+                            <p:column headerText="Paciente">
+                                <h:outputText value="#{contrato.paciente.nome}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
                 </p:panel>
-
             </h:form>                     
         </f:view>     
     </h:body>

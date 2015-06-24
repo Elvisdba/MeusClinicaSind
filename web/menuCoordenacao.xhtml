@@ -27,8 +27,7 @@
                                     <p:submenu label="Física">
                                         <p:menuitem value="Manutenção"          action="#{chamadaPaginaBean.pagina('pessoaFisica')}" />
                                         <p:menuitem value="Parentesco"          action="#{chamadaPaginaBean.paginaSimples('GrauParentesco', 'Grau Parentesco')}" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}"/>
-                                    </p:submenu>
-                                    <p:menuitem value="Função Profissional"     action="#{chamadaPaginaBean.pagina('tipoDocumentoProfissao')}" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}"/>
+                                    </p:submenu>                                    
                                     <p:menuitem value="Função Escala"           action="#{chamadaPaginaBean.paginaSimples('FuncaoEscala', 'Função Escala')}" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}"/>
                                     <p:menuitem value="Cronôgrama"              action="#{chamadaPaginaBean.pagina('cronograma')}" />
                                     <p:submenu label="Avaliação" icon="ui-icon-document" style="margin-right: 15px" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}">

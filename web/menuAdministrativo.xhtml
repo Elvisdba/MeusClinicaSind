@@ -43,6 +43,7 @@
                                     </p:submenu>
                                     <p:menuitem value="Modelo Contrato"         action="#{chamadaPaginaBean.pagina('modeloContrato')}" />
                                     <p:menuitem value="Modelo Documentos"       action="#{chamadaPaginaBean.pagina('modeloDocumentos')}" />
+                                    <p:menuitem value="Função Profissional"     action="#{chamadaPaginaBean.pagina('tipoDocumentoProfissao')}" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}"/>
                                 </p:submenu>
                                 <p:submenu label="Movimento" icon="ui-icon-document" style="margin-right: 15px">
                                     <p:menuitem value="Contrato"                action="#{chamadaPaginaBean.pagina('contrato')}"  />

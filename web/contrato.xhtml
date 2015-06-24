@@ -26,7 +26,7 @@
                     <ui:include src="templates/templatePrime.xhtml"/>
                 </f:subview>
                 <f:view>                   
-                    <ui:include src="templates/templateAcessoFilial.xhtml"/>
+                    <ui:include src="templates/templateAcessoFilialComCaixa.xhtml"/>
                     <ui:include src="templates/templateStatus.xhtml"/>
                     <p:panel styleClass="wrapper" style="border: 0px;">
                         <h:outputText value="Contrato" styleClass="fonteHeader" />
@@ -57,7 +57,7 @@
                                         <p:inputMask mask="999.999.999-99" value="#{contratoBean.contrato.responsavel.documento}" placeholder="999.999.999-99" size="12" title="Digite o CPF do responsável">
                                             <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.findPessoaPorDocumento(true)}" />
                                         </p:inputMask>                                            
-                                        <p:commandButton icon="ui-icon-search" title="Pesquisar responsável" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaFisica')}" disabled="#{controleAcessoBean.view('pesquisaPessoaFisica')}" actionListener="#{contratoBean.putTipoPesquisaPessoaFisica(true)}" global="false"/>
+                                        <p:commandButton icon="ui-icon-search" title="Pesquisar responsável" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaFisica')}" disabled="#{controleAcessoBean.view('pesquisaPessoaFisica')}" actionListener="#{contratoBean.putValidacao('responsavel')}" global="false"/>
                                         <p:outputLabel value="#{contratoBean.contrato.responsavel.nome}" />
                                         <p:commandButton icon="ui-icon-close" action="#{contratoBean.clear(1)}" update=":form_contrato:" rendered="#{contratoBean.contrato.responsavel.id != -1}"/>
                                     </h:panelGrid>
@@ -70,10 +70,10 @@
                                     </f:facet>
                                     <h:panelGrid columns="5">
                                         <p:outputLabel value="Documento:" />
-                                        <p:inputMask mask="999.999.999-99" value="#{contratoBean.contrato.paciente.documento}" placeholder="999.999.999-99" size="12" title="Digite o CPF do paciente">
+                                        <p:inputMask mask="999.999.999-99" value="#{contratoBean.contrato.paciente.documento}" placeholder="999.999.999-99" size="12" title="Digite o CPF do paciente" disabled="#{contratoBean.contrato.responsavel.id == -1}">
                                             <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.findPessoaPorDocumento(false)}" />
                                         </p:inputMask>
-                                        <p:commandButton icon="ui-icon-search" title="Pesquisar paciente" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaFisica')}" disabled="#{controleAcessoBean.view('pesquisaPessoaFisica')}" actionListener="#{contratoBean.putTipoPesquisaPessoaFisica(false)}" global="false"/>
+                                        <p:commandButton icon="ui-icon-search" title="Pesquisar paciente" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaFisica')}" disabled="#{(controleAcessoBean.view('pesquisaPessoaFisica')) and (contratoBean.contrato.responsavel.id == -1)}" actionListener="#{contratoBean.putValidacao('paciente')}"  global="false" />
                                         <p:outputLabel value="#{contratoBean.contrato.paciente.nome}" />
                                         <p:commandButton icon="ui-icon-close" action="#{contratoBean.clear(2)}" update=":form_contrato:" rendered="#{contratoBean.contrato.responsavel.id != -1}"/>
                                     </h:panelGrid> 
@@ -85,6 +85,7 @@
                                         </p:calendar>                                        
                                         <p:outputLabel value="Tipo de internação:" />
                                         <p:selectOneMenu value="#{contratoBean.idTipoInternacao}">
+                                            <p:ajax event="change" update="@this" global="false" />
                                             <f:selectItems value="#{contratoBean.listTipoInternacao}" />
                                         </p:selectOneMenu>
                                         <p:outputLabel value="Previsão:" />
@@ -128,7 +129,7 @@
                                     <p:row>
                                         <p:column styleClass="text-center">
                                             <p:inputText value="#{contratoBean.contrato.valorTotalString}" styleClass="text-center" onclick="selectInputText(this)" converter="#{toCurrency}" readonly="#{contratoBean.contrato.impresso}" disabled="#{contratoBean.contrato.responsavel.id == -1}">
-                                                <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaSaldoDevedor}" />
+                                                <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaSaldoDevedor}" global="false"/>
                                             </p:inputText>                                        
                                         </p:column>
                                         <p:column styleClass="text-center">
@@ -138,7 +139,7 @@
                                         </p:column>
                                         <p:column styleClass="text-center">
                                             <p:inputText value="#{contratoBean.contrato.valorEntradaString}" styleClass="text-center" onclick="selectInputText(this)" converter="#{toCurrency}" disabled="#{contratoBean.contrato.responsavel.id == -1}" readonly="#{contratoBean.contrato.impresso}">
-                                                <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaSaldoDevedor}"/>
+                                                <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaSaldoDevedor}" global="false"/>
                                             </p:inputText>                                        
                                         </p:column>
                                         <p:column styleClass="text-center">
@@ -148,23 +149,24 @@
                                         </p:column>
                                         <p:column styleClass="text-center">
                                             <p:inputText maxlength="3" styleClass="text-center" value="#{contratoBean.contrato.quantidadeParcelas}" disabled="#{contratoBean.contrato.responsavel.id == -1}"  readonly="#{contratoBean.contrato.impresso}">
-                                                <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaSaldoDevedor}"/>
+                                                <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaSaldoDevedor}" global="false"/>
                                             </p:inputText>                                        
                                         </p:column>
                                     </p:row>
                                     <p:row rendered="#{contratoBean.contrato.id == -1}">
                                         <p:column styleClass="text-center">
-                                            <p:commandLink value="Alterar dia de vencimento" onclick="PF('dlg_dia_vencimento').show()" style="color: blue" rendered="#{contratoBean.contrato.responsavel.id != -1}"/>
+                                            <p:commandLink value="Alterar dia de vencimento" onclick="PF('dlg_dia_vencimento').show()" style="color: blue" rendered="#{contratoBean.contrato.responsavel.id != -1}" global="false"/>
                                         </p:column>
                                         <p:column />
                                         <p:column />
                                         <p:column>
-                                            <h:outputLabel value="Dias primeira parcela:" converter="#{thisNumber}" rendered="#{contratoBean.contrato.quantidadeParcelas == 1 or contratoBean.contrato.valorEntrada > 0}" />
+                                            <h:outputLabel value="Dias primeira parcela:" rendered="#{contratoBean.contrato.quantidadeParcelas == 1 or contratoBean.contrato.valorEntrada > 0}" />
                                         </p:column>
                                         <p:column>
-                                            <p:inputText size="5" value="#{contratoBean.adicionarDias}" converter="#{thisNumber}" rendered="#{contratoBean.contrato.quantidadeParcelas == 1 or contratoBean.contrato.valorEntrada > 0}">
-                                                <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaSaldoDevedor}"/>
+                                            <p:inputText size="5" value="#{contratoBean.adicionarDias}" converter="#{thisNumber}" rendered="#{contratoBean.contrato.quantidadeParcelas == 1 or contratoBean.contrato.valorEntrada > 0}" title="Limite de dias contados a partir da data de vencimento da primeira parcela">
+                                                <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaSaldoDevedor}" global="false"/>
                                             </p:inputText>
+                                            <p:commandLink value="?" onclick="PF('dlg_example_1').show()" styleClass="margin-left bold font-color-red" title="O que é?" global="false"/>
                                         </p:column>
                                     </p:row>
                                 </p:panelGrid>
@@ -184,7 +186,7 @@
                                         </p:column>
                                         <p:column headerText="Valor Parcela" styleClass="text-center">
                                             <p:inputText value="#{movimento.valorString}" converter="#{toCurrency}" styleClass="text-center" rendered="#{movimento.id == -1}" size="10" onclick="selectInputText(this)">
-                                                <p:ajax update="@this :form_contrato:i_obs" event="change" />
+                                                <p:ajax update="@this :form_contrato:i_obs" event="change" global="false"/>
                                             </p:inputText>
                                             <h:outputLabel value="#{movimento.valorString}"  rendered="#{movimento.id != -1}" />
                                         </p:column>
@@ -192,9 +194,12 @@
                                             <p:inputMask mask="99/99/9999" value="#{movimento.baixa.baixa}" styleClass="text-center" disabled="true"/>
                                         </p:column>
                                         <p:column headerText="Tipo Documento" styleClass="text-center">
-                                            <p:commandLink value="#{movimento.tipoDocumento.descricao}" action="#{contratoBean.editMovimento(index, movimento)}" oncomplete="PF('dlg_update_ftipo_documento_ctr').show();" update=":form_contrato:id_update_ftipo_documento_ctr" styleClass="font-color-red" disabled="#{movimento.id != -1}"/>
+                                            <p:commandLink value="#{movimento.tipoDocumento.descricao}" action="#{contratoBean.editMovimento(index, movimento)}" oncomplete="PF('dlg_update_ftipo_documento_ctr').show();" update=":form_contrato:id_update_ftipo_documento_ctr" styleClass="font-color-red" disabled="#{movimento.id != -1}" global="false"/>
                                         </p:column>
-                                        <p:column width="25" styleClass="text-center">                                        
+                                        <p:column width="25" styleClass="text-center">
+                                            <h:commandLink action="#{contratoBean.printBoletos(movimento.nrCtrBoleto)}" disabled="#{contratoBean.contrato.id == -1}" rendered="#{contratoBean.contrato.id != -1}">
+                                                <p:button icon="ui-icon-print" />
+                                            </h:commandLink>                                            
                                         </p:column>
                                     </p:dataTable>
                                 </h:panelGrid>
@@ -211,7 +216,7 @@
                                             <p:inputMask mask="99/99/9999" value="#{movimento.baixa.baixa}" styleClass="text-center" disabled="true"/>
                                         </p:column>
                                         <p:column styleClass="text-center">
-                                            <p:commandLink value="#{movimento.tipoDocumento.descricao}" action="#{contratoBean.editMovimento(index, movimento)}" oncomplete="PF('dlg_update_ftipo_documento_taxas').show();" update=":form_contrato:id_update_ftipo_documento_taxas" styleClass="font-color-red" />
+                                            <p:commandLink value="#{movimento.tipoDocumento.descricao}" action="#{contratoBean.editMovimento(index, movimento)}" oncomplete="PF('dlg_update_ftipo_documento_taxas').show();" update=":form_contrato:id_update_ftipo_documento_taxas" styleClass="font-color-red" global="false"/>
                                         </p:column>
                                         <p:column width="25" styleClass="text-center">
                                             <p:commandButton icon="ui-icon-close" action="#{contratoBean.removeTaxa(index)}" update=":form_contrato:" rendered="#{!contratoBean.contrato.impresso}" disabled="#{controleAcessoBean.delete}"/>
@@ -219,14 +224,14 @@
                                     </p:dataTable>
                                 </h:panelGrid>
                                 <h:column rendered="#{!contratoBean.contrato.impresso}">
-                                    <p:panel header="Taxa extra" styleClass="margin-top-max" rendered="#{contratoBean.listTaxas.size() > 0}">
+                                    <p:panel header="Taxa extra" styleClass="margin-top-max" rendered="#{contratoBean.listTaxas.size() > 0}" id="i_tx">
                                         <h:panelGrid columns="8">
                                             <p:column>
                                                 <p:outputLabel value="Serviços:" />
                                             </p:column>
                                             <p:column styleClass="text-center">
                                                 <h:selectOneMenu value="#{contratoBean.idTaxa}">
-                                                    <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.selectedServico}"/>
+                                                    <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.selectedServico}" global="false"/>
                                                     <f:selectItems value="#{contratoBean.listTaxas}" />
                                                 </h:selectOneMenu>
                                             </p:column>
@@ -235,17 +240,17 @@
                                             </p:column>
                                             <p:column styleClass="text-center">
                                                 <p:inputText styleClass="text-center" value="#{contratoBean.valorServico}" onclick="selectInputText(this)" converter="#{toCurrency}">
-                                                    <p:ajax event="blur" update="@this" global="false"/>
+                                                    <p:ajax event="change" update="@this" global="false"/>
                                                 </p:inputText>
                                             </p:column>
                                             <p:column>
                                                 <p:outputLabel value="Vencimento:" styleClass="margin-left-max"/>                                                    
                                             </p:column>
                                             <p:inputMask value="#{contratoBean.vencimentoString}" mask="99/99/9999" size="8" styleClass="text-center" converter="#{isDateString}">
-                                                <p:ajax event="change" update="@this" />
+                                                <p:ajax event="change" update="@this" global="false"/>
                                             </p:inputMask>                                        
                                             <p:column>
-                                                <p:commandButton action="#{contratoBean.addTaxa}" icon="ui-icon-plus" rendered="#{contratoBean.listMovimentoContrato.size() > 0}" update=":form_contrato: i_taxax" disabled="#{controleAcessoBean.save}"/>
+                                                <p:commandButton action="#{contratoBean.addTaxa}" icon="ui-icon-plus" rendered="#{contratoBean.listMovimentoContrato.size() > 0}" update="i_tx :form_contrato: i_taxax" disabled="#{controleAcessoBean.save}" global="false"/>
                                             </p:column>                                        
                                         </h:panelGrid>                                    
                                     </p:panel>
@@ -253,24 +258,30 @@
                                         <p:outputLabel value="Nenhuma taxa disponível!" />
                                     </p:panel>
                                 </h:column>
-                                <p:panel styleClass="margin-top-max" rendered="#{contratoBean.contrato.id != -1}">
-                                    <h:panelGrid columns="10">
-                                        <p:outputLabel value="Data rescisão:" />
+                                <p:panel styleClass="margin-top-max" rendered="#{contratoBean.contrato.id != -1}" id="i_desligamento">
+                                    <f:facet name="header">
+                                        <p:commandButton value="Rescindir contrato" rendered="#{contratoBean.contrato.dataRescisao == null}" styleClass="font-color-red" disabled="#{controleAcessoBean.verificarPermissao('salvar_rescisao', 1)}" onclick="PF('dlg_rescindir').show()"/>
+                                        <p:commandButton value="Desfazer rescisão" rendered="#{contratoBean.contrato.dataRescisao != null}" disabled="#{controleAcessoBean.verificarPermissao('desfazer_rescisao', 2)}" onclick="PF('dlg_rescindir_2').show()"/>
+                                    </f:facet>
+                                    <h:panelGrid columns="10" rendered="#{contratoBean.contrato.dataRescisao != null}">
+                                        <p:outputLabel value="Data:" />
                                         <p:calendar value="#{contratoBean.contrato.dataRescisao}" pattern="dd/MM/yyyy" mask="99/99/9999" size="8" styleClass="text-center">
-                                            <p:ajax event="dateSelect" update="@this" listener="#{contratoBean.contrato.selectedDataRecisao}" global="false"/> 
+                                            <p:ajax event="dateSelect" update="@this i_desligamento" listener="#{contratoBean.contrato.selectedDataRecisao}" global="false"/> 
                                         </p:calendar>                                        
-                                        <p:outputLabel value="Tipo de desligamento:" styleClass="margin-left-max"/>
-                                        <p:selectOneMenu value="#{contratoBean.idTipoDesligamento}" filter="true" filterMatchMode="startsWith">
+                                        <p:outputLabel value="Tipo de desligamento:" styleClass="margin-left-max"  />
+                                        <p:selectOneMenu value="#{contratoBean.idTipoDesligamento}" filter="true" filterMatchMode="startsWith" >
+                                            <p:ajax event="change" update="@this" global="false" />
                                             <f:selectItems value="#{contratoBean.listTipoDesligamento}" />
                                         </p:selectOneMenu>                                        
                                     </h:panelGrid>
+                                    <h:panelGrid styleClass="margin-top-max" rendered="#{contratoBean.contrato.dataRescisao != null}">
+                                        <p:outputLabel value="Observação rescisória" rendered="#{contratoBean.contrato.id != -1}" styleClass="bold"/>
+                                        <p:inputTextarea  placeholder="Observação rescisória" value="#{contratoBean.contrato.observacaoRescisao}" cols="150" maxlength="255" rendered="#{contratoBean.contrato.id != -1}"></p:inputTextarea>                                        
+                                    </h:panelGrid>
                                 </p:panel>
-                                <br />
-                                <p:outputLabel value="Observação rescisória" styleClass="bold" rendered="#{contratoBean.contrato.id != -1}"/><br /><br />
-                                <p:inputTextarea  placeholder="Observação rescisória" value="#{contratoBean.contrato.observacaoRescisao}" cols="155" maxlength="255" rendered="#{contratoBean.contrato.id != -1}"></p:inputTextarea>
                                 <f:facet name="footer" >
                                     <h:panelGrid columns="10">
-                                        <p:commandButton value="Salvar" disabled="#{controleAcessoBean.save}" onclick="PF('dlg_save').show()"/>
+                                        <p:commandButton value="Salvar" disabled="#{controleAcessoBean.save}" onclick="PF('dlg_save').show()" global="false"/>
                                         <p:commandButton action="#{contratoBean.clear}" value="Novo" update=":form_contrato:"/>
                                         <p:commandButton value="Excluir" disabled="#{controleAcessoBean.delete}" onclick="PF('dlg_delete').show()" rendered="#{contratoBean.contrato.id != -1}"/>
                                         <p:commandButton action="#{chamadaPaginaBean.pesquisa('pesquisaContrato')}" value="Pesquisar" disabled="#{controleAcessoBean.view('pesquisaContrato')}"/>
@@ -281,31 +292,68 @@
                                         <h:commandLink action="#{contratoBean.printBoletos}" disabled="#{contratoBean.contrato.id == -1}" rendered="#{contratoBean.contrato.id != -1}">
                                             <p:button value="Imprimir Boletos" icon="ui-icon-print" />
                                         </h:commandLink>
-                                        <p:commandButton value="Pertences" action="#{chamadaPaginaBean.pagina('pertence')}" actionListener="#{pertenceBean.listenerLock('contrato', contratoBean.contrato.id)}" rendered="#{contratoBean.contrato.id != -1}"/>
+                                        <p:selectBooleanCheckbox value="#{contratoBean.imprimeVerso}" itemLabel="Imprime Verso (Boleto)" disabled="#{contratoBean.contrato.id == -1}" rendered="#{contratoBean.contrato.id != -1}">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:selectBooleanCheckbox>
+                                        <h:commandLink action="#{arquivoBancoBean.download}" rendered="false"> 
+                                            <p:button value="Gerar arquivo remessa" icon="ui-icon-print" />
+                                        </h:commandLink>
                                     </h:panelGrid>
                                 </f:facet>                                
                             </p:panel>                           
                             <br />
                             <p:column styleClass="margin-top-max">
-                                <ui:repeat value="#{contratoBean.listModeloDocumentos}" var="modeloDocumentos">
-                                    <h:commandLink action="#{contratoBean.imprimirOutros(modeloDocumentos.modeloContrato.id)}" disabled="#{contratoBean.contrato.id == -1}" rendered="#{contratoBean.contrato.id != -1}" style="float: left; margin-left: 10px">
-                                        <p:button value="#{modeloDocumentos.descricao}" icon="ui-icon-print" />
+                                <p:commandButton value="Modelos de documentos" onclick="PF('dlg_modelos_arquivos').show()" global="false" action="#{contratoBean.clear(4)}" update="i_m_a" rendered="#{not empty contratoBean.listMovimentoContrato}"/>
+                                <!-- 
+                                <ui:repeat value="# { contratoBean.listModeloDocumentos}" var="modeloDocumentos">
+                                    <h:commandLink action="# { contratoBean.imprimirOutros(modeloDocumentos.modeloContrato.id)}" disabled="# { contratoBean.contrato.id == -1}" rendered="# { contratoBean.contrato.id != -1}" style="float: left; margin-left: 10px; margin-bottom: 10px">
+                                        <p:button value="# { modeloDocumentos.descricao}" icon="ui-icon-print" />
                                     </h:commandLink>
-                                </ui:repeat>
+                                </ui:repeat> -->
                             </p:column>
                             <p:dialog widgetVar="dlg_save" width="400" closable="true" header="Deseja salvar este contrato?" modal="true">
                                 <f:facet name="footer">
                                     <h:panelGrid columns="2">
-                                        <p:commandButton action="#{contratoBean.save}" value="Confirmar" update=":form_contrato:" oncomplete="PF('dlg_save').close(); PF('dlg_message').show();"/>
-                                        <p:commandButton value="Cancelar" onclick="PF('dlg_save').close()"/>
+                                        <p:commandButton action="#{contratoBean.save}" value="Confirmar" update=":form_contrato:" oncomplete="PF('dlg_save').hide(); PF('dlg_message').show();"/>
+                                        <p:commandButton value="Cancelar" onclick="PF('dlg_save').hide()"/>
                                     </h:panelGrid>
+                                </f:facet>
+                            </p:dialog>
+                            <p:dialog widgetVar="dlg_example_1" width="400" closable="true" header="Exemplo" modal="true">
+                                <h:panelGrid columns="1">
+                                    <h:outputLabel value="Se a primeira parcela vence no dia 01/01/2000, então serão " />
+                                    <h:outputLabel value="acrescidos dias a partir do dia deste vencimento." /> <br />
+                                    <h:outputLabel value="- 01/01/2000 + 15 (dias) = 16/01/2000" /> <br />
+                                    <h:outputLabel value="- 29/03/1999 + 9 (dias) = 07/04/1999" />
+                                </h:panelGrid>
+                            </p:dialog>
+                            <p:dialog widgetVar="dlg_modelos_arquivos" width="800" closable="true" header="Modelos de documentos" modal="true">
+                                <h:panelGrid columns="1" id="i_m_a">
+                                    <p:dataTable value="#{contratoBean.listModeloDocumentos}" var="modeloDocumentos">
+                                        <p:column width="30" styleClass="text-center">
+                                            <p:selectBooleanCheckbox value="#{modeloDocumentos.selected}">
+                                                <p:ajax event="change" update="@this" />
+                                            </p:selectBooleanCheckbox>                                            
+                                        </p:column>
+                                        <p:column headerText="Modelo">
+                                            <p:outputLabel value="#{modeloDocumentos.descricao}" />
+                                        </p:column>
+                                        <p:column width="30">
+                                            <h:commandLink action="#{contratoBean.imprimirOutros(modeloDocumentos.modeloContrato.id)}" disabled="#{contratoBean.contrato.id == -1}" rendered="#{contratoBean.contrato.id != -1}">
+                                                <p:button icon="ui-icon-print" />
+                                            </h:commandLink>
+                                        </p:column>
+                                    </p:dataTable>
+                                </h:panelGrid>
+                                <f:facet name="footer">
+                                    <p:commandButton action="#{contratoBean.imprimirOutros}" value="Imprimir" ajax="false"/>
                                 </f:facet>
                             </p:dialog>
                             <p:dialog widgetVar="dlg_delete" width="400" closable="true" header="Deseja excluir este contrato?" modal="true">
                                 <f:facet name="footer">
                                     <h:panelGrid columns="2">
-                                        <p:commandButton action="#{contratoBean.delete}" value="Confirmar" update=":form_contrato:" oncomplete="PF('dlg_save').close(); PF('dlg_message').show();"/>
-                                        <p:commandButton value="Cancelar" onclick="PF('dlg_delete').close()"/>
+                                        <p:commandButton action="#{contratoBean.delete}" value="Confirmar" update=":form_contrato:" oncomplete="PF('dlg_save').hide(); PF('dlg_message').show();"/>
+                                        <p:commandButton value="Cancelar" onclick="PF('dlg_delete').hide()"/>
                                     </h:panelGrid>
                                 </f:facet>                                
                             </p:dialog>
@@ -313,7 +361,7 @@
                                 <p:messages showDetail="true" showIcon="true" autoUpdate="true" closable="true" />
                                 <f:facet name="footer">
                                     <h:panelGrid columns="2">
-                                        <p:commandButton value="Ok" onclick="PF('dlg_message').close()"/>
+                                        <p:commandButton value="Ok" onclick="PF('dlg_message').hide()"/>
                                     </h:panelGrid>
                                 </f:facet>                                
                             </p:dialog>
@@ -322,14 +370,14 @@
                                     <h:panelGrid columns="2">
                                         <h:commandLink action="#{contratoBean.imprimir}" value="Confirmar">
                                         </h:commandLink>
-                                        <p:commandButton value="Cancelar" onclick="PF('dlg_imprimir').close()"/>
+                                        <p:commandButton value="Cancelar" onclick="PF('dlg_imprimir').hide()"/>
                                     </h:panelGrid>
                                 </f:facet>
                             </p:dialog>
                             <p:dialog widgetVar="dlg_update_ftipo_documento_ctr" width="400" closable="true" header="Alterar tipo de documento" modal="true">
                                 <h:panelGrid columns="2" id="id_update_ftipo_documento_ctr">
                                     <p:selectOneMenu value="#{contratoBean.idFTipoDocumento}">
-                                        <p:ajax event="change" update=":form_contrato:" listener="#{contratoBean.updateFTipoDocumento(0)}" oncomplete="PF('dlg_update_ftipo_documento_ctr').close();"/>
+                                        <p:ajax event="change" update=":form_contrato:" listener="#{contratoBean.updateFTipoDocumento(0)}" oncomplete="PF('dlg_update_ftipo_documento_ctr').hide();"/>
                                         <f:selectItems value="#{contratoBean.listFTipoDocumento}" />
                                     </p:selectOneMenu>
                                 </h:panelGrid>
@@ -337,10 +385,20 @@
                             <p:dialog widgetVar="dlg_update_ftipo_documento_taxas" width="400" closable="true" header="Alterar tipo de documento" modal="true">
                                 <h:panelGrid columns="2" id="id_update_ftipo_documento_taxas">
                                     <p:selectOneMenu value="#{contratoBean.idFTipoDocumento}">
-                                        <p:ajax event="change" update=":form_contrato:" listener="#{contratoBean.updateFTipoDocumento(1)}" oncomplete="PF('dlg_update_ftipo_documento_taxas').close();"/>
+                                        <p:ajax event="change" update=":form_contrato:" listener="#{contratoBean.updateFTipoDocumento(1)}" oncomplete="PF('dlg_update_ftipo_documento_taxas').hide();"/>
                                         <f:selectItems value="#{contratoBean.listFTipoDocumento}" />
                                     </p:selectOneMenu>
                                 </h:panelGrid>
+                            </p:dialog>
+                            <p:dialog widgetVar="dlg_rescindir" width="400" closable="true" header="Deseja rescindir este contrato?" modal="true">
+                                <f:facet name="footer">
+                                    <p:commandButton action="#{contratoBean.action(1)}" update=":form_contrato:i_desligamento" value="Confirma" oncomplete="PF('dlg_rescindir').hide()"/>
+                                </f:facet>
+                            </p:dialog>
+                            <p:dialog widgetVar="dlg_rescindir_2" width="400" closable="true" header="Deseja desfazer esta rescisão?" modal="true">
+                                <f:facet name="footer">
+                                    <p:commandButton action="#{contratoBean.action(2)}" update=":form_contrato:i_desligamento" value="Confirmar" oncomplete="PF('dlg_rescindir_2').hide()"/>
+                                </f:facet>
                             </p:dialog>
                             <p:dialog widgetVar="dlg_dia_vencimento" width="400" closable="true" header="Dia do vencimento" modal="true" resizable="false" closeOnEscape="true" draggable="false">
                                 <h:panelGrid columns="2" style="width: 100%">

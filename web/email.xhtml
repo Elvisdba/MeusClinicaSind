@@ -45,7 +45,7 @@
                                                     <p:ajax event="change" update="@this, :form_email:" listener="#{emailBean.listEmailPessoas.clear()}"/>
                                                 </p:selectBooleanCheckbox>
                                             </h:column>
-                                            <c:if test="#{emailBean.filter}">
+                                            <h:column rendered="#{emailBean.filter}">
                                                 <h:panelGrid rendered="#{!emailBean.filterNewMessage}" columns="2" styleClass="margin-top-max">
                                                     <p:selectBooleanButton value="#{emailBean.filterByRotina}" onLabel="Desabilita Rotina:" offLabel="Habilita Rotina:" style="width: 150px">
                                                         <p:ajax event="change" update="@this, :form_email:" listener="#{emailBean.listEmailPessoas.clear()}" />
@@ -105,7 +105,7 @@
                                                         </h:panelGrid>
                                                     </h:column>
                                                 </h:panelGrid>
-                                            </c:if>
+                                            </h:column>
                                             <h:panelGrid rendered="#{emailBean.filterNewMessage}" columns="1" styleClass="margin-top-max" cellpadding="2">
                                                 <p:outputLabel value="Prioridade:" />
                                                 <p:selectOneMenu value="#{emailBean.index[1]}" >
