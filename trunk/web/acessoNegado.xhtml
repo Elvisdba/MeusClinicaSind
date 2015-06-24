@@ -32,12 +32,12 @@
                     <h:form id="formTemplateLinks" onsubmit="#{chamadaPaginaBean.controleLinks}"> 
                         <!-- <h:form id="formTemplateLinks" onsubmit="# {chamadaPaginaBean.controleLinksX} ">-->
                         <p:panel style="border: 0; width: 1024px">                
-                            <c:if test="#{clienteBean.usuario.id == 1}">
+                            <h:column rendered="#{clienteBean.usuario.id == 1}">
                                 <h:graphicImage id="i_logo" value="/Cliente/#{controleUsuarioBean.clienteString}/Imagens/LogoCliente.png" width="120px" style="float: left; cursor: pointer; border: 2px dashed gray;" onclick="PF('dlg_logo').show();" title="Alterar imagem" alt="Pesquisar uma imagem"/>
-                            </c:if>
-                            <c:if test="#{clienteBean.usuario.id != 1}">
-                                <h:graphicImage id="i_logo" value="/Cliente/#{controleUsuarioBean.clienteString}/Imagens/LogoCliente.png" width="120px" style="float: left" />
-                            </c:if>
+                            </h:column>
+                            <h:column rendered="#{clienteBean.usuario.id != 1}">
+                                <h:graphicImage id="i_logo_x" value="/Cliente/#{controleUsuarioBean.clienteString}/Imagens/LogoCliente.png" width="120px" style="float: left" />
+                            </h:column>
                             <br /><br />
                             <p:panel style="float: right; border: 0px; top:0px">
                                 <h:outputLabel value="Bem vindo " style="float: left; font-size: 10pt; margin-left: 50px"/>
@@ -46,11 +46,11 @@
                                 <br /><br />
                                 <p:outputLabel value="#{controleUsuarioBean.filial}" style="color: #bc4763; font-size: 10pt;  margin-left: 50px; "/>
                             </p:panel>
-                            <c:if test="true">
+                            <h:column rendered="true">
                                 <div class="clear"></div>
                                 <h:commandLink value="Perfil" action="#{chamadaPaginaBean.pagina('usuarioPerfil')}" title="Meus dados cadastrais" immediate="true" style="float: right"/>
-                            </c:if>
-                            <c:if test="true">
+                            </h:column>
+                            <h:column rendered="true">
                                 <div class="clear"></div>
                                 <div style="height: 15px; width: 100%; ">
                                     <p:dataList var="menuLinks" value="#{chamadaPaginaBean.menuLinks}" rowIndexVar="it" type="definition" >
@@ -60,7 +60,7 @@
                                         </h:column>
                                     </p:dataList>
                                 </div>
-                            </c:if>
+                            </h:column>
                         </p:panel>
                     </h:form>                    
                     <h:form id="formMenuPrincipal">

@@ -180,8 +180,8 @@
                             <p:dialog widgetVar="dlg_acordo" header="Deseja concluir esse acordo?" resizable="false" width="400" modal="true">
                                 <f:facet name="footer">
                                     <h:panelGrid columns="2">
-                                        <p:commandButton value="OK" title="OK" action="#{acordoBean.efetuarAcordo}" oncomplete="PF('dlg_acordo').close(); PF('dlg_message').show()" update="imprimirBoleto imprimirPlanilha idImprimeVerso chkEmail i_message"/>
-                                        <p:commandButton  value="Cancelar" onclick="PF('dlg_acordo').close()" />
+                                        <p:commandButton value="OK" title="OK" action="#{acordoBean.efetuarAcordo}" oncomplete="PF('dlg_acordo').hide(); PF('dlg_message').show()" update="imprimirBoleto imprimirPlanilha idImprimeVerso chkEmail i_message"/>
+                                        <p:commandButton  value="Cancelar" onclick="PF('dlg_acordo').hide()" />
                                     </h:panelGrid>
                                 </f:facet>
                             </p:dialog>
@@ -193,8 +193,8 @@
                                 </p:inputText>
                                 <f:facet name="footer">
                                     <h:panelGrid columns="2">
-                                        <p:commandButton value="OK" title="OK" action="#{acordoBean.sendMail()}" oncomplete="PF('dlg_email').close(); PF('dlg_message').show()" update="idEnviarPara i_message"/>
-                                        <p:commandButton  value="Cancelar" onclick="PF('dlg_email').close()" />
+                                        <p:commandButton value="OK" title="OK" action="#{acordoBean.sendMail()}" oncomplete="PF('dlg_email').hide(); PF('dlg_message').show()" update="idEnviarPara i_message"/>
+                                        <p:commandButton  value="Cancelar" onclick="PF('dlg_email').hide()" />
                                     </h:panelGrid>
                                 </f:facet>
                             </p:dialog>
@@ -203,7 +203,7 @@
                                 <p:messages autoUpdate="true" showSummary="true" closable="false" id="i_message"/>
                                 <f:facet name="footer">
                                     <h:panelGrid columns="2">
-                                        <p:commandButton value="Ok" onclick="PF('dlg_message').close()" />
+                                        <p:commandButton value="Ok" onclick="PF('dlg_message').hide()" />
                                     </h:panelGrid>
                                 </f:facet>
                             </p:dialog>                

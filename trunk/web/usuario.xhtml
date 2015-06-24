@@ -173,10 +173,10 @@
                                                 <p:ajax event="change" listener="#{usuarioBean.limparListaUsuarioAcesso}" update="idRenderTabela tblUsuarioAcesso" />
                                                 <f:selectItems value="#{usuarioBean.listModulos}" />
                                             </h:selectOneMenu>
-                                            <h:selectOneMenu value="#{usuarioBean.idRotina}" id="idRotina">
+                                            <p:selectOneMenu value="#{usuarioBean.idRotina}" id="idRotina" filter="true" filterMatchMode="startsWith">
                                                 <p:ajax event="change" listener="#{usuarioBean.limparListaUsuarioAcessox}" update="idRenderTabela tblUsuarioAcesso" />
                                                 <f:selectItems value="#{usuarioBean.listRotinas}"/>
-                                            </h:selectOneMenu>
+                                            </p:selectOneMenu>
                                             <h:selectOneMenu value="#{usuarioBean.idEvento}" id="idEvento">
                                                 <p:ajax event="change" listener="#{usuarioBean.limparListaUsuarioAcessox}" update="idRenderTabela tblUsuarioAcesso" />
                                                 <f:selectItems value="#{usuarioBean.listEventos}"/>

@@ -239,20 +239,20 @@
 
                                             <p:column>
                                                 <p:panel header="Foto do Perfil" id="i_panel_imagens" style="width: 330px; height: 428px; text-align: center">
-                                                    <c:if test="#{fisicaBean.fotoTempPerfil.equals('') and fisicaBean.fotoPerfil.equals('')}" >
+                                                    <h:column rendered="#{fisicaBean.fotoTempPerfil.equals('') and fisicaBean.fotoPerfil.equals('')}" >
                                                         <p:graphicImage value="/Imagens/user_female.png" rendered="#{fisicaBean.fisica.sexo.equals('F')}"/>
                                                         <p:graphicImage value="/Imagens/user_male.png" rendered="#{fisicaBean.fisica.sexo.equals('M')}"/>
-                                                    </c:if>
+                                                    </h:column>
 
-                                                    <c:if test="#{!fisicaBean.fotoTempPerfil.equals('')}" >
+                                                    <h:column rendered="#{!fisicaBean.fotoTempPerfil.equals('')}" >
                                                         <p:graphicImage value="#{fisicaBean.fotoTempPerfil}" id="i_perfil_temp" style="max-width: 300px; max-height: 395px"/>
                                                         <div class="clear"></div>
-                                                    </c:if>
+                                                    </h:column>
 
-                                                    <c:if test="#{!fisicaBean.fotoPerfil.equals('')}" >
+                                                    <h:column rendered="#{!fisicaBean.fotoPerfil.equals('')}" >
                                                         <p:graphicImage value="#{fisicaBean.fotoPerfil}" id="i_perfil" style="max-width: 300px; max-height: 395px"/>
                                                         <div class="clear"></div>
-                                                    </c:if>                                        
+                                                    </h:column>                                        
                                                 </p:panel>
 
                                                 <p:commandButton icon="ui-icon-trash" title="Remover Foto" action="#{fisicaBean.apagarImagem()}" style="float: right" rendered="#{!fisicaBean.fotoTempPerfil.equals('') or !fisicaBean.fotoPerfil.equals('')}" update=":form_pessoa_fisica"/>
@@ -263,7 +263,7 @@
 
                                         <p:dialog id="i_captura" widgetVar="dlg_captura" modal="true" header="Foto Perfil" resizable="true"  maximizable="true" minimizable="true">
                                             <h:panelGrid id="i_panel_imagem" columns="1">
-                                                <p:photoCam widgetVar="pc" listener="#{fisicaBean.capturar}" update=":form_pessoa_fisica:i_tabview_fisica:i_panel_imagens"/>
+                                                <p:photoCam widgetVar="pc" listener="#{fisicaBean.capturar}" update=":form_pessoa_fisica:i_tabview_fisica:i_panel_imagens" forceFlash="true"/>
                                                 <h:column>
                                                     <h:panelGrid columns="2">
                                                         <p:commandButton type="button" value="Capturar Foto" onclick="PF('pc').capture()" />
@@ -483,7 +483,7 @@
                                         <h:panelGrid id="i_panel_grid_pendereco">
                                             <p:dataTable value="#{fisicaBean.listPessoaEndereco}" var="pessoaEndereco" scrollable="true" scrollHeight="150" emptyMessage="Nenhum resultado encontrado" rowIndexVar="index" rendered="#{fisicaBean.listPessoaEndereco.size() > 0}">
                                                 <p:column width="25">
-                                                    <p:commandButton icon="ui-icon-pencil" action="#{fisicaBean.editarPessoaEndereco(pessoaEndereco, index)}" title="Editar Endereço de #{pessoaEndereco.tipoEndereco.descricao}" oncomplete="PF('i_dlg_editar_endereco').show()" update=":form_pessoa_fisica:i_panel_editar_endereco"/>
+                                                    <p:commandButton icon="ui-icon-pencil" action="#{fisicaBean.editarPessoaEndereco(pessoaEndereco, index)}" title="Editar Endereço de #{pessoaEndereco.tipoEndereco.descricao}" oncomplete="PF('i_dlg_editar_endereco').show()" update=":form_pessoa_fisica:i_panel_editar_endereco" />
                                                 </p:column>
                                                 <p:column headerText="Tipo">
                                                     <p:outputLabel value="#{pessoaEndereco.tipoEndereco.descricao}" />
@@ -518,7 +518,7 @@
                                             <p:commandLink value="#{fisicaBean.pessoaEndereco.endereco.logradouro.descricao} 
                                                            #{fisicaBean.pessoaEndereco.endereco.descricaoEndereco.descricao} , 
                                                            #{fisicaBean.pessoaEndereco.endereco.cidade.cidade} - 
-                                                           #{fisicaBean.pessoaEndereco.endereco.cidade.uf}" style="font-size: 12pt!important; color: red;" title="Clique para editar este Endereço"/>
+                                                           #{fisicaBean.pessoaEndereco.endereco.cidade.uf}" style="font-size: 12pt!important; color: red;" title="Clique para editar este Endereço" action="#{chamadaPaginaBean.pesquisa('pesquisaEndereco')}"/>
                                         </h:panelGrid>
 
                                         <h:panelGrid columns="2">

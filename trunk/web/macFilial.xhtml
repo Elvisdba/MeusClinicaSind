@@ -119,10 +119,6 @@
                                         <p:commandButton icon="ui-icon-transferthick-e-w" action="#{macFilialBean.putFilial(macFilial)}" title="Acessar/Trocar filial"/>
                                     </p:column>
 
-                                    <p:column headerText="Sair" rendered="#{segurancaUtilitariosBean.sessaoUsuario.administrador}" styleClass="text-center" style="width: 30px">
-                                        <p:commandButton icon="ui-icon ui-icon-extlink" action="#{macFilialBean.putFilial(macFilial, true)}" title="Acessar/Trocar filial e sair"/>
-                                    </p:column>
-
                                 </p:dataTable>   
                             </h:panelGrid>
                         </h:form>

@@ -2,7 +2,6 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:c="http://java.sun.com/jsp/jstl/core"
       xmlns:p="http://primefaces.org/ui">
 
     <h:head>
@@ -40,10 +39,10 @@
                                     <p:menuitem value="Usuários" action="#{chamadaPaginaBean.pagina('usuario')}" rendered="#{!controleAcessoBean.view('usuario')}"/>  
                                     <p:submenu label="Permissão" icon="ui-icon-contact">  
                                         <p:menuitem value="Perm. Departamento"      action="#{chamadaPaginaBean.permissaoDepartamento}" rendered="#{!controleAcessoBean.view('permissaoDepartamento')}"/>
-                                        <p:menuitem value="Módulo/Rotina"           action="#{chamadaPaginaBean.permissao}" rendered="#{!controleAcessoBean.view('permissao')}"/>
+                                        <p:menuitem value="Módulo/Rotina"           action="#{chamadaPaginaBean.permissao}" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}"/>
                                         <p:menuitem value="Cadastro Simples"        action="#{chamadaPaginaBean.simples}" rendered="#{!controleAcessoBean.view('simples')}"/>
-                                        <p:menuitem value="Rotina"                  action="#{chamadaPaginaBean.rotina}" rendered="#{!controleAcessoBean.view('rotina')}" />
-                                        <p:menuitem value="Níveis"                  action="#{chamadaPaginaBean.nivel}" rendered="#{!controleAcessoBean.view('nivel')}"/>
+                                        <p:menuitem value="Rotina"                  action="#{chamadaPaginaBean.rotina}" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}" />
+                                        <p:menuitem value="Níveis"                  action="#{chamadaPaginaBean.nivel}" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}"/>
                                         <p:menuitem value="Filial Departamento"     action="#{chamadaPaginaBean.pagina('filialDepartamento')}" rendered="#{!controleAcessoBean.view('filialDepartamento')}" />
                                     </p:submenu>  
                                     <p:submenu label="Configurações">  
@@ -52,9 +51,7 @@
                                     <p:separator />  
                                     <p:menuitem value="Pesquisar Logs"              action="#{chamadaPaginaBean.pagina('pesquisaLog')}" title="Registro de atividades" rendered="#{!controleAcessoBean.view('pesquisaLog')}"/>
                                     <p:submenu label="Sistema">                                        
-                                        <c:if test="#{controleUsuarioBean.clienteString eq 'ClinicaIntegrada'}">
-                                            <p:menuitem value="Cliente"       action="#{chamadaPaginaBean.pagina('cliente')}" />
-                                        </c:if>
+                                        <p:menuitem value="Cliente"       action="#{chamadaPaginaBean.pagina('cliente')}" rendered="#{controleUsuarioBean.clienteString eq 'ClinicaIntegrada'}"/>
                                     </p:submenu>
                                     <p:menuitem value="Sair do Sistema" action="#{usuarioBean.sairSistema}" /> 
                                 </p:submenu>                                 
@@ -98,12 +95,12 @@
                                 <p:commandLink action="#{chamadaPaginaBean.pagina('pesquisaAgendaTelefone','agendaTelefone')}" title="Pesquisa Agenda Telefônica" style="clear: both" actionListener="#{agendaTelefoneBean.putType('pesquisaAgendaTelefone')}">
                                     <h:graphicImage value="/Imagens/-icone-agenda-telefone.jpg" width="120" /><br />
                                 </p:commandLink>
-                                <c:if test="#{agendaNotificaoBean.listAniversariantes.size() > 0}">
+                                <h:column rendered="#{agendaNotificaoBean.listAniversariantes.size() > 0}">
                                     <p:commandLink onclick="PF('dlg_agenda_contato').show();">
                                         Aniversariantes do mês
                                         <h:graphicImage value="/Imagens/icon-birthday.png" width="16" /><br />
                                     </p:commandLink>
-                                </c:if>
+                                </h:column>
                             </p:panel>
                             <p:dialog widgetVar="dlg_agenda_contato" modal="true" footer="Felicite esta pessoa" width="600" height="400" resizable="false">
                                 <f:facet name="header">

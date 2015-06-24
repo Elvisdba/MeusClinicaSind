@@ -27,7 +27,7 @@
                         <f:facet name="header">Nome Empresa: #{registroBean.registro.filial.pessoa.nome}</f:facet>
                         <p:tabView>
                             <p:ajax event="tabChange" listener="#{registroBean.onChange}"/>                            
-                            <c:if test="#{registroBean.codigoModulo == 0}">
+                            <h:column rendered="#{registroBean.codigoModulo == 0}">
                                 <p:tab title="Cadastro">
                                     <p:panelGrid columns="3" columnClasses="verticalAlignTop,verticalAlignTop" styleClass="sbb">
                                         <p:outputLabel value="Email: "/>
@@ -93,7 +93,7 @@
                                     </p:panelGrid>
                                     <p:commandButton value="Testar Email" onclick="PF('dlg_test_mail').show()" type="button" styleClass="margin-top-max"/>
                                 </p:tab>
-                            </c:if>                            
+                            </h:column>                            
                         </p:tabView>
                     </p:panel>
                     <div style="clear: both;"></div>

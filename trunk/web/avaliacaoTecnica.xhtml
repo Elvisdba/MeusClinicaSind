@@ -88,16 +88,16 @@
                             <p:dialog widgetVar="dlg_cancel" header="Deseja cancelar esta avaliação?" resizable="false" width="400" modal="true" closeOnEscape="true">
                                 <f:facet name="footer">
                                     <h:panelGrid columns="2">
-                                        <p:commandButton value="Sim" action="#{avaliacaoTecnicaBean.cancel()}" title="Confirmar" oncomplete="PF('dlg_cancel').close()" update=":form_a:"/>
-                                        <p:commandButton  value="Não" onclick="PF('dlg_cancel').close()" title="Cancelar"/>
+                                        <p:commandButton value="Sim" action="#{avaliacaoTecnicaBean.cancel()}" title="Confirmar" oncomplete="PF('dlg_cancel').hide()" update=":form_a:"/>
+                                        <p:commandButton  value="Não" onclick="PF('dlg_cancel').hide()" title="Cancelar"/>
                                     </h:panelGrid>
                                 </f:facet>
                             </p:dialog>
                             <p:dialog widgetVar="dlg_missed" header="Este paciente faltou?" resizable="false" width="400" modal="true" closeOnEscape="true">
                                 <f:facet name="footer">
                                     <h:panelGrid columns="2">
-                                        <p:commandButton value="Sim" action="#{avaliacaoTecnicaBean.missed()}" title="Confirmar" oncomplete="PF('dlg_faltou').close()" update=":form_a:"/>
-                                        <p:commandButton  value="Não" onclick="PF('dlg_missed').close()" title="Cancelar"/>
+                                        <p:commandButton value="Sim" action="#{avaliacaoTecnicaBean.missed()}" title="Confirmar" oncomplete="PF('dlg_faltou').hide()" update=":form_a:"/>
+                                        <p:commandButton  value="Não" onclick="PF('dlg_missed').hide()" title="Cancelar"/>
                                     </h:panelGrid>
                                 </f:facet>
                             </p:dialog>
@@ -105,7 +105,7 @@
                                 <f:facet name="footer">
                                     <h:panelGrid columns="2">
                                         <p:commandButton value="Sim" action="#{avaliacaoTecnicaBean.exit()}" title="Confirmar" />
-                                        <p:commandButton  value="Não" onclick="PF('dlg_exit').close()" title="Cancelar"/>
+                                        <p:commandButton  value="Não" onclick="PF('dlg_exit').hide()" title="Cancelar"/>
                                     </h:panelGrid>
                                 </f:facet>
                             </p:dialog>

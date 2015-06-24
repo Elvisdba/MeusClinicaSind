@@ -28,6 +28,7 @@
             <div id="mainx">
                 <!-- INICIA DIV wrap e main -->  
                 <f:subview id="header">
+                    <ui:include src="templates/templateAcessoFilialComCaixa.xhtml"/>
                     <ui:include src="templates/templatePrime.xhtml"/>
                     <ui:include src="templates/templateAcessoFilial.xhtml"/>
                 </f:subview>
@@ -117,7 +118,7 @@
 
                                 <p:column>
                                     <br />
-                                    <p:commandButton value="Acordo" title="Fazer um acordo" action="#{movimentosReceberBean.telaAcordo()}" rendered="#{movimentosReceberBean.porPesquisa != 'quitados'}" update="formMovimentosReceber"/>
+                                    <p:commandButton value="Acordo" title="Fazer um acordo" action="#{movimentosReceberBean.telaAcordo()}" rendered="#{movimentosReceberBean.porPesquisa != 'quitados'}" update="formMovimentosReceber" disabled="true"/>
                                 </p:column>
 
                                 <p:column>
@@ -131,6 +132,11 @@
                             </h:panelGrid>
 
                             <p:dataTable value="#{movimentosReceberBean.listMovimento}" var="listMovimentoReceber" style="clear: both; font-size: 8pt!important" id="tbl" paginator="true" rows="20" emptyMessage="Nenhuma pendência foi encontrada!" rowStyleClass="#{listMovimentoReceber.row_css}">
+
+                                <p:column width="25"> 
+                                    <p:rowToggler />  
+                                </p:column>                                 
+
                                 <p:column style="text-align: center; width: 15px">
                                     <p:selectBooleanCheckbox value="#{listMovimentoReceber.selected}" disabled="#{listMovimentoReceber.disabled}">
                                         <p:ajax event="change" update="tbl :formMovimentosReceber:i_panel" listener="#{movimentosReceberBean.calculoDesconto()}"/>
@@ -139,6 +145,10 @@
 
                                 <p:column headerText="Titular" rendered="#{movimentosReceberBean.listPessoa.size() > 1}">
                                     <p:commandLink value="#{listMovimentoReceber.pessoa_nome}" action="#{movimentosReceberBean.complementoPessoa(listMovimentoReceber)}" onclick="PF('i_dlg_dados').show()" update=":formMovimentosReceber:i_dados" style="font-size: 8pt!important"/>
+                                </p:column>
+
+                                <p:column headerText="CTR" width="35" styleClass="text-center" sortBy="#{listMovimentoReceber.movimento.lote.contrato.id}" >
+                                    <p:commandLink value="#{listMovimentoReceber.movimento.lote.contrato.id}" />
                                 </p:column>
 
                                 <p:column headerText="Serviços">
@@ -173,7 +183,7 @@
                                     <h:outputText value="#{listMovimentoReceber.baixa_valor}" style="font-size: 8pt!important; float: right"/>
                                 </p:column>
 
-                                <p:column style="text-align: center;" headerText="E/S">
+                                <p:column style="text-align: center;" headerText="E/S" width="25">
                                     <h:outputText value="#{listMovimentoReceber.movimento_es}" style="font-size: 8pt!important"/>
                                 </p:column>
 
@@ -187,6 +197,14 @@
                                     </h:commandLink>
                                 </p:column>
 
+                                <p:rowExpansion>
+                                    <h:panelGrid columns="4" style="height: 40px" styleClass="sbb">
+                                        <p:column>
+                                            <h:outputText value="Boleto" style="font-weight: bold"/><br />
+                                            <h:outputText value="#{listMovimentoReceber.movimento.documento}"/>
+                                        </p:column>
+                                    </h:panelGrid>
+                                </p:rowExpansion>
                             </p:dataTable>      
 
                             <p:dialog widgetVar="i_dlg_estorno" header="Deseja estornar este Movimento" resizable="false" width="400" modal="true">

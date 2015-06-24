@@ -117,8 +117,8 @@
                                 </h:panelGrid>
                                 <f:facet name="footer">
                                     <h:panelGrid columns="2">
-                                        <p:commandButton value="Sim" action="#{alterarMovimentoBean.inativarBoleto}" title="Sim" oncomplete="PF('dlg_delete').close(); PF('dlg_message').show()" update="outConfirma"/>
-                                        <p:commandButton value="Não" title="Cancelar" onclick="PF('dlg_delete').close()"/>
+                                        <p:commandButton value="Sim" action="#{alterarMovimentoBean.inativarBoleto}" title="Sim" oncomplete="PF('dlg_delete').hide(); PF('dlg_message').show()" update="outConfirma"/>
+                                        <p:commandButton value="Não" title="Cancelar" onclick="PF('dlg_delete').hide()"/>
                                     </h:panelGrid>
                                 </f:facet>
                             </p:dialog>
@@ -126,7 +126,7 @@
                                 <p:messages autoUpdate="true" id="outConfirma" closable="false" showDetail="true"/>
                                 <f:facet name="footer">
                                     <h:panelGrid columns="2">
-                                        <p:commandButton value="Ok" title="Cancelar" onclick="PF('dlg_message').close()"/>
+                                        <p:commandButton value="Ok" title="Cancelar" onclick="PF('dlg_message').hide()"/>
                                     </h:panelGrid>
                                 </f:facet>
                             </p:dialog>
