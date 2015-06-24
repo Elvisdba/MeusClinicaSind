@@ -45,6 +45,7 @@ public class ParametroBoleto {
     // BOLETO - LAYOUT BB
     private String referencia;
     private BigDecimal valor;
+    private BigDecimal valor_total;
     private String representacao_numerica;
     private String vencimento;
     private String data_documento;
@@ -69,7 +70,7 @@ public class ParametroBoleto {
     private String codigo_barras;
     private Integer contrato_numero;
 
-    public ParametroBoleto(String cedente_nome, String cedente_documento, String cedente_codigo, String cedente_endereco, String cedente_numero, String cedente_complemento, String cedente_bairro, String cedente_cidade, String cedente_uf, String cedente_cep, String cedente_logo, String cedente_site, String cedente_email1, String cedente_telefone, String sacado_nome, String sacado_documento, String sacado_endereco, String sacado_numero, String sacado_complemento, String sacado_bairro, String sacado_cidade, String sacado_uf, String sacado_cep, String banco_codigo, String banco_logo, String banco_uso, String banco_nosso_numero, String banco_codigo_agencia, String servico, String tipo, String referencia, BigDecimal valor, String representacao_numerica, String vencimento, String data_documento, String moeda, String especie, String especie_documento, String aceite, String carteira, String exercicio, String boleto, String mensagem, String mensagem_boleto, String serrilha, String texto_titulo, String caminho_verso, String local_pagamento, String descricao_servico, Boolean imprime_verso, String layout, String codigo_barras, Integer contrato_numero) {
+    public ParametroBoleto(String cedente_nome, String cedente_documento, String cedente_codigo, String cedente_endereco, String cedente_numero, String cedente_complemento, String cedente_bairro, String cedente_cidade, String cedente_uf, String cedente_cep, String cedente_logo, String cedente_site, String cedente_email1, String cedente_telefone, String sacado_nome, String sacado_documento, String sacado_endereco, String sacado_numero, String sacado_complemento, String sacado_bairro, String sacado_cidade, String sacado_uf, String sacado_cep, String banco_codigo, String banco_logo, String banco_uso, String banco_nosso_numero, String banco_codigo_agencia, String servico, String tipo, String referencia, BigDecimal valor, BigDecimal valor_total, String representacao_numerica, String vencimento, String data_documento, String moeda, String especie, String especie_documento, String aceite, String carteira, String exercicio, String boleto, String mensagem, String mensagem_boleto, String serrilha, String texto_titulo, String caminho_verso, String local_pagamento, String descricao_servico, Boolean imprime_verso, String layout, String codigo_barras, Integer contrato_numero) {
         this.cedente_nome = cedente_nome;
         this.cedente_documento = cedente_documento;
         this.cedente_codigo = cedente_codigo;
@@ -102,6 +103,7 @@ public class ParametroBoleto {
         this.tipo = tipo;
         this.referencia = referencia;
         this.valor = valor;
+        this.valor_total = valor_total;
         this.representacao_numerica = representacao_numerica;
         this.vencimento = vencimento;
         this.data_documento = data_documento;
@@ -547,6 +549,14 @@ public class ParametroBoleto {
 
     public void setCedente_telefone(String cedente_telefone) {
         this.cedente_telefone = cedente_telefone;
+    }
+
+    public BigDecimal getValor_total() {
+        return valor_total;
+    }
+
+    public void setValor_total(BigDecimal valor_total) {
+        this.valor_total = valor_total;
     }
 
 }
