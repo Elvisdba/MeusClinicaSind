@@ -1,113 +1,53 @@
 package br.com.clinicaintegrada.financeiro;
 
-import br.com.clinicaintegrada.pessoa.Pessoa;
 import br.com.clinicaintegrada.utils.DataHoje;
 import br.com.clinicaintegrada.utils.Moeda;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
-@Entity
-@Table(name = "boletos_vw")
 public class BoletosVw implements Serializable {
 
-    @Id
-    @Column(name = "seq")
     private Long id;
-    @JoinColumn(name = "id_fin_lote", referencedColumnName = "id")
-    @ManyToOne
-    private Lote lote;
-    @JoinColumn(name = "id_fin_movimento", referencedColumnName = "id")
-    @ManyToOne
-    private Movimento movimento;
-    @Column(name = "nr_ctr_boleto")
+    private Integer lote;
+    private Integer movimento;
     private String nrCtrBoleto;
-    @JoinColumn(name = "id_lote_boleto", referencedColumnName = "id")
-    @ManyToOne
-    private LoteBoleto loteBoleto;
-    @Temporal(TemporalType.DATE)
-    @Column(name = "processamento")
+    private Integer loteBoleto;
     private Date processamento;
-    @Column(name = "logo_banco")
     private String logoBanco;
-    @Column(name = "logo")
     private String logo;
-    @Column(name = "logo_informativo")
     private String logoInformativo;
-    @Column(name = "logo_verso")
     private String logoVerso;
-    @Column(name = "codigo")
     private Integer codigo;
-    @Column(name = "responsavel")
     private String responsavel;
-    @Temporal(TemporalType.DATE)
-    @Column(name = "vencimento")
     private Date vencimento;
-    @Column(name = "grupo_categoria")
     private String grupoCategoria;
-    @Column(name = "categoria")
     private String categoria;
-    @Column(name = "servico")
     private String servico;
-    @JoinColumn(name = "id_beneficiario", referencedColumnName = "id")
-    @ManyToOne
-    private Pessoa pessoa;
-    @Column(name = "nome_beneficiario")
+    private Integer pessoa;
     private String nomeBeneficiario;
-    @Column(name = "valor")
     private Double valor;
-    @Column(name = "mensalidades_corrigidas")
     private Integer mensalidadesCorrigidas;
-    @Column(name = "mensagem_boleto")
     private String mensagemBoleto;
-    @Column(name = "banco")
     private String banco;
-    @Column(name = "agencia")
     private String agencia;
-    @Column(name = "cedente")
     private String cedente;
-    @Column(name = "boleto")
     private String boleto;
-    @Column(name = "email")
     private String email;
-    @Column(name = "nome_filial")
     private String nomeFilial;
-    @Column(name = "silte_filial")
     private String silteFilial;
-    @Column(name = "cnpj_filial")
     private String cnpjFilial;
-    @Column(name = "tel_filial")
     private String telefoneFilial;
-    @Column(name = "endereco_filial")
     private String enderecoFilial;
-    @Column(name = "bairro_filial")
     private String bairroFilial;
-    @Column(name = "cidade_filial")
     private String cidadeFilial;
-    @Column(name = "uf_filial")
     private String ufFilial;
-    @Column(name = "cep_filial")
     private String cepFilial;
-    @Column(name = "logradouro_responsavel")
     private String logradouroResponsavel;
-    @Column(name = "endereco_responsavel")
     private String enderecoResponsavel;
-    @Column(name = "cep_responsavel")
     private String cepResponsavel;
-    @Column(name = "uf_responsavel")
     private String ufResponsavel;
-    @Column(name = "cidade_responsavel")
     private String cidadeResponsavel;
-    @Column(name = "informativo")
     private String informativo;
-    @Column(name = "local_pagamento")
     private String localPagamento;
 
     public BoletosVw() {
@@ -155,7 +95,7 @@ public class BoletosVw implements Serializable {
         this.localPagamento = "";
     }
 
-    public BoletosVw(Long id, Lote lote, Movimento movimento, String nrCtrBoleto, LoteBoleto loteBoleto, Date processamento, String logoBanco, String logo, String logoInformativo, String logoVerso, Integer codigo, String responsavel, Date vencimento, String grupoCategoria, String categoria, String servico, Pessoa pessoa, String nomeBeneficiario, Double valor, Integer mensalidadesCorrigidas, String mensagemBoleto, String banco, String agencia, String cedente, String boleto, String email, String nomeFilial, String silteFilial, String cnpjFilial, String telefoneFilial, String enderecoFilial, String bairroFilial, String cidadeFilial, String ufFilial, String cepFilial, String logradouroResponsavel, String enderecoResponsavel, String cepResponsavel, String ufResponsavel, String cidadeResponsavel, String informativo, String localPagamento) {
+    public BoletosVw(Long id, Integer lote, Integer movimento, String nrCtrBoleto, Integer loteBoleto, Date processamento, String logoBanco, String logo, String logoInformativo, String logoVerso, Integer codigo, String responsavel, Date vencimento, String grupoCategoria, String categoria, String servico, Integer pessoa, String nomeBeneficiario, Double valor, Integer mensalidadesCorrigidas, String mensagemBoleto, String banco, String agencia, String cedente, String boleto, String email, String nomeFilial, String silteFilial, String cnpjFilial, String telefoneFilial, String enderecoFilial, String bairroFilial, String cidadeFilial, String ufFilial, String cepFilial, String logradouroResponsavel, String enderecoResponsavel, String cepResponsavel, String ufResponsavel, String cidadeResponsavel, String informativo, String localPagamento) {
         this.id = id;
         this.lote = lote;
         this.movimento = movimento;
@@ -208,19 +148,19 @@ public class BoletosVw implements Serializable {
         this.id = id;
     }
 
-    public Lote getLote() {
+    public Integer getLote() {
         return lote;
     }
 
-    public void setLote(Lote lote) {
+    public void setLote(Integer lote) {
         this.lote = lote;
     }
 
-    public Movimento getMovimento() {
+    public Integer getMovimento() {
         return movimento;
     }
 
-    public void setMovimento(Movimento movimento) {
+    public void setMovimento(Integer movimento) {
         this.movimento = movimento;
     }
 
@@ -232,11 +172,11 @@ public class BoletosVw implements Serializable {
         this.nrCtrBoleto = nrCtrBoleto;
     }
 
-    public LoteBoleto getLoteBoleto() {
+    public Integer getLoteBoleto() {
         return loteBoleto;
     }
 
-    public void setLoteBoleto(LoteBoleto loteBoleto) {
+    public void setLoteBoleto(Integer loteBoleto) {
         this.loteBoleto = loteBoleto;
     }
 
@@ -252,7 +192,7 @@ public class BoletosVw implements Serializable {
         return DataHoje.converteData(processamento);
     }
 
-    public void setProcessamento(String processamentoString) {
+    public void setProcessamentoString(String processamentoString) {
         this.processamento = DataHoje.converte(processamentoString);
     }
 
@@ -344,11 +284,11 @@ public class BoletosVw implements Serializable {
         this.servico = servico;
     }
 
-    public Pessoa getPessoa() {
+    public Integer getPessoa() {
         return pessoa;
     }
 
-    public void setPessoa(Pessoa pessoa) {
+    public void setPessoa(Integer pessoa) {
         this.pessoa = pessoa;
     }
 

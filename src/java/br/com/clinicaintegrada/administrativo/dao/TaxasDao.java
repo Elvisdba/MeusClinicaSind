@@ -27,10 +27,25 @@ public class TaxasDao extends DB {
         return false;
     }
 
-    public List pesquisaTodasTaxasPorCliente(int cliente) {
+    public List pesquisaTodasTaxasPorCliente(Integer cliente) {
         try {
             Query query = getEntityManager().createQuery("SELECT T FROM Taxas AS T WHERE T.cliente.id = :cliente  ORDER BY T.servicos.descricao ASC");
             query.setParameter("cliente", cliente);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+            return new ArrayList();
+        }
+        return new ArrayList();
+    }
+
+    public List pesquisaTodasTaxasPorClienteContrato(Integer cliente, Integer contrato) {
+        try {
+            Query query = getEntityManager().createQuery("SELECT T FROM Taxas AS T WHERE T.cliente.id = :cliente AND T.servicos.id NOT IN (SELECT M.servicos.id FROM Movimento AS M WHERE M.lote.contrato.id = :contrato) ORDER BY T.servicos.descricao ASC");
+            query.setParameter("cliente", cliente);
+            query.setParameter("contrato", contrato);
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;
@@ -54,6 +69,20 @@ public class TaxasDao extends DB {
             return new ArrayList();
         }
         return new ArrayList();
+    }
+
+    public Taxas findTaxaByServicos(Integer servico) {
+        try {
+            Query query = getEntityManager().createQuery("SELECT T FROM Taxas AS T WHERE T.servicos.id = :servico");
+            query.setParameter("servico", servico);
+            List list = query.getResultList();
+            if (!list.isEmpty() && list.size() == 1) {
+                return (Taxas) list.get(0);
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
     }
 
 }

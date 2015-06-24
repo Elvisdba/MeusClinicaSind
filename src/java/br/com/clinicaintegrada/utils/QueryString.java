@@ -5,7 +5,7 @@ public class QueryString {
     /**
      *
      * @param field
-     * @param type - 0 = Total; 1 = Inicial; 2 = Parcial; 3 Filnal;
+     * @param type - 0 = Total; 1 = Inicial; 2 = Parcial; 3 Final;
      * @return
      */
     public static String typeSearch(String field, int type) {

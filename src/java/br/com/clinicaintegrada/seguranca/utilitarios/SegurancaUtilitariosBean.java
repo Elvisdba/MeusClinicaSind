@@ -19,4 +19,12 @@ public class SegurancaUtilitariosBean implements Serializable {
         return (Usuario) Sessions.getObject("sessaoUsuario");
     }
 
+    public boolean getExisteMacFilialComCaixa() {
+        MacFilial macFilial = MacFilial.getAcessoFilial();
+        if (macFilial.getId() != -1 && macFilial.getCaixa() != null) {
+            return true;
+        }
+        return false;
+    }
+
 }

@@ -13,7 +13,6 @@ package br.com.clinicaintegrada.financeiro.dao;
 //import br.com.clinicaintegrada.principal.DB;
 //import br.com.clinicaintegrada.seguranca.Usuario;
 //import br.com.clinicaintegrada.dao.Dao;
-import br.com.clinicaintegrada.financeiro.BoletosVw;
 import br.com.clinicaintegrada.principal.DB;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,82 +20,6 @@ import java.util.List;
 import javax.persistence.Query;
 
 public class FinanceiroDao extends DB {
-
-    // NOVO
-    public List<BoletosVw> listaBoletos(String nr_ctr_boleto) {
-        try {
-            String queryString = "SELECT * FROM boletos_vw WHERE nr_ctr_boleto IN ('" + nr_ctr_boleto + "')";
-            Query query = getEntityManager().createNativeQuery(queryString, BoletosVw.class);
-            List list = query.getResultList();
-            if (!list.isEmpty()) {
-                return list;
-            }
-        } catch (Exception e) {
-            return new ArrayList<>();
-        }
-        return new ArrayList<>();
-    }
-
-    public List<BoletosVw> finBoletosByLote(Integer idLote) {
-        String queryString = ""
-                + "    SELECT *                                                                             "
-                + "      FROM boletos_vw                                                                    "
-                + "     WHERE id_fin_lote  = " + idLote
-                + "  ORDER BY vencimento, nr_ctr_boleto DESC";
-
-        try {
-            Query query = getEntityManager().createNativeQuery(queryString, BoletosVw.class);
-            List list = query.getResultList();
-            if (!list.isEmpty()) {
-                return list;
-            }
-        } catch (Exception e) {
-            return new ArrayList<>();
-        }
-        return new ArrayList<>();
-    }
-
-    public List<BoletosVw> listaBoletosGroup(String responsavel, String lote, String data) {
-
-        String queryWhere = "";
-        if (!responsavel.isEmpty()) {
-            queryWhere = " WHERE UPPER(responsavel) LIKE '%" + responsavel.toUpperCase() + "%'";
-        }
-        if (!lote.isEmpty() && responsavel.isEmpty()) {
-            queryWhere += " WHERE id_lote_boleto = " + Integer.valueOf(lote);
-        } else if (!lote.isEmpty()) {
-            queryWhere += " AND id_lote_boleto = " + Integer.valueOf(lote);
-        }
-        if (!data.isEmpty() && responsavel.isEmpty() && lote.isEmpty()) {
-            queryWhere += " WHERE processamento = '" + data + "'";
-        } else if (!data.isEmpty()) {
-            queryWhere += " AND processamento = '" + data + "'";
-        }
-
-        String queryString = ""
-                + "    SELECT -1 AS id,                                                                   "
-                + "           nr_ctr_boleto,                                                                "
-                + "           id_lote_boleto,                                                               "
-                + "           responsavel,                                                                  "
-                + "           boleto,                                                                       "
-                + "           to_char(vencimento,'dd/MM/yyyy') as vencimento,                               "
-                + "           to_char(processamento,'dd/MM/yyyy') as processamento,                         "
-                + "           sum(valor) as valor                                                           "
-                + "      FROM boletos_vw " + queryWhere + "                                                 "
-                + "  GROUP BY nr_ctr_boleto, id_lote_boleto, responsavel, boleto, vencimento, processamento "
-                + "  ORDER BY responsavel, vencimento DESC";
-
-        try {
-            Query query = getEntityManager().createNativeQuery(queryString, BoletosVw.class);
-            List list = query.getResultList();
-            if (!list.isEmpty()) {
-                return list;
-            }
-        } catch (Exception e) {
-            return new ArrayList<>();
-        }
-        return new ArrayList<>();
-    }
 
     public List listServicosSemCobranca() {
         try {

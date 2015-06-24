@@ -14,13 +14,13 @@ public class SegEventoDao extends DB {
                     + "      FROM Permissao AS P                                "
                     + "     WHERE P.modulo.id    = :modulo                      "
                     + "       AND P.rotina.id    = :rotina                      "
-                    + "       AND P.cliente.id   = :cliente                     "
+                    //+ "       AND P.cliente.id   = :cliente                     "
                     + "       AND P.rotina.ativo = true                         "
                     + "  GROUP BY P.segEvento                                   "
                     + "  ORDER BY P.segEvento.descricao ASC                     ");
             query.setParameter("modulo", modulo);
             query.setParameter("rotina", rotina);
-            query.setParameter("cliente", cliente);
+            // query.setParameter("cliente", cliente);
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;

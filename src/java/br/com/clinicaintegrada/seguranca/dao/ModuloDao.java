@@ -9,8 +9,7 @@ public class ModuloDao extends DB {
 
     public List listaModuloPermissaoAgrupado(int idCliente) {
         try {
-            Query query = getEntityManager().createQuery("SELECT P.modulo FROM Permissao AS P WHERE P.cliente.id = :cliente GROUP BY P.modulo ORDER BY P.modulo.descricao ASC ");
-            query.setParameter("cliente", idCliente);
+            Query query = getEntityManager().createQuery("SELECT P.modulo FROM Permissao AS P GROUP BY P.modulo ORDER BY P.modulo.descricao ASC ");
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;

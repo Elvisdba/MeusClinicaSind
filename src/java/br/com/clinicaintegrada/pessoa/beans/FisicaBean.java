@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -194,6 +195,8 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         Sessions.remove("fisicaPesquisa");
         Sessions.remove("juridicaPesquisa");
         Sessions.remove("enderecoPesquisa");
+        Sessions.remove("remove_ids");
+        Sessions.remove("validacao_tipo");
 
     }
 
@@ -304,8 +307,8 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
                     return;
                 }
                 listDocumento = db.pesquisaFisicaPorDocumento(fisica.getPessoa().getDocumento());
-                for (Object listDocumento1 : listDocumento) {
-                    if (!listDocumento.isEmpty() && ((Fisica) listDocumento1).getId() != fisica.getId()) {
+                for(int i = 0; i < listDocumento.size(); i++) {
+                    if(!Objects.equals(((Fisica) listDocumento.get(i)).getId(), fisica.getId())) {
                         Messages.warn("Validação", "Documento já existente!");
                         return;
                     }
@@ -314,7 +317,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
             List<Fisica> list = db.pesquisaFisicaPorNomeNascimentoRG(fisica.getPessoa().getNome(), fisica.getDtNascimento(), fisica.getRg());
             if (!list.isEmpty()) {
                 for (Fisica f1 : list) {
-                    if (f1.getId() != fisica.getId()) {
+                    if (f1 == fisica) {
                         Messages.warn("Validação", "Esta pessoa já esta cadastrada!");
                         return;
                     }
@@ -511,11 +514,66 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         }
     }
 
+    public Boolean validate(String url, Fisica f) {
+        List message = new ArrayList();
+        String validacao_tipo = Sessions.getString("validacao_tipo", true);
+        Boolean v = false;
+        Integer id_pessoa = f.getPessoa().getId();
+        if (url.equals("contrato")) {
+            v = true;
+            if (validacao_tipo.equals("responsavel")) {
+
+            }
+            PessoaEnderecoDao ped = new PessoaEnderecoDao();
+            List<?> list = ped.pesquisaPessoaEnderecoPorPessoa(id_pessoa);
+            if (list.isEmpty()) {
+                message.add("Endereço não cadastrado!");
+            }
+        }
+        if (v) {
+            if (!message.isEmpty()) {
+                for (Object message1 : message) {
+                    Messages.warn("Validação", message1.toString());
+                }
+                Messages.info(f.getPessoa().getNome(), "Verifique as mensagens");
+                return false;
+            }
+
+        }
+        return true;
+    }
+
     public String edit(Object o) {
+        Sessions.remove("remove_ids");
+        String url = (String) Sessions.getString("urlRetorno");
         Fisica f = (Fisica) o;
+        if (!validate(url, f)) {
+            return null;
+        }
+        listPessoaFisica.remove(f);
+        if (!listPessoaFisica.isEmpty()) {
+            List<Fisica> list = new ArrayList();
+            for (int i = 0; i < listPessoaFisica.size(); i++) {
+                try {
+                    list.add(listPessoaFisica.get(i));
+                } catch (Exception e) {
+
+                }
+            }
+            listPessoaFisica.clear();
+            listPessoaFisica = list;
+        } else {
+            listPessoaFisica.clear();
+        }
         Dao dao = new Dao();
-        fisica = (Fisica) dao.rebind(o);
-        if (fisica.getId() != f.getId()) {
+        f = (Fisica) dao.rebind(o);
+        if (!url.equals("pessoaFisica")) {
+            Sessions.put("fisicaPesquisa", f);
+            Sessions.put("linkClicado", true);
+            return url;
+        }
+        fisica = f;
+        if (!Objects.equals(fisica.getId(), f.getId())) {
             FacesContext context = FacesContext.getCurrentInstance();
             File fExiste = new File(((ServletContext) context.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/Fotos/fotoTemp.jpg"));
             if (fExiste.exists()) {
@@ -524,9 +582,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         }
         PessoaEmpresaDao peDao = new PessoaEmpresaDao();
         PessoaProfissaoDao ppDao = new PessoaProfissaoDao();
-        fisica = f;
         Sessions.put("fisicaPesquisa", fisica);
-        String url = (String) Sessions.getString("urlRetorno");
         descPesquisa = "";
         porPesquisa = "nome";
         comoPesquisa = "";
@@ -727,12 +783,24 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         comoPesquisa = "I";
         listPessoa.clear();
         listPessoaFisica.clear();
+        find();
     }
 
     public void acaoPesquisaParcial() {
         comoPesquisa = "P";
         listPessoa.clear();
         listPessoaFisica.clear();
+        find();
+    }
+
+    public void find() {
+        if (listPessoaFisica.isEmpty()) {
+            FisicaDao dao = new FisicaDao();
+            if(Sessions.exists("remove_ids")) {
+                dao.setNon_ids(Sessions.getString("remove_ids"));                
+            }
+            listPessoaFisica = dao.pesquisaPessoaFisica(descPesquisa, porPesquisa, comoPesquisa);
+        }
     }
 
     public List<ListFisicaPessoaEmpresa> getListPessoa() {
@@ -1295,10 +1363,6 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
     }
 
     public List<Fisica> getListPessoaFisica() {
-        if (listPessoaFisica.isEmpty()) {
-            FisicaDao dao = new FisicaDao();
-            listPessoaFisica = dao.pesquisaPessoaFisica(descPesquisa, porPesquisa, comoPesquisa);
-        }
         return listPessoaFisica;
     }
 
@@ -1673,6 +1737,10 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
 
     public void setListDependente(List<Dependente> listDependente) {
         this.listDependente = listDependente;
+    }
+
+    public void putValidacao(String validacao_tipo) {
+        Sessions.put("validacao_tipo", validacao_tipo);
     }
 
 }

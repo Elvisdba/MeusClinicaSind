@@ -45,6 +45,7 @@ public class ChamadaPaginaBean implements Serializable {
 
     private boolean renderPesquisa = true;
     private List<Rotina> listRotina = new ArrayList<>();
+    private Boolean disabled = false;
 
     @PreDestroy
     public void destroy() {
@@ -698,5 +699,39 @@ public class ChamadaPaginaBean implements Serializable {
      */
     public static void link() {
         Sessions.put("linkClicado", true);
+    }
+
+    /**
+     * Botão voltar
+     *
+     * @return
+     */
+    public String back() {
+        Sessions.put("linkClicado", true);
+        return urlAtual;
+    }
+
+    /**
+     * Botão voltar
+     *
+     * @param destroyBean (Apaga a sessão do bean)
+     * @return
+     */
+    public String back(String destroyBean) {
+        Sessions.remove(destroyBean);
+        Sessions.put("linkClicado", true);
+        return urlAtual;
+    }
+
+    public void backButton() {
+        this.disabled = true;
+    }
+
+    public Boolean getDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
     }
 }

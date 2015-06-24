@@ -4,7 +4,6 @@ import br.com.clinicaintegrada.financeiro.Caixa;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.Filial;
 import br.com.clinicaintegrada.pessoa.dao.FilialDao;
-import br.com.clinicaintegrada.seguranca.Cliente;
 import br.com.clinicaintegrada.seguranca.Departamento;
 import br.com.clinicaintegrada.seguranca.MacFilial;
 import br.com.clinicaintegrada.seguranca.Registro;
@@ -25,9 +24,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import javax.servlet.http.HttpSession;
 
 @ManagedBean
 @SessionScoped
@@ -240,38 +237,29 @@ public class MacFilialBean implements Serializable {
     }
 
     public String putFilial(MacFilial mf) throws IOException {
-        putFilial(mf, false);
-        ChamadaPaginaBean chamadaPaginaBean = (ChamadaPaginaBean) Sessions.getObject("chamadaPaginaBean");
-        Sessions.put("linkClicado", true);        
-        if(chamadaPaginaBean == null) {
-            return "menuPrincipal";
-        }
-        String link = chamadaPaginaBean.getPenultimoLink();
-        return link;
+        return putFilial(mf, false);
     }
 
-    public void putFilial(MacFilial mf, boolean sair) throws IOException {
+    public String putFilial(MacFilial mf, boolean sair) throws IOException {
         Sessions.remove("acessoFilial");
-        Sessions.remove("chamadaPaginaBean");
         ((ControleUsuarioBean) Sessions.getObject("controleUsuarioBean")).setMacFilial(mf);
-        ((ControleUsuarioBean) Sessions.getObject("controleUsuarioBean")).setFilial("Filial: ( " + mf.getFilial().getFilial().getPessoa().getNome() + " / " + mf.getDepartamento().getDescricao() + " )");
+        String s = "Filial: ( " + mf.getFilial().getFilial().getPessoa().getNome() + " / " + mf.getDepartamento().getDescricao() + " )";
+        if (mf.getMesa() > 0) {
+            s += " - Guiche: " + mf.getMesa();
+        }
+        if (mf.getDescricao() != null && !mf.getDescricao().isEmpty()) {
+            s += " - " + mf.getDescricao();
+        }
+        ((ControleUsuarioBean) Sessions.getObject("controleUsuarioBean")).setFilial(s);
         Sessions.put("acessoFilial", mf);
         Sessions.put("linkClicado", true);
-        if (sair) {
-            String retorno = "";
-            if (Sessions.exists("sessaoCliente")) {
-                retorno = ((Cliente) Sessions.getObject("sessaoCliente")).getIdentifica() + "/";
-                if (Sessions.exists("acessoFilial")) {
-                    MacFilial mfs = (MacFilial) Sessions.getObject("acessoFilial");
-                    retorno += "?filial=" + mfs.getMac();
-                }
-
-            }
-            FacesContext conext = FacesContext.getCurrentInstance();
-            HttpSession session = (HttpSession) conext.getExternalContext().getSession(false);
-            session.invalidate();
-            FacesContext.getCurrentInstance().getExternalContext().redirect(retorno);
+        if (Sessions.exists("back")) {
+            String back = ((ChamadaPaginaBean) Sessions.getObject("chamadaPaginaBean")).getUrlAtual();
+            Sessions.remove("back");
+            return back;
         }
+        Sessions.remove("chamadaPaginaBean");
+        return "menuPrincipal";
 
     }
 }
