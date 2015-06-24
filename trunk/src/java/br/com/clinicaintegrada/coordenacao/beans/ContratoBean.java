@@ -8,19 +8,8 @@ import br.com.clinicaintegrada.administrativo.TipoInternacao;
 import br.com.clinicaintegrada.administrativo.dao.ModeloContratoDao;
 import br.com.clinicaintegrada.administrativo.dao.ModeloDocumentosDao;
 import br.com.clinicaintegrada.administrativo.dao.TaxasDao;
-import br.com.clinicaintegrada.cobranca.BancoDoBrasil;
-import br.com.clinicaintegrada.cobranca.Bradesco;
-import br.com.clinicaintegrada.cobranca.CaixaFederalSicob;
-import br.com.clinicaintegrada.cobranca.CaixaFederalSigCB;
-import br.com.clinicaintegrada.cobranca.Cobranca;
-import br.com.clinicaintegrada.cobranca.Itau;
-import br.com.clinicaintegrada.cobranca.Real;
-import br.com.clinicaintegrada.cobranca.Santander;
-import br.com.clinicaintegrada.cobranca.Sicoob;
 import br.com.clinicaintegrada.coordenacao.Contrato;
 import br.com.clinicaintegrada.coordenacao.dao.ContratoDao;
-import br.com.clinicaintegrada.financeiro.Boleto;
-import br.com.clinicaintegrada.financeiro.BoletosVw;
 import br.com.clinicaintegrada.financeiro.CondicaoPagamento;
 import br.com.clinicaintegrada.financeiro.FStatus;
 import br.com.clinicaintegrada.financeiro.FTipoDocumento;
@@ -28,11 +17,9 @@ import br.com.clinicaintegrada.financeiro.Lote;
 import br.com.clinicaintegrada.financeiro.Movimento;
 import br.com.clinicaintegrada.financeiro.Servicos;
 import br.com.clinicaintegrada.financeiro.TipoServico;
-import br.com.clinicaintegrada.financeiro.dao.BoletoDao;
-import br.com.clinicaintegrada.financeiro.dao.FinanceiroDao;
+import br.com.clinicaintegrada.financeiro.beans.ImpressaoBoleto;
 import br.com.clinicaintegrada.financeiro.dao.LoteDao;
 import br.com.clinicaintegrada.financeiro.dao.MovimentoDao;
-import br.com.clinicaintegrada.impressao.ParametroBoleto;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.Filial;
 import br.com.clinicaintegrada.pessoa.Fisica;
@@ -44,14 +31,15 @@ import br.com.clinicaintegrada.pessoa.dao.PessoaEnderecoDao;
 import br.com.clinicaintegrada.seguranca.MacFilial;
 import br.com.clinicaintegrada.seguranca.controleUsuario.ControleUsuarioBean;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
+import br.com.clinicaintegrada.utils.Compact;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.DataHoje;
 import br.com.clinicaintegrada.utils.Dirs;
 import br.com.clinicaintegrada.utils.Download;
 import br.com.clinicaintegrada.utils.HtmlToPDF;
+import br.com.clinicaintegrada.utils.Mask;
 import br.com.clinicaintegrada.utils.Messages;
 import br.com.clinicaintegrada.utils.Moeda;
-import br.com.clinicaintegrada.utils.SalvaArquivos;
 import br.com.clinicaintegrada.utils.Sessions;
 import br.com.clinicaintegrada.utils.ValidDocuments;
 import br.com.clinicaintegrada.utils.ValorExtenso;
@@ -61,7 +49,6 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.lowagie.text.Element;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -69,9 +56,8 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
@@ -79,15 +65,6 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.export.JRPdfExporter;
-import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
-import net.sf.jasperreports.engine.util.JRLoader;
 
 @ManagedBean
 @SessionScoped
@@ -95,6 +72,19 @@ public class ContratoBean implements Serializable {
 
     private Contrato contrato;
     private Filial filialSessao;
+    private String saldoDevedor;
+    private String valorServico;
+    private String vencimentoString;
+    private String valorTotalTaxa;
+    private String descricaoPesquisa;
+    private String porPesquisa;
+    private String comoPesquisa;
+    private String idFTipoDocumento;
+    private String adicionarDias;
+    private List<SelectItem> listTaxas;
+    private List<ModeloDocumentos> listModeloDocumentos;
+    private String calculaValorMovimentoAlterado;
+    private List<SelectItem> listFTipoDocumento;
     private List<Contrato> listContratos;
     private List<SelectItem> listFilial;
     private List<SelectItem> listFilialAtual;
@@ -103,26 +93,17 @@ public class ContratoBean implements Serializable {
     private List<Movimento> listMovimento;
     private List<Movimento> listMovimentoContrato;
     private List<Movimento> listMovimentoTaxa;
+    private Movimento updateMovimento;
     private int idFilial;
     private int idFilialAtual;
     private int idTipoInternacao;
     private int idTipoDesligamento;
-    private boolean pesquisaResponsavel;
-    private String saldoDevedor;
-    private int diaVencimento;
-    private List<SelectItem> listTaxas;
     private int idTaxa;
-    private String valorServico;
-    private String vencimentoString;
-    private String valorTotalTaxa;
-    private List<ModeloDocumentos> listModeloDocumentos;
-    private String adicionarDias;
-    private boolean disabledSave;
-    private String calculaValorMovimentoAlterado;
-    private List<SelectItem> listFTipoDocumento;
-    private String idFTipoDocumento;
-    private Movimento updateMovimento;
     private int indexList;
+    private int diaVencimento;
+    private boolean pesquisaResponsavel;
+    private boolean disabledSave;
+    private Boolean imprimeVerso;
 
     @PostConstruct
     public void init() {
@@ -157,6 +138,10 @@ public class ContratoBean implements Serializable {
         idFTipoDocumento = null;
         updateMovimento = new Movimento();
         indexList = -1;
+        descricaoPesquisa = "";
+        porPesquisa = "nome";
+        comoPesquisa = "";
+        imprimeVerso = false;
     }
 
     @PreDestroy
@@ -173,13 +158,39 @@ public class ContratoBean implements Serializable {
         Sessions.remove("contratoBean");
     }
 
+    public void action(int tcase) {
+        switch (tcase) {
+            // RESCISÃO CONTRATUAL
+            case 1:
+                contrato.setDataRescisao(DataHoje.dataHoje());
+                break;
+            // DESFAZER RESCISÃO CONTRATUAL
+            case 2:
+                contrato.setDataRescisao(null);
+                contrato.setTipoDesligamento(null);
+                listTipoDesligamento.clear();
+                getListTipoDesligamento();
+                contrato.setObservacaoRescisao("");
+                break;
+
+        }
+    }
+
     public void clear(int tcase) {
         switch (tcase) {
             case 1:
                 contrato.setResponsavel(new Pessoa());
+                contrato.setPaciente(new Pessoa());
                 break;
             case 2:
                 contrato.setPaciente(new Pessoa());
+                break;
+            // DESFAZER RESCISÃO
+            case 3:
+                contrato.setPaciente(new Pessoa());
+                break;
+            case 4:
+                listModeloDocumentos.clear();
                 break;
         }
     }
@@ -187,6 +198,18 @@ public class ContratoBean implements Serializable {
     public void save() {
         if (listTipoInternacao.isEmpty()) {
             Messages.warn("Validação", "Cadastrar tipos de internação!");
+            return;
+        }
+        if (contrato.getResponsavel().getId() == -1) {
+            Messages.warn("Validação", "Pesquisar responsável!");
+            return;
+        }
+        if (contrato.getPaciente().getId() == -1) {
+            Messages.warn("Validação", "Pesquisar paciente!");
+            return;
+        }
+        if (contrato.getValorTotal() == 0) {
+            Messages.warn("Validação", "Informar o valor do contrato!");
             return;
         }
         if (disabledSave) {
@@ -262,16 +285,23 @@ public class ContratoBean implements Serializable {
                 );
                 Messages.info("Sucesso", "Registro inserido!");
                 functionsDao.gerarBoletos();
+                listTaxas.clear();
+                getListMovimentoTaxa();
+                getListTaxas();
+                listMovimentoContrato.clear();
+                getListMovimentoContrato();
             } else {
                 dao.rollback();
                 Messages.warn("Erro", "Erro ao inserir registro!");
             }
         } else {
-            if (listTipoDesligamento.isEmpty()) {
-                Messages.warn("Validação", "Cadastrar tipos de desligamento!");
-                return;
+            if (contrato.getDataRescisao() != null) {
+                if (getListTipoDesligamento().isEmpty()) {
+                    Messages.warn("Validação", "Cadastrar tipos de desligamento!");
+                    return;
+                }
+                contrato.setTipoDesligamento((TipoDesligamento) dao.find(new TipoDesligamento(), Integer.parseInt(listTipoDesligamento.get(idTipoDesligamento).getDescription())));
             }
-            contrato.setTipoDesligamento((TipoDesligamento) dao.find(new TipoDesligamento(), Integer.parseInt(listTipoDesligamento.get(idTipoDesligamento).getDescription())));
             Contrato c = (Contrato) dao.find(new Contrato(), contrato.getId());
             String beforeUpdate
                     = "ID: " + c.getId()
@@ -290,6 +320,11 @@ public class ContratoBean implements Serializable {
                         + " - Paciente: [" + contrato.getPaciente().getId() + "] - " + contrato.getPaciente().getNome()
                 );
                 functionsDao.gerarBoletos();
+                listTaxas.clear();
+                getListMovimentoTaxa();
+                getListTaxas();
+                listMovimentoContrato.clear();
+                getListMovimentoContrato();
             } else {
                 dao.rollback();
                 Messages.warn("Erro", "Erro ao atualizar registro!");
@@ -398,17 +433,30 @@ public class ContratoBean implements Serializable {
             if (contrato.getValorEntrada() == 0 && contrato.getQuantidadeParcelas() > 1) {
                 adicionarDias = "0";
             }
+            List<Movimento> list = getListMovimentoTaxa();
+            float t = 0;
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).getBaixa() == null) {
+                    t += list.get(i).getValor();
+                }
+            }
+            list.clear();
             if (contrato.getId() == -1) {
                 saldoDevedor = Float.toString((contrato.getValorTotal()));
             } else {
-                List<Movimento> list = getListMovimentoContrato();
+                list = getListMovimentoContrato();
                 float d = 0;
                 for (int i = 0; i < list.size(); i++) {
                     if (list.get(i).getBaixa() != null) {
                         d += list.get(i).getValor();
                     }
                 }
-                saldoDevedor = Float.toString((contrato.getValorTotal()) - d);
+                for (int i = 0; i < list.size(); i++) {
+                    if (list.get(i).getBaixa() != null) {
+                        d += list.get(i).getValor();
+                    }
+                }
+                saldoDevedor = Float.toString((contrato.getValorTotal()) + t - d);
             }
             float result = (contrato.getValorTotal() - contrato.getValorEntrada()) / contrato.getQuantidadeParcelas();
             geraParcelas();
@@ -451,6 +499,10 @@ public class ContratoBean implements Serializable {
                 pesquisaResponsavel = false;
             } else {
                 contrato.setPaciente(((Fisica) Sessions.getObject("fisicaPesquisa", true)).getPessoa());
+                if (contrato.getPaciente().getId().equals(contrato.getResponsavel().getId())) {
+                    contrato.setPaciente(new Pessoa());
+                    Messages.warn("Validação", "Responsável e paciente devem ser pessoas diferentes!");
+                }
             }
         }
         return contrato;
@@ -461,9 +513,6 @@ public class ContratoBean implements Serializable {
     }
 
     public List<Contrato> getListContratos() {
-        listContratos.clear();
-        Dao dao = new Dao();
-        listContratos = dao.list(new Contrato());
         return listContratos;
     }
 
@@ -526,11 +575,16 @@ public class ContratoBean implements Serializable {
     }
 
     public List<SelectItem> getListTipoDesligamento() {
-        if (listTipoDesligamento.isEmpty()) {
-            Dao dao = new Dao();
-            List<TipoDesligamento> list = (List<TipoDesligamento>) dao.list(new TipoDesligamento(), true);
-            for (int i = 0; i < list.size(); i++) {
-                listTipoDesligamento.add(new SelectItem(i, list.get(i).getDescricao(), "" + list.get(i).getId()));
+        if (contrato.getDataRescisao() != null) {
+            if (listTipoDesligamento.isEmpty()) {
+                Dao dao = new Dao();
+                List<TipoDesligamento> list = (List<TipoDesligamento>) dao.list(new TipoDesligamento(), true);
+                for (int i = 0; i < list.size(); i++) {
+                    if (list.get(i).getDescricao().equals("RESCISÃO")) {
+                        idTipoDesligamento = i;
+                    }
+                    listTipoDesligamento.add(new SelectItem(i, list.get(i).getDescricao(), "" + list.get(i).getId()));
+                }
             }
         }
         return listTipoDesligamento;
@@ -757,8 +811,11 @@ public class ContratoBean implements Serializable {
         m.setAtivo(true);
         m.setEvento(null);
         m.setValorString(valorServico);
+        if (m.getValor() <= 0) {
+            Messages.warn("Validação", "Valor da taxa deve ser superior a 0!");
+            return;
+        }
         m.setBaixa(null);
-        listTaxas.clear();
         if (contrato.getId() != -1) {
             //m.setTipoDocumento((FTipoDocumento) dao.find(new FTipoDocumento(), 1));
             m.setLote(listMovimento.get(0).getLote());
@@ -769,12 +826,22 @@ public class ContratoBean implements Serializable {
             } else {
                 Messages.warn("Validação", "Erro ao adicionar taxa!");
             }
+            listTaxas.clear();
         } else {
+            listTaxas.remove(idTaxa);
+            List<?> list = listTaxas;
+            List<SelectItem> listSelectItem = new ArrayList();
+            for (int i = 0; i < list.size(); i++) {
+                listSelectItem.add(new SelectItem(i, listTaxas.get(i).getLabel(), listTaxas.get(i).getDescription()));
+            }
+            listTaxas = listSelectItem;
+            idTaxa = 0;
+            selectedServico();
             Messages.info("Sucesso", "Taxa adicionada!");
             listMovimentoTaxa.add(m);
         }
         getListMovimentoTaxa();
-        getListTaxas();
+        // getListTaxas();
         valorServico = "0,00";
         vencimentoString = DataHoje.data();
         valorTotalTaxa = "0,00";
@@ -783,37 +850,47 @@ public class ContratoBean implements Serializable {
             vt += listMovimentoTaxa.get(i).getValor();
         }
         valorTotalTaxa = Moeda.converteR$Float(vt);
+        float sd = Moeda.converteUS$(saldoDevedor);
+        saldoDevedor = Moeda.converteR$Float(sd + m.getValor());
     }
 
     public void removeTaxa(int index) {
         Servicos s = new Servicos();
+        float vs = 0;
         for (int i = 0; i < listMovimentoTaxa.size(); i++) {
             if (i == index) {
                 s = listMovimentoTaxa.get(i).getServicos();
                 break;
             }
         }
-        listTaxas.clear();
         Dao dao = new Dao();
         if (contrato.getId() != -1) {
+            vs = listMovimentoTaxa.get(index).getValor();
             if (dao.delete(listMovimentoTaxa.get(index), true)) {
                 listMovimentoTaxa.clear();
                 listMovimento.clear();
                 getListMovimentoTaxa();
                 Messages.info("Sucesso", "Taxa removida!");
+                listTaxas.clear();
             } else {
                 Messages.warn("Validação", "Erro ao remover taxa!");
             }
         } else {
             Messages.info("Sucesso", "Taxa removida!");
+            vs = listMovimentoTaxa.get(index).getValor();
+            listTaxas.add(new SelectItem(listTaxas.size(), listMovimentoTaxa.get(index).getServicos().getDescricao(), "" + new TaxasDao().findTaxaByServicos(listMovimentoTaxa.get(index).getServicos().getId()).getId()));
             listMovimentoTaxa.remove(index);
+            idTaxa = 0;
+            selectedServico();
         }
         getListTaxas();
         float vt = 0;
         for (int i = 0; i < listMovimentoTaxa.size(); i++) {
             vt += listMovimentoTaxa.get(i).getValor();
         }
+        float sd = Moeda.converteUS$(saldoDevedor);
         valorTotalTaxa = Moeda.converteR$Float(vt);
+        saldoDevedor = Moeda.converteR$Float(sd - vs);
         idTaxa = 0;
 
     }
@@ -826,33 +903,49 @@ public class ContratoBean implements Serializable {
     public List<SelectItem> getListTaxas() {
         if (listTaxas.isEmpty()) {
             TaxasDao taxasDao = new TaxasDao();
-            List<Taxas> list = taxasDao.pesquisaTodasTaxasPorCliente(SessaoCliente.get().getId());
-            Dao dao = new Dao();
-            if (list.size() != listMovimentoTaxa.size()) {
-                for (int i = 0; i < list.size(); i++) {
-                    if (i == 0) {
-                        valorServico = list.get(i).getValorString();
-                        idTaxa = i;
-                    }
-                    if (listMovimentoTaxa.isEmpty()) {
-                        if (i == 0) {
-                            valorServico = list.get(i).getValorString();
-                            idTaxa = i;
-                        }
-                        listTaxas.add(new SelectItem(i, list.get(i).getServicos().getDescricao(), "" + list.get(i).getId()));
-                    } else {
-                        for (int j = 0; j < listMovimentoTaxa.size(); j++) {
-                            if (listMovimentoTaxa.get(j).getServicos().getId() != list.get(i).getServicos().getId()) {
-                                if (j == 0) {
-                                    valorServico = list.get(i).getValorString();
-                                    idTaxa = j;
-                                }
-                                listTaxas.add(new SelectItem(j, list.get(i).getServicos().getDescricao(), "" + list.get(i).getId()));
-                            }
-                        }
-                    }
+            List<Taxas> list;
+            Boolean b = false;
+            if (contrato.getId() == -1) {
+                list = taxasDao.pesquisaTodasTaxasPorCliente(SessaoCliente.get().getId());
+                if (list.size() == listMovimentoTaxa.size()) {
+                    list.clear();
                 }
+            } else {
+                list = taxasDao.pesquisaTodasTaxasPorClienteContrato(SessaoCliente.get().getId(), contrato.getId());
             }
+            for (int i = 0; i < list.size(); i++) {
+                if (i == 0) {
+                    valorServico = list.get(i).getValorString();
+                    idTaxa = i;
+                }
+                listTaxas.add(new SelectItem(i, list.get(i).getServicos().getDescricao(), "" + list.get(i).getId()));
+            }
+//            if (list.size() != listMovimentoTaxa.size()) {
+//                for (int i = 0; i < list.size(); i++) {
+//                    if (i == 0) {
+//                        valorServico = list.get(i).getValorString();
+//                        idTaxa = i;
+//                    }
+//                    if (listMovimentoTaxa.isEmpty() || !b) {
+//                        if (i == 0) {
+//                            valorServico = list.get(i).getValorString();
+//                            idTaxa = i;
+//                        }
+//                        listTaxas.add(new SelectItem(i, list.get(i).getServicos().getDescricao(), "" + list.get(i).getId()));
+//                        b = true;
+//                    } else {
+//                        for (int j = 0; j < listMovimentoTaxa.size(); j++) {
+//                            if (listMovimentoTaxa.get(j).getServicos().getId() != list.get(i).getServicos().getId()) {
+//                                if (j == 0) {
+//                                    valorServico = list.get(i).getValorString();
+//                                    idTaxa = j;
+//                                }
+//                                listTaxas.add(new SelectItem(j, list.get(i).getServicos().getDescricao(), "" + list.get(i).getId()));
+//                            }
+//                        }
+//                    }
+//                }
+//            }
         }
         return listTaxas;
     }
@@ -1157,14 +1250,14 @@ public class ContratoBean implements Serializable {
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("<br>", "<br />"));
             modeloContrato.setDescricao(modeloContrato.getDescricao().replaceAll("(<img[^>]*[^/]>)(?!\\s*</img>)", "$1</img>"));
             try {
-                File dirFile = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato/"));
+                File dirFile = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/contrato/"));
                 if (!dirFile.exists()) {
-                    if (!Dirs.create("Arquivos/contrato")) {
+                    if (!Dirs.create("arquivos/contrato")) {
                         return;
                     }
                 }
                 String fileName = "contrato" + DataHoje.hora().hashCode() + ".pdf";
-                String filePDF = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato/_" + fileName);
+                String filePDF = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/contrato/_" + fileName);
                 boolean success = new File(filePDF).createNewFile();
                 //boolean success = file.createNewFile();
                 boolean delete = false;
@@ -1173,11 +1266,11 @@ public class ContratoBean implements Serializable {
                     HtmlToPDF.convert(modeloContrato.getDescricao(), os);
                     os.flush();
                     os.close();
-                    String pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato");
+                    String pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/contrato");
                     try {
                         PdfReader reader = new PdfReader(filePDF);
                         int n = reader.getNumberOfPages();
-                        FileOutputStream fileOutputStream = new FileOutputStream(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato/" + fileName));
+                        FileOutputStream fileOutputStream = new FileOutputStream(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/contrato/" + fileName));
                         PdfStamper stamp = new PdfStamper(reader, fileOutputStream);
                         int i = 0;
                         PdfContentByte over;
@@ -1218,7 +1311,44 @@ public class ContratoBean implements Serializable {
         }
     }
 
+    public void imprimirOutros() {
+        UUID uuidX = UUID.randomUUID();
+        String uuid = uuidX.toString().replace("-", "_");
+        String pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/contrato");
+        List list = new ArrayList();
+        for (int i = 0; i < listModeloDocumentos.size(); i++) {
+            if (listModeloDocumentos.get(i).getSelected()) {
+                String name = imprimirOutros(listModeloDocumentos.get(i).getModeloContrato().getId(), true);
+                list.add(name);
+            }
+        }
+        //Compact.OUT_FILE = fileName + PART_NAME + "_" + idUsuario + "_" + uuid + "." + COMPRESS_EXTENSION;
+        String filename = "arquivos_contrato" + "_" + contrato.getId() + "." + "zip";
+        Compact.OUT_FILE = filename;
+        Compact.setListFiles(list);
+        String realPath = "/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/contrato/";
+        Compact.PATH_OUT_FILE = realPath;
+        try {
+            Compact.toZip();
+        } catch (IOException e) {
+        }
+        Download download = new Download(filename, pathPasta, "application/zip, application/octet-stream", FacesContext.getCurrentInstance());
+        download.open();
+        download.open();
+        download.close();
+        if (!list.isEmpty()) {
+            for (int i = 0; i < list.size(); i++) {
+                File f = new File(list.get(i).toString());
+                f.delete();
+            }
+        }
+    }
+
     public void imprimirOutros(int idModeloContratoDocumentos) {
+        imprimirOutros(idModeloContratoDocumentos, false);
+    }
+
+    public String imprimirOutros(int idModeloContratoDocumentos, Boolean compact) {
 
         if (contrato.getId() != -1) {
             Dao dao = new Dao();
@@ -1380,21 +1510,26 @@ public class ContratoBean implements Serializable {
             modeloContrato.setDescricao(modeloContrato.getDescricao().replace("<br>", "<br />"));
             modeloContrato.setDescricao(modeloContrato.getDescricao().replaceAll("(<img[^>]*[^/]>)(?!\\s*</img>)", "$1</img>"));
             try {
-                File dirFile = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato/"));
+                File dirFile = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/contrato/"));
                 if (!dirFile.exists()) {
-                    if (!Dirs.create("Arquivos/contrato")) {
-                        return;
+                    if (!Dirs.create("arquivos/contrato")) {
+                        return null;
                     }
                 }
-                String fileName = "modelo_extra" + DataHoje.hora().hashCode() + ".pdf";
-                String filePDF = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato/" + fileName);
+                String modelo = modeloContrato.getTitulo().replace(" ", "_");
+                modelo = modelo.toLowerCase();
+                String fileName = "modelo_" + modelo + "_" + DataHoje.hora().hashCode() + ".pdf";
+                String filePDF = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/contrato/" + fileName);
                 File file = new File(filePDF);
                 boolean success = file.createNewFile();
                 if (success) {
                     OutputStream os = new FileOutputStream(filePDF);
                     HtmlToPDF.convert(modeloContrato.getDescricao(), os);
                     os.close();
-                    String pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/contrato");
+                    if (compact) {
+                        return filePDF;
+                    }
+                    String pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/contrato");
                     Download download = new Download(fileName, pathPasta, "application/pdf", FacesContext.getCurrentInstance());
                     download.open();
                     download.close();
@@ -1405,12 +1540,14 @@ public class ContratoBean implements Serializable {
 
             }
         }
+        return null;
     }
 
     public List<ModeloDocumentos> getListModeloDocumentos() {
-        listModeloDocumentos.clear();
-        ModeloDocumentosDao mdd = new ModeloDocumentosDao();
-        listModeloDocumentos = mdd.pesquisaTodosPorRotina(73);
+        if (listModeloDocumentos.isEmpty()) {
+            ModeloDocumentosDao mdd = new ModeloDocumentosDao();
+            listModeloDocumentos = mdd.pesquisaTodosPorRotina(73);
+        }
         return listModeloDocumentos;
     }
 
@@ -1438,13 +1575,13 @@ public class ContratoBean implements Serializable {
             vn = contrato.getValorTotal() - v;
             if (v != contrato.getValorTotal()) {
                 disabledSave = true;
-                String message = "";
                 if (vn > 0) {
-                    message = " Acrescentar ";
+                    return "Existe uma difereça na soma das parcelas do contrato: Acrescentar R$ " + Moeda.converteR$Float(vn) + ".  Corrigir para salvar.";
+                } else if (vn < 0) {
+                    return "Existe uma difereça na soma das parcelas do contrato: Remover R$ " + Moeda.converteR$Float(vn) + ".  Corrigir para salvar.";
                 } else {
-                    message = " Remover ";
+                    return "";
                 }
-                return "Existe uma difereça na soma das parcelas do contrato: " + message + " R$ " + Moeda.converteR$Float(vn) + ".  Corrigir para salvar.";
             }
         }
         return "";
@@ -1526,126 +1663,99 @@ public class ContratoBean implements Serializable {
     }
 
     public void printBoletos() {
-        if (!listMovimento.isEmpty()) {
-            FinanceiroDao financeiroDao = new FinanceiroDao();
-            List<BoletosVw> listBoletosVw = financeiroDao.finBoletosByLote(listMovimento.get(0).getLote().getId());
-            if (!listBoletosVw.isEmpty()) {
-                List list = new ArrayList();
-                Dao dao = new Dao();
-                Filial filial = (Filial) dao.find(new Filial(), 1);
-                Map<String, Object> map = new LinkedHashMap<>();
-                float valor = 0;
-                float valor_total = 0;
+        ImpressaoBoleto.IMPRIME_VERSO = imprimeVerso;
+        ImpressaoBoleto.IMPRIME_VERSO_FIM = true;
+        ImpressaoBoleto.printByLote(listMovimento.get(0).getLote().getId());
+        ImpressaoBoleto.IMPRIME_VERSO = false;
+    }
 
-                try {
-                    File file_jasper = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Relatorios/BOLETO.jasper"));
-                    JasperReport jasperReport = (JasperReport) JRLoader.loadObject(file_jasper);
+    public void printBoletos(String nrCtrBoleto) {
+        ImpressaoBoleto.IMPRIME_VERSO = imprimeVerso;
+        ImpressaoBoleto.IMPRIME_VERSO_FIM = true;
+        ImpressaoBoleto.printByNrCtrBoleto(nrCtrBoleto);
+        ImpressaoBoleto.IMPRIME_VERSO = false;
+    }
 
-                    File file_jasper_verso = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Relatorios/BOLETO_VERSO.jasper"));
-                    JasperReport jasperReportVerso = (JasperReport) JRLoader.loadObject(file_jasper_verso);
-                    List<JasperPrint> jasperPrintList = new ArrayList<>();
-                    File file_promo = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/BannerPromoBoleto.png"));
+    public void acaoPesquisaInicial() {
+        comoPesquisa = "I";
+        listContratos.clear();
+        loadContratos();
+    }
 
-                    if (!file_promo.exists()) {
-                        file_promo = null;
-                    }
+    public void acaoPesquisaParcial() {
+        comoPesquisa = "P";
+        listContratos.clear();
+        loadContratos();
+    }
 
-                    BoletoDao boletoDao = new BoletoDao();
-                    Cobranca cobranca = null;
+    public String getDescricaoPesquisa() {
+        return descricaoPesquisa;
+    }
 
-                    for (int w = 0; w < listBoletosVw.size(); w++) {
-                        Boleto boletox = boletoDao.findBoletosByNrCtrBoleto("'" + listBoletosVw.get(w).getNrCtrBoleto() + "'"); // NR_CTR_BOLETO
-                        Movimento mov = (Movimento) dao.find(new Movimento(), (Integer) listBoletosVw.get(w).getMovimento().getId());
-                        if ((boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.caixaFederal))
-                                && (boletox.getContaCobranca().getLayout().getId() == Cobranca.SICOB)) {
-                            cobranca = new CaixaFederalSicob(mov, boletox);
-                        } else if ((boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.caixaFederal))
-                                && (boletox.getContaCobranca().getLayout().getId() == Cobranca.SIGCB)) {
-                            cobranca = new CaixaFederalSigCB(mov, boletox);
-                        } else if (boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.itau)) {
-                            cobranca = new Itau(mov, boletox);
-                        } else if (boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.bancoDoBrasil)) {
-                            cobranca = new BancoDoBrasil(mov, boletox);
-                        } else if (boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.real)) {
-                            cobranca = new Real(mov, boletox);
-                        } else if (boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.bradesco)) {
-                            cobranca = new Bradesco(mov, boletox);
-                        } else if (boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.santander)) {
-                            cobranca = new Santander(mov, boletox);
-                        } else if (boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.sicoob)) {
-                            cobranca = new Sicoob(mov, boletox);
-                        }
-
-                        valor = Moeda.converteUS$(listBoletosVw.get(w).getValorString());
-                        valor_total = Moeda.somaValores(valor_total, Moeda.converteUS$(listBoletosVw.get(w).getValor().toString()));
-                        list.add(new ParametroBoleto(
-                                ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/LogoCliente.png"), // LOGO CLÍNICA
-                                filial.getFilial().getPessoa().getNome(), // CLIENTE NOME
-                                "" + listBoletosVw.get(w).getCodigo(), // CODIGO
-                                listBoletosVw.get(w).getResponsavel(), // RESPONSAVEL
-                                listBoletosVw.get(w).getVencimentoString(), // VENCIMENTO
-                                listBoletosVw.get(w).getServico(), // SERVICO
-                                Moeda.converteR$Float(valor), // VALOR
-                                Moeda.converteR$Float(valor_total), // VALOR TOTAL
-                                Moeda.converteR$("" + listBoletosVw.get(w).getMensalidadesCorrigidas()), // VALOR ATRASADAS
-                                Moeda.converteR$Float(valor_total), // VALOR ATÉ  VALOR VENCIMENTO
-                                file_promo == null ? null : file_promo.getAbsolutePath(), // LOGO PROMOÇÃO
-                                ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(boletox.getContaCobranca().getContaBanco().getBanco().getLogo().trim()), // LOGO BANCO
-                                listBoletosVw.get(w).getMensagemBoleto(), // MENSAGEM
-                                listBoletosVw.get(w).getAgencia(), // AGENCIA
-                                cobranca.representacao(), // REPRESENTACAO
-                                listBoletosVw.get(w).getCedente(), // CODIGO CEDENTE
-                                listBoletosVw.get(w).getNrCtrBoleto(), // NOSSO NUMENTO
-                                listBoletosVw.get(w).getProcessamentoString(), // PROCESSAMENTO
-                                cobranca.codigoBarras(),
-                                ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Imagens/serrilha.GIF"), // SERRILHA
-                                listBoletosVw.get(w).getLogradouroResponsavel() + " " + listBoletosVw.get(w).getEnderecoResponsavel(), // ENDERECO RESPONSAVEL
-                                listBoletosVw.get(w).getBairroFilial() + " " + listBoletosVw.get(w).getEnderecoFilial(), // ENDERECO FILIAL
-                                listBoletosVw.get(w).getCidadeResponsavel() + " " + listBoletosVw.get(w).getUfResponsavel() + " " + listBoletosVw.get(w).getCepResponsavel(), // COMPLEMENTO RESPONSAVEL
-                                listBoletosVw.get(w).getCidadeFilial() + " " + listBoletosVw.get(w).getUfFilial() + " " + listBoletosVw.get(w).getCepFilial(), // COMPLEMENTO FILIAL
-                                listBoletosVw.get(w).getCnpjFilial(), // CNPJ FILIAL
-                                listBoletosVw.get(w).getTelefoneFilial(), // TELEFONE FILIAL
-                                listBoletosVw.get(w).getEmail(), // EMAIL FILIAL
-                                listBoletosVw.get(w).getSilteFilial(), // SITE FILIAL
-                                ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/LogoCliente.png"), // LOGO BOLETO - VERSO
-                                listBoletosVw.get(w).getLocalPagamento(), // LOCAL DE PAGAMENTO
-                                listBoletosVw.get(w).getInformativo()
-                        ));
-                        JRBeanCollectionDataSource dtSource = new JRBeanCollectionDataSource(list);
-                        jasperPrintList.add(JasperFillManager.fillReport(jasperReport, null, dtSource));
-                        if (true) {
-                            dtSource = new JRBeanCollectionDataSource(list);
-                            jasperPrintList.add(JasperFillManager.fillReport(jasperReportVerso, null, dtSource));
-                        }
-                        valor = 0;
-                        valor_total = 0;
-                        list.clear();
-                    }
-
-                    JRPdfExporter exporter = new JRPdfExporter();
-                    ByteArrayOutputStream retorno = new ByteArrayOutputStream();
-
-                    exporter.setParameter(JRExporterParameter.JASPER_PRINT_LIST, jasperPrintList);
-                    exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, retorno);
-                    exporter.setParameter(JRPdfExporterParameter.IS_CREATING_BATCH_MODE_BOOKMARKS, Boolean.TRUE);
-                    exporter.exportReport();
-
-                    byte[] arquivo = retorno.toByteArray();
-
-                    String nomeDownload = "boleto_bancario_" + DataHoje.horaMinuto().replace(":", "") + ".pdf";
-                    Dirs.create("Arquivos/downloads/boletos");
-                    String pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/downloads/boletos");
-                    SalvaArquivos sa = new SalvaArquivos(arquivo, nomeDownload, false);
-                    sa.salvaNaPasta(pathPasta);
-                    Download download = new Download(nomeDownload, pathPasta, "application/pdf", FacesContext.getCurrentInstance());
-                    download.open();
-                    download.close();
-                } catch (JRException e) {
-                    e.getMessage();
-                }
+    public void setDescricaoPesquisa(String descricaoPesquisa) {
+        if (porPesquisa.equals("contrato")) {
+            try {
+                Integer.parseInt(descricaoPesquisa);
+            } catch (NumberFormatException e) {
+                descricaoPesquisa = "";
             }
-
         }
+        this.descricaoPesquisa = descricaoPesquisa;
+    }
 
+    public String getPorPesquisa() {
+        return porPesquisa;
+    }
+
+    public void setPorPesquisa(String porPesquisa) {
+        this.porPesquisa = porPesquisa;
+    }
+
+    public String getComoPesquisa() {
+        return comoPesquisa;
+    }
+
+    public void setComoPesquisa(String comoPesquisa) {
+        this.comoPesquisa = comoPesquisa;
+    }
+
+    public String getMask() {
+        String mask = porPesquisa;
+
+        if (mask.equals("paciente_documento") || mask.equals("responsavel_documento")) {
+            mask = "cpf";
+        }
+        return Mask.getMascaraPesquisa(mask, true);
+    }
+
+    public void loadContratos() {
+        ContratoDao contratoDao = new ContratoDao();
+        contratoDao.setCliente(SessaoCliente.get().getId());
+        listContratos = (List<Contrato>) contratoDao.find(porPesquisa, comoPesquisa, descricaoPesquisa);
+    }
+
+    public void putValidacao(String validacao_tipo) {
+        Sessions.remove("remove_ids");
+        if (validacao_tipo.equals("responsavel")) {
+            pesquisaResponsavel = true;
+            Sessions.put("validacao_tipo", validacao_tipo);
+            if (contrato.getResponsavel().getId() != null && contrato.getResponsavel().getId() != -1) {
+                Sessions.put("remove_ids", contrato.getResponsavel().getId());
+            }
+        } else {
+            pesquisaResponsavel = false;
+            Sessions.put("validacao_tipo", validacao_tipo);
+            if (contrato.getResponsavel().getId() != null && contrato.getResponsavel().getId() != -1) {
+                Sessions.put("remove_ids", "" + contrato.getResponsavel().getId());
+            }
+        }
+    }
+
+    public Boolean getImprimeVerso() {
+        return imprimeVerso;
+    }
+
+    public void setImprimeVerso(Boolean imprimeVerso) {
+        this.imprimeVerso = imprimeVerso;
     }
 }

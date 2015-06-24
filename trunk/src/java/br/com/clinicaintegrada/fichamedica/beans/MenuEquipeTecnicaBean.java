@@ -72,7 +72,10 @@ public class MenuEquipeTecnicaBean implements Serializable {
         if (listAgendamento.isEmpty()) {
             MenuEquipeTecnicaDao metd = new MenuEquipeTecnicaDao();
             Integer idStatus;
-            if (indexStatus == 1) {
+            if(indexStatus == null) {
+                idStatus = 1;
+                indexStatus = 1;
+            } else if (indexStatus == 1) {
                 idStatus = 1;
             } else if (indexStatus == 2) {
                 idStatus = 2;
@@ -99,6 +102,9 @@ public class MenuEquipeTecnicaBean implements Serializable {
     public void changeTab(TabChangeEvent event) {
         listAgendamento.clear();
         indexStatus = ((TabView) event.getComponent()).getActiveIndex();
+        if(indexStatus == null) {
+            indexStatus = 1;
+        }
     }
 
     public Integer getIndexStatus() {

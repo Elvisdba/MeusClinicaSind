@@ -16,12 +16,12 @@ public class PermissaoDao extends DB {
                     + "   FROM Permissao AS P                                   "
                     + "  WHERE P.modulo.id  = :modulo                           "
                     + "    AND P.rotina.id  = :rotina                           "
-                    + "    AND P.segEvento.id  = :evento                           "
-                    + "    AND P.cliente.id = :cliente");
+                    + "    AND P.segEvento.id  = :evento                        ");
+                    // + "    AND P.cliente.id = :cliente");
             query.setParameter("modulo", idModulo);
             query.setParameter("rotina", idRotina);
             query.setParameter("evento", idEvento);
-            query.setParameter("cliente", idCliente);
+            // query.setParameter("cliente", idCliente);
             List list = query.getResultList();
             if (!list.isEmpty() && list.size() == 1) {
                 return (Permissao) query.getSingleResult();
@@ -39,12 +39,12 @@ public class PermissaoDao extends DB {
                     + "  WHERE P.modulo.id      = :modulo                       "
                     + "    AND P.rotina.id      = :rotina                       "
                     + "    AND P.rotina.ativo   = true                          "
-                    + "    AND P.segEvento.id   = :evento                       "
-                    + "    AND P.cliente.id     = :cliente                      ");
+                    + "    AND P.segEvento.id   = :evento                       ");
+                    // + "    AND P.cliente.id     = :cliente                      ");
             query.setParameter("modulo", idModulo);
             query.setParameter("rotina", idRotina);
             query.setParameter("evento", idEvento);
-            query.setParameter("cliente", idCliente);
+            // query.setParameter("cliente", idCliente);
             List list = query.getResultList();
             if (!list.isEmpty() && list.size() == 1) {
                 return (Permissao) query.getSingleResult();
@@ -150,7 +150,7 @@ public class PermissaoDao extends DB {
             queryFiltro = " AND UPPER(P.rotina.rotina) LIKE '%" + descricaoPesquisa.toUpperCase() + "%'";
         }
         try {
-            Query query = getEntityManager().createQuery(" SELECT P FROM Permissao AS P WHERE P.cliente.id = " + idCliente + " AND P.id NOT IN ( SELECT PD.permissao.id FROM PermissaoDepartamento AS PD WHERE PD.departamento.id = " + idDepartamento + " AND PD.nivel.id = " + idNivel + " AND PD.cliente.id = " + idCliente + " ) " + queryFiltro + " ORDER BY P.modulo.descricao ASC, P.rotina.rotina ASC ");
+            Query query = getEntityManager().createQuery(" SELECT P FROM Permissao AS P WHERE P.id NOT IN ( SELECT PD.permissao.id FROM PermissaoDepartamento AS PD WHERE PD.departamento.id = " + idDepartamento + " AND PD.nivel.id = " + idNivel + " AND PD.cliente.id = " + idCliente + " ) " + queryFiltro + " ORDER BY P.modulo.descricao ASC, P.rotina.rotina ASC ");
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;

@@ -678,7 +678,7 @@ public class MovimentosReceberBean {
                 }
                 // DATA DE HOJE MENOR OU IGUAL A DATA DE VENCIMENTO
                 if (DataHoje.converteDataParaInteger(DataHoje.converteData((Date) ((List) lista.get(i)).get(3)))
-                        <= DataHoje.converteDataParaInteger(DataHoje.data())
+                        == DataHoje.converteDataParaInteger(DataHoje.data())
                         && dataBaixa.isEmpty()) {
                     chk = true;
                 } else {
@@ -686,12 +686,14 @@ public class MovimentosReceberBean {
                 }
 
                 // DATA DE HOJE MENOR QUE DATA DE VENCIMENTO
-                if (DataHoje.converteDataParaInteger(DataHoje.converteData((Date) ((List) lista.get(i)).get(3)))
-                        < DataHoje.converteDataParaInteger(DataHoje.data()) && dataBaixa.isEmpty()) {
-                    disabled = true;
-                } else {
-                    disabled = false;
-                }
+//                if (DataHoje.converteDataParaInteger(DataHoje.converteData((Date) ((List) lista.get(i)).get(3)))
+//                        < DataHoje.converteDataParaInteger(DataHoje.data()) && dataBaixa.isEmpty()) {
+//                if (DataHoje.converteDataParaInteger(DataHoje.converteData((Date) ((List) lista.get(i)).get(3)))
+//                        < DataHoje.converteDataParaInteger(DataHoje.data()) && dataBaixa.isEmpty()) {
+//                    disabled = true;
+//                } else {
+//                    disabled = false;
+//                }
                 if (((List) lista.get(i)).get(3) != null) {
                     vencimento = DataHoje.converteData((Date) ((List) lista.get(i)).get(3));
                 } else {

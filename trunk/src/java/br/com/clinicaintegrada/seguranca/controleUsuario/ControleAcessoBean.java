@@ -292,7 +292,7 @@ public class ControleAcessoBean implements Serializable {
                         idEvento = 3;
                     }
                 }
-                retorno = verificaPermissao(idModulo, rotina.getId(), idEvento);
+                retorno = verificaPermissao(null, idModulo, rotina.getId(), idEvento);
 //                permissao = permissaoDao.pesquisaPermissao(idModulo, rotina.getId(), idEvento, SessaoCliente.get().getId());
 //                if (permissao != null) {
 //                    PermissaoUsuarioDao permissaoUsuarioDao = new PermissaoUsuarioDao();
@@ -599,7 +599,7 @@ public class ControleAcessoBean implements Serializable {
         return idIndexPermissao;
     }
 
-    public void setIdIndexPermissao(int idIndexPermissao) {
+    public void setIdIndexPermissao(Integer idIndexPermissao) {
         this.idIndexPermissao = idIndexPermissao;
     }
 
@@ -609,8 +609,8 @@ public class ControleAcessoBean implements Serializable {
      * @param idEvento
      * @return
      */
-    public boolean verificaPermissao(int idEvento) {
-        return verificaPermissao(0, 0, idEvento);
+    public boolean verificaPermissao(Integer idEvento) {
+        return verificaPermissao(null, 0, 0, idEvento);
 
     }
 
@@ -621,18 +621,77 @@ public class ControleAcessoBean implements Serializable {
      * @param idEvento
      * @return
      */
-    public boolean verificaPermissao(String pageName, int idEvento) {
+    public boolean verificaPermissao(String pageName, Integer idEvento) {
         Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
         if (user.getId() == 1 || user.getAdministrador()) {
             return false;
-        }        
-        RotinaDao rotinaDao = new RotinaDao();
-        String pagina = "\"/ClinicaIntegrada/" + pageName + ".jsf\"";
-        Rotina r = rotinaDao.pesquisaRotinaPorPagina(pagina);
-        if (r != null) {
-            return verificaPermissao(0, r.getId(), idEvento);
         }
-        return false;
+        RotinaDao rotinaDao = new RotinaDao();
+        Rotina r = rotinaDao.pesquisaRotinaPorPagina(pageName);
+        if (r == null) {
+            r = rotinaDao.pesquisaRotinaPorAcao(pageName);
+        }
+        if (r == null) {
+            return false;
+        }
+        return verificaPermissao(null, 0, r.getId(), idEvento);
+    }
+
+    /**
+     * 1 - Inclusão; 2 - Exclusão; 3 - Alteração; 4 - Consulta
+     *
+     * @param pageName Nome da página da rotina
+     * @param idEvento
+     * @return
+     */
+    public boolean verificarPermissao(String pageName, Integer idEvento) {
+        return verificaPermissao(pageName, idEvento);
+    }
+
+    /**
+     * 1 - Inclusão; 2 - Exclusão; 3 - Alteração; 4 - Consulta
+     *
+     * @param usuario Class
+     * @param pageName Nome da página da rotina
+     * @param idEvento
+     * @return
+     */
+    public boolean verificarPermissao(Usuario usuario, String pageName, Integer idEvento) {
+        RotinaDao rotinaDao = new RotinaDao();
+        String pagina = pageName;
+        Rotina r = rotinaDao.pesquisaRotinaPorPagina(pagina);
+        if (r == null) {
+            r = rotinaDao.pesquisaRotinaPorAcao(pagina);
+        }
+        if (r == null) {
+            return false;
+        }
+        return verificaPermissao(usuario, 0, r.getId(), idEvento);
+    }
+
+    /**
+     * 1 - Inclusão; 2 - Exclusão; 3 - Alteração; 4 - Consulta
+     *
+     * @param usuario
+     * @param pageName
+     * @param idEvento
+     * @return
+     */
+    public boolean verificaPermissao(Usuario usuario, String pageName, Integer idEvento) {
+        Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
+        if (user.getId() == 1) {
+            return false;
+        }
+        RotinaDao rotinaDao = new RotinaDao();
+        String pagina = pageName;
+        Rotina r = rotinaDao.pesquisaRotinaPorPagina(pagina);
+        if (r == null) {
+            r = rotinaDao.pesquisaRotinaPorAcao(pagina);
+        }
+        if (r == null) {
+            return false;
+        }
+        return verificaPermissao(usuario, 0, r.getId(), idEvento);
     }
 
     /**
@@ -642,8 +701,8 @@ public class ControleAcessoBean implements Serializable {
      * @param idEvento
      * @return
      */
-    public boolean verificaPermissao(int idRotina, int idEvento) {
-        return verificaPermissao(0, idRotina, idEvento);
+    public boolean verificaPermissao(Integer idRotina, Integer idEvento) {
+        return verificaPermissao(null, 0, idRotina, idEvento);
     }
 
     /**
@@ -654,12 +713,15 @@ public class ControleAcessoBean implements Serializable {
      * @param idEvento
      * @return
      */
-    public boolean verificaPermissao(int idModulo, int idRotina, int idEvento) {
+    public boolean verificaPermissao(Usuario usuario, Integer idModulo, Integer idRotina, Integer idEvento) {
         //PESQUISA DE PERMISSAO-------------------------------------------------------------------------------------------
         boolean retorno = true;
-        if (Sessions.exists("sessaoUsuario")) {
+        Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
+        if (usuario != null) {
+            user = usuario;
+        }
+        if (Sessions.exists("sessaoUsuario") || user != null) {
             Permissao permissao;
-            Usuario user = (Usuario) Sessions.getObject("sessaoUsuario");
             int idCliente = SessaoCliente.get().getId();
             if (user.getId() == 1 || user.getAdministrador()) {
                 return false;

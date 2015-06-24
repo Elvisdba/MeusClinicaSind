@@ -71,6 +71,7 @@ public class EnderecoBean implements Serializable {
         listSelectItem[3] = new ArrayList<>();
         porPesquisa = "";
         btnCadastrar = false;
+        pesquisar = false;
         getListCidade();
         getListLogradouro();
     }

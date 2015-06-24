@@ -29,6 +29,10 @@ public class MacFilial implements java.io.Serializable {
     @JoinColumn(name = "id_caixa", referencedColumnName = "id")
     @ManyToOne
     private Caixa caixa;
+    @Column(name = "ds_descricao", nullable = true, length = 100)
+    private String descricao;
+    @Column(name = "is_caixa_operador", columnDefinition = "boolean default true")
+    private boolean caixaOperador;
 
     public MacFilial() {
         this.id = -1;
@@ -37,15 +41,19 @@ public class MacFilial implements java.io.Serializable {
         this.mac = "";
         this.mesa = 0;
         this.caixa = new Caixa();
+        this.descricao = "";
+        this.caixaOperador = true;
     }
 
-    public MacFilial(Integer id, Departamento departamento, Filial filial, String mac, Integer mesa, Caixa caixa) {
+    public MacFilial(Integer id, Departamento departamento, Filial filial, String mac, Integer mesa, Caixa caixa, String descricao, boolean caixaOperador) {
         this.id = id;
         this.departamento = departamento;
         this.filial = filial;
         this.mac = mac;
         this.mesa = mesa;
         this.caixa = caixa;
+        this.descricao = descricao;
+        this.caixaOperador = caixaOperador;
     }
 
     public Integer getId() {
@@ -102,5 +110,21 @@ public class MacFilial implements java.io.Serializable {
 
     public void setCaixa(Caixa caixa) {
         this.caixa = caixa;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public boolean isCaixaOperador() {
+        return caixaOperador;
+    }
+
+    public void setCaixaOperador(boolean caixaOperador) {
+        this.caixaOperador = caixaOperador;
     }
 }

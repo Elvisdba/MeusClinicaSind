@@ -118,11 +118,11 @@ public class RotinaDao extends DB {
                     + "     FROM Permissao AS P                                 "
                     + "    WHERE P.modulo.id = :modulo                          "
                     + "      AND P.rotina.ativo = true                          "
-                    + "      AND P.cliente.id   = :cliente                      "
+                    // + "      AND P.cliente.id   = :cliente                      "
                     + " GROUP BY P.rotina                                       "
                     + " ORDER BY P.rotina.rotina ASC                            ");
             query.setParameter("modulo", idModulo);
-            query.setParameter("cliente", idCliente);
+            // query.setParameter("cliente", idCliente);
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;
@@ -205,5 +205,18 @@ public class RotinaDao extends DB {
         } catch (Exception e) {
         }
         return new ArrayList();
+    }
+
+    public Rotina pesquisaRotinaPorAcao(String acao) {
+        try {
+            Query query = getEntityManager().createQuery("SELECT ROT FROM Rotina AS ROT WHERE ROT.acao LIKE :acao");
+            query.setParameter("acao", acao);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return (Rotina) query.getSingleResult();
+            }
+        } catch (Exception e) {
+        }
+        return null;
     }
 }

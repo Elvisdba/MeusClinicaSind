@@ -21,11 +21,15 @@ public class ModeloDocumentos implements Serializable {
     @ManyToOne
     private Rotina rotina;
 
+    @Transient
+    private Boolean selected;
+
     public ModeloDocumentos() {
         this.id = -1;
         this.descricao = "";
         this.modeloContrato = new ModeloContrato();
         this.rotina = new Rotina();
+        this.selected = false;
     }
 
     public ModeloDocumentos(Integer id, String descricao, ModeloContrato modeloContrato, Rotina rotina) {
@@ -65,6 +69,14 @@ public class ModeloDocumentos implements Serializable {
 
     public void setRotina(Rotina rotina) {
         this.rotina = rotina;
+    }
+
+    public Boolean getSelected() {
+        return selected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
     }
 
 }

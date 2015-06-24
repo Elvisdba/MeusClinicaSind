@@ -1,5 +1,8 @@
 package br.com.clinicaintegrada.financeiro.list;
 
+import br.com.clinicaintegrada.financeiro.Movimento;
+import br.com.clinicaintegrada.utils.Dao;
+
 public class ListMovimentoReceber {
 
     private boolean selected;
@@ -274,6 +277,10 @@ public class ListMovimentoReceber {
 
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
+    }
+
+    public Movimento getMovimento() {
+        return (Movimento) new Dao().find(new Movimento(), Integer.parseInt(movimento_id));
     }
 
 }

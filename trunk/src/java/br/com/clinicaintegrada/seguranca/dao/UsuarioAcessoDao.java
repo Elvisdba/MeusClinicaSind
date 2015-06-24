@@ -8,7 +8,7 @@ import javax.persistence.Query;
 
 public class UsuarioAcessoDao extends DB {
 
-    public UsuarioAcesso pesquisaUsuarioAcesso(int idUsuario, int idPermissao, int idCliente) {
+    public UsuarioAcesso pesquisaUsuarioAcesso(Integer idUsuario, Integer idPermissao, Integer idCliente) {
         try {
             Query query = getEntityManager().createQuery("SELECT UA FROM UsuarioAcesso AS UA WHERE UA.usuario.id = :usuario AND UA.permissao.id = :permissao AND UA.cliente.id = :cliente");
             query.setParameter("usuario", idUsuario);
@@ -23,7 +23,7 @@ public class UsuarioAcessoDao extends DB {
         return null;
     }
 
-    public List<UsuarioAcesso> pesquisaAcesso(int idPermissao) {
+    public List<UsuarioAcesso> pesquisaAcesso(Integer idPermissao) {
         try {
             Query query = getEntityManager().createQuery("SELECT UA FROM UsuarioAcesso AS UA WHERE UA.permissao.id = :permissao");
             query.setParameter("permissao", idPermissao);
@@ -36,7 +36,7 @@ public class UsuarioAcessoDao extends DB {
         return new ArrayList();
     }
 
-    public UsuarioAcesso pesquisaUsuarioAcessoModuloRotinaEvento(int idUsuario, int idModulo, int idRotina, int idEvento, int idCliente) {
+    public UsuarioAcesso pesquisaUsuarioAcessoModuloRotinaEvento(Integer idUsuario, Integer idModulo, Integer idRotina, Integer idEvento, Integer idCliente) {
         try {
             Query query = getEntityManager().createQuery(
                     "   SELECT UA                                               "
@@ -60,7 +60,7 @@ public class UsuarioAcessoDao extends DB {
         return null;
     }
 
-    public List<UsuarioAcesso> listaUsuarioAcesso(int idUsuario, int idModulo, int idRotina, int idEvento, int idCliente) {
+    public List<UsuarioAcesso> listaUsuarioAcesso(Integer idUsuario, Integer idModulo, Integer idRotina, Integer idEvento, Integer idCliente) {
         String moduloString = "";
         String rotinaString = "";
         String eventoString = "";
@@ -74,7 +74,7 @@ public class UsuarioAcessoDao extends DB {
             eventoString = " AND UA.permissao.segEvento.id = :evento ";
         }
         if (idCliente > 0) {
-            eventoString = " AND UA.permissao.cliente.id = :cliente ";
+            eventoString = " AND UA.cliente.id = :cliente ";
         }
         try {
             Query qry = getEntityManager().createQuery(

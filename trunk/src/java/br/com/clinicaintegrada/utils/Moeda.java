@@ -164,7 +164,7 @@ public final class Moeda {
     }
 
     public static double somaValores(double a, double b) {
-        return somaValores(a, b);
+        return somaValores((float) a, (float) b);
     }
 
     public static float somaValores(float a, float b) {

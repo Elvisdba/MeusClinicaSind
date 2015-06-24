@@ -59,6 +59,8 @@ public class ContaCobranca implements Serializable {
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
     @OneToOne
     private Cliente cliente;
+    @Column(name = "ds_mensagem", length = 1000, nullable = false)
+    private String mensagem;
 
     public ContaCobranca() {
         this.id = -1;
@@ -83,10 +85,11 @@ public class ContaCobranca implements Serializable {
         this.caminhoRetorno = "";
         this.ativo = true;
         this.apelido = "";
-        cliente = new Cliente();
+        this.cliente = new Cliente();
+        this.mensagem = "";
     }
 
-    public ContaCobranca(int id, ContaBanco contaBanco, String codCedente, String localPagamento, float repasse, String boletoInicial, String categoriaSindical, String arrecadacaoSindical, String febranSindical, String segmentoSindical, String sicasSindical, String codigoSindical, String moeda, String especieMoeda, String especieDoc, String carteira, String aceite, String cedente, Layout layout, String caminhoRetorno, boolean ativo, String apelido, Cliente cliente) {
+    public ContaCobranca(int id, ContaBanco contaBanco, String codCedente, String localPagamento, float repasse, String boletoInicial, String categoriaSindical, String arrecadacaoSindical, String febranSindical, String segmentoSindical, String sicasSindical, String codigoSindical, String moeda, String especieMoeda, String especieDoc, String carteira, String aceite, String cedente, Layout layout, String caminhoRetorno, boolean ativo, String apelido, Cliente cliente, String mensagem) {
         this.id = id;
         this.contaBanco = contaBanco;
         this.codCedente = codCedente;
@@ -110,6 +113,7 @@ public class ContaCobranca implements Serializable {
         this.ativo = ativo;
         this.apelido = apelido;
         this.cliente = cliente;
+        this.mensagem = mensagem;
     }
 
     public int getId() {
@@ -317,6 +321,14 @@ public class ContaCobranca implements Serializable {
     @Override
     public String toString() {
         return "ContaCobranca{" + "id=" + id + ", contaBanco=" + contaBanco + ", codCedente=" + codCedente + ", localPagamento=" + localPagamento + ", repasse=" + repasse + ", boletoInicial=" + boletoInicial + ", categoriaSindical=" + categoriaSindical + ", arrecadacaoSindical=" + arrecadacaoSindical + ", febranSindical=" + febranSindical + ", segmentoSindical=" + segmentoSindical + ", sicasSindical=" + sicasSindical + ", codigoSindical=" + codigoSindical + ", moeda=" + moeda + ", especieMoeda=" + especieMoeda + ", especieDoc=" + especieDoc + ", carteira=" + carteira + ", aceite=" + aceite + ", cedente=" + cedente + ", layout=" + layout + ", caminhoRetorno=" + caminhoRetorno + ", ativo=" + ativo + ", apelido=" + apelido + ", cliente=" + cliente + '}';
+    }
+
+    public String getMensagem() {
+        return mensagem;
+    }
+
+    public void setMensagem(String mensagem) {
+        this.mensagem = mensagem;
     }
 
 }

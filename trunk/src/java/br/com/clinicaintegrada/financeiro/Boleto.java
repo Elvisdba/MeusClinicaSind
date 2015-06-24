@@ -2,6 +2,7 @@ package br.com.clinicaintegrada.financeiro;
 
 import br.com.clinicaintegrada.seguranca.Cliente;
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.*;
 
 @Entity
@@ -29,6 +30,14 @@ public class Boleto implements Serializable {
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private Cliente cliente;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "dt_vencimento")
+    private Date dtVencimento;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "dt_vencimento_original")
+    private Date dtVencimentoOriginal;
+    @Column(name = "ds_mensagem", length = 1000)
+    private String mensagem;
 
     public Boleto() {
         this.id = -1;
@@ -38,9 +47,12 @@ public class Boleto implements Serializable {
         this.nrCtrBoleto = "";
         this.ativo = true;
         this.cliente = new Cliente();
+        this.dtVencimento = null;
+        this.dtVencimentoOriginal = null;
+        this.mensagem = null;
     }
 
-    public Boleto(int id, ContaCobranca contaCobranca, int nrBoleto, String boletoComposto, String nrCtrBoleto, boolean ativo, Cliente cliente) {
+    public Boleto(int id, ContaCobranca contaCobranca, int nrBoleto, String boletoComposto, String nrCtrBoleto, boolean ativo, Cliente cliente, Date dtVencimento, Date dtVencimentoOriginal, String mensagem) {
         this.id = id;
         this.contaCobranca = contaCobranca;
         this.nrBoleto = nrBoleto;
@@ -48,6 +60,9 @@ public class Boleto implements Serializable {
         this.nrCtrBoleto = nrCtrBoleto;
         this.ativo = ativo;
         this.cliente = cliente;
+        this.dtVencimento = dtVencimento;
+        this.dtVencimentoOriginal = dtVencimentoOriginal;
+        this.mensagem = mensagem;
     }
 
     public int getId() {
@@ -127,6 +142,30 @@ public class Boleto implements Serializable {
     @Override
     public String toString() {
         return "Boleto{" + "id=" + id + ", contaCobranca=" + contaCobranca + ", nrBoleto=" + nrBoleto + ", boletoComposto=" + boletoComposto + ", nrCtrBoleto=" + nrCtrBoleto + ", ativo=" + ativo + ", cliente=" + cliente + '}';
+    }
+
+    public Date getDtVencimento() {
+        return dtVencimento;
+    }
+
+    public void setDtVencimento(Date dtVencimento) {
+        this.dtVencimento = dtVencimento;
+    }
+
+    public Date getDtVencimentoOriginal() {
+        return dtVencimentoOriginal;
+    }
+
+    public void setDtVencimentoOriginal(Date dtVencimentoOriginal) {
+        this.dtVencimentoOriginal = dtVencimentoOriginal;
+    }
+
+    public String getMensagem() {
+        return mensagem;
+    }
+
+    public void setMensagem(String mensagem) {
+        this.mensagem = mensagem;
     }
 
 }
