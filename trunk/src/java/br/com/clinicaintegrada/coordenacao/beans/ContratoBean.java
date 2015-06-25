@@ -104,6 +104,7 @@ public class ContratoBean implements Serializable {
     private boolean pesquisaResponsavel;
     private boolean disabledSave;
     private Boolean imprimeVerso;
+    private String mensagem;
 
     @PostConstruct
     public void init() {
@@ -142,6 +143,7 @@ public class ContratoBean implements Serializable {
         porPesquisa = "nome";
         comoPesquisa = "";
         imprimeVerso = false;
+        mensagem = "";
     }
 
     @PreDestroy
@@ -1663,17 +1665,21 @@ public class ContratoBean implements Serializable {
     }
 
     public void printBoletos() {
+        ImpressaoBoleto.MENSAGEM = mensagem;
         ImpressaoBoleto.IMPRIME_VERSO = imprimeVerso;
         ImpressaoBoleto.IMPRIME_VERSO_FIM = true;
         ImpressaoBoleto.printByLote(listMovimento.get(0).getLote().getId());
         ImpressaoBoleto.IMPRIME_VERSO = false;
+        ImpressaoBoleto.MENSAGEM = "";
     }
 
     public void printBoletos(String nrCtrBoleto) {
+        ImpressaoBoleto.MENSAGEM = mensagem;
         ImpressaoBoleto.IMPRIME_VERSO = imprimeVerso;
         ImpressaoBoleto.IMPRIME_VERSO_FIM = true;
         ImpressaoBoleto.printByNrCtrBoleto(nrCtrBoleto);
         ImpressaoBoleto.IMPRIME_VERSO = false;
+        ImpressaoBoleto.MENSAGEM = "";
     }
 
     public void acaoPesquisaInicial() {
@@ -1757,5 +1763,13 @@ public class ContratoBean implements Serializable {
 
     public void setImprimeVerso(Boolean imprimeVerso) {
         this.imprimeVerso = imprimeVerso;
+    }
+
+    public String getMensagem() {
+        return mensagem;
+    }
+
+    public void setMensagem(String mensagem) {
+        this.mensagem = mensagem;
     }
 }
