@@ -109,12 +109,17 @@
                                     </p:column>
                                 </h:panelGrid>
                                 
-                                <h:panelGrid style="margin-top: 10px" columns="2">
+                                <h:panelGrid columns="2" styleClass="margin-top-max">
                                     <h:outputLabel value="Layout:" />
                                     <p:selectOneMenu value="#{contaCobrancaBean.idLayout}" style="width: 150px;">
                                         <p:ajax event="change" update="@this" />
                                         <f:selectItems value="#{contaCobrancaBean.listLayout}" />
                                     </p:selectOneMenu>
+                                </h:panelGrid>
+                                
+                                <h:panelGrid style="margin-top: 10px" columns="1" styleClass="margin-top-max">
+                                    <h:outputLabel value="Mensagem:" />
+                                    <p:inputTextarea value="#{contaCobrancaBean.contaCobranca.mensagem}" maxlength="1000" cols="155" rows="10" placeholder="Mensagem na compensação do boleto: protesto, multa, juros, etc..."/>
                                 </h:panelGrid>
                                 
                             </p:panel>
