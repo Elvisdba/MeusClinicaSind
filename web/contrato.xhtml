@@ -300,17 +300,11 @@
                                         </h:commandLink>
                                     </h:panelGrid>
                                 </f:facet>                                
-                            </p:panel>                           
-                            <br />
-                            <p:column styleClass="margin-top-max">
+                            </p:panel>
+                            <h:panelGrid columns="2" styleClass="margin-top-max">
+                                <p:commandButton value="Mensagem Boleto" onclick="PF('dlg_mensagem_boleto').show()" rendered="#{contratoBean.contrato.id != -1}"/>                            
                                 <p:commandButton value="Modelos de documentos" onclick="PF('dlg_modelos_arquivos').show()" global="false" action="#{contratoBean.clear(4)}" update="i_m_a" rendered="#{not empty contratoBean.listMovimentoContrato}"/>
-                                <!-- 
-                                <ui:repeat value="# { contratoBean.listModeloDocumentos}" var="modeloDocumentos">
-                                    <h:commandLink action="# { contratoBean.imprimirOutros(modeloDocumentos.modeloContrato.id)}" disabled="# { contratoBean.contrato.id == -1}" rendered="# { contratoBean.contrato.id != -1}" style="float: left; margin-left: 10px; margin-bottom: 10px">
-                                        <p:button value="# { modeloDocumentos.descricao}" icon="ui-icon-print" />
-                                    </h:commandLink>
-                                </ui:repeat> -->
-                            </p:column>
+                            </h:panelGrid>
                             <p:dialog widgetVar="dlg_save" width="400" closable="true" header="Deseja salvar este contrato?" modal="true">
                                 <f:facet name="footer">
                                     <h:panelGrid columns="2">
@@ -383,16 +377,25 @@
                                 </h:panelGrid>
                             </p:dialog>
                             <p:dialog widgetVar="dlg_update_ftipo_documento_taxas" width="400" closable="true" header="Alterar tipo de documento" modal="true">
-                                <h:panelGrid columns="2" id="id_update_ftipo_documento_taxas">
+                                <h:panelGrid columns="3" id="id_update_ftipo_documento_taxas">
                                     <p:selectOneMenu value="#{contratoBean.idFTipoDocumento}">
                                         <p:ajax event="change" update=":form_contrato:" listener="#{contratoBean.updateFTipoDocumento(1)}" oncomplete="PF('dlg_update_ftipo_documento_taxas').hide();"/>
                                         <f:selectItems value="#{contratoBean.listFTipoDocumento}" />
                                     </p:selectOneMenu>
+                                    <h:commandLink action="#{contratoBean.printBoletos(contratoBean.updateMovimento.nrCtrBoleto)}">
+                                        <p:button icon="ui-icon-print" />
+                                    </h:commandLink>                                     
                                 </h:panelGrid>
                             </p:dialog>
                             <p:dialog widgetVar="dlg_rescindir" width="400" closable="true" header="Deseja rescindir este contrato?" modal="true">
                                 <f:facet name="footer">
                                     <p:commandButton action="#{contratoBean.action(1)}" update=":form_contrato:i_desligamento" value="Confirma" oncomplete="PF('dlg_rescindir').hide()"/>
+                                </f:facet>
+                            </p:dialog>
+                            <p:dialog widgetVar="dlg_mensagem_boleto" width="600" closable="true" header="Mensagem boleto" modal="true">
+                                <p:inputTextarea value="#{contratoBean.mensagem}" cols="89" rows="5"></p:inputTextarea>
+                                <f:facet name="footer">
+                                    <p:commandButton update=":form_contrato:" value="Ok" oncomplete="PF('dlg_mensagem_boleto').hide()"/>
                                 </f:facet>
                             </p:dialog>
                             <p:dialog widgetVar="dlg_rescindir_2" width="400" closable="true" header="Deseja desfazer esta rescisão?" modal="true">
