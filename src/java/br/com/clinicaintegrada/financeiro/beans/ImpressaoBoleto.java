@@ -50,6 +50,7 @@ public class ImpressaoBoleto {
 
     public static boolean IMPRIME_VERSO;
     public static boolean IMPRIME_VERSO_FIM;
+    public static String MENSAGEM;
 
     public static void printByNrCtrBoleto(String nrCtrBoleto) {
         if (nrCtrBoleto.isEmpty()) {
@@ -93,6 +94,7 @@ public class ImpressaoBoleto {
                 Cobranca cobranca = null;
                 String cedente_logo = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/LogoCliente.png");
                 // int qntItens = 0;
+                String documento = "";
                 for (int w = 0; w < listBoletosVw.size(); w++) {
                     Boleto boletox = new BoletoDao().findBoletosByNrCtrBoleto(listBoletosVw.get(w).getNrCtrBoleto()); // NR_CTR_BOLETO
                     String logo_banco = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(boletox.getContaCobranca().getContaBanco().getBanco().getLogo().trim());
@@ -116,6 +118,17 @@ public class ImpressaoBoleto {
                     } else if (boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.sicoob)) {
                         cobranca = new Sicoob(mov, boletox);
                     }
+                    if (!documento.isEmpty() && !documento.equals(mov.getDocumento())) {
+                        JRBeanCollectionDataSource dtSource = new JRBeanCollectionDataSource(list);
+                        jasperPrintList.add(JasperFillManager.fillReport(jasperReport, null, dtSource));
+                        dtSource = new JRBeanCollectionDataSource(list);
+                        jasperPrintList.add(JasperFillManager.fillReport(jasperReportVerso, null, dtSource));
+                        valor = 0;
+                        valor_total = 0;
+                        list.clear();
+                    }
+
+                    documento = mov.getDocumento();
 
                     valor = Moeda.converteUS$(listBoletosVw.get(w).getValorString());
                     valor_total = Moeda.somaValores(valor_total, listBoletosVw.get(w).getValor());
@@ -161,6 +174,7 @@ public class ImpressaoBoleto {
                             // BOLETO - LAYOUT
                             mov.getReferencia(), // REFERÊNCIA 
                             new BigDecimal(valor), // VALOR
+                            new BigDecimal(valor_total), // VALOR
                             cobranca.representacao(), // REPRESETANÇÃO NÚMÉRICA
                             DataHoje.converteData(boletox.getDtVencimento()), // VENCIMENTO
                             mov.getLote().getEmissaoString(), // DATA DOCUMENTO
@@ -171,8 +185,8 @@ public class ImpressaoBoleto {
                             boletox.getContaCobranca().getCarteira(), // CARTEIRA
                             mov.getReferencia().substring(3), // EXERCICÍO
                             mov.getDocumento(), // BOLETO
-                            "", //  MENSAGEM
-                            boletox.getMensagem(), // MENSAGEM BOLETO
+                            boletox.getContaCobranca().getMensagem(), //  MENSAGEM
+                            MENSAGEM, // MENSAGEM BOLETO
                             getSerrilha(), // SERRILHA
                             "", // TEXTO
                             "", // CAMINHO VERSO
@@ -216,10 +230,6 @@ public class ImpressaoBoleto {
 //                                listBoletosVw.get(w).getLocalPagamento(), // LOCAL DE PAGAMENTO
 //                                listBoletosVw.get(w).getInformativo()
 //                        ));
-                    JRBeanCollectionDataSource dtSource = new JRBeanCollectionDataSource(list);
-                    jasperPrintList.add(JasperFillManager.fillReport(jasperReport, null, dtSource));
-                    dtSource = new JRBeanCollectionDataSource(list);
-                    jasperPrintList.add(JasperFillManager.fillReport(jasperReportVerso, null, dtSource));
 //                    if (IMPRIME_VERSO) {
 //                        if (IMPRIME_VERSO_FIM) {
 //                            if ((w + 1) == listBoletosVw.size()) {
@@ -230,6 +240,13 @@ public class ImpressaoBoleto {
 //                        }
 //
 //                    }
+                }
+
+                if (!list.isEmpty()) {
+                    JRBeanCollectionDataSource dtSource = new JRBeanCollectionDataSource(list);
+                    jasperPrintList.add(JasperFillManager.fillReport(jasperReport, null, dtSource));
+                    dtSource = new JRBeanCollectionDataSource(list);
+                    jasperPrintList.add(JasperFillManager.fillReport(jasperReportVerso, null, dtSource));
                     valor = 0;
                     valor_total = 0;
                     list.clear();
