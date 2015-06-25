@@ -3,6 +3,7 @@ package br.com.clinicaintegrada.pessoa.dao;
 import br.com.clinicaintegrada.pessoa.Fisica;
 import br.com.clinicaintegrada.principal.DB;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
+import br.com.clinicaintegrada.utils.DataHoje;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -119,26 +120,40 @@ public class FisicaDao extends DB {
 
     public List pesquisaFisicaPorNomeNascimentoRG(String nome, Date nascimento, String rg, boolean like) {
         try {
-            Query query;
+            String queryString = "";
             if (like) {
-                query = getEntityManager().createQuery("SELECT F FROM Fisica AS F WHERE F.pessoa.cliente.id = :p1 AND UPPER(F.pessoa.nome) LIKE :p2 ");
-                query.setParameter("p2", "'%" + nome + "%'");
+                queryString = ""
+                        + "     SELECT F.*              "
+                        + "       FROM pes_fisica AS F  "
+                        + " INNER JOIN pes_pessoa AS P ON P.id = F.id_pessoa  "
+                        + "      WHERE P.id_cliente = " + SessaoCliente.get().getId()
+                        + "        AND func_translate(UPPER(P.ds_nome)) LIKE func_translate(UPPER('" + nome + "')) ";
             } else if (rg.isEmpty() && nascimento != null) {
-                query = getEntityManager().createQuery("SELECT F FROM Fisica AS F WHERE F.pessoa.cliente.id = :p1 AND UPPER(F.pessoa.nome) = :p2 AND F.dtNascimento = :p3");
-                query.setParameter("p2", nome);
-                query.setParameter("p3", nascimento);
+                queryString = ""
+                        + "     SELECT F.* "
+                        + "       FROM pes_fisica AS F  "
+                        + " INNER JOIN pes_pessoa AS P ON P.id = F.id_pessoa  "
+                        + "      WHERE P.id_cliente = " + SessaoCliente.get().getId()
+                        + "        AND func_translate(UPPER(P.ds_nome)) LIKE func_translate(UPPER('" + nome + "')) "
+                        + "        AND F.dt_nascimento = '" + DataHoje.converteData(nascimento) + "' ";
+
             } else if (!rg.isEmpty()) {
-                query = getEntityManager().createQuery("SELECT F FROM Fisica AS F WHERE F.pessoa.cliente.id = :p1 AND F.rg = :p2");
-                query.setParameter("p2", rg);
+                queryString = ""
+                        + "     SELECT F.* "
+                        + "       FROM pes_fisica AS F  "
+                        + " INNER JOIN pes_pessoa AS P ON P.id = F.id_pessoa "
+                        + "      WHERE P.id_cliente = " + SessaoCliente.get().getId()
+                        + "        AND F.ds_rg LIKE '" + rg + "' ";
             } else {
                 return new ArrayList();
             }
-            query.setParameter("p1", SessaoCliente.get().getId());
+            Query query = getEntityManager().createNativeQuery(queryString, Fisica.class);
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;
             }
         } catch (Exception e) {
+            return new ArrayList();
         }
         return new ArrayList();
     }
