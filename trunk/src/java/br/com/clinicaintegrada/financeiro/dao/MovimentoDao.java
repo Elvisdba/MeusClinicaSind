@@ -11,6 +11,12 @@ import oracle.toplink.essentials.exceptions.EJBQLException;
 
 public class MovimentoDao extends DB {
 
+    private String order;
+
+    public MovimentoDao() {
+        order = "";
+    }
+
     public List findMovimentosByLote(int idLote) {
         return findMovimentos(idLote, -1, 0, true);
     }
@@ -41,6 +47,9 @@ public class MovimentoDao extends DB {
                 queryString += " AND M.baixa IS NULL ";
             } else if (tBaixa == 2) {
                 queryString += " AND M.baixa IS NOT NULL ";
+            }
+            if (!order.isEmpty()) {
+                queryString += " ORDER BY " + order;
             }
             Query query = getEntityManager().createQuery(queryString);
             List list = query.getResultList();
@@ -163,5 +172,13 @@ public class MovimentoDao extends DB {
         }
         return new ArrayList();
 
+    }
+
+    public String getOrder() {
+        return order;
+    }
+
+    public void setOrder(String order) {
+        this.order = order;
     }
 }
