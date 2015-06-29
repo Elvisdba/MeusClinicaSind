@@ -28,6 +28,16 @@
                     <ui:include src="templates/templatePrime.xhtml"/>
                 </f:subview>
                 <f:view>
+                    <f:metadata>
+                        <f:event type="preRenderView" listener="${uploadBean.load()}"/>
+                        <f:event type="preRenderView" listener="${photoCamBean.load()}"/>
+                        <f:event type="preRenderView" listener="${uploadBean.setRotinaNome('pessoaFisica')}"/>
+                        <f:event type="preRenderView" listener="${photoCamBean.setRotinaNome('pessoaFisica')}"/>
+                        <f:event type="preRenderView" listener="${uploadBean.setUPDATE(':form_pessoa_fisica:i_tabview_fisica:i_panel_imagens')}"/>
+                        <f:event type="preRenderView" listener="${photoCamBean.setUPDATE(':form_pessoa_fisica:i_tabview_fisica:i_panel_imagens')}"/>
+                    </f:metadata>
+                    <ui:include src="templates/templateUpload.xhtml" />
+                    <ui:include src="templates/templatePhotoCam.xhtml" />                    
                     <p:panel styleClass="wrapper no-border">
                         <h:form id="form_pessoa_fisica">
                             <h:outputScript name="script_primefaces.js" library="js" />
@@ -238,26 +248,19 @@
                                             </p:column>
 
                                             <p:column>
-                                                <p:panel header="Foto do Perfil" id="i_panel_imagens" style="width: 330px; height: 428px; text-align: center">
-                                                    <h:column rendered="#{fisicaBean.fotoTempPerfil.equals('') and fisicaBean.fotoPerfil.equals('')}" >
-                                                        <p:graphicImage value="/Imagens/user_female.png" rendered="#{fisicaBean.fisica.sexo.equals('F')}"/>
-                                                        <p:graphicImage value="/Imagens/user_male.png" rendered="#{fisicaBean.fisica.sexo.equals('M')}"/>
+                                                <p:panel header="Foto do Perfil" id="i_panel_imagens" style="width: 100%; height: 428px; text-align: center">
+                                                    <h:column rendered="#{empty fisicaBean.fotoTempPerfil}">
+                                                        <p:graphicImage value="#{pessoaUtilitariosBean.getFotoPessoaFisica(fisicaBean.fisica.pessoa)}" cache="false" style="max-width: 300px; max-height: 395px"/>
                                                     </h:column>
-
-                                                    <h:column rendered="#{!fisicaBean.fotoTempPerfil.equals('')}" >
-                                                        <p:graphicImage value="#{fisicaBean.fotoTempPerfil}" id="i_perfil_temp" style="max-width: 300px; max-height: 395px"/>
+                                                    <h:column rendered="#{not empty fisicaBean.fotoTempPerfil}">
+                                                        <p:graphicImage value="#{fisicaBean.fotoTempPerfil}" id="i_perfil" style="max-width: 300px; max-height: 395px" cache="false"/>
                                                         <div class="clear"></div>
                                                     </h:column>
-
-                                                    <h:column rendered="#{!fisicaBean.fotoPerfil.equals('')}" >
-                                                        <p:graphicImage value="#{fisicaBean.fotoPerfil}" id="i_perfil" style="max-width: 300px; max-height: 395px"/>
-                                                        <div class="clear"></div>
-                                                    </h:column>                                        
                                                 </p:panel>
 
-                                                <p:commandButton icon="ui-icon-trash" title="Remover Foto" action="#{fisicaBean.apagarImagem()}" style="float: right" rendered="#{!fisicaBean.fotoTempPerfil.equals('') or !fisicaBean.fotoPerfil.equals('')}" update=":form_pessoa_fisica"/>
-                                                <p:commandButton value="Upload Foto" type="button" onclick="PF('dlg_upload').show();" id="id_btn_uploads" style="float: right"/>
-                                                <p:commandButton value="Capturar" onclick="PF('dlg_captura').show();" />
+                                                <p:commandButton icon="photocam" value="Capturar" title="Capturar Foto" oncomplete="PF('dlg_photocam').show();" action="#{photoCamBean.listener(fisicaBean.path, fisicaBean.fisica.pessoa.id == -1 ? 'perfil' : fisicaBean.fisica.pessoa.id, true, (fisicaBean.fisica.pessoa.id == -1 ? true : false))}" global="false" update=":form_photocam_files:i_panel_photocam" disabled="#{fisicaBean.fisica.id == -1}"/>
+                                                <p:commandButton icon="ui-icon-arrowthick-1-n" value="Upload Foto" title="Enviar foto" oncomplete="PF('dlg_upload').show();" actionListener="#{uploadBean.listener(fisicaBean.path, fisicaBean.fisica.pessoa.id == -1 ? 'perfil' : fisicaBean.fisica.pessoa.id, 'image/png,image/jpeg', true, true)}" global="false" update=":form_upload_files:i_panel_anexos" disabled="#{fisicaBean.fisica.id == -1}"/>
+                                                <p:commandButton icon="ui-icon-trash" title="Remover Foto" action="#{fisicaBean.apagarImagem()}" update="i_panel_imagens" disabled="#{fisicaBean.fisica.id == -1}"/>
                                             </p:column>
                                         </h:panelGrid>
 
@@ -452,8 +455,7 @@
 
                                         <h:panelGrid id="i_panel_add_endereco">
                                             <h:panelGrid columns="2" rendered="#{fisicaBean.enderecox.id == -1 and fisicaBean.listPessoaEndereco.size() == 0}">
-                                                <p:commandButton icon="ui-icon-search" title="Pesquisar Endereço"  action="#{chamadaPaginaBean.pesquisa('pesquisaEndereco')}"/>
-                                                <p:commandLink ajax="false" value="PESQUISAR ENDEREÇO"  action="#{chamadaPaginaBean.pesquisa('pesquisaEndereco')}"/>
+                                                <p:commandButton onclick="PF('dlg_pesquisa_endereco').show()" value="Pesquisar endereço" action="#{pesquisaEnderecoBean.put('pessoaFisica')}" update="@this :form_pessoa_fisica:i_pesquisa_endereco"/>
                                             </h:panelGrid>
 
                                             <h:panelGrid rendered="#{fisicaBean.enderecox.id != -1 and fisicaBean.listPessoaEndereco.size() == 0}">
@@ -612,6 +614,12 @@
                                     </f:facet>
                                 </p:dialog>
                             </h:panelGrid>
+                            <p:dialog widgetVar="dlg_pesquisa_endereco" modal="true" resizable="false" height="600" width="1000" header="Pesquisar Endereço">
+                                <p:ajax event="close" listener="#{pesquisaEnderecoBean.clear()}"/>
+                                <p:panel id="i_pesquisa_endereco" styleClass="no-border">                                    
+                                    <ui:include src="templates/templatePesquisaEndereco.xhtml" />    
+                                </p:panel>
+                            </p:dialog>                            
                             <p:dialog widgetVar="dlg_pessoa_juridica_card" modal="true" resizable="false" height="400" width="600" header="Detalhes">
                                 <p:ajax event="close" listener="#{pessoaCardBean.close}"/>  
                                 <p:panel id="i_pessoa_juridica_card">
