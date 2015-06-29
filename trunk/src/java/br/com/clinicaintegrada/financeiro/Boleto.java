@@ -15,7 +15,7 @@ public class Boleto implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @JoinColumn(name = "id_conta_cobranca", referencedColumnName = "id", nullable = false)
     @ManyToOne
     private ContaCobranca contaCobranca;
@@ -52,7 +52,7 @@ public class Boleto implements Serializable {
         this.mensagem = null;
     }
 
-    public Boleto(int id, ContaCobranca contaCobranca, int nrBoleto, String boletoComposto, String nrCtrBoleto, boolean ativo, Cliente cliente, Date dtVencimento, Date dtVencimentoOriginal, String mensagem) {
+    public Boleto(Integer id, ContaCobranca contaCobranca, int nrBoleto, String boletoComposto, String nrCtrBoleto, boolean ativo, Cliente cliente, Date dtVencimento, Date dtVencimentoOriginal, String mensagem) {
         this.id = id;
         this.contaCobranca = contaCobranca;
         this.nrBoleto = nrBoleto;
@@ -65,11 +65,11 @@ public class Boleto implements Serializable {
         this.mensagem = mensagem;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -85,7 +85,7 @@ public class Boleto implements Serializable {
         return nrBoleto;
     }
 
-    public void setNrBoleto(int nrBoleto) {
+    public void setNrBoleto(long nrBoleto) {
         this.nrBoleto = nrBoleto;
     }
 

@@ -27,7 +27,6 @@ import br.com.clinicaintegrada.financeiro.dao.MovimentoDao;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.Filial;
 import br.com.clinicaintegrada.principal.DB;
-import br.com.clinicaintegrada.seguranca.Rotina;
 import br.com.clinicaintegrada.seguranca.Usuario;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import br.com.clinicaintegrada.utils.DataHoje;
@@ -553,7 +552,7 @@ public class GerarMovimento extends DB {
                 mi.setUsuario((Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("sessaoUsuario"));
                 mi.setHistorico(historico);
 
-                Boleto bol = boletoDao.findBoletosByNrCtrBoleto(movimento.getNrCtrBoleto());
+                Boleto bol = boletoDao.findBoletoByNrCtrBoleto(movimento.getNrCtrBoleto());
                 if (bol != null) {
                     bol.setAtivo(false);
                     if (!dao.update(bol)) {
