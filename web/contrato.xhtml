@@ -78,7 +78,7 @@
                                         <p:commandButton icon="ui-icon-close" action="#{contratoBean.clear(2)}" update=":form_contrato:" rendered="#{contratoBean.contrato.responsavel.id != -1}"/>
                                     </h:panelGrid> 
                                     <hr />
-                                    <h:panelGrid columns="10" styleClass="margin-top-max" width="980">
+                                    <h:panelGrid columns="11" styleClass="margin-top-max" width="960">
                                         <p:outputLabel value="Data internação:" />
                                         <p:calendar value="#{contratoBean.contrato.dataCadastro}" pattern="dd/MM/yyyy" mask="99/99/9999" size="8" styleClass="text-center">
                                             <p:ajax event="dateSelect" update="@this" listener="#{contratoBean.contrato.selectedDataCadastro}" global="false"/> 
@@ -92,9 +92,9 @@
                                         <p:inputText value="#{contratoBean.contrato.previsaoDiasString}" size="1" maxlength="3" styleClass="text-center" converter="#{thisNumber}">
                                             <p:ajax event="blur" update="@this" global="false"/>
                                         </p:inputText>
-                                        <p:outputLabel value="dia(s)" />
-                                        <p:outputLabel value="Senha:" rendered="#{contratoBean.contrato.id == -1}"/>
-                                        <p:inputText value="#{contratoBean.contrato.senha}" maxlength="3" styleClass="text-center" readonly="true" rendered="#{contratoBean.contrato.id == -1}">
+                                        <p:outputLabel value="dia(s)" styleClass="margin-left-max"/>
+                                        <p:outputLabel value="Senha:" rendered="#{contratoBean.contrato.id != -1}" styleClass="font-color-red"/>
+                                        <p:inputText value="#{contratoBean.contrato.senha}" maxlength="3" styleClass="text-center font-color-red" readonly="true" rendered="#{contratoBean.contrato.id != -1}" size="5">
                                             <p:ajax event="blur" update="@this" global="false"/>
                                         </p:inputText>
                                     </h:panelGrid> 
@@ -197,8 +197,8 @@
                                             <p:commandLink value="#{movimento.tipoDocumento.descricao}" action="#{contratoBean.editMovimento(index, movimento)}" oncomplete="PF('dlg_update_ftipo_documento_ctr').show();" update=":form_contrato:id_update_ftipo_documento_ctr" styleClass="font-color-red" disabled="#{movimento.id != -1}" global="false"/>
                                         </p:column>
                                         <p:column width="25" styleClass="text-center">
-                                            <h:commandLink action="#{contratoBean.printBoletos(movimento.nrCtrBoleto)}" disabled="#{contratoBean.contrato.id == -1}" rendered="#{contratoBean.contrato.id != -1}">
-                                                <p:button icon="ui-icon-print" />
+                                            <h:commandLink action="#{contratoBean.printBoletos(movimento.nrCtrBoleto)}" rendered="#{contratoBean.contrato.id != -1}" disabled="#{(contratoBean.disabledPrint(movimento))}" >
+                                                <p:button icon="ui-icon-print" disabled="#{(contratoBean.disabledPrint(movimento))}" />
                                             </h:commandLink>                                            
                                         </p:column>
                                     </p:dataTable>
