@@ -10,7 +10,6 @@ import br.com.clinicaintegrada.administrativo.dao.ModeloDocumentosDao;
 import br.com.clinicaintegrada.administrativo.dao.TaxasDao;
 import br.com.clinicaintegrada.coordenacao.Contrato;
 import br.com.clinicaintegrada.coordenacao.dao.ContratoDao;
-import br.com.clinicaintegrada.financeiro.Boleto;
 import br.com.clinicaintegrada.financeiro.CondicaoPagamento;
 import br.com.clinicaintegrada.financeiro.FStatus;
 import br.com.clinicaintegrada.financeiro.FTipoDocumento;
@@ -19,7 +18,6 @@ import br.com.clinicaintegrada.financeiro.Movimento;
 import br.com.clinicaintegrada.financeiro.Servicos;
 import br.com.clinicaintegrada.financeiro.TipoServico;
 import br.com.clinicaintegrada.financeiro.beans.ImpressaoBoleto;
-import br.com.clinicaintegrada.financeiro.dao.BoletoDao;
 import br.com.clinicaintegrada.financeiro.dao.LoteDao;
 import br.com.clinicaintegrada.financeiro.dao.MovimentoDao;
 import br.com.clinicaintegrada.logSistema.Logger;
@@ -42,6 +40,7 @@ import br.com.clinicaintegrada.utils.HtmlToPDF;
 import br.com.clinicaintegrada.utils.Mask;
 import br.com.clinicaintegrada.utils.Messages;
 import br.com.clinicaintegrada.utils.Moeda;
+import br.com.clinicaintegrada.utils.PasswordGenerator;
 import br.com.clinicaintegrada.utils.Sessions;
 import br.com.clinicaintegrada.utils.ValidDocuments;
 import br.com.clinicaintegrada.utils.ValorExtenso;
@@ -219,7 +218,7 @@ public class ContratoBean implements Serializable {
         if (disabledSave) {
             Messages.warn("Validação", getCalculaValorMovimentoAlterado());
             return;
-   
+
         }
         Dao dao = new Dao();
         contrato.setTipoInternacao((TipoInternacao) dao.find(new TipoInternacao(), Integer.parseInt(listTipoInternacao.get(idTipoInternacao).getDescription())));
@@ -228,6 +227,9 @@ public class ContratoBean implements Serializable {
         contrato.setFilialAtual(MacFilial.getAcessoFilial().getFilial());
         dao.openTransaction();
         FunctionsDao functionsDao = new FunctionsDao();
+        if (contrato.getSenha().isEmpty()) {
+            contrato.setSenha(PasswordGenerator.create());
+        }
         if (contrato.getId() == -1) {
             contrato.setCliente(SessaoCliente.get());
             contrato.setFilial(MacFilial.getAcessoFilial().getFilial());
@@ -373,7 +375,14 @@ public class ContratoBean implements Serializable {
                 }
             }
         }
+        saldoDevedor = "";
+        listMovimento.clear();
+        getListMovimento();
+        listMovimentoContrato.clear();
+        getListMovimentoContrato();
         listTaxas.clear();
+        getListMovimentoTaxa();
+        listMovimentoTaxa.clear();
         getListMovimentoTaxa();
         getListTaxas();
         float vt = 0;
@@ -403,7 +412,7 @@ public class ContratoBean implements Serializable {
         MovimentoDao movimentoDao = new MovimentoDao();
         List<Movimento> list = movimentoDao.findMovimentosByLote(listMovimento.get(0).getLote().getId());
         for (int i = 0; i < list.size(); i++) {
-            if(list.get(i).getBaixa() != null) {
+            if (list.get(i).getBaixa() != null) {
                 Messages.warn("Erro", "Não é possível excluir contratos com movimentos baixados. Somente rescisão!");
                 return;
             }
@@ -463,11 +472,6 @@ public class ContratoBean implements Serializable {
             } else {
                 list = getListMovimentoContrato();
                 float d = 0;
-                for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).getBaixa() != null) {
-                        d += list.get(i).getValor();
-                    }
-                }
                 for (int i = 0; i < list.size(); i++) {
                     if (list.get(i).getBaixa() != null) {
                         d += list.get(i).getValor();
@@ -772,6 +776,7 @@ public class ContratoBean implements Serializable {
                 Lote l = loteDao.findLoteByContrato(contrato.getId());
                 if (l != null) {
                     MovimentoDao movimentoDao = new MovimentoDao();
+                    movimentoDao.setOrder(" M.vencimento ");
                     listMovimento = movimentoDao.findMovimentosByLote(l.getId());
                 }
             }
@@ -1234,13 +1239,13 @@ public class ContratoBean implements Serializable {
             for (Movimento listaMovimento : listMovimentoTaxa) {
                 for (l = 0; l < listTaxas.size(); l++) {
                     t = (Taxas) dao.find(new Taxas(), Integer.parseInt(listTaxas.get(l).getDescription()));
-                    if (listaMovimento.getServicos().getId() == t.getServicos().getId()) {
-                        if (!t.getOcultaContrato()) {
-                            valorTaxaString += " - Vencimento: " + listaMovimento.getVencimentoString() + " - " + listaMovimento.getServicos().getDescricao() + " - R$ " + listaMovimento.getValorString() + "; <br /><br />";
-                            valorTotalTaxas += listaMovimento.getValor();
-                            break;
-                        }
+                    if (!t.getOcultaContrato()) {
+                        valorTaxaString += " - Vencimento: " + listaMovimento.getVencimentoString() + " - " + listaMovimento.getServicos().getDescricao() + " - R$ " + listaMovimento.getValorString() + "; <br /><br />";
+                        valorTotalTaxas += listaMovimento.getValor();
+                        break;
                     }
+//                    if (listaMovimento.getServicos().getId() == t.getServicos().getId()) {
+//                    }
                 }
             }
             String valorTotalTaxaString = " -- ";
@@ -1274,7 +1279,9 @@ public class ContratoBean implements Serializable {
                         return;
                     }
                 }
-                String fileName = "contrato" + DataHoje.hora().hashCode() + ".pdf";
+                UUID uuidX = UUID.randomUUID();
+                String uuid = uuidX.toString().replace("-", "_");                
+                String fileName = "contrato_" + uuid + ".pdf";
                 String filePDF = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/contrato/_" + fileName);
                 boolean success = new File(filePDF).createNewFile();
                 //boolean success = file.createNewFile();
@@ -1787,5 +1794,14 @@ public class ContratoBean implements Serializable {
 
     public void setMensagem(String mensagem) {
         this.mensagem = mensagem;
+    }
+
+    public Boolean disabledPrint(Movimento m) {
+        if (m.getLote().getContrato().getId() == -1) {
+            return true;
+        } else if (m.getBaixa() != null) {
+            return true;
+        }
+        return false;
     }
 }

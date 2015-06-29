@@ -118,135 +118,101 @@ public class ImpressaoBoleto {
                     } else if (boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.sicoob)) {
                         cobranca = new Sicoob(mov, boletox);
                     }
-                    if (!documento.isEmpty() && !documento.equals(mov.getDocumento())) {
-                        JRBeanCollectionDataSource dtSource = new JRBeanCollectionDataSource(list);
-                        jasperPrintList.add(JasperFillManager.fillReport(jasperReport, null, dtSource));
-                        dtSource = new JRBeanCollectionDataSource(list);
-                        jasperPrintList.add(JasperFillManager.fillReport(jasperReportVerso, null, dtSource));
-                        valor = 0;
-                        valor_total = 0;
-                        list.clear();
+
+                    if (mov.getBaixa() == null) {
+
+                        if (!documento.isEmpty() && !documento.equals(mov.getDocumento())) {
+                            JRBeanCollectionDataSource dtSource = new JRBeanCollectionDataSource(list);
+                            jasperPrintList.add(JasperFillManager.fillReport(jasperReport, null, dtSource));
+                            if (IMPRIME_VERSO) {
+                                dtSource = new JRBeanCollectionDataSource(list);
+                                jasperPrintList.add(JasperFillManager.fillReport(jasperReportVerso, null, dtSource));
+                            }
+                            valor = 0;
+                            valor_total = 0;
+                            list.clear();
+                        }
+
+                        documento = mov.getDocumento();
+
+                        valor = Moeda.converteUS$(listBoletosVw.get(w).getValorString());
+                        valor_total = Moeda.somaValores(valor_total, listBoletosVw.get(w).getValor());
+
+                        list.add(new ParametroBoleto(
+                                // CEDENTE
+                                listBoletosVw.get(w).getNomeFilial(), // CEDENTE - NOME
+                                listBoletosVw.get(w).getCnpjFilial(), // CEDENTE - DOCUMENTO
+                                boletox.getContaCobranca().getCodCedente(), // CEDENTE - CÓDIGO
+                                listBoletosVw.get(w).getEnderecoFilial(), // CEDENTE - ENDEREÇO
+                                "", // CEDENTE - NÚMERO
+                                "", // CEDENTE - COMPLEMENTO
+                                listBoletosVw.get(w).getBairroFilial(), // CEDENTE - BAIRRO
+                                listBoletosVw.get(w).getCidadeFilial(), // CEDENTE - CIDADE
+                                listBoletosVw.get(w).getUfFilial(), // CEDENTE - UF
+                                listBoletosVw.get(w).getCepFilial(), // CEDENTE - CEP
+                                cedente_logo, // CEDENTE - LOGO
+                                listBoletosVw.get(w).getSilteFilial(), // CEDENTE - SITE
+                                listBoletosVw.get(w).getEmail(), // CEDENTE - EMAIL
+                                listBoletosVw.get(w).getTelefoneFilial(), // CEDENTE - EMAIL
+                                // SACADO
+                                mov.getPessoa().getNome(), // SACADO - NOME
+                                mov.getPessoa().getDocumento(), // SACADO - DOCUMENTO
+                                listBoletosVw.get(w).getLogradouroResponsavel(), // SACADO - LOGRADOURO
+                                listBoletosVw.get(w).getEnderecoResponsavel(), // SACADO - ENDEREÇO
+                                "", // SACADO - NÚMERO
+                                "", // SACADO - COMPLEMENTO
+                                "", // SACADO - BAIRRO
+                                listBoletosVw.get(w).getCidadeResponsavel(), // SACADO - CIDADE
+                                listBoletosVw.get(w).getUfResponsavel(), // SACADO - ESTADO
+                                listBoletosVw.get(w).getCepResponsavel(), // SACADO - CEP
+
+                                // BANCO
+                                boletox.getContaCobranca().getContaBanco().getBanco().getNumero(), // BANCO - CÓDIGO
+                                logo_banco, // BANCO - LOGO
+                                "", // BANCO - USO
+                                cobranca.getNossoNumeroFormatado(), // BANCO - NOSSO NÚMERO
+                                cobranca.getAgenciaFormatada(), // BANCO - AGÊNCIA
+
+                                // HEADER
+                                listBoletosVw.get(w).getServico(), // SERVIÇO
+                                "", // TIPO
+
+                                // BOLETO - LAYOUT
+                                mov.getReferencia(), // REFERÊNCIA 
+                                new BigDecimal(valor), // VALOR
+                                new BigDecimal(valor_total), // VALOR
+                                cobranca.representacao(), // REPRESETANÇÃO NÚMÉRICA
+                                DataHoje.converteData(boletox.getDtVencimento()), // VENCIMENTO
+                                mov.getLote().getEmissaoString(), // DATA DOCUMENTO
+                                boletox.getContaCobranca().getMoeda(), // MOEDA
+                                boletox.getContaCobranca().getEspecieMoeda(), // ESPÉCIE
+                                boletox.getContaCobranca().getEspecieDoc(), // ESPÉCIE DOCUMENTO
+                                boletox.getContaCobranca().getAceite(), // ACEITE
+                                boletox.getContaCobranca().getCarteira(), // CARTEIRA
+                                mov.getReferencia().substring(3), // EXERCICÍO
+                                mov.getDocumento(), // BOLETO
+                                boletox.getContaCobranca().getMensagem(), //  MENSAGEM
+                                MENSAGEM, // MENSAGEM BOLETO
+                                getSerrilha(), // SERRILHA
+                                "", // TEXTO
+                                "", // CAMINHO VERSO
+                                boletox.getContaCobranca().getLocalPagamento(), // LOCAL DE PAGAMENTO
+                                listBoletosVw.get(w).getServico(), // DESCRIÇÃO SERVIÇO
+                                false, // IMPRIME VERSO
+                                "", // LAYOUT
+                                cobranca.codigoBarras(), // CÓDIGO BARRAS
+                                mov.getLote().getContrato().getId() // CONTRATO NUMERO
+                        ));
                     }
-
-                    documento = mov.getDocumento();
-
-                    valor = Moeda.converteUS$(listBoletosVw.get(w).getValorString());
-                    valor_total = Moeda.somaValores(valor_total, listBoletosVw.get(w).getValor());
-
-                    list.add(new ParametroBoleto(
-                            // CEDENTE
-                            listBoletosVw.get(w).getNomeFilial(), // CEDENTE - NOME
-                            listBoletosVw.get(w).getCnpjFilial(), // CEDENTE - DOCUMENTO
-                            boletox.getContaCobranca().getCodCedente(), // CEDENTE - CÓDIGO
-                            listBoletosVw.get(w).getEnderecoFilial(), // CEDENTE - ENDEREÇO
-                            "", // CEDENTE - NÚMERO
-                            "", // CEDENTE - COMPLEMENTO
-                            listBoletosVw.get(w).getBairroFilial(), // CEDENTE - BAIRRO
-                            listBoletosVw.get(w).getCidadeFilial(), // CEDENTE - CIDADE
-                            listBoletosVw.get(w).getUfFilial(), // CEDENTE - UF
-                            listBoletosVw.get(w).getCepFilial(), // CEDENTE - CEP
-                            cedente_logo, // CEDENTE - LOGO
-                            listBoletosVw.get(w).getSilteFilial(), // CEDENTE - SITE
-                            listBoletosVw.get(w).getEmail(), // CEDENTE - EMAIL
-                            listBoletosVw.get(w).getTelefoneFilial(), // CEDENTE - EMAIL
-                            // SACADO
-                            mov.getPessoa().getNome(), // SACADO - NOME
-                            mov.getPessoa().getDocumento(), // SACADO - DOCUMENTO
-                            listBoletosVw.get(w).getEnderecoResponsavel(), // SACADO - ENDEREÇO
-                            "", // SACADO - NÚMERO
-                            "", // SACADO - COMPLEMENTO
-                            "", // SACADO - BAIRRO
-                            listBoletosVw.get(w).getCidadeResponsavel(), // SACADO - CIDADE
-                            listBoletosVw.get(w).getUfResponsavel(), // SACADO - ESTADO
-                            listBoletosVw.get(w).getCepResponsavel(), // SACADO - CEP
-
-                            // BANCO
-                            boletox.getContaCobranca().getContaBanco().getBanco().getNumero(), // BANCO - CÓDIGO
-                            logo_banco, // BANCO - LOGO
-                            "", // BANCO - USO
-                            cobranca.getNossoNumeroFormatado(), // BANCO - NOSSO NÚMERO
-                            cobranca.getAgenciaFormatada(), // BANCO - AGÊNCIA
-
-                            // HEADER
-                            listBoletosVw.get(w).getServico(), // SERVIÇO
-                            "", // TIPO
-
-                            // BOLETO - LAYOUT
-                            mov.getReferencia(), // REFERÊNCIA 
-                            new BigDecimal(valor), // VALOR
-                            new BigDecimal(valor_total), // VALOR
-                            cobranca.representacao(), // REPRESETANÇÃO NÚMÉRICA
-                            DataHoje.converteData(boletox.getDtVencimento()), // VENCIMENTO
-                            mov.getLote().getEmissaoString(), // DATA DOCUMENTO
-                            boletox.getContaCobranca().getMoeda(), // MOEDA
-                            boletox.getContaCobranca().getEspecieMoeda(), // ESPÉCIE
-                            boletox.getContaCobranca().getEspecieDoc(), // ESPÉCIE DOCUMENTO
-                            boletox.getContaCobranca().getAceite(), // ACEITE
-                            boletox.getContaCobranca().getCarteira(), // CARTEIRA
-                            mov.getReferencia().substring(3), // EXERCICÍO
-                            mov.getDocumento(), // BOLETO
-                            boletox.getContaCobranca().getMensagem(), //  MENSAGEM
-                            MENSAGEM, // MENSAGEM BOLETO
-                            getSerrilha(), // SERRILHA
-                            "", // TEXTO
-                            "", // CAMINHO VERSO
-                            boletox.getContaCobranca().getLocalPagamento(), // LOCAL DE PAGAMENTO
-                            listBoletosVw.get(w).getServico(), // DESCRIÇÃO SERVIÇO
-                            false, // IMPRIME VERSO
-                            "", // LAYOUT
-                            cobranca.codigoBarras(), // CÓDIGO BARRAS
-                            mov.getLote().getContrato().getId() // CONTRATO NUMERO
-                    ));
-//                        list.add(new ParametroBoleto(
-//                                ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/LogoCliente.png"), // LOGO CLÍNICA
-//                                filial.getFilial().getPessoa().getNome(), // CLIENTE NOME
-//                                "" + listBoletosVw.get(w).getCodigo(), // CODIGO
-//                                listBoletosVw.get(w).getResponsavel(), // RESPONSAVEL
-//                                listBoletosVw.get(w).getVencimentoString(), // VENCIMENTO
-//                                listBoletosVw.get(w).getServico(), // SERVICO
-//                                Moeda.converteR$Float(valor), // VALOR
-//                                Moeda.converteR$Float(valor_total), // VALOR TOTAL
-//                                Moeda.converteR$("" + listBoletosVw.get(w).getMensalidadesCorrigidas()), // VALOR ATRASADAS
-//                                Moeda.converteR$Float(valor_total), // VALOR ATÉ  VALOR VENCIMENTO
-//                                file_promo == null ? null : file_promo.getAbsolutePath(), // LOGO PROMOÇÃO
-//                                ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(boletox.getContaCobranca().getContaBanco().getBanco().getLogo().trim()), // LOGO BANCO
-//                                listBoletosVw.get(w).getMensagemBoleto(), // MENSAGEM
-//                                listBoletosVw.get(w).getAgencia(), // AGENCIA
-//                                cobranca.representacao(), // REPRESENTACAO
-//                                listBoletosVw.get(w).getCedente(), // CODIGO CEDENTE
-//                                listBoletosVw.get(w).getNrCtrBoleto(), // NOSSO NUMENTO
-//                                listBoletosVw.get(w).getProcessamentoString(), // PROCESSAMENTO
-//                                cobranca.codigoBarras(),
-//                                ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Imagens/serrilha.GIF"), // SERRILHA
-//                                listBoletosVw.get(w).getLogradouroResponsavel() + " " + listBoletosVw.get(w).getEnderecoResponsavel(), // ENDERECO RESPONSAVEL
-//                                listBoletosVw.get(w).getBairroFilial() + " " + listBoletosVw.get(w).getEnderecoFilial(), // ENDERECO FILIAL
-//                                listBoletosVw.get(w).getCidadeResponsavel() + " " + listBoletosVw.get(w).getUfResponsavel() + " " + listBoletosVw.get(w).getCepResponsavel(), // COMPLEMENTO RESPONSAVEL
-//                                listBoletosVw.get(w).getCidadeFilial() + " " + listBoletosVw.get(w).getUfFilial() + " " + listBoletosVw.get(w).getCepFilial(), // COMPLEMENTO FILIAL
-//                                listBoletosVw.get(w).getCnpjFilial(), // CNPJ FILIAL
-//                                listBoletosVw.get(w).getTelefoneFilial(), // TELEFONE FILIAL
-//                                listBoletosVw.get(w).getEmail(), // EMAIL FILIAL
-//                                listBoletosVw.get(w).getSilteFilial(), // SITE FILIAL
-//                                ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/LogoCliente.png"), // LOGO BOLETO - VERSO
-//                                listBoletosVw.get(w).getLocalPagamento(), // LOCAL DE PAGAMENTO
-//                                listBoletosVw.get(w).getInformativo()
-//                        ));
-//                    if (IMPRIME_VERSO) {
-//                        if (IMPRIME_VERSO_FIM) {
-//                            if ((w + 1) == listBoletosVw.size()) {
-//                            }
-//                        } else {
-//                            dtSource = new JRBeanCollectionDataSource(list);
-//                            jasperPrintList.add(JasperFillManager.fillReport(jasperReportVerso, null, dtSource));
-//                        }
-//
-//                    }
                 }
 
                 if (!list.isEmpty()) {
                     JRBeanCollectionDataSource dtSource = new JRBeanCollectionDataSource(list);
                     jasperPrintList.add(JasperFillManager.fillReport(jasperReport, null, dtSource));
-                    dtSource = new JRBeanCollectionDataSource(list);
-                    jasperPrintList.add(JasperFillManager.fillReport(jasperReportVerso, null, dtSource));
+                    if (IMPRIME_VERSO) {
+                        dtSource = new JRBeanCollectionDataSource(list);
+                        jasperPrintList.add(JasperFillManager.fillReport(jasperReportVerso, null, dtSource));
+                    }
                     valor = 0;
                     valor_total = 0;
                     list.clear();
