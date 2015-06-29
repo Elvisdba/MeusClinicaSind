@@ -65,7 +65,7 @@ public class ImprimirBoleto {
         Boleto bol = new Boleto();
 
         for (int i = 0; i < lista.size(); i++) {
-            bol = boletoDao.findBoletosByNrCtrBoleto(lista.get(i).getNrCtrBoleto());
+            bol = boletoDao.findBoletoByNrCtrBoleto(lista.get(i).getNrCtrBoleto());
             if (bol == null) {
                 ContaCobranca cc = dbc.findContaCobrancaByServicoAndTipoServico(lista.get(i).getServicos().getId(), lista.get(i).getTipoServico().getId());
                 int id_boleto = boletoDao.saveBoletoNativeQuery(cc.getId(), SessaoCliente.get().getId());
@@ -1207,7 +1207,7 @@ public class ImprimirBoleto {
             List<List> lAcres = new ArrayList<>();
 
             while (i < lista.size()) {
-                Boleto boleto = boletoDao.findBoletosByNrCtrBoleto(lista.get(i).getNrCtrBoleto());
+                Boleto boleto = boletoDao.findBoletoByNrCtrBoleto(lista.get(i).getNrCtrBoleto());
                 BigDecimal valor, multa, juros, correcao, desconto;
 
                 if (lAcres.isEmpty()) {

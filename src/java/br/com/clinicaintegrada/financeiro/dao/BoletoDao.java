@@ -10,7 +10,7 @@ import javax.persistence.Query;
 
 public class BoletoDao extends DB {
 
-    public Boleto findBoletosByNrCtrBoleto(String nrCtrBoleto) {
+    public Boleto findBoletoByNrCtrBoleto(String nrCtrBoleto) {
         try {
             Query qry = getEntityManager().createQuery(
                     "  SELECT B                             "
@@ -18,7 +18,7 @@ public class BoletoDao extends DB {
                     + " WHERE B.nrCtrBoleto = '" + nrCtrBoleto + "'");
             List list = qry.getResultList();
             if (!list.isEmpty()) {
-                return (Boleto) qry.getSingleResult();
+                return (Boleto) list.get(0);
             }
         } catch (Exception e) {
             return null;

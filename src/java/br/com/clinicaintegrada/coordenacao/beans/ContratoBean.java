@@ -10,6 +10,7 @@ import br.com.clinicaintegrada.administrativo.dao.ModeloDocumentosDao;
 import br.com.clinicaintegrada.administrativo.dao.TaxasDao;
 import br.com.clinicaintegrada.coordenacao.Contrato;
 import br.com.clinicaintegrada.coordenacao.dao.ContratoDao;
+import br.com.clinicaintegrada.financeiro.Boleto;
 import br.com.clinicaintegrada.financeiro.CondicaoPagamento;
 import br.com.clinicaintegrada.financeiro.FStatus;
 import br.com.clinicaintegrada.financeiro.FTipoDocumento;
@@ -18,6 +19,7 @@ import br.com.clinicaintegrada.financeiro.Movimento;
 import br.com.clinicaintegrada.financeiro.Servicos;
 import br.com.clinicaintegrada.financeiro.TipoServico;
 import br.com.clinicaintegrada.financeiro.beans.ImpressaoBoleto;
+import br.com.clinicaintegrada.financeiro.dao.BoletoDao;
 import br.com.clinicaintegrada.financeiro.dao.LoteDao;
 import br.com.clinicaintegrada.financeiro.dao.MovimentoDao;
 import br.com.clinicaintegrada.logSistema.Logger;
@@ -217,6 +219,7 @@ public class ContratoBean implements Serializable {
         if (disabledSave) {
             Messages.warn("Validação", getCalculaValorMovimentoAlterado());
             return;
+   
         }
         Dao dao = new Dao();
         contrato.setTipoInternacao((TipoInternacao) dao.find(new TipoInternacao(), Integer.parseInt(listTipoInternacao.get(idTipoInternacao).getDescription())));
@@ -290,6 +293,8 @@ public class ContratoBean implements Serializable {
                 listTaxas.clear();
                 getListMovimentoTaxa();
                 getListTaxas();
+                listMovimento.clear();
+                listMovimentoTaxa.clear();
                 listMovimentoContrato.clear();
                 getListMovimentoContrato();
             } else {
@@ -325,6 +330,8 @@ public class ContratoBean implements Serializable {
                 listTaxas.clear();
                 getListMovimentoTaxa();
                 getListTaxas();
+                listMovimento.clear();
+                listMovimentoTaxa.clear();
                 listMovimentoContrato.clear();
                 getListMovimentoContrato();
             } else {
@@ -393,11 +400,19 @@ public class ContratoBean implements Serializable {
 
     public void delete(Contrato c) {
         Dao dao = new Dao();
+        MovimentoDao movimentoDao = new MovimentoDao();
+        List<Movimento> list = movimentoDao.findMovimentosByLote(listMovimento.get(0).getLote().getId());
+        for (int i = 0; i < list.size(); i++) {
+            if(list.get(i).getBaixa() != null) {
+                Messages.warn("Erro", "Não é possível excluir contratos com movimentos baixados. Somente rescisão!");
+                return;
+            }
+        }
         Logger logger = new Logger();
         dao.openTransaction();
         if (contrato.getId() != -1) {
-            for (int i = 0; i < listMovimento.size(); i++) {
-                if (!dao.delete(listMovimento.get(i))) {
+            for (int i = 0; i < list.size(); i++) {
+                if (!dao.delete(list.get(i))) {
                     Messages.warn("Erro", "Erro ao remover movimento!");
                     dao.rollback();
                     return;
@@ -442,9 +457,9 @@ public class ContratoBean implements Serializable {
                     t += list.get(i).getValor();
                 }
             }
-            list.clear();
+            //list.clear();
             if (contrato.getId() == -1) {
-                saldoDevedor = Float.toString((contrato.getValorTotal()));
+                saldoDevedor = Float.toString((contrato.getValorTotal()) + t);
             } else {
                 list = getListMovimentoContrato();
                 float d = 0;
@@ -717,7 +732,8 @@ public class ContratoBean implements Serializable {
                 if (Moeda.substituiVirgulaFloat(getSaldoDevedor()) > 0) {
                     int vencto = 0;
                     int h = 0;
-                    float v = (Moeda.substituiVirgulaFloat(getSaldoDevedor()) - contrato.getValorEntrada()) / contrato.getQuantidadeParcelas();
+                    // float v = (Moeda.substituiVirgulaFloat(getSaldoDevedor()) - contrato.getValorEntrada()) / contrato.getQuantidadeParcelas();
+                    float v = (Moeda.substituiVirgulaFloat(contrato.getValorTotalString()) - contrato.getValorEntrada()) / contrato.getQuantidadeParcelas();
                     for (int i = 0; i < contrato.getQuantidadeParcelas(); i++) {
                         if (!isEntrada && i == 0 && addDias > 0) {
                             m.setVencimentoString(dh.incrementarMeses(i + 1, dataVencimento));

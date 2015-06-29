@@ -516,7 +516,7 @@ public class BaixaGeralBean {
             // PEGAR PLANO 5 VINCULADO AO FIN_BOLETO > FIN_CONTA_COBRANCA
             // CASO NÃO TENHA FIN_BOLETO return mensagem = "Não existe conta banco para baixar este boleto!";
             BoletoDao boletoDao = new BoletoDao();
-            Boleto bol = boletoDao.findBoletosByNrCtrBoleto(listMovimentos.get(0).getNrCtrBoleto());
+            Boleto bol = boletoDao.findBoletoByNrCtrBoleto(listMovimentos.get(0).getNrCtrBoleto());
             if (bol == null) {
                 return mensagem = "Não existe conta banco para baixar este boleto!";
             }
@@ -784,13 +784,13 @@ public class BaixaGeralBean {
         if (banco.isEmpty() && getListMovimentos().size() == 1) {
             BoletoDao boletoDao = new BoletoDao();
             ImprimirBoleto imp = new ImprimirBoleto();
-            Boleto bol = boletoDao.findBoletosByNrCtrBoleto(listMovimentos.get(0).getNrCtrBoleto());
+            Boleto bol = boletoDao.findBoletoByNrCtrBoleto(listMovimentos.get(0).getNrCtrBoleto());
 
             if (bol == null) {
                 listMovimentos = imp.atualizaContaCobrancaMovimento(listMovimentos);
             }
 
-            bol = boletoDao.findBoletosByNrCtrBoleto(listMovimentos.get(0).getNrCtrBoleto());
+            bol = boletoDao.findBoletoByNrCtrBoleto(listMovimentos.get(0).getNrCtrBoleto());
             banco = bol.getContaCobranca().getContaBanco().getConta() + " / " + bol.getContaCobranca().getContaBanco().getBanco().getBanco();
         }
         return banco;

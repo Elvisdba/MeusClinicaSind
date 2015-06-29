@@ -96,7 +96,7 @@ public class ImpressaoBoleto {
                 // int qntItens = 0;
                 String documento = "";
                 for (int w = 0; w < listBoletosVw.size(); w++) {
-                    Boleto boletox = new BoletoDao().findBoletosByNrCtrBoleto(listBoletosVw.get(w).getNrCtrBoleto()); // NR_CTR_BOLETO
+                    Boleto boletox = new BoletoDao().findBoletoByNrCtrBoleto(listBoletosVw.get(w).getNrCtrBoleto()); // NR_CTR_BOLETO
                     String logo_banco = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(boletox.getContaCobranca().getContaBanco().getBanco().getLogo().trim());
                     Movimento mov = (Movimento) dao.find(new Movimento(), (Integer) Integer.parseInt(Long.toString(listBoletosVw.get(w).getMovimento())));
                     if ((boletox.getContaCobranca().getContaBanco().getBanco().getNumero().equals(Cobranca.caixaFederal))

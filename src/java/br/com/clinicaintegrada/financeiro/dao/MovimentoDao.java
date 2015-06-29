@@ -1,17 +1,11 @@
 package br.com.clinicaintegrada.financeiro.dao;
 
-import br.com.clinicaintegrada.financeiro.Boleto;
-import br.com.clinicaintegrada.financeiro.FormaPagamento;
 import br.com.clinicaintegrada.financeiro.Movimento;
-import br.com.clinicaintegrada.pessoa.dao.FilialDao;
 import br.com.clinicaintegrada.principal.DB;
-import br.com.clinicaintegrada.seguranca.Registro;
-import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import br.com.clinicaintegrada.utils.DataHoje;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 import javax.persistence.Query;
 import oracle.toplink.essentials.exceptions.EJBQLException;
 

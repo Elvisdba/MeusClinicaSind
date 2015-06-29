@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.application.FacesMessage;
@@ -55,6 +56,7 @@ import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Part;
+import org.apache.commons.io.FileUtils;
 import org.primefaces.component.accordionpanel.AccordionPanel;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.context.RequestContext;
@@ -202,6 +204,27 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
 
     public void clear() {
         Sessions.remove("fisicaBean");
+        clear(0);
+
+    }
+
+    public void clear(Integer tCase) {
+        if (tCase == 0) {
+            try {
+                Sessions.remove("cropperBean");
+                Sessions.remove("uploadBean");
+                Sessions.remove("photoCamBean");
+                FileUtils.deleteDirectory(new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("") + "/Cliente/" + getCliente() + "/temp/" + "foto/" + getUsuario().getId()));
+                File f = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/Imagens/Fotos/" + -1 + ".png"));
+                if (f.exists()) {
+                    f.delete();
+                }
+            } catch (IOException ex) {
+                java.util.logging.Logger.getLogger(FisicaBean.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else if (tCase == 1) {
+            fisica.setDtRecadastro(null);
+        }
     }
 
     public String getEnderecoCobranca() {
@@ -307,8 +330,8 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
                     return;
                 }
                 listDocumento = db.pesquisaFisicaPorDocumento(fisica.getPessoa().getDocumento());
-                for(int i = 0; i < listDocumento.size(); i++) {
-                    if(!Objects.equals(((Fisica) listDocumento.get(i)).getId(), fisica.getId())) {
+                for (int i = 0; i < listDocumento.size(); i++) {
+                    if (!Objects.equals(((Fisica) listDocumento.get(i)).getId(), fisica.getId())) {
                         Messages.warn("Validação", "Documento já existente!");
                         return;
                     }
@@ -580,6 +603,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
                 fExiste.delete();
             }
         }
+        listPessoaEndereco.clear();
         PessoaEmpresaDao peDao = new PessoaEmpresaDao();
         PessoaProfissaoDao ppDao = new PessoaProfissaoDao();
         Sessions.put("fisicaPesquisa", fisica);
@@ -796,8 +820,8 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
     public void find() {
         if (listPessoaFisica.isEmpty()) {
             FisicaDao dao = new FisicaDao();
-            if(Sessions.exists("remove_ids")) {
-                dao.setNon_ids(Sessions.getString("remove_ids"));                
+            if (Sessions.exists("remove_ids")) {
+                dao.setNon_ids(Sessions.getString("remove_ids"));
             }
             listPessoaFisica = dao.pesquisaPessoaFisica(descPesquisa, porPesquisa, comoPesquisa);
         }
@@ -1432,6 +1456,19 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
     }
 
     public String getFotoTempPerfil() {
+        if (fotoTempPerfil.isEmpty()) {
+            String urlTemp = "/Cliente/" + getCliente() + "/temp/" + "foto/" + getUsuario().getId() + "/perfil.png";
+            String arquivo = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(urlTemp);
+            for (String imagensTipo1 : imagensTipo) {
+                File f = new File(arquivo);
+                if (f.exists()) {
+                    fotoTempPerfil = urlTemp;
+                    break;
+                } else {
+                    fotoTempPerfil = "";
+                }
+            }
+        }
         return fotoTempPerfil;
     }
 
@@ -1741,6 +1778,14 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
 
     public void putValidacao(String validacao_tipo) {
         Sessions.put("validacao_tipo", validacao_tipo);
+    }
+
+    public String getPath() {
+        if (fisica.getId() == -1) {
+            return "temp/foto/" + ((Usuario) Sessions.getObject("sessaoUsuario")).getId();
+        } else {
+            return "Imagens/Fotos";
+        }
     }
 
 }
