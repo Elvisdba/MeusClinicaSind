@@ -191,7 +191,7 @@ public class BoletoDao extends DB {
 //        29 - f.juruf AS uf_filial,
 //        30 - ("substring"(f.jurcep::text, 1, 5) || '-'::text) || "right"(f.jurcep::text, 3) AS cep_filial,
 //        31 - er.logradouro AS logradouro_responsavel,
-//        32 - rtrim(((((er.endereco::text || ', '::text) || per.ds_numero::text) || ' '::text) || per.ds_complemento::text) || er.bairro::text) AS endereco_responsavel,
+//        32 - rtrim(((((er.endereco::text || ', '::text) || per.ds_numero::text) || ' '::text) || per.ds_complemento::text) || ' - Bairro: ' || er.bairro::text) AS endereco_responsavel,
 //        33 - ("left"(er.cep::text, 5) || '-'::text) || "right"(er.cep::text, 3) AS cep_responsavel,
 //        34 - er.uf AS uf_responsavel,
 //        35 - er.cidade AS cidade_responsavel,
