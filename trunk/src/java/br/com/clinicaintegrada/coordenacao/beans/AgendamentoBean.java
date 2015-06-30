@@ -1,12 +1,12 @@
 package br.com.clinicaintegrada.coordenacao.beans;
 
+import br.com.clinicaintegrada.configuracao.ConfiguracaoCoordenacao;
+import br.com.clinicaintegrada.configuracao.dao.ConfiguracaoCoordenacaoDao;
 import br.com.clinicaintegrada.coordenacao.Agendamento;
-import br.com.clinicaintegrada.coordenacao.ConfiguracaoCoordenacao;
 import br.com.clinicaintegrada.coordenacao.Contrato;
 import br.com.clinicaintegrada.coordenacao.Evento;
 import br.com.clinicaintegrada.coordenacao.Status;
 import br.com.clinicaintegrada.coordenacao.dao.AgendamentoDao;
-import br.com.clinicaintegrada.coordenacao.dao.ConfiguracaoCoordenacaoDao;
 import br.com.clinicaintegrada.coordenacao.dao.EventoDao;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.FuncaoEquipe;
