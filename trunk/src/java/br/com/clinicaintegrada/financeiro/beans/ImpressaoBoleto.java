@@ -155,6 +155,7 @@ public class ImpressaoBoleto {
                                 listBoletosVw.get(w).getEmail(), // CEDENTE - EMAIL
                                 listBoletosVw.get(w).getTelefoneFilial(), // CEDENTE - EMAIL
                                 // SACADO
+                                listBoletosVw.get(w).getCodigo(), // SACADO - CÓDIGO
                                 mov.getPessoa().getNome(), // SACADO - NOME
                                 mov.getPessoa().getDocumento(), // SACADO - DOCUMENTO
                                 listBoletosVw.get(w).getLogradouroResponsavel(), // SACADO - LOGRADOURO
@@ -192,7 +193,7 @@ public class ImpressaoBoleto {
                                 mov.getReferencia().substring(3), // EXERCICÍO
                                 mov.getDocumento(), // BOLETO
                                 boletox.getContaCobranca().getMensagem(), //  MENSAGEM
-                                MENSAGEM, // MENSAGEM BOLETO
+                                boletox.getMensagem(), // MENSAGEM BOLETO
                                 getSerrilha(), // SERRILHA
                                 "", // TEXTO
                                 "", // CAMINHO VERSO
