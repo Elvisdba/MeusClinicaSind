@@ -2,7 +2,6 @@ package br.com.clinicaintegrada.fichamedica.beans;
 
 import br.com.clinicaintegrada.fichamedica.Avaliacao;
 import br.com.clinicaintegrada.fichamedica.AvaliacaoEquipe;
-import br.com.clinicaintegrada.coordenacao.ConfiguracaoCoordenacao;
 import br.com.clinicaintegrada.fichamedica.dao.AvaliacaoEquipeDao;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.FuncaoEquipe;
