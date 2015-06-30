@@ -556,6 +556,12 @@
             <redirect/>
         </navigation-case>          
         
+        <navigation-case>
+            <from-outcome>configuracaoFinanceiro</from-outcome>
+            <to-view-id>/configuracaoFinanceiro.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>          
+        
         <!-- 
         <navigation-case>
             <from-outcome>#{navigationRules.param}</from-outcome>
