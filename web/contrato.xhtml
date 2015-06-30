@@ -59,7 +59,7 @@
                                         </p:inputMask>                                            
                                         <p:commandButton icon="ui-icon-search" title="Pesquisar responsável" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaFisica')}" disabled="#{controleAcessoBean.view('pesquisaPessoaFisica')}" actionListener="#{contratoBean.putValidacao('responsavel')}" global="false"/>
                                         <p:outputLabel value="#{contratoBean.contrato.responsavel.nome}" />
-                                        <p:commandButton icon="ui-icon-close" action="#{contratoBean.clear(1)}" update=":form_contrato:" rendered="#{contratoBean.contrato.responsavel.id != -1}"/>
+                                        <p:commandButton icon="ui-icon-close" action="#{contratoBean.clear(1)}" update=":form_contrato:" rendered="#{contratoBean.contrato.responsavel.id != -1}" />
                                     </h:panelGrid>
                                 </p:panel>
                                 <p:panel styleClass="margin-top-max">
@@ -150,7 +150,7 @@
                                         <p:column styleClass="text-center">
                                             <p:inputText maxlength="3" styleClass="text-center" value="#{contratoBean.contrato.quantidadeParcelas}" disabled="#{contratoBean.contrato.responsavel.id == -1}"  readonly="#{contratoBean.contrato.impresso}">
                                                 <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaSaldoDevedor}" global="false"/>
-                                            </p:inputText>                                        
+                                            </p:inputText>                                           
                                         </p:column>
                                     </p:row>
                                     <p:row rendered="#{contratoBean.contrato.id == -1}">
@@ -191,7 +191,7 @@
                                             <h:outputLabel value="#{movimento.valorString}"  rendered="#{movimento.id != -1}" />
                                         </p:column>
                                         <p:column headerText="Data de Quitação" styleClass="text-center">
-                                            <p:inputMask mask="99/99/9999" value="#{movimento.baixa.baixa}" styleClass="text-center" disabled="true"/>
+                                            <p:inputMask mask="99/99/9999" value="#{movimento.baixa.baixa}" styleClass="text-center" disabled="true" size="8"/>
                                         </p:column>
                                         <p:column headerText="Tipo Documento" styleClass="text-center">
                                             <p:commandLink value="#{movimento.tipoDocumento.descricao}" action="#{contratoBean.editMovimento(index, movimento)}" oncomplete="PF('dlg_update_ftipo_documento_ctr').show();" update=":form_contrato:id_update_ftipo_documento_ctr" styleClass="font-color-red" disabled="#{movimento.id != -1}" global="false"/>
@@ -199,7 +199,10 @@
                                         <p:column width="25" styleClass="text-center">
                                             <h:commandLink action="#{contratoBean.printBoletos(movimento.nrCtrBoleto)}" rendered="#{contratoBean.contrato.id != -1}" disabled="#{(contratoBean.disabledPrint(movimento))}" >
                                                 <p:button icon="ui-icon-print" disabled="#{(contratoBean.disabledPrint(movimento))}" />
-                                            </h:commandLink>                                            
+                                            </h:commandLink>
+                                        </p:column>
+                                        <p:column width="25" styleClass="text-center">
+                                            <p:commandButton icon="ui-icon-gear" action="#{contratoBean.editMovimento(index, movimento)}" oncomplete="PF('dlg_update_ftipo_documento_ctr').show();" update=":form_contrato:id_update_ftipo_documento_ctr"  rendered="#{contratoBean.contrato.id != -1}" disabled="#{(contratoBean.disabledPrint(movimento))}" />
                                         </p:column>
                                     </p:dataTable>
                                 </h:panelGrid>
@@ -213,10 +216,15 @@
                                         <p:column styleClass="text-center">#{movimento.vencimentoString}</p:column>
                                         <p:column styleClass="text-center">#{movimento.valorString}</p:column>
                                         <p:column styleClass="text-center">
-                                            <p:inputMask mask="99/99/9999" value="#{movimento.baixa.baixa}" styleClass="text-center" disabled="true"/>
+                                            <p:inputMask mask="99/99/9999" value="#{movimento.baixa.baixa}" styleClass="text-center" disabled="true" size="8"/>
                                         </p:column>
                                         <p:column styleClass="text-center">
                                             <p:commandLink value="#{movimento.tipoDocumento.descricao}" action="#{contratoBean.editMovimento(index, movimento)}" oncomplete="PF('dlg_update_ftipo_documento_taxas').show();" update=":form_contrato:id_update_ftipo_documento_taxas" styleClass="font-color-red" global="false"/>
+                                        </p:column>
+                                        <p:column width="25" styleClass="text-center">
+                                            <h:commandLink action="#{contratoBean.printBoletos(movimento.nrCtrBoleto)}" rendered="#{contratoBean.contrato.id != -1}" disabled="#{(contratoBean.disabledPrint(movimento))}" >
+                                                <p:button icon="ui-icon-print" disabled="#{(contratoBean.disabledPrint(movimento))}" />
+                                            </h:commandLink>                                             
                                         </p:column>
                                         <p:column width="25" styleClass="text-center">
                                             <p:commandButton icon="ui-icon-close" action="#{contratoBean.removeTaxa(index)}" update=":form_contrato:" rendered="#{!contratoBean.contrato.impresso}" disabled="#{controleAcessoBean.delete}"/>
@@ -302,7 +310,6 @@
                                 </f:facet>                                
                             </p:panel>
                             <h:panelGrid columns="2" styleClass="margin-top-max">
-                                <p:commandButton value="Mensagem Boleto" onclick="PF('dlg_mensagem_boleto').show()" rendered="#{contratoBean.contrato.id != -1}"/>                            
                                 <p:commandButton value="Modelos de documentos" onclick="PF('dlg_modelos_arquivos').show()" global="false" action="#{contratoBean.clear(4)}" update="i_m_a" rendered="#{not empty contratoBean.listMovimentoContrato}"/>
                             </h:panelGrid>
                             <p:dialog widgetVar="dlg_save" width="400" closable="true" header="Deseja salvar este contrato?" modal="true">
@@ -368,34 +375,47 @@
                                     </h:panelGrid>
                                 </f:facet>
                             </p:dialog>
-                            <p:dialog widgetVar="dlg_update_ftipo_documento_ctr" width="400" closable="true" header="Alterar tipo de documento" modal="true">
-                                <h:panelGrid columns="2" id="id_update_ftipo_documento_ctr">
-                                    <p:selectOneMenu value="#{contratoBean.idFTipoDocumento}">
+                            <p:dialog widgetVar="dlg_update_ftipo_documento_ctr" width="600" closable="true" header="Movimento/Boleto" modal="true" dynamic="true">
+                                <h:panelGrid columns="2" id="id_update_ftipo_documento_ctr" columnClasses="verticalAlignTop,verticalAlignTop">
+                                    <p:outputLabel value="Alterar tipo de documento: " />
+                                    <p:selectOneMenu value="#{contratoBean.idFTipoDocumento}" disabled="#{contratoBean.updateMovimento.id != -1}">
                                         <p:ajax event="change" update=":form_contrato:" listener="#{contratoBean.updateFTipoDocumento(0)}" oncomplete="PF('dlg_update_ftipo_documento_ctr').hide();"/>
                                         <f:selectItems value="#{contratoBean.listFTipoDocumento}" />
                                     </p:selectOneMenu>
+                                    <p:outputLabel value="Mensagem Boleto: " rendered="#{contratoBean.contrato.id != -1}"/>
+                                    <p:inputTextarea  value="#{contratoBean.mensagem[0]}" maxlength="1000" cols="50" rows="20" rendered="#{contratoBean.contrato.id != -1}">
+                                        <p:ajax event="change" update="@this" />
+                                    </p:inputTextarea>
+                                    <h:column />
+                                    <h:panelGrid columns="2" rendered="#{contratoBean.contrato.id != -1}">
+                                        <f:facet name="header">Salvar Mensagem</f:facet>
+                                        <p:commandButton value="Somente este boleto" action="#{contratoBean.saveMensagemBoleto(1)}" update=":form_contrato:" />
+                                        <p:commandButton value="Todos boletos"  action="#{contratoBean.saveMensagemBoleto(0)}" update=":form_contrato:"/>
+                                    </h:panelGrid>                                    
                                 </h:panelGrid>
                             </p:dialog>
-                            <p:dialog widgetVar="dlg_update_ftipo_documento_taxas" width="400" closable="true" header="Alterar tipo de documento" modal="true">
-                                <h:panelGrid columns="3" id="id_update_ftipo_documento_taxas">
+                            <p:dialog widgetVar="dlg_update_ftipo_documento_taxas" width="600" closable="true" header="Movimento/Boleto" modal="true" dynamic="true">
+                                <h:panelGrid columns="2" id="id_update_ftipo_documento_taxas" columnClasses="verticalAlignTop,verticalAlignTop">
+                                    <p:outputLabel value="Alterar tipo de documento: " />
                                     <p:selectOneMenu value="#{contratoBean.idFTipoDocumento}">
                                         <p:ajax event="change" update=":form_contrato:" listener="#{contratoBean.updateFTipoDocumento(1)}" oncomplete="PF('dlg_update_ftipo_documento_taxas').hide();"/>
                                         <f:selectItems value="#{contratoBean.listFTipoDocumento}" />
                                     </p:selectOneMenu>
-                                    <h:commandLink action="#{contratoBean.printBoletos(contratoBean.updateMovimento.nrCtrBoleto)}">
-                                        <p:button icon="ui-icon-print" />
-                                    </h:commandLink>                                     
-                                </h:panelGrid>
+                                    <p:outputLabel value="Mensagem Boleto: " rendered="#{contratoBean.contrato.id != -1}"/>
+                                    <p:inputTextarea value="#{contratoBean.mensagem[1]}" maxlength="1000" cols="50" rows="20" rendered="#{contratoBean.contrato.id != -1}">
+                                        <p:ajax event="change" update="@this" />
+                                    </p:inputTextarea>
+                                    <h:column />
+                                    <h:panelGrid columns="2" rendered="#{contratoBean.contrato.id != -1}">
+                                        <f:facet name="header">Salvar Mensagem</f:facet>
+                                        <p:commandButton value="Somente este boleto" action="#{contratoBean.saveMensagemBoleto(1)}" update=":form_contrato:"/>
+                                        <p:commandButton value="Todos boletos"  action="#{contratoBean.saveMensagemBoleto(0)}" update=":form_contrato:"/>
+                                    </h:panelGrid>
+                                </h:panelGrid>                               
                             </p:dialog>
                             <p:dialog widgetVar="dlg_rescindir" width="400" closable="true" header="Deseja rescindir este contrato?" modal="true">
                                 <f:facet name="footer">
                                     <p:commandButton action="#{contratoBean.action(1)}" update=":form_contrato:i_desligamento" value="Confirma" oncomplete="PF('dlg_rescindir').hide()"/>
-                                </f:facet>
-                            </p:dialog>
-                            <p:dialog widgetVar="dlg_mensagem_boleto" width="600" closable="true" header="Mensagem boleto" modal="true">
-                                <p:inputTextarea value="#{contratoBean.mensagem}" cols="89" rows="5"></p:inputTextarea>
-                                <f:facet name="footer">
-                                    <p:commandButton update=":form_contrato:" value="Ok" oncomplete="PF('dlg_mensagem_boleto').hide()"/>
                                 </f:facet>
                             </p:dialog>
                             <p:dialog widgetVar="dlg_rescindir_2" width="400" closable="true" header="Deseja desfazer esta rescisão?" modal="true">

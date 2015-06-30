@@ -46,7 +46,8 @@
                                         <p:menuitem value="Filial Departamento"     action="#{chamadaPaginaBean.pagina('filialDepartamento')}" rendered="#{!controleAcessoBean.view('filialDepartamento')}" />
                                     </p:submenu>  
                                     <p:submenu label="Configurações">  
-                                        <p:menuitem value="Coordenação"         action="#{chamadaPaginaBean.pagina('configuracaoCoordenacao')}" rendered="#{!controleAcessoBean.view('configuracaoCoordenacao')}"/>
+                                        <p:menuitem value="Coordenação"         action="#{chamadaPaginaBean.pagina('configuracaoCoordenacao')}" />
+                                        <p:menuitem value="Financeiro"          action="#{chamadaPaginaBean.pagina('configuracaoFinanceiro')}" />
                                     </p:submenu>  
                                     <p:separator />  
                                     <p:menuitem value="Pesquisar Logs"              action="#{chamadaPaginaBean.pagina('pesquisaLog')}" title="Registro de atividades" rendered="#{!controleAcessoBean.view('pesquisaLog')}"/>
