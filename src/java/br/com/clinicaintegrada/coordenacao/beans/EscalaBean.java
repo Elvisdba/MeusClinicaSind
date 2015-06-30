@@ -1,10 +1,10 @@
 package br.com.clinicaintegrada.coordenacao.beans;
 
-import br.com.clinicaintegrada.coordenacao.ConfiguracaoCoordenacao;
+import br.com.clinicaintegrada.configuracao.ConfiguracaoCoordenacao;
+import br.com.clinicaintegrada.configuracao.dao.ConfiguracaoCoordenacaoDao;
 import br.com.clinicaintegrada.coordenacao.Escala;
 import br.com.clinicaintegrada.coordenacao.Contrato;
 import br.com.clinicaintegrada.coordenacao.FuncaoEscala;
-import br.com.clinicaintegrada.coordenacao.dao.ConfiguracaoCoordenacaoDao;
 import br.com.clinicaintegrada.coordenacao.dao.EscalaDao;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.Equipe;

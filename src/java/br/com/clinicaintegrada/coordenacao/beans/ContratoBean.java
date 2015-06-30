@@ -10,6 +10,7 @@ import br.com.clinicaintegrada.administrativo.dao.ModeloDocumentosDao;
 import br.com.clinicaintegrada.administrativo.dao.TaxasDao;
 import br.com.clinicaintegrada.coordenacao.Contrato;
 import br.com.clinicaintegrada.coordenacao.dao.ContratoDao;
+import br.com.clinicaintegrada.financeiro.Boleto;
 import br.com.clinicaintegrada.financeiro.CondicaoPagamento;
 import br.com.clinicaintegrada.financeiro.FStatus;
 import br.com.clinicaintegrada.financeiro.FTipoDocumento;
@@ -18,6 +19,7 @@ import br.com.clinicaintegrada.financeiro.Movimento;
 import br.com.clinicaintegrada.financeiro.Servicos;
 import br.com.clinicaintegrada.financeiro.TipoServico;
 import br.com.clinicaintegrada.financeiro.beans.ImpressaoBoleto;
+import br.com.clinicaintegrada.financeiro.dao.BoletoDao;
 import br.com.clinicaintegrada.financeiro.dao.LoteDao;
 import br.com.clinicaintegrada.financeiro.dao.MovimentoDao;
 import br.com.clinicaintegrada.logSistema.Logger;
@@ -105,7 +107,7 @@ public class ContratoBean implements Serializable {
     private boolean pesquisaResponsavel;
     private boolean disabledSave;
     private Boolean imprimeVerso;
-    private String mensagem;
+    private String[] mensagem;
 
     @PostConstruct
     public void init() {
@@ -144,7 +146,9 @@ public class ContratoBean implements Serializable {
         porPesquisa = "nome";
         comoPesquisa = "";
         imprimeVerso = false;
-        mensagem = "";
+        mensagem = new String[2];
+        mensagem[0] = "";
+        mensagem[1] = "";
     }
 
     @PreDestroy
@@ -1280,7 +1284,7 @@ public class ContratoBean implements Serializable {
                     }
                 }
                 UUID uuidX = UUID.randomUUID();
-                String uuid = uuidX.toString().replace("-", "_");                
+                String uuid = uuidX.toString().replace("-", "_");
                 String fileName = "contrato_" + uuid + ".pdf";
                 String filePDF = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/contrato/_" + fileName);
                 boolean success = new File(filePDF).createNewFile();
@@ -1688,21 +1692,17 @@ public class ContratoBean implements Serializable {
     }
 
     public void printBoletos() {
-        ImpressaoBoleto.MENSAGEM = mensagem;
         ImpressaoBoleto.IMPRIME_VERSO = imprimeVerso;
         ImpressaoBoleto.IMPRIME_VERSO_FIM = true;
         ImpressaoBoleto.printByLote(listMovimento.get(0).getLote().getId());
         ImpressaoBoleto.IMPRIME_VERSO = false;
-        ImpressaoBoleto.MENSAGEM = "";
     }
 
     public void printBoletos(String nrCtrBoleto) {
-        ImpressaoBoleto.MENSAGEM = mensagem;
         ImpressaoBoleto.IMPRIME_VERSO = imprimeVerso;
         ImpressaoBoleto.IMPRIME_VERSO_FIM = true;
         ImpressaoBoleto.printByNrCtrBoleto(nrCtrBoleto);
         ImpressaoBoleto.IMPRIME_VERSO = false;
-        ImpressaoBoleto.MENSAGEM = "";
     }
 
     public void acaoPesquisaInicial() {
@@ -1788,11 +1788,11 @@ public class ContratoBean implements Serializable {
         this.imprimeVerso = imprimeVerso;
     }
 
-    public String getMensagem() {
+    public String[] getMensagem() {
         return mensagem;
     }
 
-    public void setMensagem(String mensagem) {
+    public void setMensagem(String[] mensagem) {
         this.mensagem = mensagem;
     }
 
@@ -1803,5 +1803,33 @@ public class ContratoBean implements Serializable {
             return true;
         }
         return false;
+    }
+
+    public void saveMensagemBoleto(Integer tcase) {
+        BoletoDao boletoDao = new BoletoDao();
+        String msg = "";
+        if (!mensagem[0].isEmpty()) {
+            msg = mensagem[0];
+            mensagem[0] = "";
+        } else if (!mensagem[1].isEmpty()) {
+            msg = mensagem[1];
+            mensagem[1] = "";
+        }
+        if (tcase == 0) {
+            for (Movimento listMovimento1 : listMovimento) {
+                Boleto boleto = boletoDao.findBoletoByNrCtrBoleto(listMovimento1.getNrCtrBoleto());
+                if (boleto != null) {
+                    boleto.setMensagem(msg);
+                    new Dao().update(boleto, true);
+                }
+            }
+        } else if (tcase == 1) {
+            Boleto boleto = boletoDao.findBoletoByNrCtrBoleto(updateMovimento.getNrCtrBoleto());
+            if (boleto != null) {
+                boleto.setMensagem(msg);
+                new Dao().update(boleto, true);
+            }
+        }
+        updateMovimento = new Movimento();
     }
 }
