@@ -1,8 +1,7 @@
-package br.com.clinicaintegrada.coordenacao.beans;
+package br.com.clinicaintegrada.configuracao.beans;
 
-import br.com.clinicaintegrada.agenda.AgendaTelefone;
-import br.com.clinicaintegrada.coordenacao.ConfiguracaoCoordenacao;
-import br.com.clinicaintegrada.coordenacao.dao.ConfiguracaoCoordenacaoDao;
+import br.com.clinicaintegrada.configuracao.ConfiguracaoCoordenacao;
+import br.com.clinicaintegrada.configuracao.dao.ConfiguracaoCoordenacaoDao;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import br.com.clinicaintegrada.utils.Dao;
