@@ -319,23 +319,23 @@ public class Pessoa implements BaseEntity, Serializable {
         return true;
     }
 
+//    public Fisica getFisica() {
+//        Fisica fisica = new Fisica();
+//        fisica.setPessoa(null);
+//        if (this.id != -1) {
+//            FisicaDao fisicaDao = new FisicaDao();
+//            fisica = fisicaDao.pesquisaFisicaPorPessoa(this.id);
+//            if (fisica.getId() != -1) {
+//                fisica = (Fisica) new Dao().rebind(fisica);
+//            }
+//            // fisica.setPessoa(null);
+//        }
+//        return fisica;
+//    }
+
     @Override
     public String toString() {
         return "Pessoa{" + "id=" + id + ", cliente=" + cliente + ", nome=" + nome + ", tipoDocumento=" + tipoDocumento + ", obs=" + obs + ", site=" + site + ", telefone1=" + telefone1 + ", telefone2=" + telefone2 + ", telefone3=" + telefone3 + ", email1=" + email1 + ", email2=" + email2 + ", email3=" + email3 + ", documento=" + documento + ", login=" + login + ", senha=" + senha + ", criacao=" + criacao + '}';
-    }
-
-    public Fisica getFisica() {
-        Fisica fisica = new Fisica();
-        fisica.setPessoa(null);
-        if (this.id != -1) {
-            FisicaDao fisicaDao = new FisicaDao();
-            fisica = fisicaDao.pesquisaFisicaPorPessoa(this.id);
-            if (fisica.getId() != -1) {
-                fisica = (Fisica) new Dao().rebind(fisica);
-            }
-            fisica.setPessoa(null);
-        }
-        return fisica;
     }
 
 }
