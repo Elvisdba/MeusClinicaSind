@@ -991,12 +991,18 @@ public class JuridicaBean implements Serializable {
 
     public void acaoPesquisaInicial() {
         comoPesquisa = "I";
-        listJuridica.clear();
+        load();
     }
 
     public void acaoPesquisaParcial() {
         comoPesquisa = "P";
+        load();
+    }
+
+    public void load() {
         listJuridica.clear();
+        JuridicaDao juridicaDao = new JuridicaDao();
+        listJuridica = juridicaDao.pesquisaPessoaJuridica(descPesquisa, porPesquisa, comoPesquisa, SessaoCliente.get());
     }
 
     public String getMask() {
@@ -1282,10 +1288,6 @@ public class JuridicaBean implements Serializable {
     }
 
     public List<Juridica> getListJuridica() {
-        if (listJuridica.isEmpty()) {
-            JuridicaDao juridicaDao = new JuridicaDao();
-            listJuridica = juridicaDao.pesquisaPessoaJuridica(descPesquisa, porPesquisa, comoPesquisa, SessaoCliente.get());
-        }
         return listJuridica;
     }
 
@@ -1315,7 +1317,15 @@ public class JuridicaBean implements Serializable {
     }
 
     public String getMascaraPesquisaJuridica() {
-        return Mask.getMascaraPesquisa(porPesquisa, true);
+        String mask = porPesquisa;
+        if (porPesquisa.equals("ds_cnpj")) {
+            mask = "cnpj";
+        } else if (porPesquisa.equals("ds_cpf")) {
+            mask = "cpf";
+        } else if (porPesquisa.equals("ds_cei")) {
+            mask = "cei";
+        }
+        return Mask.getMascaraPesquisa(mask, true);
     }
 
     public JuridicaReceita getJuridicaReceita() {
