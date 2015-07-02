@@ -25,7 +25,7 @@ import javax.servlet.http.HttpSession;
 @SessionScoped
 @SuppressWarnings("unchecked")
 public class ControleUsuarioBean implements Serializable {
-    
+
     private Usuario usuario = new Usuario();
     private MacFilial macFilial = new MacFilial();
     private String login = "";
@@ -41,8 +41,29 @@ public class ControleUsuarioBean implements Serializable {
     private String msgErro = "";
     private List<ContadorAcessos> listaContador = new ArrayList();
     private List<String> images = new ArrayList<>();
-    
+
     public String validacao() throws Exception {
+        if (macFilial != null && macFilial.getId() != null) {
+            Object objs[] = new Object[2];
+            objs[0] = macFilial.getFilial();
+            objs[1] = macFilial.getDepartamento();
+            Sessions.put("acessoFilial", macFilial);
+            filial = "( " + macFilial.getFilial().getFilial().getPessoa().getNome() + " / " + macFilial.getDepartamento().getDescricao() + " )";
+            if (macFilial.getMesa() > 0) {
+                filial += " - Guiche: " + macFilial.getMesa();
+            }
+            if (macFilial.getDescricao() != null && !macFilial.getDescricao().isEmpty()) {
+                filial += " - " + macFilial.getDescricao();
+            }
+            if (macFilial.getCaixa() != null) {
+                if (macFilial.getCaixa().getCaixa() > 0) {
+                    filial += " - Caixa: " + macFilial.getCaixa().getCaixa();
+                }
+            }
+        } else {
+            Sessions.put("acessoFilial", null);
+            filial = "";
+        }
         String pagina = null;
         Sessions.put("indicaAcesso", "local");
         UsuarioDao db = new UsuarioDao();
@@ -87,7 +108,7 @@ public class ControleUsuarioBean implements Serializable {
         }
         return pagina;
     }
-    
+
     public String getValidacaoIndex() throws IOException {
         if (Sessions.exists("sessaoCliente")) {
             Sessions.remove("conexao");
@@ -125,7 +146,7 @@ public class ControleUsuarioBean implements Serializable {
         }
         return null;
     }
-    
+
     public String getValidaIndex() {
         if (Sessions.exists("sessaoCliente")) {
             Sessions.remove("conexao");
@@ -158,10 +179,10 @@ public class ControleUsuarioBean implements Serializable {
         }
         return null;
     }
-    
+
     public void refreshForm(String retorno) throws IOException {
     }
-    
+
     public String voltarDoAcessoNegado() {
         linkVoltar = Sessions.getString("urlRetorno");
         if (linkVoltar == null) {
@@ -170,7 +191,7 @@ public class ControleUsuarioBean implements Serializable {
             return converteURL();
         }
     }
-    
+
     public String converteURL() {
         String url = linkVoltar;
         iniURL = url.lastIndexOf("/");
@@ -182,50 +203,50 @@ public class ControleUsuarioBean implements Serializable {
         }
         return paginaDestino;
     }
-    
+
     public void carregar() {
         //FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("urlIndex", request.getQueryString());
         filialDep = "oi";
     }
-    
+
     public Usuario getUsuario() {
         return usuario;
     }
-    
+
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
-    
+
     public String getLogin() {
         return login;
     }
-    
+
     public void setLogin(String login) {
         this.login = login;
     }
-    
+
     public String getAlerta() {
         return alerta;
     }
-    
+
     public void setAlerta(String alerta) {
         this.alerta = alerta;
     }
-    
+
     public String getFilial() {
         return filial;
     }
-    
+
     public void setFilial(String filial) {
         this.filial = filial;
     }
-    
+
     public String getFilialDep() throws IOException {
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         //  filialDep = request.getRequestURL().toString();
         // filialDep = requestFilial.getQueryString();
         filialDep = request.getParameter("filial");
-        if (filialDep == null && macFilial.getId() != -1) {
+        if (filialDep == null && macFilial.getId() != null) {
             return "";
         }
         if (filialDep != null) {
@@ -241,7 +262,7 @@ public class ControleUsuarioBean implements Serializable {
         }
         return filialDep;
     }
-    
+
     public void redireciona(String regir) throws IOException {
         if (!filialDep.isEmpty() && !filialDep.equals("Filial sem Registro")) {
             String retorno = "";
@@ -251,27 +272,27 @@ public class ControleUsuarioBean implements Serializable {
             FacesContext.getCurrentInstance().getExternalContext().redirect(retorno);
         }
     }
-    
+
     public void setFilialDep(String filialDep) {
         this.filialDep = filialDep;
     }
-    
+
     public MacFilial getMacFilial() {
         return macFilial;
     }
-    
+
     public void setMacFilial(MacFilial macFilial) {
         this.macFilial = macFilial;
     }
-    
+
     public String getMsgErro() {
         return msgErro;
     }
-    
+
     public void setMsgErro(String msgErro) {
         this.msgErro = msgErro;
     }
-    
+
     public List<ContadorAcessos> getListaContador() {
         if (Sessions.exists("sessaoUsuario")) {
             Usuario usu = ((Usuario) Sessions.getObject("sessaoUsuario"));
@@ -283,18 +304,18 @@ public class ControleUsuarioBean implements Serializable {
         }
         return listaContador;
     }
-    
+
     public void setListaContador(List<ContadorAcessos> listaContador) {
         this.listaContador = listaContador;
     }
-    
+
     public static String getCliente() {
         if (Sessions.exists("sessaoCliente")) {
             cliente = ((Cliente) Sessions.getObject("sessaoCliente")).getIdentifica();
         }
         return cliente;
     }
-    
+
     public String getClienteString() {
         String novoCliente = "";
         if (Sessions.exists("sessaoCliente")) {
@@ -302,22 +323,22 @@ public class ControleUsuarioBean implements Serializable {
         }
         return novoCliente;
     }
-    
+
     public boolean isBoqueiaMenu() {
         String nomeCliente = getClienteString();
         return nomeCliente.equals("Rtools") || nomeCliente.equals("ClinicaIntegrada");
     }
-    
+
     public static void setBloqueiaMenu(String aBloqueiaMenu) {
         bloqueiaMenu = aBloqueiaMenu;
     }
-    
+
     public void removeSessionsModuloMenuPrincipal() {
         if (Sessions.exists("idModulo")) {
             Sessions.remove("idModulo");
         }
     }
-    
+
     public List<String> getImages() {
         if (images.isEmpty()) {
             images = new ArrayList<>();
@@ -325,9 +346,9 @@ public class ControleUsuarioBean implements Serializable {
         }
         return images;
     }
-    
+
     public void setImages(List<String> images) {
         this.images = images;
     }
-    
+
 }
