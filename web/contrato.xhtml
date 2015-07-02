@@ -26,7 +26,7 @@
                     <ui:include src="templates/templatePrime.xhtml"/>
                 </f:subview>
                 <f:view>                   
-                    <ui:include src="templates/templateAcessoFilialComCaixa.xhtml"/>
+                    <ui:include src="templates/templateAcessoFilial.xhtml"/>
                     <ui:include src="templates/templateStatus.xhtml"/>
                     <p:panel styleClass="wrapper" style="border: 0px;">
                         <h:outputText value="Contrato" styleClass="fonteHeader" />
@@ -39,6 +39,18 @@
                             <p:panel styleClass="margin-top-med">
                                 <f:facet name="header">
                                     <p:outputLabel value="Contrato nº #{contratoBean.contrato.id}" rendered="#{contratoBean.contrato.id != -1}" styleClass="font-color-red font-size-12"/>
+                                    <h:panelGrid columns="2">
+                                        <p:outputLabel value="Unidade de cadastramento:" styleClass="bold" />
+                                        <p:selectOneMenu value="#{contratoBean.idFilial}" disabled="true">
+                                            <p:ajax event="change" update="@this" global="false" />
+                                            <f:selectItems value="#{contratoBean.listFilial}" />
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Unidade atual do paciente:" styleClass="bold" />
+                                        <p:selectOneMenu value="#{contratoBean.idFilialAtual}" disabled="#{contratoBean.contrato.id != -1}">
+                                            <p:ajax event="change" update="@this" global="false" />
+                                            <f:selectItems value="#{contratoBean.listFilialAtual}" />
+                                        </p:selectOneMenu>
+                                    </h:panelGrid>
                                 </f:facet>
                                 <h:panelGrid columns="2">
                                     <p:outputLabel value="Data Contratual:" styleClass="bold" />
