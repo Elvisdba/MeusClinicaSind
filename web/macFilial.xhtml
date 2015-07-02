@@ -48,34 +48,24 @@
                                 </h:panelGrid>
                             </p:panel>
 
-                            <h:panelGrid style="clear: both; margin-top: 20px; float: left; width: 400px;" columns="3">
-                                <p:column>
-                                    <h:outputLabel value="Mac "/>
-                                    <br />
+                            <h:panelGrid columns="5" cellpadding="3">
+                                <h:outputLabel value="Mac"/>
+                                <h:outputLabel value="Nr Mesa"/>
+                                <h:outputLabel value="Caixa"/>
+                                <h:outputLabel value="Descrição"/>
+                                <h:column />
+                                <p:inputMask value="#{macFilialBean.macFilial.mac}" size="15" mask="**-**-**-**-**-**"/>
+                                <p:inputText value="#{macFilialBean.macFilial.mesa}" size="5"/>
+                                <p:selectOneMenu value="#{macFilialBean.idCaixa}" style="width: 200px">
+                                    <f:selectItems value="#{macFilialBean.listaCaixa}"/>
+                                </p:selectOneMenu>
+                                <p:inputText value="#{macFilialBean.macFilial.descricao}" maxlength="100" size="25"/>
+                                <h:column>
                                     <h:panelGrid columns="2">
-                                        <p:inputMask value="#{macFilialBean.macFilial.mac}" size="15" mask="**-**-**-**-**-**"/>
-                                    </h:panelGrid> 
-                                </p:column>
-
-                                <p:column>
-                                    <h:outputLabel value="Nr Mesa "/>
-                                    <br />
-                                    <h:panelGrid columns="2">
-                                        <p:inputText value="#{macFilialBean.macFilial.mesa}" size="5"/>
+                                        <p:commandButton value="Salvar" action="#{macFilialBean.save}" disabled="#{controleAcessoBean.save}" update=":form_mac_filial_1: :form_mac_filial_2:tbl"/>                                    
+                                        <p:commandButton value="Novo" action="#{macFilialBean.clear}" update=":form_mac_filial_1: :form_mac_filial_2:tbl"/>
                                     </h:panelGrid>
-                                </p:column>
-
-                                <p:column>
-                                    <h:outputLabel value="Caixa "/>
-                                    <br />
-
-                                    <h:panelGrid columns="2">
-                                        <p:selectOneMenu value="#{macFilialBean.idCaixa}" style="width: 200px">
-                                            <f:selectItems value="#{macFilialBean.listaCaixa}"/>
-                                        </p:selectOneMenu>
-                                        <p:commandButton value="Salvar" action="#{macFilialBean.add}" disabled="#{controleAcessoBean.save}" update=":form_mac_filial_1: :form_mac_filial_2:tbl"/>
-                                    </h:panelGrid>
-                                </p:column>
+                                </h:column>
                             </h:panelGrid>
 
                             <h:panelGrid style="clear: both; margin-bottom: 20px; float: right; width: 100%;" columns="1">
@@ -95,15 +85,19 @@
                                     </p:column>
 
                                     <p:column headerText="Filial">
-                                        <h:outputLabel value="#{macFilial.filial.filial.pessoa.nome}"/>
+                                        <p:commandLink value="#{macFilial.filial.filial.pessoa.nome}" action="#{macFilialBean.edit(macFilial)}" update=":form_mac_filial_1: :form_mac_filial_2:"/>
                                     </p:column>
 
                                     <p:column headerText="Departamento" styleClass="text-center">
-                                        <h:outputLabel value="#{macFilial.departamento.descricao}"/>
+                                        <p:commandLink value="#{macFilial.departamento.descricao}" action="#{macFilialBean.edit(macFilial)}" update=":form_mac_filial_1: :form_mac_filial_2:"/>
                                     </p:column>
 
+                                    <p:column headerText="Descrição" filterBy="#{macFilial.descricao}" filterMatchMode="global">
+                                        <p:commandLink value="#{macFilial.descricao}" action="#{macFilialBean.edit(macFilial)}" update=":form_mac_filial_1: :form_mac_filial_2:"/>
+                                    </p:column>                                    
+
                                     <p:column headerText="Registro" styleClass="text-center" width="140">
-                                        <p:inputText value="#{macFilial.mac}" onclick="selectInputText(this)" styleClass="text-center" readonly="true" style="color: #bc4763"/>
+                                        <p:inputText value="#{macFilial.mac}" onclick="selectInputText(this)" styleClass="text-center" readonly="true" style="color: #bc4763" size="16"/>
                                     </p:column>
 
                                     <p:column headerText="Nr Mesa" styleClass="text-center">
