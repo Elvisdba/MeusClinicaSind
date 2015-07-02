@@ -134,6 +134,18 @@ public class PessoaUtilitarios implements Serializable {
      * @param pessoa
      * @return
      */
+    public String getFotoPessoaFisica(Integer pessoa) {
+        Pessoa p = new Pessoa();
+        p.setId(pessoa);
+        return getFotoPessoaFisica(p, 0);
+    }
+
+    /**
+     * Retorna foto da pessoa
+     *
+     * @param pessoa
+     * @return
+     */
     public String getFotoPessoaFisica(Pessoa pessoa) {
         return getFotoPessoaFisica(pessoa, 0);
     }
@@ -152,16 +164,21 @@ public class PessoaUtilitarios implements Serializable {
             } catch (InterruptedException ex) {
             }
         }
+        Fisica fis = new FisicaDao().pesquisaFisicaPorPessoa(pessoa.getId());
         String foto = "/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/Fotos/" + pessoa.getId() + ".png";
         File f = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(foto));
         if (!f.exists()) {
             foto = "/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/Fotos/" + pessoa.getId() + ".jpg";
             f = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(foto));
             if (!f.exists()) {
-                if (pessoa.getFisica().getSexo().equals("F")) {
-                    foto = "/Imagens/user_female.png";
+                if(fis == null) {
+                    foto = "/Imagens/user_male.png";                    
                 } else {
-                    foto = "/Imagens/user_male.png";
+                    if (fis.getSexo().equals("F")) {
+                        foto = "/Imagens/user_female.png";
+                    } else {
+                        foto = "/Imagens/user_male.png";
+                    }
                 }
             }
         }
