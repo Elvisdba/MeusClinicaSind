@@ -37,13 +37,13 @@
                                     <p:inputMask value="#{juridicaBean.descPesquisa}" size="50" mask="#{juridicaBean.mascaraPesquisaJuridica}" autocomplete="false"/>
                                     <p:selectOneMenu value="#{juridicaBean.porPesquisa}">
                                         <p:ajax event="change" update="i_panel_pesquisa" />
-                                        <f:selectItem itemValue="nome"     itemLabel="Nome"/>
-                                        <f:selectItem itemValue="fantasia" itemLabel="Fantasia"/>
-                                        <f:selectItem itemValue="cnpj"     itemLabel="CNPJ"/>
-                                        <f:selectItem itemValue="cpf"      itemLabel="CPF"/>
-                                        <f:selectItem itemValue="cei"      itemLabel="CEI"/>
-                                        <f:selectItem itemValue="email1" itemLabel="E-mail 1"/>
-                                        <f:selectItem itemValue="email2" itemLabel="E-mail 2"/>
+                                        <f:selectItem itemValue="ds_nome"     itemLabel="Nome"/>
+                                        <f:selectItem itemValue="ds_fantasia" itemLabel="Fantasia"/>
+                                        <f:selectItem itemValue="ds_cnpj"     itemLabel="CNPJ"/>
+                                        <f:selectItem itemValue="ds_cpf"      itemLabel="CPF"/>
+                                        <f:selectItem itemValue="ds_cei"      itemLabel="CEI"/>
+                                        <f:selectItem itemValue="ds_email1" itemLabel="E-mail 1"/>
+                                        <f:selectItem itemValue="ds_email2" itemLabel="E-mail 2"/>
                                         <f:selectItem itemValue="endereco" itemLabel="Endereço"/>
                                     </p:selectOneMenu>                        
                                     <p:commandButton value="Inicial" action="#{juridicaBean.acaoPesquisaInicial}" update=":formGridPesquisaPessoaJuridica:i_panel_grid" />
@@ -52,18 +52,18 @@
                                 <p:focus for="i_panel_pesquisa" />
                             </p:panel>
                         </h:form>
-                        
+
                         <h:form id="formGridPesquisaPessoaJuridica">
                             <h:panelGrid id="i_panel_grid" style="width: 100%">
                                 <p:dataTable value="#{juridicaBean.listJuridica}" var="juridica" id="tbl" emptyMessage="Nenhuma empresa encontrada" scrollHeight="400" scrollable="true">
                                     <p:column style="width:5%">  
                                         <p:rowToggler />  
                                     </p:column>  
-                                    
+
                                     <p:column styleClass="text-center" width="30">
                                         <p:commandButton icon="ui-icon-link" action="#{juridicaBean.edit(juridica)}" title="Editar registro nº#{juridica.id}"/>
                                     </p:column>
-                                    
+
                                     <p:column headerText="Nome">
                                         <p:commandLink action="#{juridicaBean.edit(juridica)}" value="#{juridica.pessoa.nome}"/>
                                     </p:column>
@@ -100,9 +100,9 @@
                             </h:panelGrid>
                         </h:form>                        
                     </p:panel>
-                    
-                        
-                    
+
+
+
                 </f:view>
                 <!-- FINALIZA div wrap main -->
             </div>
