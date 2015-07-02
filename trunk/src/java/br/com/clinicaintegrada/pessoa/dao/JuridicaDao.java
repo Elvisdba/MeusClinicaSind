@@ -17,25 +17,27 @@ public class JuridicaDao extends DB {
             return new ArrayList();
         }
         descricao = descricao.toLowerCase().toUpperCase();
-        String queryString = "SELECT J FROM Juridica AS J WHERE (J.pessoa.cliente.id = :cliente OR J.id = :juridica)";
-        if (por.equals("fantasia")) {
-            por = "fantasia";
+        String queryString = ""
+                + "     SELECT J.*                                              "
+                + "       FROM pes_juridica AS J                                "
+                + " INNER JOIN pes_pessoa AS P ON P.id = J.id_pessoa            "
+                + "      WHERE (P.id_cliente = " + cliente.getId() + " OR J.id = " + cliente.getIdJuridica() + ")";
+        if (por.equals("ds_fantasia")) {
+            por = "ds_fantasia";
             switch (como) {
                 case "P":
                     descricao = "%" + descricao + "%";
                     break;
                 case "I":
-                    por = "fantasia";
+                    por = "ds_fantasia";
                     descricao = descricao + "%";
                     break;
             }
-            queryString += " AND UPPER(J." + por + ") LIKE :descricao ORDER BY J.pessoa.nome ";
+            queryString += " AND UPPER(func_translate(J." + por + ")) LIKE func_translate(UPPER('" + descricao + "')) ORDER BY P.ds_nome ";
         }
-        if (por.equals("nome") || por.equals("email1") || por.equals("email2") || por.equals("cnpj") || por.equals("cpf") || por.equals("cei")) {
-            if (por.equals("cnpj") || por.equals("cpf") || por.equals("cei")) {
-                por = "documento";
-            } else {
-                por = "nome";
+        if (por.equals("ds_nome") || por.equals("ds_email1") || por.equals("ds_email2") || por.equals("ds_cpf") || por.equals("ds_cnpj") || por.equals("ds_cei")) {
+            if (por.equals("ds_cpf") || por.equals("ds_cnpj") || por.equals("ds_cei")) {
+                por = "ds_documento";
             }
             switch (como) {
                 case "P":
@@ -45,55 +47,36 @@ public class JuridicaDao extends DB {
                     descricao = descricao + "%";
                     break;
             }
-            queryString += " AND UPPER(J.pessoa." + por + ") LIKE :descricao ORDER BY J.pessoa.nome ";
+            queryString += " AND UPPER(func_translate(P." + por + ")) LIKE func_translate(UPPER('" + descricao + "')) ORDER BY P.ds_nome ";
         }
         if (por.equals("endereco")) {
-            String queryEndereco = ""
-                    + "       SELECT jur.id                                                                         "
-                    + "        FROM pes_pessoa_endereco     AS pesend                                               "
-                    + "  INNER JOIN pes_pessoa              AS pes      ON (pes.id = pesend.id_pessoa)              "
-                    + "  INNER JOIN end_endereco            AS ende     ON (ende.id = pesend.id_endereco)           "
-                    + "  INNER JOIN end_cidade              AS cid      ON (cid.id = ende.id_cidade)                "
-                    + "  INNER JOIN end_descricao_endereco  AS enddes   ON (enddes.id = ende.id_descricao_endereco) "
-                    + "  INNER JOIN end_bairro              AS bai      ON (bai.id = ende.id_bairro)                "
-                    + "  INNER JOIN end_logradouro          AS logr     ON (logr.id = ende.id_logradouro)           "
-                    + "  INNER JOIN pes_juridica jur ON (jur.id_pessoa = pes.id)                                    "
-                    + "  WHERE UPPER(TRANSLATE(logr.ds_descricao) || ' ' || enddes.ds_descricao || ', ' || pesend.ds_numero || ', ' || bai.ds_descricao || ', ' || cid.ds_cidade || ', ' || cid.ds_uf)    LIKE UPPER('%" + descricao + "%')  "
-                    + "     OR UPPER(TRANSLATE(logr.ds_descricao) || ' ' || enddes.ds_descricao || ', ' || bai.ds_descricao || ', ' || cid.ds_cidade || ', ' || cid.ds_uf)    LIKE UPPER('%" + descricao + "%')  "
-                    + "     OR UPPER(TRANSLATE(logr.ds_descricao) || ' ' || enddes.ds_descricao || ', ' || cid.ds_cidade  || ', ' || cid.ds_uf) LIKE UPPER('%" + descricao + "%')                                "
-                    + "     OR UPPER(TRANSLATE(logr.ds_descricao) || ' ' || enddes.ds_descricao || ', ' || cid.ds_cidade  ) LIKE UPPER('%" + descricao + "%')                                                    "
-                    + "     OR UPPER(TRANSLATE(logr.ds_descricao) || ' ' || enddes.ds_descricao) LIKE UPPER('%" + descricao + "%') || ', ' || pesend.ds_numero                                                   "
-                    + "     OR UPPER(TRANSLATE(logr.ds_descricao) || ' ' || enddes.ds_descricao) LIKE UPPER('%" + descricao + "%')                                                                               "
-                    + "     OR UPPER(TRANSLATE(enddes.ds_descricao)) LIKE UPPER('%" + descricao + "%')                                                                                                           "
-                    + "     OR UPPER(TRANSLATE(cid.ds_cidade)) LIKE UPPER('%" + descricao + "%')                                                                                                                 "
-                    + "     OR UPPER(TRANSLATE(ende.ds_cep)) "
+            queryString = ""
+                    + " SELECT J.* FROM pes_juridica AS J WHERE J.id IN ("
+                    + "       SELECT jur.id                                                                         \n"
+                    + "        FROM pes_pessoa_endereco     AS pesend                                               \n"
+                    + "  INNER JOIN pes_pessoa              AS pes      ON (pes.id = pesend.id_pessoa)              \n"
+                    + "  INNER JOIN end_endereco            AS ende     ON (ende.id = pesend.id_endereco)           \n"
+                    + "  INNER JOIN end_cidade              AS cid      ON (cid.id = ende.id_cidade)                \n"
+                    + "  INNER JOIN end_descricao_endereco  AS enddes   ON (enddes.id = ende.id_descricao_endereco) \n"
+                    + "  INNER JOIN end_bairro              AS bai      ON (bai.id = ende.id_bairro)                \n"
+                    + "  INNER JOIN end_logradouro          AS logr     ON (logr.id = ende.id_logradouro)           \n"
+                    + "  INNER JOIN pes_juridica jur ON (jur.id_pessoa = pes.id)                                    \n"
+                    + "  WHERE UPPER(func_translate(logr.ds_descricao || ' ' || enddes.ds_descricao || ', ' || pesend.ds_numero || ', ' || bai.ds_descricao || ', ' || cid.ds_cidade || ', ' || cid.ds_uf))    LIKE UPPER(func_translate('%" + descricao + "%'))    \n"
+                    + "     OR UPPER(func_translate(logr.ds_descricao || ' ' || enddes.ds_descricao || ', ' || bai.ds_descricao || ', ' || cid.ds_cidade || ', ' || cid.ds_uf))    LIKE UPPER(func_translate('%" + descricao + "%'))                                \n"
+                    + "     OR UPPER(func_translate(logr.ds_descricao || ' ' || enddes.ds_descricao || ', ' || cid.ds_cidade  || ', ' || cid.ds_uf)) LIKE UPPER(func_translate('%" + descricao + "%'))                                                              \n"
+                    + "     OR UPPER(func_translate(logr.ds_descricao || ' ' || enddes.ds_descricao || ', ' || cid.ds_cidade  )) LIKE UPPER(func_translate('%" + descricao + "%'))                                                                                  \n"
+                    + "     OR UPPER(func_translate(logr.ds_descricao || ' ' || enddes.ds_descricao || ', ' || pesend.ds_numero )) LIKE UPPER(func_translate('%" + descricao + "%'))                                                                                \n"
+                    + "     OR UPPER(func_translate(logr.ds_descricao || ' ' || enddes.ds_descricao)) LIKE UPPER(func_translate('%" + descricao + "%'))                                                                                                             \n"
+                    + "     OR UPPER(func_translate(enddes.ds_descricao)) LIKE UPPER('%" + descricao + "%')                                                                                                                                                         \n"
+                    + "     OR UPPER(func_translate(cid.ds_cidade)) LIKE UPPER(func_translate('%" + descricao + "%'))                                                                                                                                               \n"
+                    + "     OR ende.ds_cep LIKE '%" + descricao + "%'                                                                                                                                                                                                     \n"
                     + "    AND (pes.id_cliente = " + cliente.getId()
-                    + "     OR pes.id_juridica = " + cliente.getIdJuridica() + " )"
-                    + "  LIMIT 1000 ";
+                    + "     OR jur.id = " + cliente.getIdJuridica() + " )"
+                    + "  LIMIT 1000 )";
 
-            Query qryEndereco = getEntityManager().createNativeQuery(queryEndereco);
-            List listEndereco = qryEndereco.getResultList();
-            String listaId = "";
-            if (!listEndereco.isEmpty()) {
-                for (int i = 0; i < listEndereco.size(); i++) {
-                    if (i == 0) {
-                        listaId = ((Integer) ((List) listEndereco.get(i)).get(0)).toString();
-                    } else {
-                        listaId += ", " + ((Integer) ((List) listEndereco.get(i)).get(0)).toString();
-                    }
-                }
-                queryString = " SELECT JUR FROM Juridica AS JUR WHERE JUR.id IN(" + listaId + ") ORDER BY JUR.pessoa.nome ASC";
-            }
         }
         try {
-            Query query = getEntityManager().createQuery(queryString);
-            query.setParameter("cliente", cliente.getId());
-            query.setParameter("juridica", cliente.getIdJuridica());
-            if (!descricao.equals("%%") && !descricao.equals("%")) {
-                if (!por.equals("endereco")) {
-                    query.setParameter("descricao", descricao);
-                }
-            }
+            Query query = getEntityManager().createNativeQuery(queryString, Juridica.class);
             List lista = query.getResultList();
             if (!lista.isEmpty()) {
                 return lista;

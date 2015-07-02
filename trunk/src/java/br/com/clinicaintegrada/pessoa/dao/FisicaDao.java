@@ -52,27 +52,29 @@ public class FisicaDao extends DB {
                 }
             }
             if (por.equals("endereco")) {
-                queryString = ""
-                        + "      SELECT F.* "
-                        + "        FROM pes_pessoa_endereco     AS pesend                                                                                                                                 "
-                        + "  INNER JOIN pes_pessoa              AS pes      ON (pes.id = pesend.id_pessoa)                                                                                                "
-                        + "  INNER JOIN end_endereco            AS ende     ON (ende.id = pesend.id_endereco)                                                                                             "
-                        + "  INNER JOIN end_cidade              AS cid      ON (cid.id = ende.id_cidade)                                                                                                  "
-                        + "  INNER JOIN end_descricao_endereco  AS enddes   ON (enddes.id = ende.id_descricao_endereco)                                                                                   "
-                        + "  INNER JOIN end_bairro              AS bai      ON (bai.id = ende.id_bairro)                                                                                                  "
-                        + "  INNER JOIN end_logradouro          AS logr     ON (logr.id = ende.id_logradouro)                                                                                             "
-                        + "  INNER JOIN pes_fisica              AS fis      ON (fis.id_pessoa = pes.id)                                                                                                   "
-                        + "  WHERE UPPER(logr.ds_descricao || ' ' || enddes.ds_descricao || ', ' || bai.ds_descricao || ', ' || cid.ds_cidade || ', ' || cid.ds_uf)    LIKE UPPER('%" + descricao + "%')  "
-                        + "     OR UPPER(logr.ds_descricao || ' ' || enddes.ds_descricao || ', ' || cid.ds_cidade  || ', ' || cid.ds_uf) LIKE UPPER('%" + descricao + "%')                                "
-                        + "     OR UPPER(logr.ds_descricao || ' ' || enddes.ds_descricao || ', ' || cid.ds_cidade  ) LIKE UPPER('%" + descricao + "%')                                                    "
-                        + "     OR UPPER(logr.ds_descricao || ' ' || enddes.ds_descricao) LIKE UPPER('%" + descricao + "%')                                                                               "
-                        + "     OR UPPER(enddes.ds_descricao) LIKE UPPER('%" + descricao + "%')                                                                                                           "
-                        + "     OR UPPER(cid.ds_cidade) LIKE UPPER('%" + descricao + "%')                                                                                                                 "
-                        + "     OR UPPER(ende.ds_cep) = '" + descricao + "' "
-                        + "    AND pes.id_cliente = " + SessaoCliente.get().getId();
+                queryString = "SELECT F.* "
+                        + "      FROM pes_fisica AS F WHERE F.id_pessoa IN("
+                        + "      SELECT FIS.id_pessoa                                                                                                                                                     \n"
+                        + "        FROM pes_pessoa_endereco     AS pesend                                                                                                                                 \n"
+                        + "  INNER JOIN pes_pessoa              AS pes      ON (pes.id = pesend.id_pessoa)                                                                                                \n"
+                        + "  INNER JOIN end_endereco            AS ende     ON (ende.id = pesend.id_endereco)                                                                                             \n"
+                        + "  INNER JOIN end_cidade              AS cid      ON (cid.id = ende.id_cidade)                                                                                                  \n"
+                        + "  INNER JOIN end_descricao_endereco  AS enddes   ON (enddes.id = ende.id_descricao_endereco)                                                                                   \n"
+                        + "  INNER JOIN end_bairro              AS bai      ON (bai.id = ende.id_bairro)                                                                                                  \n"
+                        + "  INNER JOIN end_logradouro          AS logr     ON (logr.id = ende.id_logradouro)                                                                                             \n"
+                        + "  INNER JOIN pes_fisica              AS fis      ON (fis.id_pessoa = pes.id)                                                                                                   \n"
+                        + "  WHERE func_translate(UPPER(logr.ds_descricao || ' ' || enddes.ds_descricao || ', ' || bai.ds_descricao || ', ' || cid.ds_cidade || ', ' || cid.ds_uf))    LIKE func_translate(UPPER('%" + descricao + "%'))\n"
+                        + "     OR func_translate(UPPER(logr.ds_descricao || ' ' || enddes.ds_descricao || ', ' || cid.ds_cidade  || ', ' || cid.ds_uf)) LIKE func_translate(UPPER('%" + descricao + "%'))                              \n"
+                        + "     OR func_translate(UPPER(logr.ds_descricao || ' ' || enddes.ds_descricao || ', ' || cid.ds_cidade  )) LIKE func_translate(UPPER('%" + descricao + "%'))                                                  \n"
+                        + "     OR func_translate(UPPER(logr.ds_descricao || ' ' || enddes.ds_descricao)) LIKE func_translate(UPPER('%" + descricao + "%'))                                                                             \n"
+                        + "     OR func_translate(UPPER(enddes.ds_descricao)) LIKE func_translate(UPPER('%" + descricao + "%'))                                                                                                         \n"
+                        + "     OR func_translate(UPPER(cid.ds_cidade)) LIKE func_translate(UPPER('%" + descricao + "%'))                                                                                                               \n"
+                        + "     OR UPPER(ende.ds_cep) = '" + descricao + "'                                                                                                                                                             \n"
+                        + "    AND pes.id_cliente = " + SessaoCliente.get().getId() + " AND pesend.id_tipo_endereco = 3";
                 if (!non_ids.isEmpty()) {
                     queryString += " AND pes.id NOT IN (" + non_ids + " )";
                 }
+                queryString += " GROUP BY FIS.id_pessoa )";
             }
             Query query = getEntityManager().createNativeQuery(queryString, Fisica.class);
             List list = query.getResultList();
