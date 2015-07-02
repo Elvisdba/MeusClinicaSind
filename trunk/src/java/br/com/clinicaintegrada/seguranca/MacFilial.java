@@ -35,7 +35,7 @@ public class MacFilial implements java.io.Serializable {
     private boolean caixaOperador;
 
     public MacFilial() {
-        this.id = -1;
+        this.id = null;
         this.departamento = new Departamento();
         this.filial = new Filial();
         this.mac = "";
