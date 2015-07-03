@@ -1,29 +1,14 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.com.clinicaintegrada.coordenacao.dao;
 
-import br.com.clinicaintegrada.coordenacao.ConfiguracaoCoordenacao;
-import br.com.clinicaintegrada.principal.DB;
-import java.util.List;
-import javax.persistence.Query;
-
-public class ConfiguracaoCoordenacaoDao extends DB {
-
-    /**
-     *
-     * @param idCliente
-     * @return
-     */
-    public ConfiguracaoCoordenacao findByCliente(Integer idCliente) {
-        try {
-            Query query = getEntityManager().createQuery("SELECT CC FROM ConfiguracaoCoordenacao AS CC WHERE CC.cliente.id = :cliente");
-            query.setParameter("cliente", idCliente);
-            List list = query.getResultList();
-            if (!list.isEmpty()) {
-                return (ConfiguracaoCoordenacao) query.getSingleResult();
-            }
-        } catch (Exception e) {
-            return null;
-        }
-        return null;
-    }
-
+/**
+ *
+ * @author rtools2
+ */
+public class ConfiguracaoCoordenacaoDao {
+    
 }
