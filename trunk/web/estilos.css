@@ -236,7 +236,7 @@ label, .fontePadrao{
     text-align:center;
     display: table-cell;
     vertical-align: middle;
-    background-image: url(Imagens/suporte.png);
+    background-image: url(imagens/suporte.png);
 }
 
 .larguraColunaNome{
@@ -244,7 +244,7 @@ label, .fontePadrao{
 
 }
 
-span.loading-status {background: url(Imagens/espere.gif) no-repeat; background-size: 16px 16px; width: 16px; height: 16px; display: block;}
+span.loading-status {background: url(imagens/espere.gif) no-repeat; background-size: 16px 16px; width: 16px; height: 16px; display: block;}
 
 .larguraColuna{
     width: 200px;
