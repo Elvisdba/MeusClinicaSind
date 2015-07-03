@@ -79,10 +79,10 @@ public class ImpressaoBoleto {
             double valor_total = 0;
 
             try {
-                File file_jasper = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Relatorios/BOLETO.jasper"));
+                File file_jasper = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/relatorios/BOLETO.jasper"));
                 JasperReport jasperReport = (JasperReport) JRLoader.loadObject(file_jasper);
 
-                File file_jasper_verso = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Relatorios/BOLETO_VERSO.jasper"));
+                File file_jasper_verso = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/relatorios/BOLETO_VERSO.jasper"));
                 JasperReport jasperReportVerso = (JasperReport) JRLoader.loadObject(file_jasper_verso);
                 List<JasperPrint> jasperPrintList = new ArrayList<>();
                 //File file_promo = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/BannerPromoBoleto.png"));
@@ -90,9 +90,9 @@ public class ImpressaoBoleto {
 ////                if (!file_promo.exists()) {
 ////                    file_promo = null;
 ////                }
-                // String LAYOUT = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Relatorios/BOLETO_HEADER.jasper");
+                // String LAYOUT = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/relatorios/BOLETO_HEADER.jasper");
                 Cobranca cobranca = null;
-                String cedente_logo = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/LogoCliente.png");
+                String cedente_logo = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/LogoCliente.png");
                 // int qntItens = 0;
                 String documento = "";
                 for (int w = 0; w < listBoletosVw.size(); w++) {
@@ -250,7 +250,7 @@ public class ImpressaoBoleto {
     }
 
     public static String getCaminho_verso() {
-        String caminho_verso = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Relatorios/BOLETO_VERSO.jasper");
+        String caminho_verso = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/relatorios/BOLETO_VERSO.jasper");
         if (new File(caminho_verso).exists()) {
             return caminho_verso;
         }
@@ -364,10 +364,10 @@ public class ImpressaoBoleto {
 //        float valor_total = 0;
 //
 //        try {
-//            File file_jasper = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Relatorios/BOLETO.jasper"));
+//            File file_jasper = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/relatorios/BOLETO.jasper"));
 //            JasperReport jasperReport = (JasperReport) JRLoader.loadObject(file_jasper);
 //
-//            File file_jasper_verso = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Relatorios/BOLETO_VERSO.jasper"));
+//            File file_jasper_verso = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/relatorios/BOLETO_VERSO.jasper"));
 //            JasperReport jasperReportVerso = (JasperReport) JRLoader.loadObject(file_jasper_verso);
 //
 //            List<JasperPrint> jasperPrintList = new ArrayList<>();

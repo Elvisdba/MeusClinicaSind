@@ -190,8 +190,8 @@ public class ImprimirBoleto {
             MensagemCobranca mensagemCobranca = null;
             Historico historico = null;
 
-            File file_jasper = new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/BOLETO.jasper"));
-            //File file_jasper = new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/teste.jasper"));
+            File file_jasper = new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/BOLETO.jasper"));
+            //File file_jasper = new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/teste.jasper"));
 
             JasperReport jasper = (JasperReport) JRLoader.loadObject(file_jasper);
 
@@ -202,9 +202,9 @@ public class ImprimirBoleto {
 //
 //                Boleto boletox = movDB.pesquisaBoletos(lista.get(i).getNrCtrBoleto());
 //                if (boletox.getContaCobranca().getLayout().getId() == 2) {
-//                    swap[40] = ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/SINDICAL.jasper");
+//                    swap[40] = ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/SINDICAL.jasper");
 //                } else {
-//                    swap[40] = ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/SICOB.jasper");
+//                    swap[40] = ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/SICOB.jasper");
 //                }
 //                swap[43] = "";
 //                swap[42] = "";
@@ -462,7 +462,7 @@ public class ImprimirBoleto {
 //                        lista.get(i).getReferencia().substring(3),//exercicio
 //                        swap[16],//nomeentidade
 //                        swap[40],
-//                        //   ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/SICOB.jasper"),//LAYOUT
+//                        //   ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/SICOB.jasper"),//LAYOUT
 //                        mensagem,//movDB.pesquisaMensagemCobranca(lista.get(i).getId()).getMensagemConvencao().getMensagemContribuinte(),//mensagem
 //                        boletox.getContaCobranca().getLocalPagamento(),//local_pag
 //                        swap[18],//endent
@@ -484,7 +484,7 @@ public class ImprimirBoleto {
 //                        swap[44], //codigosindical
 //                        swap[43], //usoBanco
 //                        swap[42], //textoTitulo
-//                        ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/BOLETO_VERSO.jasper"),//caminhoVerso
+//                        ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/BOLETO_VERSO.jasper"),//caminhoVerso
 //                        boletox.getContaCobranca().getContaBanco().getFilial().getFilial().getPessoa().getNome()));
 //                i++;
 //            }
@@ -494,7 +494,7 @@ public class ImprimirBoleto {
                     null,
                     dtSource);
             arquivo = JasperExportManager.exportReportToPdf(print);
-            pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/downloads/boletos");
+            pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/downloads/boletos");
 
         } catch (Exception e) {
             int x = i;
@@ -680,7 +680,7 @@ public class ImprimirBoleto {
             List ljasper = new ArrayList();
             //* JASPER 1 *//
             jasper = (JasperReport) JRLoader.loadObject(
-                    new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/DEMOSTRATIVO_ACORDO.jasper"))
+                    new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/DEMOSTRATIVO_ACORDO.jasper"))
             );
             JRBeanCollectionDataSource dtSource = new JRBeanCollectionDataSource(vetor);
             ljasper.add(JasperFillManager.fillReport(jasper, null, dtSource));
@@ -696,7 +696,7 @@ public class ImprimirBoleto {
 
             arquivo = retorno.toByteArray();
 
-            pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/downloads/boletos");
+            pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/downloads/boletos");
         } catch (Exception erro) {
             System.err.println("O arquivo não foi gerado corretamente! Erro: " + erro.getMessage());
         }
@@ -844,7 +844,7 @@ public class ImprimirBoleto {
             List ljasper = new ArrayList();
             //* JASPER 1 *//
             jasper = (JasperReport) JRLoader.loadObject(
-                    new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/PROMISSORIA.jasper"))
+                    new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/PROMISSORIA.jasper"))
             );
             JRBeanCollectionDataSource dtSource = new JRBeanCollectionDataSource(vetor);
             ljasper.add(JasperFillManager.fillReport(jasper, null, dtSource));
@@ -860,7 +860,7 @@ public class ImprimirBoleto {
 
             arquivo = retorno.toByteArray();
 
-            pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/downloads/boletos");
+            pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/downloads/boletos");
         } catch (Exception erro) {
             System.err.println("O arquivo não foi gerado corretamente! Erro: " + erro.getMessage());
         }
@@ -1069,7 +1069,7 @@ public class ImprimirBoleto {
             List ljasper = new ArrayList();
             //* JASPER 1 *//
             jasper = (JasperReport) JRLoader.loadObject(
-                    new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/PLANILHA_DE_DEBITO.jasper"))
+                    new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/PLANILHA_DE_DEBITO.jasper"))
             );
             JRBeanCollectionDataSource dtSource = new JRBeanCollectionDataSource(vetor);
             ljasper.add(JasperFillManager.fillReport(jasper, null, dtSource));
@@ -1085,7 +1085,7 @@ public class ImprimirBoleto {
 
             arquivo = retorno.toByteArray();
 
-            pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/downloads/boletos");
+            pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/downloads/boletos");
         } catch (Exception erro) {
             System.err.println("O arquivo não foi gerado corretamente! Erro: " + erro.getMessage());
         }
@@ -1350,14 +1350,14 @@ public class ImprimirBoleto {
             List ljasper = new ArrayList();
             //* JASPER 1 *//
             jasper = (JasperReport) JRLoader.loadObject(
-                    new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/DEMOSTRATIVO_ACORDO.jasper"))
+                    new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/DEMOSTRATIVO_ACORDO.jasper"))
             );
             JRBeanCollectionDataSource dtSource = new JRBeanCollectionDataSource(vetor1);
             ljasper.add(JasperFillManager.fillReport(jasper, null, dtSource));
 
             //* JASPER 2 *//
             jasper = (JasperReport) JRLoader.loadObject(
-                    new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/PLANILHA_DE_DEBITO.jasper"))
+                    new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/PLANILHA_DE_DEBITO.jasper"))
             );
             dtSource = new JRBeanCollectionDataSource(vetor2);
             ljasper.add(JasperFillManager.fillReport(jasper, null, dtSource));
@@ -1373,7 +1373,7 @@ public class ImprimirBoleto {
 
             arquivo = retorno.toByteArray();
 
-            pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/downloads/boletos");
+            pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/downloads/boletos");
         } catch (Exception erro) {
             System.err.println("O arquivo não foi gerado corretamente! Erro: " + erro.getMessage());
         }
@@ -1662,7 +1662,7 @@ public class ImprimirBoleto {
             List ljasper = new ArrayList();
             //* JASPER 1 *//
             jasper = (JasperReport) JRLoader.loadObject(
-                    new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/DEMOSTRATIVO_ACORDO.jasper"))
+                    new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/DEMOSTRATIVO_ACORDO.jasper"))
             );
             JRBeanCollectionDataSource dtSource = new JRBeanCollectionDataSource(vetor1);
             ljasper.add(JasperFillManager.fillReport(jasper, null, dtSource));
@@ -1670,7 +1670,7 @@ public class ImprimirBoleto {
 
             //* JASPER 2 *//
             jasper = (JasperReport) JRLoader.loadObject(
-                    new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/PLANILHA_DE_DEBITO.jasper"))
+                    new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/PLANILHA_DE_DEBITO.jasper"))
             );
             dtSource = new JRBeanCollectionDataSource(vetor2);
             ljasper.add(JasperFillManager.fillReport(jasper, null, dtSource));
@@ -1679,7 +1679,7 @@ public class ImprimirBoleto {
             if (imprimir_pro) {
                 //* JASPER 3 *//
                 jasper = (JasperReport) JRLoader.loadObject(
-                        new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/PROMISSORIA.jasper"))
+                        new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/PROMISSORIA.jasper"))
                 );
                 dtSource = new JRBeanCollectionDataSource(vetor3);
                 ljasper.add(JasperFillManager.fillReport(jasper, null, dtSource));
@@ -1696,7 +1696,7 @@ public class ImprimirBoleto {
 
             arquivo = retorno.toByteArray();
 
-            pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/downloads/boletos");
+            pathPasta = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/downloads/boletos");
         } catch (Exception erro) {
             System.err.println("O arquivo não foi gerado corretamente! Erro: " + erro.getMessage());
         }

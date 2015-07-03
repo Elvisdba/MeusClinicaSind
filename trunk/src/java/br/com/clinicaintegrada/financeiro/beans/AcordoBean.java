@@ -192,7 +192,7 @@ public class AcordoBean {
             for (int i = 0; i < listaImp.size(); i++) {
                 ImprimirBoleto imp = new ImprimirBoleto();
                 imp.imprimirBoleto(listaImp, listaValores, listaVencimentos, imprimeVerso);
-                String patch = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos");
+                String patch = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos");
                 if (!new File(patch + "/downloads").exists()) {
                     File file = new File(patch + "/downloads");
                     file.mkdir();
@@ -201,7 +201,7 @@ public class AcordoBean {
                     File file = new File(patch + "/downloads/boletos");
                     file.mkdir();
                 }
-                String nome = imp.criarLink(listaImp.get(i).getPessoa(), reg.getSisUrlPath() + "/Sindical/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/downloads/boletos");
+                String nome = imp.criarLink(listaImp.get(i).getPessoa(), reg.getSisUrlPath() + "/Sindical/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/downloads/boletos");
 
                 reg = (Registro) new Dao().find(new Registro(), 1);
                 List<Pessoa> p = new ArrayList();

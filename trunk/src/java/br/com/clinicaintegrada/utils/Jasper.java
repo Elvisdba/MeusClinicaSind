@@ -182,10 +182,10 @@ public class Jasper {
         String subreport = "";
         switch (TYPE) {
             case "retrato":
-                subreport = ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/CABECALHO_RETRATO.jasper");
+                subreport = ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/CABECALHO_RETRATO.jasper");
                 break;
             case "paisagem":
-                subreport = ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/CABECALHO_PAISAGEM.jasper");
+                subreport = ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/CABECALHO_PAISAGEM.jasper");
                 break;
             default:
                 IS_HEADER = false;
@@ -230,9 +230,9 @@ public class Jasper {
         // -----------------------------------------------------------------------------------------------------
         // -----------------------------------------------------------------------------------------------------
         if (Jasper.PATH.isEmpty()) {
-            realPath = "/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/" + fileName + "/";
+            realPath = "/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/" + fileName + "/";
         } else {
-            realPath = "/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/" + PATH + "/" + fileName + "/";
+            realPath = "/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/" + PATH + "/" + fileName + "/";
         }
         String dirPath = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(realPath);
         if (!Jasper.PART_NAME.isEmpty()) {
@@ -349,10 +349,10 @@ public class Jasper {
                     byte[] bytes;
                     JasperReport subJasper;
                     if (!SUBREPORT_NAME.isEmpty()) {
-                        if (new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Relatorios/ " + SUBREPORT_NAME)).exists()) {
-                            subJasper = (JasperReport) JRLoader.loadObject(new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Relatorios/ " + SUBREPORT_NAME)));
+                        if (new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/relatorios/ " + SUBREPORT_NAME)).exists()) {
+                            subJasper = (JasperReport) JRLoader.loadObject(new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/relatorios/ " + SUBREPORT_NAME)));
                         } else {
-                            subJasper = (JasperReport) JRLoader.loadObject(new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/" + SUBREPORT_NAME)));
+                            subJasper = (JasperReport) JRLoader.loadObject(new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/" + SUBREPORT_NAME)));
                         }
                     }
                     if (IS_REPORT_CONNECTION) {
@@ -364,8 +364,8 @@ public class Jasper {
                     }
                     JasperReport jasper = null;
                     if (jasperListExport.isEmpty()) {
-                        if (new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Relatorios/" + jasperName)).exists()) {
-                            jasper = (JasperReport) JRLoader.loadObject(new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Relatorios/" + jasperName)));
+                        if (new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/relatorios/" + jasperName)).exists()) {
+                            jasper = (JasperReport) JRLoader.loadObject(new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/relatorios/" + jasperName)));
                         } else if (new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "" + jasperName)).exists()) {
                             jasper = (JasperReport) JRLoader.loadObject(new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "" + jasperName)));
                         } else {
@@ -431,9 +431,9 @@ public class Jasper {
                         }
                         listCollection.clear();
                         if (Jasper.PATH.isEmpty()) {
-                            realPath = "/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/" + fileName + "/";
+                            realPath = "/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/" + fileName + "/";
                         } else {
-                            realPath = "/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/" + PATH + "/" + fileName + "/";
+                            realPath = "/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/" + PATH + "/" + fileName + "/";
                         }
                         jasper.setProperty(fileName, PATH);
                         // JRVariable[] jrvs = jasper.getVariables();

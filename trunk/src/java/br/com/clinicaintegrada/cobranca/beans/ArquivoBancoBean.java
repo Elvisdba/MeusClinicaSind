@@ -1220,7 +1220,7 @@
 ////                    JasperReport jasper = null;
 ////                    Collection listaComp = new ArrayList<ComparaMovimentos>();
 ////
-////                    File fl = new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/COMPARATIVO_MOVIMENTO.jasper"));
+////                    File fl = new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/COMPARATIVO_MOVIMENTO.jasper"));
 ////                    jasper = (JasperReport) JRLoader.loadObject(fl);
 ////
 ////                    JRBeanCollectionDataSource dtSource = new JRBeanCollectionDataSource(listaComparas);
@@ -1633,7 +1633,7 @@
 ////            JasperReport jasper = null;
 ////            Collection listaDocs = new ArrayList<DocumentoInvalido>();
 ////
-////            File fl = new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/DOCUMENTOINVALIDO.jasper"));
+////            File fl = new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/DOCUMENTOINVALIDO.jasper"));
 ////            jasper = (JasperReport) JRLoader.loadObject(fl);
 ////
 ////            try {
