@@ -7,7 +7,7 @@
     <h:head>
         <title>Menu Principal</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" charset="UTF-8"/>
-        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/Imagens/favicon.ico"/>  
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/imagens/favicon.ico"/>  
         <style type="text/css">
             .ui-widget-content .ui-inputfield{ padding: 8px!important;} 
             .ui-button { padding: 3px!important; }
@@ -94,19 +94,19 @@
                                     </h:panelGrid>
                                 </center>
                                 <p:commandLink action="#{chamadaPaginaBean.pagina('pesquisaAgendaTelefone','agendaTelefone')}" title="Pesquisa Agenda Telefônica" style="clear: both" actionListener="#{agendaTelefoneBean.putType('pesquisaAgendaTelefone')}">
-                                    <h:graphicImage value="/Imagens/-icone-agenda-telefone.jpg" width="120" /><br />
+                                    <h:graphicImage value="/imagens/-icone-agenda-telefone.jpg" width="120" /><br />
                                 </p:commandLink>
                                 <h:column rendered="#{agendaNotificaoBean.listAniversariantes.size() > 0}">
                                     <p:commandLink onclick="PF('dlg_agenda_contato').show();">
                                         Aniversariantes do mês
-                                        <h:graphicImage value="/Imagens/icon-birthday.png" width="16" /><br />
+                                        <h:graphicImage value="/imagens/icon-birthday.png" width="16" /><br />
                                     </p:commandLink>
                                 </h:column>
                             </p:panel>
                             <p:dialog widgetVar="dlg_agenda_contato" modal="true" footer="Felicite esta pessoa" width="600" height="400" resizable="false">
                                 <f:facet name="header">
                                     <h:panelGrid columns="2">
-                                        <h:graphicImage value="/Imagens/icon-birthday.png" width="16" />
+                                        <h:graphicImage value="/imagens/icon-birthday.png" width="16" />
                                         <h:column>Aniversariantes</h:column>
                                     </h:panelGrid>
                                 </f:facet>
