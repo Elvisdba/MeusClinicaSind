@@ -1,5 +1,6 @@
 package br.com.clinicaintegrada.pessoa;
 
+import br.com.clinicaintegrada.coordenacao.Contrato;
 import br.com.clinicaintegrada.utils.DataHoje;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -15,22 +16,22 @@ public class Fotos implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    @JoinColumn(name = "id_pessoa", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "id_contrato", referencedColumnName = "id", nullable = false)
     @OneToOne
-    private Pessoa pessoa;
+    private Contrato contrato;
     @Temporal(TemporalType.DATE)
     @Column(name = "dt_data")
     private Date data;
 
     public Fotos() {
         this.id = null;
-        this.pessoa = null;
+        this.contrato = null;
         this.data = null;
     }
 
-    public Fotos(Integer id, Pessoa pessoa, Date data) {
+    public Fotos(Integer id, Contrato contrato, Date data) {
         this.id = id;
-        this.pessoa = pessoa;
+        this.contrato = contrato;
         this.data = data;
     }
 
@@ -42,12 +43,12 @@ public class Fotos implements Serializable {
         this.id = id;
     }
 
-    public Pessoa getPessoa() {
-        return pessoa;
+    public Contrato getContrato() {
+        return contrato;
     }
 
-    public void setPessoa(Pessoa pessoa) {
-        this.pessoa = pessoa;
+    public void setContrato(Contrato contrato) {
+        this.contrato = contrato;
     }
 
     public Date getData() {

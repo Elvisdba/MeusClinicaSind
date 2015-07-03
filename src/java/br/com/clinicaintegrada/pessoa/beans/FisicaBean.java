@@ -215,7 +215,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
                 Sessions.remove("uploadBean");
                 Sessions.remove("photoCamBean");
                 FileUtils.deleteDirectory(new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("") + "/Cliente/" + getCliente() + "/temp/" + "foto/" + getUsuario().getId()));
-                File f = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/Imagens/Fotos/" + -1 + ".png"));
+                File f = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/imagens/fotos/" + -1 + ".png"));
                 if (f.exists()) {
                     f.delete();
                 }
@@ -450,7 +450,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
 
     public void limpaFoto() {
         FacesContext context = FacesContext.getCurrentInstance();
-        File fExiste = new File(((ServletContext) context.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/Fotos/fotoTemp.jpg"));
+        File fExiste = new File(((ServletContext) context.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/fotos/fotoTemp.jpg"));
         if (fExiste.exists()) {
             fExiste.delete();
         }
@@ -598,7 +598,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         fisica = f;
         if (!Objects.equals(fisica.getId(), f.getId())) {
             FacesContext context = FacesContext.getCurrentInstance();
-            File fExiste = new File(((ServletContext) context.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/Fotos/fotoTemp.jpg"));
+            File fExiste = new File(((ServletContext) context.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/fotos/fotoTemp.jpg"));
             if (fExiste.exists()) {
                 fExiste.delete();
             }
@@ -651,7 +651,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
     }
 
     public void showImagemFisica() {
-        String caminhoTemp = "/Cliente/" + getCliente() + "/Imagens/Fotos/";
+        String caminhoTemp = "/Cliente/" + getCliente() + "/imagens/fotos/";
         String arquivo = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(caminhoTemp);
         for (String imagensTipo1 : imagensTipo) {
             File f = new File(arquivo + "/" + fisica.getPessoa().getId() + "." + imagensTipo1);
@@ -1024,8 +1024,8 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
 
     public String getPessoaImagem() {
         FacesContext context = FacesContext.getCurrentInstance();
-        File files = new File(((ServletContext) context.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/Fotos/"));
-        File fExiste = new File(((ServletContext) context.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/Fotos/fotoTemp.jpg"));
+        File files = new File(((ServletContext) context.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/fotos/"));
+        File fExiste = new File(((ServletContext) context.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/fotos/fotoTemp.jpg"));
         File listFile[] = files.listFiles();
         String nome;
         String caminho;
@@ -1053,7 +1053,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
                     if (Integer.parseInt(n) == fisica.getPessoa().getId()) {
                         nome = n;
                         fotoTemp = false;
-                        caminho = ((ServletContext) context.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/Fotos/fotoTemp.jpg");
+                        caminho = ((ServletContext) context.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/fotos/fotoTemp.jpg");
                         File fl = new File(caminho);
                         fl.delete();
                         break;
@@ -1069,10 +1069,10 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
     }
 
     public void salvarImagem() {
-        if (!Dirs.create("Imagens/Fotos/")) {
+        if (!Dirs.create("imagens/fotos/")) {
             return;
         }
-        String arquivo = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/Imagens/Fotos/");
+        String arquivo = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/imagens/fotos/");
         boolean error = false;
         if (!fotoTempPerfil.equals("")) {
             File des = new File(arquivo + "/" + fisica.getPessoa().getId() + ".png");
@@ -1081,7 +1081,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
             }
             File src = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(fotoTempPerfil));
             boolean rename = src.renameTo(des);
-            fotoPerfil = "/Cliente/" + getCliente() + "/Imagens/Fotos/" + fisica.getPessoa().getId() + ".png";
+            fotoPerfil = "/Cliente/" + getCliente() + "/imagens/fotos/" + fisica.getPessoa().getId() + ".png";
             fotoTempPerfil = "";
 
             if (!rename) {
@@ -1096,13 +1096,13 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
 
     public void excluirImagemSozinha() {
         FacesContext context = FacesContext.getCurrentInstance();
-        String caminho = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/Fotos/fotoTemp.jpg");
+        String caminho = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/fotos/fotoTemp.jpg");
         try {
             File fl = new File(caminho);
             if (fl.exists()) {
                 fl.delete();
             } else if (fisica.getId() != -1) {
-                caminho = ((ServletContext) context.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/Fotos/" + String.valueOf(fisica.getPessoa().getId()) + ".jpg");
+                caminho = ((ServletContext) context.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/fotos/" + String.valueOf(fisica.getPessoa().getId()) + ".jpg");
                 fl = new File(caminho);
                 fl.delete();
                 Dao dao = new Dao();
@@ -1116,7 +1116,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
 
     public void removeImagem() {
         try {
-            File fl = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente" + ControleUsuarioBean.getCliente() + "/Imagens/Fotos/" + String.valueOf(fisica.getPessoa().getId()) + ".png"));
+            File fl = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente" + ControleUsuarioBean.getCliente() + "/imagens/fotos/" + String.valueOf(fisica.getPessoa().getId()) + ".png"));
             if (fl.exists()) {
                 fl.delete();
             }
@@ -1548,7 +1548,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
             sucesso = f.delete();
         } else {
             if (fisica.getId() != -1) {
-                File f = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/Imagens/Fotos/" + fisica.getPessoa().getId() + ".png"));
+                File f = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/imagens/fotos/" + fisica.getPessoa().getId() + ".png"));
                 sucesso = f.delete();
             }
         }
@@ -1784,7 +1784,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         if (fisica.getId() == -1) {
             return "temp/foto/" + ((Usuario) Sessions.getObject("sessaoUsuario")).getId();
         } else {
-            return "Imagens/Fotos";
+            return "imagens/Fotos";
         }
     }
 

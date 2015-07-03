@@ -58,7 +58,7 @@ public class PhotoCam implements Serializable {
         PATH_FILE = "perfil";
         FILE_TEMP = "";
         FILE_TEMP_NAME = "";
-        FILE_PERMANENT = "/Imagens/user_undefined.png";
+        FILE_PERMANENT = "/imagens/user_undefined.png";
         REPLACE_FILES = false;
         UPDATES = new ArrayList();
         SHOW_MESSAGE = false;
@@ -122,7 +122,7 @@ public class PhotoCam implements Serializable {
                 UPDATES.add(split1);
             }
         }
-        FILE_PERMANENT = "/Imagens/user_undefined.png";
+        FILE_PERMANENT = "/imagens/user_undefined.png";
         UPDATE = update.trim();
         AUTO_SAVE = autosave;
         PATH = aPATH;
@@ -132,7 +132,7 @@ public class PhotoCam implements Serializable {
         SHOW_MESSAGE = true;
         visible = true;
         stop = 4;
-        InputStream stream = new FileInputStream(new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Imagens/user_undefined.png")));
+        InputStream stream = new FileInputStream(new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/imagens/user_undefined.png")));
         streamedContent = new DefaultStreamedContent(stream, "image/png");
         // FILE_MEMORY = "";
         // deleteMemoryFile();
@@ -226,9 +226,9 @@ public class PhotoCam implements Serializable {
                 while (!f.exists()) {
                     Thread.sleep(1000);
                     if (i == 10) {
-                        stream = new FileInputStream(new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Imagens/user_undefined.png")));
+                        stream = new FileInputStream(new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("imagens/user_undefined.png")));
                         streamedContent = new DefaultStreamedContent(stream, "image/png");
-                        FILE_PERMANENT = "/Imagens/user_undefined.png";
+                        FILE_PERMANENT = "/imagens/user_undefined.png";
                         break;
                     }
                     i++;
@@ -368,7 +368,7 @@ public class PhotoCam implements Serializable {
         PATH_FILE = "perfil";
         FILE_TEMP = "";
         FILE_TEMP_NAME = "";
-        FILE_PERMANENT = "/Imagens/user_undefined.png";
+        FILE_PERMANENT = "/imagens/user_undefined.png";
         REPLACE_FILES = false;
         SHOW_MESSAGE = false;
         AUTO_SAVE = false;

@@ -9,7 +9,9 @@ import br.com.clinicaintegrada.coordenacao.Status;
 import br.com.clinicaintegrada.coordenacao.dao.AgendamentoDao;
 import br.com.clinicaintegrada.coordenacao.dao.EventoDao;
 import br.com.clinicaintegrada.logSistema.Logger;
+import br.com.clinicaintegrada.pessoa.Fotos;
 import br.com.clinicaintegrada.pessoa.FuncaoEquipe;
+import br.com.clinicaintegrada.pessoa.dao.FotosDao;
 import br.com.clinicaintegrada.pessoa.dao.FuncaoEquipeDao;
 import br.com.clinicaintegrada.seguranca.Usuario;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
@@ -30,11 +32,12 @@ import javax.faces.model.SelectItem;
 @ManagedBean
 @SessionScoped
 public class AgendamentoBean implements Serializable {
-    
+
     private Agendamento agendamento;
     private Agendamento agendamentoEdit;
     private List<Agendamento> listAgendamento;
     private List<Agendamento> listAgendamentoConsulta;
+    private List<Fotos> listFotos;
     private Contrato contrato;
     private List<SelectItem>[] listSelectItem;
     private Integer[] index;
@@ -43,14 +46,16 @@ public class AgendamentoBean implements Serializable {
     private String by;
     private String description;
     private Boolean actives;
+    private Boolean visibleCadastrarFoto;
     private String startFinish;
-    
+
     @PostConstruct
     public void init() {
         agendamento = new Agendamento();
         agendamentoEdit = new Agendamento();
         listAgendamento = new ArrayList<>();
         listAgendamentoConsulta = new ArrayList<>();
+        listFotos = new ArrayList<>();
         contrato = new Contrato();
         data = new String[2];
         data[0] = DataHoje.data();
@@ -68,18 +73,21 @@ public class AgendamentoBean implements Serializable {
         description = "";
         startFinish = "";
         actives = false;
+        visibleCadastrarFoto = false;
     }
-    
+
     @PreDestroy
     public void destroy() {
         Sessions.remove("agendamentoBean");
         Sessions.remove("agendamentoPesquisa");
+        Sessions.remove("photoCamBean");
+        Sessions.remove("uploadBean");
     }
-    
+
     public void clear() {
         Sessions.remove("agendamentoBean");
     }
-    
+
     public void clear(int tCase) {
         // CASO 0 - BOTÃO SALVAR / EXCLUIR
         if (tCase == 0 || tCase == 1) {
@@ -93,7 +101,7 @@ public class AgendamentoBean implements Serializable {
             Sessions.remove("agendamentoBean");
         }
     }
-    
+
     public void save() {
         ConfiguracaoCoordenacao cc = new ConfiguracaoCoordenacaoDao().findByCliente(SessaoCliente.get().getId());
         if (cc == null) {
@@ -197,12 +205,12 @@ public class AgendamentoBean implements Serializable {
             }
         }
     }
-    
+
     public void delete() {
         delete(agendamento);
         clear(0);
     }
-    
+
     public void delete(Agendamento o) {
         Dao dao = new Dao();
         Logger logger = new Logger();
@@ -221,7 +229,7 @@ public class AgendamentoBean implements Serializable {
             }
         }
     }
-    
+
     public String edit(Object o) {
         Dao dao = new Dao();
         agendamento = (Agendamento) dao.rebind(o);
@@ -242,7 +250,7 @@ public class AgendamentoBean implements Serializable {
         }
         return null;
     }
-    
+
     public String editConsulta(Agendamento o) {
         Dao dao = new Dao();
         agendamentoEdit = (Agendamento) dao.rebind(o);
@@ -256,15 +264,21 @@ public class AgendamentoBean implements Serializable {
         }
         return null;
     }
-    
+
     public Contrato getContrato() {
         if (Sessions.exists("contratoPesquisa")) {
             getListAgendamento();
             contrato = (Contrato) Sessions.getObject("contratoPesquisa", true);
+            listFotos = new FotosDao().findFotosByContrato(contrato.getId());
+            List list = new FotosDao().findFotosByContrato(contrato.getId(), 60);
+            visibleCadastrarFoto = false;
+            if (list.isEmpty()) {
+                visibleCadastrarFoto = true;
+            }
         }
         return contrato;
     }
-    
+
     public void setContrato(Contrato contrato) {
         this.contrato = contrato;
     }
@@ -299,7 +313,7 @@ public class AgendamentoBean implements Serializable {
         }
         return listSelectItem;
     }
-    
+
     public void setListSelectItem(List<SelectItem>[] listSelectItem) {
         this.listSelectItem = listSelectItem;
     }
@@ -312,11 +326,11 @@ public class AgendamentoBean implements Serializable {
     public Integer[] getIndex() {
         return index;
     }
-    
+
     public void setIndex(Integer[] index) {
         this.index = index;
     }
-    
+
     public List<Agendamento> getListAgendamento() {
         if (listAgendamento.isEmpty()) {
             if (contrato.getId() != -1) {
@@ -326,15 +340,15 @@ public class AgendamentoBean implements Serializable {
         }
         return listAgendamento;
     }
-    
+
     public void setListAgendamento(List<Agendamento> listAgendamento) {
         this.listAgendamento = listAgendamento;
     }
-    
+
     public String getHoraAgenda() {
         return horaAgenda;
     }
-    
+
     public void setHoraAgenda(String horaAgenda) {
         if (!horaAgenda.isEmpty()) {
             this.horaAgenda = DataHoje.validaHora(horaAgenda);
@@ -342,15 +356,15 @@ public class AgendamentoBean implements Serializable {
             this.horaAgenda = horaAgenda;
         }
     }
-    
+
     public Agendamento getAgendamento() {
         return agendamento;
     }
-    
+
     public void setAgendamento(Agendamento agendamento) {
         this.agendamento = agendamento;
     }
-    
+
     public List<Agendamento> getListAgendamentoConsulta() {
         if (listAgendamentoConsulta.isEmpty()) {
             AgendamentoDao agendamentoDao = new AgendamentoDao();
@@ -371,69 +385,69 @@ public class AgendamentoBean implements Serializable {
         }
         return listAgendamentoConsulta;
     }
-    
+
     public void setListAgendamentoConsulta(List<Agendamento> listAgendamentoConsulta) {
         this.listAgendamentoConsulta = listAgendamentoConsulta;
     }
-    
+
     public String getBy() {
         return by;
     }
-    
+
     public void setBy(String by) {
         this.by = by;
     }
-    
+
     public String getDescription() {
         return description;
     }
-    
+
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     public Boolean getActives() {
         return actives;
     }
-    
+
     public void setActives(Boolean actives) {
         this.actives = actives;
     }
-    
+
     public Agendamento getAgendamentoEdit() {
         return agendamentoEdit;
     }
-    
+
     public void setAgendamentoEdit(Agendamento agendamentoEdit) {
         this.agendamentoEdit = agendamentoEdit;
     }
-    
+
     public void searchInit() {
         startFinish = "I";
         listAgendamentoConsulta.clear();
     }
-    
+
     public void searchFinish() {
         startFinish = "P";
         listAgendamentoConsulta.clear();
     }
-    
+
     public String getStartFinish() {
         return startFinish;
     }
-    
+
     public void setStartFinish(String startFinish) {
         this.startFinish = startFinish;
     }
-    
+
     public String[] getData() {
         return data;
     }
-    
+
     public void setData(String[] data) {
         this.data = data;
     }
-    
+
     public Boolean getHabilitaFuncaoEquipe() {
         if (index[0] != null) {
             Integer id = Integer.parseInt(listSelectItem[0].get(index[0]).getDescription());
@@ -444,5 +458,37 @@ public class AgendamentoBean implements Serializable {
         index[3] = null;
         return false;
     }
-    
+
+    public List<Fotos> getListFotos() {
+        return listFotos;
+    }
+
+    public void setListFotos(List<Fotos> listFotos) {
+        this.listFotos = listFotos;
+    }
+
+    public String getPath() {
+        if (contrato.getId() != -1) {
+            return "imagens/evolucao";
+        }
+        return "";
+    }
+
+    public String getId() {
+        Integer id;
+        id = new FotosDao().next();
+        if (id == null) {
+            id = 1;
+        }
+        return "" + id;
+    }
+
+    public Boolean getVisibleCadastrarFoto() {
+        return visibleCadastrarFoto;
+    }
+
+    public void setVisibleCadastrarFoto(Boolean visibleCadastrarFoto) {
+        this.visibleCadastrarFoto = visibleCadastrarFoto;
+    }
+
 }

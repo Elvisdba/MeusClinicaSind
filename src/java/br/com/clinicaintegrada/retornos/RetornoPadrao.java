@@ -43,7 +43,7 @@ public class RetornoPadrao extends ArquivoRetorno {
         String valorPago = "";
         String dataPagamento = "";
         String dataVencimento = "";
-        String caminho = ((ServletContext) context.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/ArquivoRetorno/Padrao");
+        String caminho = ((ServletContext) context.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/arquivo_retorno/padrao");
         //String idContaCobranca = "";
         //Servicos servico = new Servicos();
         ServicosDao servicosDao = new ServicosDao();
@@ -119,7 +119,7 @@ public class RetornoPadrao extends ArquivoRetorno {
                 for (int i = 0; i < listFile.length; i++) {
                     try {
                         if (!listFile[i].getName().toLowerCase().startsWith(DataHoje.ArrayDataHoje()[2] + "-" + DataHoje.ArrayDataHoje()[1])) {
-                            File fileDel = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/ArquivoRetorno/Padrao/ARQUIVOBAIXA.ret"));
+                            File fileDel = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/arquivo_retorno/padrao/ARQUIVOBAIXA.ret"));
                             if (fileDel.exists()) {
                                 fileDel.delete();
                             }
