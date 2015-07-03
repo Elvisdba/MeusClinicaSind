@@ -48,7 +48,7 @@
                             </h:column>
                             <h:column>
                                 <h:panelGrid columns="3" style="margin-left: 55px">
-                                    <p:commandButton title="Cortar imagem" icon="ui-icon-scissors" update="i_photocam_preview i_panel_photocam_actions" action="#{cropperBean.editCrop}" rendered="#{!cropperBean.cut}" disabled="#{photoCamBean.FILE_PERMANENT eq '/Imagens/user_undefined.png'}"/>
+                                    <p:commandButton title="Cortar imagem" icon="ui-icon-scissors" update="i_photocam_preview i_panel_photocam_actions" action="#{cropperBean.editCrop}" rendered="#{!cropperBean.cut}" disabled="#{photoCamBean.FILE_PERMANENT eq '/imagens/user_undefined.png'}"/>
                                     <p:commandButton title="Desfazer" icon="ui-icon-close" update="i_photocam_preview i_panel_photocam_actions" action="#{cropperBean.editCrop}" rendered="#{cropperBean.cut}"/>
                                     <p:commandButton value="Cortar" action="#{cropperBean.crop}" update="i_photocam_preview i_panel_photocam_actions i_message_photocam" rendered="#{cropperBean.cut}" actionListener="#{cropperBean.listenerParamsCrop(photoCamBean.FILE_PERMANENT)}" />                            
                                 </h:panelGrid>
