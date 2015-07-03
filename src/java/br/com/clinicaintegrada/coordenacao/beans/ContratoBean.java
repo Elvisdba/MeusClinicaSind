@@ -227,8 +227,6 @@ public class ContratoBean implements Serializable {
         Dao dao = new Dao();
         contrato.setTipoInternacao((TipoInternacao) dao.find(new TipoInternacao(), Integer.parseInt(listTipoInternacao.get(idTipoInternacao).getDescription())));
         Logger logger = new Logger();
-        contrato.setFilial(MacFilial.getAcessoFilial().getFilial());
-        contrato.setFilialAtual(MacFilial.getAcessoFilial().getFilial());
         dao.openTransaction();
         FunctionsDao functionsDao = new FunctionsDao();
         if (contrato.getSenha().isEmpty()) {
@@ -237,6 +235,7 @@ public class ContratoBean implements Serializable {
         if (contrato.getId() == -1) {
             contrato.setCliente(SessaoCliente.get());
             contrato.setFilial(MacFilial.getAcessoFilial().getFilial());
+            contrato.setFilialAtual((Filial) dao.find(new Filial(), Integer.parseInt(listFilialAtual.get(idFilialAtual).getDescription())));
             ContratoDao contratoDao = new ContratoDao();
             if (contratoDao.existeContrato(contrato)) {
                 Messages.warn("Validação", "Contrato já existe!");
@@ -550,6 +549,9 @@ public class ContratoBean implements Serializable {
             FilialDao filialDao = new FilialDao();
             List<Filial> list = (List<Filial>) filialDao.pesquisaTodasCliente();
             for (int i = 0; i < list.size(); i++) {
+                if(MacFilial.getAcessoFilial().getFilial().getId().equals(list.get(i).getId())) {
+                    idFilial = i;
+                }
                 listFilial.add(new SelectItem(i, list.get(i).getFilial().getPessoa().getNome(), "" + list.get(i).getId()));
             }
         }
@@ -568,7 +570,7 @@ public class ContratoBean implements Serializable {
             boolean isFilial = false;
             for (int i = 0; i < list.size(); i++) {
                 if (!isFilial) {
-                    if (macFilial.getFilial().getId() == list.get(i).getId()) {
+                    if (macFilial.getFilial().getId().equals(list.get(i).getId())) {
                         idFilialAtual = i;
                         isFilial = true;
                     }
