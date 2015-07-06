@@ -27,7 +27,12 @@
                                 <h:panelGrid columns="4" style="float: left">
                                     <p:inputText id="idPesquisar" value="#{simplesBean.pesquisaLista}" size="50" title="Pesquisar"/>
 
-                                    <p:commandButton value="Pesquisar" update="i_panel_grid"/>
+                                    <h:panelGrid columns="4">
+                                        <p:commandButton value="Igual" action="#{simplesBean.limpaLista(0)}" update=":formCadastroSimples:i_panel_grid" />
+                                        <p:commandButton value="Inicial" action="#{simplesBean.limpaLista(1)}" update=":formCadastroSimples:i_panel_grid" />
+                                        <p:commandButton value="Parcial" action="#{simplesBean.limpaLista(2)}" update=":formCadastroSimples:i_panel_grid" />
+                                        <p:commandButton value="Final" action="#{simplesBean.limpaLista(3)}" update=":formCadastroSimples:i_panel_grid" />
+                                    </h:panelGrid>
 
                                     <p:ajaxStatus id="i_status" onstart="PF('i_dlg_modal').show();" onsuccess="PF('i_dlg_modal').hide();" />
                                 </h:panelGrid>
