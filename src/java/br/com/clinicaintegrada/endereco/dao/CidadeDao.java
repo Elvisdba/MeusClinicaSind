@@ -55,9 +55,7 @@ public class CidadeDao extends DB {
                 break;
         }
         try {
-            Query query = getEntityManager().createQuery("SELECT C FROM Cidade AS C WHERE UPPER(C.cidade) LIKE :cidade AND C.uf = :uf");
-            query.setParameter("cidade", cidade);
-            query.setParameter("uf", uf);
+            Query query = getEntityManager().createNativeQuery("SELECT C.* FROM end_cidade AS C WHERE UPPER(FUNC_TRANSLATE(C.ds_cidade)) = '" + AnaliseString.removerAcentos(cidade.toUpperCase()) + "'  AND UPPER(C.ds_uf) = '" + uf.toUpperCase() + "'", Cidade.class);
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;
@@ -70,7 +68,7 @@ public class CidadeDao extends DB {
     public Cidade pesquisaCidadePorEstadoCidade(String uf, String cidade) {
         cidade = cidade.toLowerCase().toUpperCase();
         try {
-            Query query = getEntityManager().createNativeQuery("SELECT C.* FROM end_cidade AS C WHERE UPPER(TRANSLATE(C.ds_cidade)) = '" + AnaliseString.removerAcentos(cidade) + "'  AND UPPER(C.ds_uf) = '" + uf.toUpperCase() + "'", Cidade.class);
+            Query query = getEntityManager().createNativeQuery("SELECT C.* FROM end_cidade AS C WHERE UPPER(FUNC_TRANSLATE(C.ds_cidade)) = '" + AnaliseString.removerAcentos(cidade) + "'  AND UPPER(C.ds_uf) = '" + uf.toUpperCase() + "'", Cidade.class);
             List list = query.getResultList();
             if (!list.isEmpty() || list.size() == 1) {
                 return (Cidade) query.getSingleResult();
