@@ -31,6 +31,7 @@ import br.com.clinicaintegrada.sistema.Cor;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.DaoInterface;
 import br.com.clinicaintegrada.utils.Messages;
+import br.com.clinicaintegrada.utils.QueryString;
 import br.com.clinicaintegrada.utils.Sessions;
 import br.com.clinicaintegrada.utils.Tables;
 import java.io.Serializable;
@@ -159,6 +160,7 @@ public class SimplesBean implements Serializable {
         Sessions.put("linkClicado", true);
         if (Sessions.exists("urlRetorno") && !((String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("urlRetorno")).substring(0, 4).equals("menu")) {
             Sessions.put("simplesPesquisa", objeto);
+            lista.clear();
             return (String) Sessions.getString("urlRetorno");
         }
         return null;
@@ -679,40 +681,39 @@ public class SimplesBean implements Serializable {
         return false;
     }
 
-    public void limpaLista() {
-        // lista.clear();
-    }
-
-    public synchronized List getLista() throws ClassNotFoundException {
+    public void limpaLista(Integer type) {
         if (sessoes != null) {
             if (!pesquisaLista.isEmpty()) {
                 Object o = (Object) convertToObject(sessoes[0]);
                 String tableName = Tables.name(o);
                 Dao dao = new Dao();
                 if (o == null) {
-                    return new ArrayList();
+                    lista = new ArrayList();
                 }
+                int maxResults = 1000;                
                 String queryString;
+
                 int t = o.getClass().getDeclaredFields().length;
                 if (t == 2) {
-                    queryString = " SELECT * FROM " + tableName + " WHERE translate(upper(ds_descricao)) LIKE '%" + descricao.toUpperCase() + "%'";
+                    queryString = " SELECT * FROM " + tableName + " WHERE func_translate(upper(ds_descricao)) " + QueryString.typeSearch(pesquisaLista, type) + " ORDER BY ds_descricao LIMIT " + maxResults;
                 } else {
-                    queryString = " SELECT * FROM " + tableName + " WHERE translate(upper(ds_descricao)) LIKE '%" + descricao.toUpperCase() + "%' AND id_cliente = " + SessaoCliente.get().getId();
+                    queryString = " SELECT * FROM " + tableName + " WHERE func_translate(upper(ds_descricao)) " + QueryString.typeSearch(pesquisaLista, type) + " AND (id_cliente IS NULL OR id_cliente = " + SessaoCliente.get().getId() + ") ORDER BY ds_descricao LIMIT " + maxResults;
                 }
                 try {
                     Query query = dao.getEntityManager().createNativeQuery(queryString, o.getClass());
                     query.setMaxResults(1000);
                     lista = query.getResultList();
-                    if (!lista.isEmpty()) {
-                        return lista;
-                    }
                 } catch (Exception e) {
                     java.util.logging.Logger.getLogger(SimplesBean.class.getName()).log(Level.SEVERE, null, e);
 
                 }
+            } else {
+                lista = new ArrayList();                
             }
-            return new ArrayList();
         }
+    }
+
+    public synchronized List getLista() throws ClassNotFoundException {
         return lista;
     }
 
