@@ -50,7 +50,7 @@ public class ControleUsuarioBean implements Serializable {
             Sessions.put("acessoFilial", macFilial);
             filial = "( " + macFilial.getFilial().getFilial().getPessoa().getNome() + " / " + macFilial.getDepartamento().getDescricao() + " )";
             if (macFilial.getMesa() > 0) {
-                filial += " - Guiche: " + macFilial.getMesa();
+                filial += " - Guichê: " + macFilial.getMesa();
             }
             if (macFilial.getDescricao() != null && !macFilial.getDescricao().isEmpty()) {
                 filial += " - " + macFilial.getDescricao();
