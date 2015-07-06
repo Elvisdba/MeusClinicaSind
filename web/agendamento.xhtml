@@ -26,10 +26,13 @@
                         <f:event type="preRenderView" listener="${uploadBean.load()}"/>
                         <f:event type="preRenderView" listener="${photoCamBean.load()}"/>
                         <f:event type="preRenderView" listener="${uploadBean.setRotinaNome('agendamento')}"/>
+                        <f:event type="preRenderView" listener="${photoCamBean.setRotinaNome('agendamento')}"/>
                         <f:event type="preRenderView" listener="${photoCamBean.setUPDATE(':form_a:')}"/>
+                        <f:event type="preRenderView" listener="${uploadBean.setUPDATE(':form_a:')}"/>
                     </f:metadata>
                     <ui:include src="templates/templateUpload.xhtml" />
                     <ui:include src="templates/templatePhotoCam.xhtml" />                    
+                    <ui:include src="templates/templateFotosEvolucao.xhtml" />                    
                     <p:panel styleClass="wrapper" style="border: 0px;">
                         <h:outputText value="Agendamento" styleClass="fonteHeader" />
                         <div class="clear"></div>
@@ -92,13 +95,16 @@
                                     </p:inputTextarea>
                                 </h:panelGrid>
                             </p:panel>
-                            <h:panelGrid columns="6" styleClass="margin-top-max">
+                            <h:panelGrid columns="4" styleClass="margin-top-max">
                                 <p:commandButton value="Salvar" onclick="PF('dlg_save').show()" disabled="#{controleAcessoBean.save}"/>
-                                <p:commandButton value="Novo" action="#{agendamentoBean.clear(0)}" update=":form_a:"/>
+                                <p:commandButton value="Novo" action="#{agendamentoBean.clear(1)}" update=":form_a:"/>
                                 <p:commandButton value="Excluir" onclick="PF('dlg_delete').show()" disabled="#{controleAcessoBean.delete}"/>
                                 <p:commandButton value="Consultar agendamentos" action="#{chamadaPaginaBean.pagina('consultaAgendamento')}" />
-                                <p:commandButton icon="photocam" value="Capturar" title="Capturar Foto" oncomplete="PF('dlg_photocam').show();" action="#{photoCamBean.listener(agendamentoBean.path, agendamentoBean.id, true, true)}" global="false" update=":form_photocam_files:i_panel_photocam" disabled="#{!agendamentoBean.visibleCadastrarFoto}"/>
-                                <p:commandButton icon="ui-icon-arrowthick-1-n" value="Upload Foto" title="Enviar foto" oncomplete="PF('dlg_upload').show();" actionListener="#{uploadBean.listener(agendamentoBean.path, agendamentoBean.id, 'image/png,image/jpeg', true, true)}" global="false" update=":form_upload_files:i_panel_anexos" disabled="#{!agendamentoBean.visibleCadastrarFoto}"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="3" styleClass="margin-top-max">
+                                <p:commandButton value="Fotos Evolução" title="Fotos Evolução" oncomplete="PF('dlg_fotos_evolucao').show();" global="false" update="#{fotosBean.update}" action="#{fotosBean.load(agendamentoBean.contrato.id)}" rendered="#{agendamentoBean.contrato.id != -1}"/>
+                                <p:commandButton icon="photocam" value="Capturar" title="Capturar Foto" oncomplete="PF('dlg_photocam').show();" action="#{photoCamBean.listener(agendamentoBean.path, agendamentoBean.id, true, true)}" global="false" update=":form_photocam_files:i_panel_photocam" disabled="#{!agendamentoBean.visibleCadastrarFoto}" rendered="#{agendamentoBean.contrato.id != -1}"/>
+                                <p:commandButton icon="ui-icon-arrowthick-1-n" value="Upload Foto" title="Enviar foto" oncomplete="PF('dlg_upload').show();" actionListener="#{uploadBean.listener(agendamentoBean.path, agendamentoBean.id, 'image/png,image/jpeg', true, true)}" global="false" update=":form_upload_files:i_panel_anexos" disabled="#{!agendamentoBean.visibleCadastrarFoto}" rendered="#{agendamentoBean.contrato.id != -1}"/>
                             </h:panelGrid>
                             <p:panel header="Lista" styleClass="margin-top-max">
                                 <p:selectBooleanCheckbox value="#{agendamentoBean.actives}" itemLabel="Somente não atendidos">
