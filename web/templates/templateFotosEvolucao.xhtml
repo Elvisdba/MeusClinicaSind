@@ -1,0 +1,27 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core">
+    <f:view>
+        <h:form id="form_fotos_evolucao">
+            <p:dialog widgetVar="dlg_fotos_evolucao" modal="true" header="Fotos Evolução" resizable="true"  maximizable="true" minimizable="true" closeOnEscape="true" width="760">
+                <h:panelGrid id="i_fotos_evolucao">
+                    <p:dataGrid value="#{fotosBean.listFotos}" var="fotos" emptyMessage="Nenhum registro encontrado!">
+                        <h:panelGrid columns="1">
+                            <p:column>
+                                #{fotos.dataString}
+                            </p:column>
+                            <p:column>
+                                <p:graphicImage value="/Cliente/#{controleUsuarioBean.clienteString}/imagens/evolucao/#{fotos.id}.png" width="250"/>
+                            </p:column>
+                            <p:column width="30">
+                                <p:commandButton icon="ui-icon-close" action="#{fotosBean.delete(fotos)}" update=":form_fotos_evolucao:i_fotos_evolucao"/>
+                            </p:column>                            
+                        </h:panelGrid>
+                    </p:dataGrid>                    
+                </h:panelGrid>
+            </p:dialog>
+        </h:form>
+    </f:view>
+</ui:composition>
