@@ -283,7 +283,7 @@ public class MacFilialBean implements Serializable {
         ((ControleUsuarioBean) Sessions.getObject("controleUsuarioBean")).setMacFilial(mf);
         String s = "Filial: ( " + mf.getFilial().getFilial().getPessoa().getNome() + " / " + mf.getDepartamento().getDescricao() + " )";
         if (mf.getMesa() > 0) {
-            s += " - Guiche: " + mf.getMesa();
+            s += " - Guichê: " + mf.getMesa();
         }
         if (mf.getDescricao() != null && !mf.getDescricao().isEmpty()) {
             s += " - " + mf.getDescricao();
