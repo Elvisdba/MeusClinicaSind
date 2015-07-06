@@ -115,6 +115,7 @@ public class MacFilialBean implements Serializable {
                 Messages.info("Sucesso", "Registro inserido com sucesso");
                 macFilial = new MacFilial();
                 listaMacs.clear();
+                idCaixa = 0;
             } else {
                 di.rollback();
                 Messages.warn("Erro", "Erro ao inserir esse registro!");
@@ -132,6 +133,7 @@ public class MacFilialBean implements Serializable {
                 Messages.info("Sucesso", "Registro atualizado com sucesso");
                 macFilial = new MacFilial();
                 listaMacs.clear();
+                idCaixa = 0;
             } else {
                 di.rollback();
                 Messages.warn("Erro", "Erro ao inserir esse registro!");
