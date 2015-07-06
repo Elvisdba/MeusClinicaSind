@@ -1,9 +1,14 @@
 package br.com.clinicaintegrada.utils;
 
+import br.com.clinicaintegrada.coordenacao.Contrato;
+import br.com.clinicaintegrada.coordenacao.beans.AgendamentoBean;
 import br.com.clinicaintegrada.pessoa.Fisica;
+import br.com.clinicaintegrada.pessoa.Fotos;
 import br.com.clinicaintegrada.pessoa.dao.FisicaDao;
+import br.com.clinicaintegrada.pessoa.dao.FotosDao;
 import br.com.clinicaintegrada.seguranca.Cliente;
 import br.com.clinicaintegrada.seguranca.Usuario;
+import static com.google.common.io.Files.copy;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -310,7 +315,7 @@ public class PhotoCam implements Serializable {
         PATH = aPATH;
     }
 
-    public void complete() {
+    public void complete() throws FileNotFoundException {
         if (SUCCESS) {
             Fisica f;
             Dao dao = new Dao();
@@ -324,6 +329,46 @@ public class PhotoCam implements Serializable {
                             f.setDtFoto(DataHoje.dataHoje());
                             if (!dao.update(f, true)) {
                                 SUCCESS = false;
+                            }
+                        }
+                    } catch (Exception e) {
+
+                    }
+                    break;
+                case "agendamento":
+                    try {
+                        Integer id = Integer.parseInt(PATH_FILE.replace(".png", ""));
+                        Fotos fotos = new Fotos();
+                        fotos.setId(null);
+                        Contrato c = ((AgendamentoBean) Sessions.getObject("agendamentoBean")).getContrato();
+                        fotos.setContrato(c);
+                        fotos.setDataString(DataHoje.data());
+                        FotosDao fotosDao = new FotosDao();
+                        if (fotosDao.findFotosByContratoData(fotos.getContrato().getId(), DataHoje.data()).isEmpty()) {
+                            if (dao.save(fotos, true)) {
+                                if (!id.equals(fotos.getId())) {
+                                    streamedContent = null;
+                                    File file_origem = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/" + PATH + "/" + PATH_FILE));
+                                    File file_destino = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/" + PATH + "/" + fotos.getId() + ".png"));
+                                    PATH_FILE = fotos.getId() + ".png";
+                                    file_origem.renameTo(file_destino);
+                                    InputStream stream = new FileInputStream(file_destino);
+                                    streamedContent = new DefaultStreamedContent(stream, "image/png");
+                                    File fileFisica = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/imagens/fotos/" + c.getPaciente().getId() + ".png"));
+                                    if (!fileFisica.exists()) {
+                                        copy(file_destino, fileFisica);
+                                        if (fileFisica.exists()) {
+                                            Fisica fisica = new FisicaDao().pesquisaFisicaPorPessoa(c.getPaciente().getId());
+                                            if (fisica.getDtFoto() == null) {
+                                                fisica.setDtFoto(DataHoje.dataHoje());
+                                                dao.update(fisica, true);
+                                            }
+                                        }
+                                    }
+
+                                }
+                            } else {
+                                // FILE_PERMANENT = "";
                             }
                         }
                     } catch (Exception e) {
