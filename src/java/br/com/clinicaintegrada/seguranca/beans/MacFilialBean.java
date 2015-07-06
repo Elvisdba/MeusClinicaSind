@@ -70,6 +70,17 @@ public class MacFilialBean implements Serializable {
         }
         Filial filial = (Filial) di.find(new Filial(), Integer.parseInt(getListaFiliais().get(idFilial).getDescription()));
         Departamento departamento = (Departamento) di.find(new Departamento(), Integer.parseInt(getListaDepartamentos().get(idDepartamento).getDescription()));
+        if (listaCaixa.get(idCaixa).getDescription().equals("-1")) {
+            macFilial.setCaixa(null);
+        } else {
+//                for (int i = 0; i < listaMacs.size(); i++) {
+//                    if (listaMacs.get(i).getCaixa() != null && listaMacs.get(i).getCaixa().getId() == Integer.valueOf(listaCaixa.get(idCaixa).getDescription())) {
+//                        Messages.warn("Validação", "Já existe uma filial cadastrada para este Caixa");
+//                        return;
+//                    }
+//                }
+            macFilial.setCaixa((Caixa) di.find(new Caixa(), Integer.valueOf(listaCaixa.get(idCaixa).getDescription())));
+        }
         if (macFilial.getMac().isEmpty()) {
             Messages.warn("Validação", "Digite um mac válido!");
             return;
@@ -91,17 +102,6 @@ public class MacFilialBean implements Serializable {
             if (macFiliaDao.pesquisaMac(macFilial.getMac()) != null) {
                 Messages.warn("Validação", "Este computador ja está registrado!");
                 return;
-            }
-            if (listaCaixa.get(idCaixa).getDescription().equals("-1")) {
-                macFilial.setCaixa(null);
-            } else {
-//                for (int i = 0; i < listaMacs.size(); i++) {
-//                    if (listaMacs.get(i).getCaixa() != null && listaMacs.get(i).getCaixa().getId() == Integer.valueOf(listaCaixa.get(idCaixa).getDescription())) {
-//                        Messages.warn("Validação", "Já existe uma filial cadastrada para este Caixa");
-//                        return;
-//                    }
-//                }
-                macFilial.setCaixa((Caixa) di.find(new Caixa(), Integer.valueOf(listaCaixa.get(idCaixa).getDescription())));
             }
             if (di.save(macFilial)) {
                 logger.save(
@@ -175,9 +175,12 @@ public class MacFilialBean implements Serializable {
                 idDepartamento = i;
             }
         }
-        for (int i = 0; i < listaCaixa.size(); i++) {
-            if (macFilial.getCaixa().getId() == Integer.parseInt(listaCaixa.get(i).getDescription())) {
-                idCaixa = i;
+        if (mf.getCaixa() != null) {
+            idCaixa = 0;
+            for (int i = 0; i < listaCaixa.size(); i++) {
+                if (macFilial.getCaixa().getId() == Integer.parseInt(listaCaixa.get(i).getDescription())) {
+                    idCaixa = i;
+                }
             }
         }
     }
