@@ -54,7 +54,7 @@ public class EnderecoDao extends DB {
                     + "      AND UPPER(cid.ds_cidade) = '" + cidade.toLowerCase().toUpperCase() + "'"
                     + "      AND UPPER(cid.ds_uf) = '" + uf.toLowerCase().toUpperCase() + "'"
                     + "      AND UPPER(logr.ds_descricao) = '" + logradouro.toLowerCase().toUpperCase() + "'"
-                    + "      AND UPPER(translate(des.ds_descricao)) LIKE '" + AnaliseString.removerAcentos(descricao) + "'"
+                    + "      AND UPPER(func_translate(des.ds_descricao)) LIKE '" + AnaliseString.removerAcentos(descricao) + "'"
                     + "      AND ( ende.id_cliente = " + SessaoCliente.get().getId() + " OR ende.id_cliente IS NULL ) "
                     + " ORDER BY des.ds_descricao";
             Query query = getEntityManager().createNativeQuery(queryString, Endereco.class);
