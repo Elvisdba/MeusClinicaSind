@@ -346,32 +346,29 @@ public class PhotoCam implements Serializable {
                         FotosDao fotosDao = new FotosDao();
                         if (fotosDao.findFotosByContratoData(fotos.getContrato().getId(), DataHoje.data()).isEmpty()) {
                             if (dao.save(fotos, true)) {
-                                if (!id.equals(fotos.getId())) {
-                                    streamedContent = null;
-                                    File file_origem = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/" + PATH + "/" + PATH_FILE));
-                                    File file_destino = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/" + PATH + "/" + fotos.getId() + ".png"));
-                                    PATH_FILE = fotos.getId() + ".png";
-                                    file_origem.renameTo(file_destino);
-                                    InputStream stream = new FileInputStream(file_destino);
-                                    streamedContent = new DefaultStreamedContent(stream, "image/png");
-                                    File fileFisica = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/imagens/fotos/" + c.getPaciente().getId() + ".png"));
-                                    if (!fileFisica.exists()) {
-                                        copy(file_destino, fileFisica);
-                                        if (fileFisica.exists()) {
-                                            Fisica fisica = new FisicaDao().pesquisaFisicaPorPessoa(c.getPaciente().getId());
-                                            if (fisica.getDtFoto() == null) {
-                                                fisica.setDtFoto(DataHoje.dataHoje());
-                                                dao.update(fisica, true);
-                                            }
+                                streamedContent = null;
+                                File file_origem = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/" + PATH + "/" + PATH_FILE));
+                                File file_destino = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/" + PATH + "/" + fotos.getId() + ".png"));
+                                PATH_FILE = fotos.getId() + ".png";
+                                file_origem.renameTo(file_destino);
+                                InputStream stream = new FileInputStream(file_destino);
+                                streamedContent = new DefaultStreamedContent(stream, "image/png");
+                                File fileFisica = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/imagens/fotos/" + c.getPaciente().getId() + ".png"));
+                                if (!fileFisica.exists()) {
+                                    copy(file_destino, fileFisica);
+                                    if (fileFisica.exists()) {
+                                        Fisica fisica = new FisicaDao().pesquisaFisicaPorPessoa(c.getPaciente().getId());
+                                        if (fisica.getDtFoto() == null) {
+                                            fisica.setDtFoto(DataHoje.dataHoje());
+                                            dao.update(fisica, true);
                                         }
                                     }
-
                                 }
                             } else {
                                 // FILE_PERMANENT = "";
                             }
                         }
-                    } catch (Exception e) {
+                    } catch (NumberFormatException | IOException e) {
 
                     }
                     break;
