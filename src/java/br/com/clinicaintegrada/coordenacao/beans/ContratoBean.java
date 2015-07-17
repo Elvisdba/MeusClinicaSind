@@ -27,6 +27,7 @@ import br.com.clinicaintegrada.pessoa.Filial;
 import br.com.clinicaintegrada.pessoa.Fisica;
 import br.com.clinicaintegrada.pessoa.Pessoa;
 import br.com.clinicaintegrada.pessoa.PessoaEndereco;
+import br.com.clinicaintegrada.pessoa.beans.FotosEvolucaoBean;
 import br.com.clinicaintegrada.pessoa.dao.FilialDao;
 import br.com.clinicaintegrada.pessoa.dao.FisicaDao;
 import br.com.clinicaintegrada.pessoa.dao.PessoaEnderecoDao;
@@ -344,6 +345,9 @@ public class ContratoBean implements Serializable {
                 Messages.warn("Erro", "Erro ao atualizar registro!");
             }
         }
+        if (contrato.getId() != -1) {
+            new FotosEvolucaoBean().execute(contrato);
+        }
 
     }
 
@@ -549,7 +553,7 @@ public class ContratoBean implements Serializable {
             FilialDao filialDao = new FilialDao();
             List<Filial> list = (List<Filial>) filialDao.pesquisaTodasCliente();
             for (int i = 0; i < list.size(); i++) {
-                if(MacFilial.getAcessoFilial().getFilial().getId().equals(list.get(i).getId())) {
+                if (MacFilial.getAcessoFilial().getFilial().getId().equals(list.get(i).getId())) {
                     idFilial = i;
                 }
                 listFilial.add(new SelectItem(i, list.get(i).getFilial().getPessoa().getNome(), "" + list.get(i).getId()));

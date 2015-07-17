@@ -203,8 +203,10 @@ public class EnderecoBean implements Serializable {
         Sessions.put("linkClicado", true);
         if (url != null) {
             Sessions.put("enderecoPesquisa", endereco);
+            Sessions.remove("enderecoBean");
             return url;
         }
+        Sessions.remove("enderecoBean");
         return "endereco";
     }
 

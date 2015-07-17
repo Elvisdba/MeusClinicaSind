@@ -38,22 +38,25 @@ public class FisicaDao extends DB {
                     if (como.isEmpty()) {
                         queryString += " AND UPPER(F." + por + ") = FUNC_TRANSLATE('" + descricao + "')";
                     } else {
-                        queryString += " AND UPPER(F." + por + ") LIKE FUNC_TRANSLATE('" + descricao + "')";
+                        queryString += " AND FUNC_TRANSLATE(UPPER(F." + por + ")) LIKE UPPER(FUNC_TRANSLATE('" + descricao + "')) ";
                     }
                 } else {
                     if (como.isEmpty()) {
-                        queryString += " AND UPPER(FUNC_TRANSLATE(P." + por + ")) = FUNC_TRANSLATE('" + descricao + "')";
+                        queryString += " AND UPPER(FUNC_TRANSLATE(P." + por + ")) = UPPER(FUNC_TRANSLATE('" + descricao + "')) ";
                     } else {
-                        queryString += " AND UPPER(FUNC_TRANSLATE(P." + por + ")) LIKE FUNC_TRANSLATE('" + descricao + "')";
+                        queryString += " AND UPPER(FUNC_TRANSLATE(P." + por + ")) LIKE UPPER(FUNC_TRANSLATE('" + descricao + "')) ";
                     }
                 }
                 if (!non_ids.isEmpty()) {
-                    queryString += "  AND F.id_pessoa NOT IN (" + non_ids + ")";
+                    queryString += "  AND F.id_pessoa NOT IN (" + non_ids + ") ";
                 }
             }
+            queryString += " ORDER BY P.ds_nome ";
             if (por.equals("endereco")) {
-                queryString = "SELECT F.* "
-                        + "      FROM pes_fisica AS F WHERE F.id_pessoa IN("
+                queryString = "SELECT F.*                                           "
+                        + "      FROM pes_fisica AS F                               "
+                        + "         INNER JOIN PES_PESSOA P ON P.id = F.id_pessoa   "
+                        + "     WHERE F.id_pessoa IN("
                         + "      SELECT FIS.id_pessoa                                                                                                                                                     \n"
                         + "        FROM pes_pessoa_endereco     AS pesend                                                                                                                                 \n"
                         + "  INNER JOIN pes_pessoa              AS pes      ON (pes.id = pesend.id_pessoa)                                                                                                \n"
@@ -74,7 +77,7 @@ public class FisicaDao extends DB {
                 if (!non_ids.isEmpty()) {
                     queryString += " AND pes.id NOT IN (" + non_ids + " )";
                 }
-                queryString += " GROUP BY FIS.id_pessoa )";
+                queryString += " GROUP BY FIS.id_pessoa ) ORDER BY P.ds_nome";
             }
             Query query = getEntityManager().createNativeQuery(queryString, Fisica.class);
             List list = query.getResultList();

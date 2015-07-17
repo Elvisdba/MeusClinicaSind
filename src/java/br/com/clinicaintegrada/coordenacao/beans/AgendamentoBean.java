@@ -101,6 +101,7 @@ public class AgendamentoBean implements Serializable {
             Sessions.remove("agendamentoBean");
         }
     }
+    
 
     public void save() {
         ConfiguracaoCoordenacao cc = new ConfiguracaoCoordenacaoDao().findByCliente(SessaoCliente.get().getId());
@@ -114,6 +115,17 @@ public class AgendamentoBean implements Serializable {
             Messages.warn("Validação", "Selecionar evento!");
             return;
         }
+        List list = new FotosDao().findFotosByContrato(contrato.getId());
+        if (list.isEmpty()) {
+            Messages.warn("Validação", "Cadastrar nova foto de evolução para realizar agendamento!");
+            return;
+        }
+        list = new FotosDao().findFotosByContrato(contrato.getId(), 30);
+        if (list.isEmpty()) {
+            Messages.warn("Validação", "Cadastrar nova foto de evolução para realizar agendamento!");
+            return;
+        }
+        visibleCadastrarFoto = false;
         agendamento.setEvento((Evento) dao.find(new Evento(), Integer.parseInt(listSelectItem[0].get(index[0]).getDescription())));
         if (getHabilitaFuncaoEquipe()) {
             if (listSelectItem[1].isEmpty()) {
@@ -270,7 +282,7 @@ public class AgendamentoBean implements Serializable {
             getListAgendamento();
             contrato = (Contrato) Sessions.getObject("contratoPesquisa", true);
             listFotos = new FotosDao().findFotosByContrato(contrato.getId());
-            List list = new FotosDao().findFotosByContrato(contrato.getId(), 60);
+            List list = new FotosDao().findFotosByContrato(contrato.getId(), 30);
             visibleCadastrarFoto = false;
             if (list.isEmpty()) {
                 visibleCadastrarFoto = true;
@@ -476,7 +488,7 @@ public class AgendamentoBean implements Serializable {
 
     public String getId() {
         Integer id;
-        id = new FotosDao().next();
+        id = new FotosDao().currval();
         if (id == null) {
             id = 1;
         }
@@ -484,6 +496,11 @@ public class AgendamentoBean implements Serializable {
     }
 
     public Boolean getVisibleCadastrarFoto() {
+        List list = new FotosDao().findFotosByContrato(contrato.getId(), 60);
+        visibleCadastrarFoto = false;
+        if (list.isEmpty()) {
+            visibleCadastrarFoto = true;
+        }
         return visibleCadastrarFoto;
     }
 

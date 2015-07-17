@@ -139,7 +139,7 @@ public class Mail extends MailTemplate implements Serializable {
                             htmlString = ""
                                     + "<html>"
                                     + "     <body style='background-color: white'>"
-                                    + "         <img src=" + "../LogoCliente.png" + " height=\"20\" alt=\"" + r.getFilial().getPessoa().getNome() + "\"/>"
+                                    + "         <img src=" + "../logo_cliente.png" + " height=\"20\" alt=\"" + r.getFilial().getPessoa().getNome() + "\"/>"
                                     + "         <h3><strong>" + r.getFilial().getPessoa().getNome() + "</strong></h3>"
                                     + "         <hr />"
                                     + "         <p> " + email.getMensagem() + "</p>"
@@ -151,7 +151,7 @@ public class Mail extends MailTemplate implements Serializable {
                             htmlString = ""
                                     + "<html>"
                                     + "     <body style='background-color: white'>"
-                                    + "         <img src=" + "../LogoCliente.png" + " height=\"20\" alt=\"" + r.getFilial().getPessoa().getNome() + "\"/>"
+                                    + "         <img src=" + "../logo_cliente.png" + " height=\"20\" alt=\"" + r.getFilial().getPessoa().getNome() + "\"/>"
                                     + "         <h3><strong>" + r.getFilial().getPessoa().getNome() + "</strong></h3>"
                                     + "         <hr />"
                                     + "         " + email.getMensagem()

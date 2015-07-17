@@ -263,7 +263,7 @@ public class MovimentosReceberBean {
             for (int i = 0; i < lista.size(); i++) {
 
                 collection.add(new ParametroRecibo(
-                        ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/LogoCliente.png"),
+                        ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/logo_cliente.png"),
                         cliente.getPessoa().getNome(),
                         pe.getEndereco().getDescricaoEndereco().getDescricao(),
                         pe.getEndereco().getLogradouro().getDescricao(),

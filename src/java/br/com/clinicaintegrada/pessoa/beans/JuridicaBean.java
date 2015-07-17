@@ -1124,7 +1124,7 @@ public class JuridicaBean implements Serializable {
             Registro r = registroDao.pesquisaRegistroPorCliente(SessaoCliente.get().getId());
             mail.setFiles(new ArrayList());
             List<File> files = new ArrayList<>();
-            files.add(new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + SessaoCliente.get().getIdentifica() + "/Imagens/LogoCliente.png")));
+            files.add(new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + SessaoCliente.get().getIdentifica() + "/Imagens/logo_cliente.png")));
             mail.setFiles(files);
             String personalizadoHeader = ""
                     + "<p style=\"margin-top:25px;\">Segue abaixo dados solicitados</p>"

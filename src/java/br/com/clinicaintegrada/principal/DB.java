@@ -69,7 +69,8 @@ public class DB {
          *
          */
         cliente.setCaminhoSistema("ClinicaIntegrada");
-        cliente.setPersistence("ClinicaIntegradaProducao");
+        cliente.setPersistence("ClinicaIntegrada");
+        // cliente.setPersistence("ClinicaIntegradaProducao");
         cliente.setHost("192.168.1.60");
         cliente.setSenha("989899");
         /**

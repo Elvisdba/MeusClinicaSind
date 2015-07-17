@@ -169,22 +169,25 @@ public class CidadeBean implements Serializable {
     }
 
     public List<Cidade> getListCidade() {
-        if (listCidade.isEmpty()) {
-            CidadeDao cidadeDao = new CidadeDao();
-            listCidade = cidadeDao.pesquisaCidadePorEstadoCidade(cidade.getUf(), cidade.getCidade(), getComoPesquisa());
-
-        }
         return listCidade;
     }
 
-    public void acaoPesquisaInicial() {
+    public void load() {
         listCidade.clear();
+        CidadeDao cidadeDao = new CidadeDao();
+        if (!cidade.getCidade().isEmpty()) {
+            listCidade = cidadeDao.pesquisaCidadePorEstadoCidade(cidade.getUf(), cidade.getCidade(), getComoPesquisa());
+        }
+    }
+
+    public void acaoPesquisaInicial() {
         comoPesquisa = "I";
+        load();
     }
 
     public void acaoPesquisaParcial() {
-        listCidade.clear();
         comoPesquisa = "P";
+        load();
     }
 
     public String getDescricaoCidadePesquisa() {

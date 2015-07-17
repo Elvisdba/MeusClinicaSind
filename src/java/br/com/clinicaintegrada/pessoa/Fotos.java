@@ -9,7 +9,9 @@ import javax.persistence.*;
 import org.primefaces.event.SelectEvent;
 
 @Entity
-@Table(name = "pes_fotos")
+@Table(name = "pes_fotos",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"id_contrato", "dt_data"})
+)
 public class Fotos implements Serializable {
 
     @Id

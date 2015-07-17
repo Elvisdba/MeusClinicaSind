@@ -13,6 +13,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 
 @ManagedBean
 @SessionScoped
@@ -162,5 +164,18 @@ public class RotinaBean implements Serializable {
 
     public void setDescricaoPesquisa(String descricaoPesquisa) {
         this.descricaoPesquisa = descricaoPesquisa;
+    }
+
+    public static Rotina getRotinaAtual() {
+        try {
+            return new RotinaDao().pesquisaRotinaPorPagina(curlURL(), true);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String curlURL() {
+        String curl = ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getRequestURI();
+        return curl.substring(curl.lastIndexOf("/") + 1, curl.lastIndexOf("."));
     }
 }

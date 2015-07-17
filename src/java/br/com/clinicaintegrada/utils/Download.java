@@ -50,7 +50,7 @@ public class Download {
             facesContext.responseComplete();
         } catch (IOException ex) {
             System.out.println("Error in downloadFile: " + ex.getMessage());
-        }
+        } 
     }
 
     public void close() {

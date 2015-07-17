@@ -690,7 +690,7 @@ public class SimplesBean implements Serializable {
                 if (o == null) {
                     lista = new ArrayList();
                 }
-                int maxResults = 1000;                
+                int maxResults = 1000;
                 String queryString;
 
                 int t = o.getClass().getDeclaredFields().length;
@@ -708,7 +708,7 @@ public class SimplesBean implements Serializable {
 
                 }
             } else {
-                lista = new ArrayList();                
+                lista = new ArrayList();
             }
         }
     }

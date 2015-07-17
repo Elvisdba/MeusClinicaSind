@@ -12,7 +12,7 @@ import javax.faces.bean.ViewScoped;
 public class SegurancaUtilitariosBean implements Serializable {
 
     public boolean getExisteMacFilial() {
-        return MacFilial.getAcessoFilial().getId() != -1;
+        return MacFilial.getAcessoFilial().getId() != null;
     }
 
     public Usuario getSessaoUsuario() {
@@ -21,7 +21,7 @@ public class SegurancaUtilitariosBean implements Serializable {
 
     public boolean getExisteMacFilialComCaixa() {
         MacFilial macFilial = MacFilial.getAcessoFilial();
-        if (macFilial.getId() != -1 && macFilial.getCaixa() != null) {
+        if (macFilial.getId() != null && macFilial.getCaixa() != null) {
             return true;
         }
         return false;

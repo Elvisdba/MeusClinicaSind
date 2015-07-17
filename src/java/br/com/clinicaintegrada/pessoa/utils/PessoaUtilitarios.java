@@ -11,6 +11,7 @@ import br.com.clinicaintegrada.seguranca.Usuario;
 import br.com.clinicaintegrada.seguranca.controleUsuario.ControleUsuarioBean;
 import br.com.clinicaintegrada.seguranca.dao.UsuarioDao;
 import br.com.clinicaintegrada.utils.Dao;
+import br.com.clinicaintegrada.utils.DataHoje;
 import br.com.clinicaintegrada.utils.Sessions;
 import java.io.File;
 import java.io.Serializable;
@@ -134,7 +135,7 @@ public class PessoaUtilitarios implements Serializable {
      * @param pessoa
      * @return
      */
-    public String getFotoPessoaFisica(Integer pessoa) {
+    public String getFotoPessoaFisica(int pessoa) {
         Pessoa p = new Pessoa();
         p.setId(pessoa);
         return getFotoPessoaFisica(p, 0);
@@ -146,7 +147,7 @@ public class PessoaUtilitarios implements Serializable {
      * @param pessoa
      * @return
      */
-    public String getFotoPessoaFisica(Pessoa pessoa) {
+    public String getFotoPessoa(Pessoa pessoa) {
         return getFotoPessoaFisica(pessoa, 0);
     }
 
@@ -165,19 +166,19 @@ public class PessoaUtilitarios implements Serializable {
             }
         }
         Fisica fis = new FisicaDao().pesquisaFisicaPorPessoa(pessoa.getId());
-        String foto = "/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/Fotos/" + pessoa.getId() + ".png";
+        String foto = "/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/fotos/" + pessoa.getId() + ".png";
         File f = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(foto));
         if (!f.exists()) {
-            foto = "/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/Fotos/" + pessoa.getId() + ".jpg";
+            foto = "/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/fotos/" + pessoa.getId() + ".jpg";
             f = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(foto));
             if (!f.exists()) {
-                if(fis == null) {
-                    foto = "/Imagens/user_male.png";                    
+                if (fis == null) {
+                    foto = "/imagens/user_male.png";
                 } else {
                     if (fis.getSexo().equals("F")) {
-                        foto = "/Imagens/user_female.png";
+                        foto = "/imagens/user_female.png";
                     } else {
-                        foto = "/Imagens/user_male.png";
+                        foto = "/imagens/user_male.png";
                     }
                 }
             }
@@ -209,16 +210,16 @@ public class PessoaUtilitarios implements Serializable {
             } catch (InterruptedException ex) {
             }
         }
-        String foto = "/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/Fotos/" + fisica.getPessoa().getId() + ".png";
+        String foto = "/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/fotos/" + fisica.getPessoa().getId() + ".png";
         File f = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(foto));
         if (!f.exists()) {
-            foto = "/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/Fotos/" + fisica.getPessoa().getId() + ".jpg";
+            foto = "/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/fotos/" + fisica.getPessoa().getId() + ".jpg";
             f = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(foto));
             if (!f.exists()) {
                 if (fisica.getSexo().equals("F")) {
-                    foto = "/Imagens/user_female.png";
+                    foto = "/imagens/user_female.png";
                 } else {
-                    foto = "/Imagens/user_male.png";
+                    foto = "/imagens/user_male.png";
                 }
             }
         }
@@ -231,5 +232,14 @@ public class PessoaUtilitarios implements Serializable {
 
     public void setUsuarioSessao(Usuario usuarioSessao) {
         this.usuarioSessao = usuarioSessao;
+    }
+
+    public Integer idade(Integer pesso_id) {
+        try {
+            Fisica f = new FisicaDao().pesquisaFisicaPorPessoa(pesso_id);
+            return new DataHoje().calcularIdade(f.getNascimento());
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }
