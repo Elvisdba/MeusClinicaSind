@@ -1,6 +1,8 @@
 package br.com.clinicaintegrada.utils;
 
-public class MenuLinks {
+import java.io.Serializable;
+
+public class MenuLinks implements Serializable {
 
     private int indice = 0;
     private String link = "";
@@ -11,7 +13,7 @@ public class MenuLinks {
         indice = 0;
         link = "";
         descricao = "";
-        ativo = false;
+        ativo = false;  
     }
 
     public MenuLinks(int indice, String link, String descricao, boolean ativo) {

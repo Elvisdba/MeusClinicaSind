@@ -630,7 +630,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         pessoaProfissao = ppDao.pesquisaPessoaProfissaoPorFisica(fisica.getId());
         if (pessoaProfissao.getId() != -1) {
             for (int i = 0; i < listProfissoes.size(); i++) {
-                if (Integer.valueOf(listProfissoes.get(i).getDescription()) == pessoaProfissao.getProfissao().getId()) {
+                if (Integer.parseInt(listProfissoes.get(i).getDescription()) == pessoaProfissao.getProfissao().getId()) {
                     idProfissao = i;
                     break;
                 }
@@ -638,7 +638,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         }
         if (fisica.getTipoCadastro() != null) {
             for (int i = 0; i < listTipoCadastro.size(); i++) {
-                if (Integer.valueOf(listTipoCadastro.get(i).getDescription()) == fisica.getTipoCadastro().getId()) {
+                if (Integer.parseInt(listTipoCadastro.get(i).getDescription()) == fisica.getTipoCadastro().getId()) {
                     idTipoCadastro = i;
                     break;
                 }
@@ -1594,8 +1594,10 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
 
             enderecoCompleto = enderecox.getLogradouro().getDescricao() + " "
                     + enderecox.getDescricaoEndereco().getDescricao() + ", "
+                    + enderecox.getBairro().getDescricao() + " - "
                     + enderecox.getCidade().getCidade() + " - "
-                    + enderecox.getCidade().getUf();
+                    + enderecox.getCidade().getUf() + " - "
+                    + "CEP: " + enderecox.getCep();
 
             Sessions.remove("enderecoPesquisa");
 
@@ -1614,6 +1616,22 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         if (fisica.getId() != -1 && listPessoaEndereco.isEmpty()) {
             PessoaEnderecoDao pessoaEnderecoDao = new PessoaEnderecoDao();
             listPessoaEndereco = pessoaEnderecoDao.pesquisaPessoaEnderecoPorPessoa(fisica.getPessoa().getId());
+            if (enderecoCompleto.isEmpty()) {
+                for (int i = 0; i < listPessoaEndereco.size(); i++) {
+                    if (!listPessoaEndereco.isEmpty()) {
+                        if(listPessoaEndereco.get(i).getTipoEndereco().getId() == 3) {
+                            PessoaEndereco pe = listPessoaEndereco.get(i);
+                            enderecoCompleto = pe.getEndereco().getLogradouro().getDescricao() + " "
+                                    + pe.getEndereco().getDescricaoEndereco().getDescricao() + ", "
+                                    + pe.getEndereco().getBairro().getDescricao() + " - "
+                                    + pe.getEndereco().getCidade().getCidade() + " - "
+                                    + pe.getEndereco().getCidade().getUf() + " - "
+                                    + "CEP: " + pe.getEndereco().getCep();
+                            break;
+                        }
+                    }
+                }
+            }
         }
         return listPessoaEndereco;
     }
@@ -1784,7 +1802,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         if (fisica.getId() == -1) {
             return "temp/foto/" + ((Usuario) Sessions.getObject("sessaoUsuario")).getId();
         } else {
-            return "imagens/Fotos";
+            return "imagens/fotos";
         }
     }
 

@@ -232,7 +232,7 @@ public class BaixaGeralBean {
                         return null;
                     }
                     collection.add(new ParametroRecibo(
-                            ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/LogoCliente.png"),
+                            ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/logo_cliente.png"),
                             sindicato.getPessoa().getNome(),
                             pe.getEndereco().getDescricaoEndereco().getDescricao(),
                             pe.getEndereco().getLogradouro().getDescricao(),

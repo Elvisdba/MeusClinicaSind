@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import org.apache.jasper.tagplugins.jstl.core.Catch;
+import org.primefaces.event.SelectEvent;
 
 public class DataHoje {
 
@@ -1016,6 +1017,15 @@ public class DataHoje {
             return hourString;
         } catch (Exception e) {
             return "";
+        }
+    }
+
+    public static Date converteSelectEvent(SelectEvent selectEvent) {
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
+            return DataHoje.converte(format.format(selectEvent.getObject()));
+        } catch (Exception e) {
+            return null;
         }
     }
 }

@@ -56,6 +56,7 @@ public class RotinaDao extends DB {
                 return (Rotina) query.getSingleResult();
             }
         } catch (Exception e) {
+            return null;
         }
         return null;
     }

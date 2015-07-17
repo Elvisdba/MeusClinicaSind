@@ -10,11 +10,11 @@ public class ConfiguracaoUpload {
     private String arquivo;
     private String renomear;
     private FileUploadEvent event;
-    private int tamanhoMaximo;
-    private int alturaMaxima;
-    private int larguraMaxima;
+    private Integer tamanhoMaximo;
+    private Integer alturaMaxima;
+    private Integer larguraMaxima;
     private List tiposPermitidos;
-    private boolean substituir;
+    private Boolean substituir;
 
     public ConfiguracaoUpload() {
         this.diretorio = "";
@@ -28,7 +28,7 @@ public class ConfiguracaoUpload {
         this.renomear = "";
     }
 
-    public ConfiguracaoUpload(String diretorio, String arquivo, String renomear, FileUploadEvent event, int tamanhoMaximo, int alturaMaxima, int larguraMaxima, List tiposPermitidos, boolean substituir) {
+    public ConfiguracaoUpload(String diretorio, String arquivo, String renomear, FileUploadEvent event, Integer tamanhoMaximo, Integer alturaMaxima, Integer larguraMaxima, List tiposPermitidos, Boolean substituir) {
         this.diretorio = diretorio;
         this.arquivo = arquivo;
         this.renomear = renomear;
@@ -64,27 +64,27 @@ public class ConfiguracaoUpload {
         this.event = event;
     }
 
-    public int getTamanhoMaximo() {
+    public Integer getTamanhoMaximo() {
         return tamanhoMaximo;
     }
 
-    public void setTamanhoMaximo(int tamanhoMaximo) {
+    public void setTamanhoMaximo(Integer tamanhoMaximo) {
         this.tamanhoMaximo = tamanhoMaximo;
     }
 
-    public int getAlturaMaxima() {
+    public Integer getAlturaMaxima() {
         return alturaMaxima;
     }
 
-    public void setAlturaMaxima(int alturaMaxima) {
+    public void setAlturaMaxima(Integer alturaMaxima) {
         this.alturaMaxima = alturaMaxima;
     }
 
-    public int getLarguraMaxima() {
+    public Integer getLarguraMaxima() {
         return larguraMaxima;
     }
 
-    public void setLarguraMaxima(int larguraMaxima) {
+    public void setLarguraMaxima(Integer larguraMaxima) {
         this.larguraMaxima = larguraMaxima;
     }
 
@@ -96,11 +96,11 @@ public class ConfiguracaoUpload {
         this.tiposPermitidos = tiposPermitidos;
     }
 
-    public boolean isSubstituir() {
+    public Boolean getSubstituir() {
         return substituir;
     }
 
-    public void setSubstituir(boolean substituir) {
+    public void setSubstituir(Boolean substituir) {
         this.substituir = substituir;
     }
 

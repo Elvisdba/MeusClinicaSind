@@ -22,6 +22,11 @@ public class PesquisarProfissaoBean implements Serializable {
     }
 
     public List<Profissao> getListProfissao() {
+        return listProfissao;
+    }
+
+    public void load() {
+        listProfissao.clear();
         if (!descricaoProfissao.equals("")) {
             profissao.setProfissao(descricaoProfissao);
         }
@@ -30,17 +35,16 @@ public class PesquisarProfissaoBean implements Serializable {
             listProfissao = (List<Profissao>) profissaoDao.pesquisaProfissao(por, combo, profissao.getProfissao());
         }
         descricaoProfissao = "";
-        return listProfissao;
     }
 
     public void inicial() {
-        listProfissao.clear();
         por = "I";
+        load();
     }
 
     public void parcial() {
-        listProfissao.clear();
         por = "P";
+        load();
     }
 
     public void editProfissao(Profissao p) {

@@ -171,7 +171,7 @@ public class ClienteBean implements Serializable {
 //        cu.setDiretorio("Imagens");
 //        //cu.setArquivo("l");
 //        cu.setSubstituir(true);
-//        cu.setRenomear("LogoCliente" + ".png");
+//        cu.setRenomear("logo_cliente" + ".png");
 //        cu.setEvent(event);
 //        Upload.enviar(cu, true);
     }

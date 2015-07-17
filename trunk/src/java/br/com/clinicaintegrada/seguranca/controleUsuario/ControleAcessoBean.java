@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 @ManagedBean
 @SessionScoped
 @SuppressWarnings("unchecked")
-public class ControleAcessoBean implements Serializable {
+public class ControleAcessoBean {
 
     // static final long serialVersionUID = 7220145288109489651L;
     private String login = "";
@@ -39,7 +39,6 @@ public class ControleAcessoBean implements Serializable {
     private String urlDestino;
     private HttpServletRequest paginaRequerida;
     private String showRendered = "true";
-    private String msgConfirma = "";
     private int tipo = -1;
     private Modulo modulo = new Modulo();
     private Rotina rotina = new Rotina();
@@ -53,14 +52,6 @@ public class ControleAcessoBean implements Serializable {
 
     public void setShowRendered(String showRendered) {
         this.showRendered = showRendered;
-    }
-
-    public String getMsgConfirma() {
-        return msgConfirma;
-    }
-
-    public void setMsgConfirma(String msgConfirma) {
-        this.msgConfirma = msgConfirma;
     }
 
     public String getValidacao() throws IOException {
@@ -250,7 +241,7 @@ public class ControleAcessoBean implements Serializable {
         return retorno;
     }
 
-    public boolean getSave() {
+    public Boolean getSave() {
         Object object = (Object) FacesContext.getCurrentInstance().getExternalContext().getRequestMap().get("object");
         if (object == null) {
             return true;
@@ -328,7 +319,7 @@ public class ControleAcessoBean implements Serializable {
         return retorno;
     }
 
-    public boolean getSalvar(Object object, int idMod) throws IllegalArgumentException {
+    public Boolean getSalvar(Object object, int idMod) throws IllegalArgumentException {
         if (object == null) {
             return false;
         }
@@ -417,7 +408,7 @@ public class ControleAcessoBean implements Serializable {
         return verificaPermissao(pageName, 4);
     }
 
-    public boolean getDelete() {
+    public Boolean getDelete() {
         return verificaPermissao(2);
 //        //PESQUISA DE PERMISSAO-------------------------------------------------------------------------------------------
 //        boolean retorno = true;
@@ -707,6 +698,7 @@ public class ControleAcessoBean implements Serializable {
     /**
      * 1 - Inclusão; 2 - Exclusão; 3 - Alteração; 4 - Consulta
      *
+     * @param usuario
      * @param idModulo
      * @param idRotina
      * @param idEvento

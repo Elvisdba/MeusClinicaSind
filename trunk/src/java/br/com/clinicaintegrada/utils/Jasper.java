@@ -2,9 +2,12 @@ package br.com.clinicaintegrada.utils;
 
 import br.com.clinicaintegrada.pessoa.Juridica;
 import br.com.clinicaintegrada.pessoa.Pessoa;
+import br.com.clinicaintegrada.pessoa.PessoaEndereco;
+import br.com.clinicaintegrada.pessoa.dao.PessoaEnderecoDao;
 import br.com.clinicaintegrada.principal.DBExternal;
 import br.com.clinicaintegrada.seguranca.Usuario;
 import br.com.clinicaintegrada.seguranca.controleUsuario.ControleUsuarioBean;
+import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -153,7 +156,7 @@ public class Jasper {
     public static void printReports(String jasperName, String fileName, Collection c, Map parameters, List jasperListExport) throws SecurityException, IllegalArgumentException {
         Jasper.LIST_FILE_GENERATED = new ArrayList();
         Dao dao = new Dao();
-        Juridica juridica = (Juridica) dao.find(new Juridica(), 1);
+        Juridica juridica = (Juridica) dao.find(new Juridica(), SessaoCliente.get().getIdJuridica());
         byte[] bytesComparer = null;
         byte[] b = null;
         if (jasperListExport.isEmpty()) {
@@ -173,7 +176,7 @@ public class Jasper {
         fileName = fileName.replace("/", "");
         fileName = fileName.toLowerCase();
         fileName = AnaliseString.removerAcentos(fileName);
-        if (!Dirs.create("Arquivos/" + PATH + "/" + fileName)) {
+        if (!Dirs.create("arquivos/" + PATH + "/" + fileName)) {
             Messages.info("Sistema", "Erro ao criar diretório!");
             return;
         }
@@ -195,19 +198,23 @@ public class Jasper {
             parameters = new HashMap();
         }
         if (IS_HEADER) {
-//            parameters.put("sindicato_nome", juridica.getPessoa().getNome());
-//            parameters.put("sindicato_documento", juridica.getPessoa().getDocumento());
-//            parameters.put("sindicato_site", juridica.getPessoa().getSite());
-//            parameters.put("sindicato_logradouro", juridica.getPessoa().getPessoaEndereco().getEndereco().getLogradouro().getDescricao());
-//            parameters.put("sindicato_endereco", juridica.getPessoa().getPessoaEndereco().getEndereco().getDescricaoEndereco().getDescricao());
-//            parameters.put("sindicato_numero", juridica.getPessoa().getPessoaEndereco().getNumero());
-//            parameters.put("sindicato_complemento", juridica.getPessoa().getPessoaEndereco().getComplemento());
-//            parameters.put("sindicato_bairro", juridica.getPessoa().getPessoaEndereco().getEndereco().getBairro().getDescricao());
-//            parameters.put("sindicato_cidade", juridica.getPessoa().getPessoaEndereco().getEndereco().getCidade().getCidade());
-//            parameters.put("sindicato_uf", juridica.getPessoa().getPessoaEndereco().getEndereco().getCidade().getUf());
-//            parameters.put("sindicato_cep", juridica.getPessoa().getPessoaEndereco().getEndereco().getCep());
-//            parameters.put("sindicato_logo", ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/LogoCliente.png"));
-//            parameters.put("template_dir", subreport);
+            List list = new PessoaEnderecoDao().listaPessoaEnderecoPorPessoaTipo(juridica.getPessoa().getId(), 2);
+            if (!list.isEmpty()) {
+                PessoaEndereco pessoaEndereco = (PessoaEndereco) list.get(0);
+                parameters.put("companhia_nome", juridica.getPessoa().getNome());
+                parameters.put("companhia_documento", juridica.getPessoa().getDocumento());
+                parameters.put("companhia_site", juridica.getPessoa().getSite());
+                parameters.put("companhia_logradouro", pessoaEndereco.getEndereco().getLogradouro().getDescricao());
+                parameters.put("companhia_endereco", pessoaEndereco.getEndereco().getDescricaoEndereco().getDescricao());
+                parameters.put("companhia_numero", pessoaEndereco.getNumero());
+                parameters.put("companhia_complemento", pessoaEndereco.getComplemento());
+                parameters.put("companhia_bairro", pessoaEndereco.getEndereco().getBairro().getDescricao());
+                parameters.put("companhia_cidade", pessoaEndereco.getEndereco().getCidade().getCidade());
+                parameters.put("companhia_uf", pessoaEndereco.getEndereco().getCidade().getUf());
+                parameters.put("companhia_cep", pessoaEndereco.getEndereco().getCep());
+                parameters.put("companhia_logo", ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/logo_cliente.png"));
+                parameters.put("template_dir", subreport);
+            }
         }
         MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
         String downloadName = "";
@@ -368,6 +375,8 @@ public class Jasper {
                             jasper = (JasperReport) JRLoader.loadObject(new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/relatorios/" + jasperName)));
                         } else if (new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "" + jasperName)).exists()) {
                             jasper = (JasperReport) JRLoader.loadObject(new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "" + jasperName)));
+                        } else if (new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/"+ jasperName)).exists()) {
+                            jasper = (JasperReport) JRLoader.loadObject(new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/"+ jasperName)));
                         } else {
                             jasper = (JasperReport) JRLoader.loadObject(new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath(jasperName)));
                         }
@@ -575,19 +584,23 @@ public class Jasper {
                 IS_DOWNLOAD = false;
             }
         }
-        if (IS_DOWNLOAD) {
-            Download download = new Download(downloadName, dirPath, mimeType, FacesContext.getCurrentInstance());
-            download.open();
-            FILE_NAME_GENERATED = dirPath + "/" + downloadName;
-            if (IS_REMOVE_FILE) {
-                download.close();
-            }
-            if (!listFilesZip.isEmpty()) {
-                for (int i = 0; i < listFilesZip.size(); i++) {
-                    File f = new File(listFilesZip.get(i).toString());
-                    f.delete();
+        try {
+            if (IS_DOWNLOAD) {
+                Download download = new Download(downloadName, dirPath, mimeType, FacesContext.getCurrentInstance());
+                download.open();
+                FILE_NAME_GENERATED = dirPath + "/" + downloadName;
+                if (IS_REMOVE_FILE) {
+                    download.close();
+                }
+                if (!listFilesZip.isEmpty()) {
+                    for (int i = 0; i < listFilesZip.size(); i++) {
+                        File f = new File(listFilesZip.get(i).toString());
+                        f.delete();
+                    }
                 }
             }
+        } catch (Exception e) {
+            e.getMessage();
         }
         destroy();
     }

@@ -92,7 +92,7 @@ public class ImpressaoBoleto {
 ////                }
                 // String LAYOUT = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/relatorios/BOLETO_HEADER.jasper");
                 Cobranca cobranca = null;
-                String cedente_logo = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/LogoCliente.png");
+                String cedente_logo = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/logo_cliente.png");
                 // int qntItens = 0;
                 String documento = "";
                 for (int w = 0; w < listBoletosVw.size(); w++) {
@@ -410,7 +410,7 @@ public class ImpressaoBoleto {
 //                    valor_total = Moeda.somaValores(valor_total, Moeda.converteUS$(null));
 //
 ////                    lista.add(new ParametroBoleto(
-////                            ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/LogoCliente.png"), // LOGO CLÍNICA
+////                            ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/logo_cliente.png"), // LOGO CLÍNICA
 ////                            filial.getFilial().getPessoa().getNome(),
 ////                            lista_socio.get(w).get(9).toString(), // CODIGO
 ////                            lista_socio.get(w).get(10).toString(), // RESPONSAVEL

@@ -55,7 +55,7 @@ public class CidadeDao extends DB {
                 break;
         }
         try {
-            Query query = getEntityManager().createNativeQuery("SELECT C.* FROM end_cidade AS C WHERE UPPER(FUNC_TRANSLATE(C.ds_cidade)) = '" + AnaliseString.removerAcentos(cidade.toUpperCase()) + "'  AND UPPER(C.ds_uf) = '" + uf.toUpperCase() + "'", Cidade.class);
+            Query query = getEntityManager().createNativeQuery("SELECT C.* FROM end_cidade AS C WHERE UPPER(FUNC_TRANSLATE(C.ds_cidade)) LIKE '" + AnaliseString.removerAcentos(cidade.toUpperCase()) + "'  AND UPPER(C.ds_uf) = '" + uf.toUpperCase() + "'", Cidade.class);
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return list;
@@ -76,5 +76,40 @@ public class CidadeDao extends DB {
         } catch (Exception e) {
         }
         return null;
+    }
+
+    /**
+     *
+     * @param cliente_id tipo)
+     * @return
+     */
+    public List findCidadesByPessoaEnderecoGroup(Integer cliente_id) {
+        try {
+            String queryString = ""
+                    + "     SELECT CI.*                                                     \n"
+                    + "       FROM end_cidade AS CI WHERE CI.id IN (                        \n"
+                    // SUB QUERY
+                    + "        SELECT C.id "
+                    + "          FROM pes_pessoa AS P                                       \n"
+                    + "    INNER JOIN pes_fisica AS F ON F.id_pessoa = P.id                 \n"
+                    + "    INNER JOIN pes_pessoa_endereco AS PE ON PE.id_pessoa = P.id      \n"
+                    + "    INNER JOIN end_endereco AS E ON E.id = PE.id_endereco            \n"
+                    + "    INNER JOIN end_cidade AS C ON C.id = E.id_cidade                 \n"
+                    + "         WHERE P.id_cliente = ?                                      \n"
+                    + "      GROUP BY C.id                                                  \n"
+                    + ") "
+                    + " ORDER BY CI.ds_cidade;                                              ";
+
+            Query query = getEntityManager().createNativeQuery(queryString, Cidade.class);
+            query.setParameter(1, cliente_id);
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+
+        } catch (Exception e) {
+
+        }
+        return new ArrayList();
     }
 }

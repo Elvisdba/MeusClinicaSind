@@ -32,7 +32,7 @@ public class DescricaoEndereco implements java.io.Serializable {
 
     public DescricaoEndereco(Integer id, Cliente cliente, String descricao) {
         this.id = id;
-        this.cliente = new Cliente();
+        this.cliente = cliente;
         this.descricao = descricao;
     }
 
