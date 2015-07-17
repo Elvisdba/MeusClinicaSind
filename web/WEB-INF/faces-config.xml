@@ -562,6 +562,49 @@
             <redirect/>
         </navigation-case>          
         
+        <navigation-case>
+            <from-outcome>relatorioPessoaFisica</from-outcome>
+            <to-view-id>/relatorioPessoaFisica.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>relatorioCliente</from-outcome>
+            <to-view-id>/relatorioCliente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>relatorioPaciente</from-outcome>
+            <to-view-id>/relatorioPaciente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>relatorioEquipeTecnica</from-outcome>
+            <to-view-id>/relatorioEquipeTecnica.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>          
+        
+        <navigation-case>
+            <from-outcome>relatorioFuncionario</from-outcome>
+            <to-view-id>/relatorioFuncionario.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>          
+        
+        <navigation-case>
+            <from-outcome>relatorio</from-outcome>
+            <to-view-id>/relatorio.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>          
+        
+        <navigation-case>
+            <from-outcome>pesquisaRelatorio</from-outcome>
+            <to-view-id>/pesquisaRelatorio.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>          
+
+                                    
         <!-- 
         <navigation-case>
             <from-outcome>#{navigationRules.param}</from-outcome>

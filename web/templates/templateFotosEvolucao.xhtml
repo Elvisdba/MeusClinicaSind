@@ -5,9 +5,9 @@
                 xmlns:f="http://java.sun.com/jsf/core">
     <f:view>
         <h:form id="form_fotos_evolucao">
-            <p:dialog widgetVar="dlg_fotos_evolucao" modal="true" header="Fotos Evolução" resizable="true"  maximizable="true" minimizable="true" closeOnEscape="true" width="760">
+            <p:dialog widgetVar="dlg_fotos_evolucao" modal="true" header="Fotos Evolução" resizable="true"  maximizable="true" minimizable="true" closeOnEscape="true" width="760" position="center">
                 <h:panelGrid id="i_fotos_evolucao">
-                    <p:dataGrid value="#{fotosBean.listFotos}" var="fotos" emptyMessage="Nenhum registro encontrado!">
+                    <p:dataGrid value="#{fotosEvolucaoBean.listFotos}" var="fotos" emptyMessage="Nenhum registro encontrado!">
                         <h:panelGrid columns="1">
                             <p:column>
                                 #{fotos.dataString}
@@ -16,7 +16,7 @@
                                 <p:graphicImage value="/Cliente/#{controleUsuarioBean.clienteString}/imagens/evolucao/#{fotos.id}.png" width="250"/>
                             </p:column>
                             <p:column width="30">
-                                <p:commandButton icon="ui-icon-close" action="#{fotosBean.delete(fotos)}" update=":form_fotos_evolucao:i_fotos_evolucao"/>
+                                <p:commandButton icon="ui-icon-close" action="#{fotosEvolucaoBean.delete(fotos)}" update=":form_fotos_evolucao:i_fotos_evolucao" disabled="#{fotosEvolucaoBean.disable_delete_photo}" />
                             </p:column>                            
                         </h:panelGrid>
                     </p:dataGrid>                    

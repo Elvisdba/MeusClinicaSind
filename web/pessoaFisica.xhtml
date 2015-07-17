@@ -40,6 +40,7 @@
                     <ui:include src="templates/templatePhotoCam.xhtml" />
                     <p:panel styleClass="wrapper no-border">
                         <h:form id="form_pessoa_fisica">
+                            <p:focus context="i_panel_pessoa_fisica"/>
                             <h:outputScript name="script_primefaces.js" library="js" />
                             <p:outputLabel value="Cadastro Física" styleClass="fonteHeader"/>
                             <c:set scope="request" var="object" value="${fisicaBean.fisica}"/>
@@ -250,7 +251,7 @@
                                             <p:column>
                                                 <p:panel header="Foto do Perfil" id="i_panel_imagens" style="width: 100%; height: 428px; text-align: center">
                                                     <h:column rendered="#{empty fisicaBean.fotoTempPerfil}">
-                                                        <p:graphicImage value="#{pessoaUtilitariosBean.getFotoPessoaFisica(fisicaBean.fisica.pessoa)}" cache="false" style="max-width: 300px; max-height: 395px"/>
+                                                        <p:graphicImage value="#{pessoaUtilitariosBean.getFotoPessoaFisica(fisicaBean.fisica.pessoa.id)}" cache="false" style="max-width: 300px; max-height: 395px"/>
                                                     </h:column>
                                                     <h:column rendered="#{not empty fisicaBean.fotoTempPerfil}">
                                                         <p:graphicImage value="#{fisicaBean.fotoTempPerfil}" id="i_perfil" style="max-width: 300px; max-height: 395px" cache="false"/>
@@ -263,17 +264,6 @@
                                                 <p:commandButton icon="ui-icon-trash" title="Remover Foto" action="#{fisicaBean.apagarImagem()}" update="i_panel_imagens" disabled="#{fisicaBean.fisica.id == -1}"/>
                                             </p:column>
                                         </h:panelGrid>
-
-                                        <p:dialog id="i_captura" widgetVar="dlg_captura" modal="true" header="Foto Perfil" resizable="true"  maximizable="true" minimizable="true">
-                                            <h:panelGrid id="i_panel_imagem" columns="1">
-                                                <p:photoCam widgetVar="pc" listener="#{fisicaBean.capturar}" update=":form_pessoa_fisica:i_tabview_fisica:i_panel_imagens" forceFlash="true"/>
-                                                <h:column>
-                                                    <h:panelGrid columns="2">
-                                                        <p:commandButton type="button" value="Capturar Foto" onclick="PF('pc').capture()" />
-                                                    </h:panelGrid>
-                                                </h:column>
-                                            </h:panelGrid>                        
-                                        </p:dialog>
                                     </p:tab>
                                     <p:tab title="Dependentes" id="i_panel_dependente">
                                         <p:messages id="id_valida_dependentes" autoUpdate="true" showSummary="true" showDetail="true" />
@@ -451,18 +441,13 @@
                                 <!-- ENDEREÇO -->
                                 <p:accordionPanel id="i_acc_tab_endereco" activeIndex="#{fisicaBean.indexNovoEndereco}" widgetVar="wdg_acc_end" rendered="#{fisicaBean.indexPessoaFisica != 2}">
 
-                                    <p:tab id="i_tab_endereco" title="Endereço da Pessoa">
-
+                                    <p:tab id="i_tab_endereco" title="#{(empty fisicaBean.enderecoCompleto ? 'Endereço da Pessoa' : fisicaBean.enderecoCompleto)} " titleStyleClass="#{(empty fisicaBean.enderecoCompleto ? '' : 'font-color-red')} font-size-11">
                                         <h:panelGrid id="i_panel_add_endereco">
                                             <h:panelGrid columns="2" rendered="#{fisicaBean.enderecox.id == -1 and fisicaBean.listPessoaEndereco.size() == 0}">
                                                 <p:commandButton onclick="PF('dlg_pesquisa_endereco').show()" value="Pesquisar endereço" action="#{pesquisaEnderecoBean.put('pessoaFisica')}" update="@this :form_pessoa_fisica:i_pesquisa_endereco"/>
                                             </h:panelGrid>
 
                                             <h:panelGrid rendered="#{fisicaBean.enderecox.id != -1 and fisicaBean.listPessoaEndereco.size() == 0}">
-                                                <h:panelGrid columns="1">
-                                                    <p:outputLabel value="#{fisicaBean.enderecoCompleto}" style="font-size: 12pt!important; color: red;" title="Endereço para Cobrança"/>
-                                                </h:panelGrid>
-
                                                 <h:panelGrid columns="3">
                                                     <p:column>
                                                         <p:outputLabel value="Número"/><br />
@@ -571,8 +556,8 @@
                                             <p:column>
                                                 <p:outputLabel value="Por" /><br />
                                                 <p:selectOneMenu id="idPor" value="#{fisicaBean.combo}" style="padding-right: 20px">
-                                                    <f:selectItem itemValue="profissao"  itemLabel="Profissão"/>
-                                                    <f:selectItem itemValue="cbo" itemLabel="Cbo"/>
+                                                    <f:selectItem itemValue="ds_profissao"  itemLabel="Profissão"/>
+                                                    <f:selectItem itemValue="ds_cbo" itemLabel="Cbo"/>
                                                 </p:selectOneMenu>
                                             </p:column>
 
