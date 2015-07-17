@@ -75,8 +75,12 @@
                                     <h:outputText value="#{fisica.pessoa.email1}"/>
                                 </p:column>
 
-                                <p:column headerText="Telefone" width="100" styleClass="text-center">
-                                    <h:outputText value="#{fisica.pessoa.telefone1}"/>                                    
+                                <p:column headerText="Telefone" width="130" styleClass="text-center">
+                                    <h:panelGrid styleClass="sbb">
+                                        <h:outputText value=" #{fisica.pessoa.telefone1} " rendered="#{not empty fisica.pessoa.telefone1}"/>
+                                        <h:outputText value=" #{fisica.pessoa.telefone2} " rendered="#{not empty fisica.pessoa.telefone2}"/>
+                                        <h:outputText value=" #{fisica.pessoa.telefone3} " rendered="#{not empty fisica.pessoa.telefone3}"/>
+                                    </h:panelGrid>
                                 </p:column>
 
                                 <p:rowExpansion>

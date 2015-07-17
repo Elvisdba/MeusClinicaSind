@@ -48,11 +48,12 @@
                                     <p:submenu label="Configurações">  
                                         <p:menuitem value="Coordenação"         action="#{chamadaPaginaBean.pagina('configuracaoCoordenacao')}" />
                                         <p:menuitem value="Financeiro"          action="#{chamadaPaginaBean.pagina('configuracaoFinanceiro')}" />
-                                    </p:submenu>  
+                                    </p:submenu>
                                     <p:separator />  
                                     <p:menuitem value="Pesquisar Logs"              action="#{chamadaPaginaBean.pagina('pesquisaLog')}" title="Registro de atividades" rendered="#{!controleAcessoBean.view('pesquisaLog')}"/>
                                     <p:submenu label="Sistema">
                                         <p:menuitem value="Cliente"       action="#{chamadaPaginaBean.pagina('cliente')}" rendered="#{controleUsuarioBean.clienteString eq 'ClinicaIntegrada'}"/>
+                                        <p:menuitem value="Relatórios"    action="#{chamadaPaginaBean.pagina('relatorio')}" rendered="#{!controleAcessoBean.view('relatorio')}" />
                                     </p:submenu>
                                     <p:menuitem value="Sair do Sistema" action="#{usuarioBean.sairSistema}" /> 
                                 </p:submenu>                                 
@@ -83,7 +84,10 @@
                                     </p:submenu>
                                     <p:menuitem icon="ui-icon ui-icon-mail-closed" value="Email" action="#{chamadaPaginaBean.pagina('email')}" />
                                 </p:submenu>
-                                <p:menuitem value="Relatórios" />
+                                <p:submenu label="Relatórios">
+                                    <p:menuitem value="Pessoa Física"           action="#{chamadaPaginaBean.pagina('relatorioPessoaFisica', 'relatorioFisicaBean')}" />
+                                    <p:menuitem value="Pessoa Funcionários"     action="#{chamadaPaginaBean.pagina('relatorioFuncionario', 'relatorioFuncionarioBean')}" />
+                                </p:submenu>
                             </p:menubar> 
                         </p:panel>
                         <p:panel style="border: 0px; width: 1024px; height: 550px; margin: 0 auto">

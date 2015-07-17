@@ -32,7 +32,7 @@
                     </f:metadata>
                     <ui:include src="templates/templateUpload.xhtml" />
                     <ui:include src="templates/templatePhotoCam.xhtml" />                    
-                    <ui:include src="templates/templateFotosEvolucao.xhtml" />                    
+                    <ui:include src="templates/templateFotosEvolucao.xhtml" />
                     <p:panel styleClass="wrapper" style="border: 0px;">
                         <h:outputText value="Agendamento" styleClass="fonteHeader" />
                         <div class="clear"></div>
@@ -102,7 +102,7 @@
                                 <p:commandButton value="Consultar agendamentos" action="#{chamadaPaginaBean.pagina('consultaAgendamento')}" />
                             </h:panelGrid>
                             <h:panelGrid columns="3" styleClass="margin-top-max">
-                                <p:commandButton value="Fotos Evolução" title="Fotos Evolução" oncomplete="PF('dlg_fotos_evolucao').show();" global="false" update="#{fotosBean.update}" action="#{fotosBean.load(agendamentoBean.contrato.id)}" rendered="#{agendamentoBean.contrato.id != -1}"/>
+                                <p:commandButton value="Fotos Evolução" title="Fotos Evolução" oncomplete="PF('dlg_fotos_evolucao').show();" global="false" update="#{fotosEvolucaoBean.update}" action="#{fotosEvolucaoBean.load(agendamentoBean.contrato.id)}" rendered="#{agendamentoBean.contrato.id != -1}"/>
                                 <p:commandButton icon="photocam" value="Capturar" title="Capturar Foto" oncomplete="PF('dlg_photocam').show();" action="#{photoCamBean.listener(agendamentoBean.path, agendamentoBean.id, true, true)}" global="false" update=":form_photocam_files:i_panel_photocam" disabled="#{!agendamentoBean.visibleCadastrarFoto}" rendered="#{agendamentoBean.contrato.id != -1}"/>
                                 <p:commandButton icon="ui-icon-arrowthick-1-n" value="Upload Foto" title="Enviar foto" oncomplete="PF('dlg_upload').show();" actionListener="#{uploadBean.listener(agendamentoBean.path, agendamentoBean.id, 'image/png,image/jpeg', true, true)}" global="false" update=":form_upload_files:i_panel_anexos" disabled="#{!agendamentoBean.visibleCadastrarFoto}" rendered="#{agendamentoBean.contrato.id != -1}"/>
                             </h:panelGrid>

@@ -33,10 +33,10 @@
                         <!-- <h:form id="formTemplateLinks" onsubmit="# {chamadaPaginaBean.controleLinksX} ">-->
                         <p:panel style="border: 0; width: 1024px">                
                             <h:column rendered="#{clienteBean.usuario.id == 1}">
-                                <h:graphicImage id="i_logo" value="/Cliente/#{controleUsuarioBean.clienteString}/imagens/LogoCliente.png" width="120px" style="float: left; cursor: pointer; border: 2px dashed gray;" onclick="PF('dlg_logo').show();" title="Alterar imagem" alt="Pesquisar uma imagem"/>
+                                <h:graphicImage id="i_logo" value="/Cliente/#{controleUsuarioBean.clienteString}/imagens/logo_cliente.png" width="120px" style="float: left; cursor: pointer; border: 2px dashed gray;" onclick="PF('dlg_logo').show();" title="Alterar imagem" alt="Pesquisar uma imagem"/>
                             </h:column>
                             <h:column rendered="#{clienteBean.usuario.id != 1}">
-                                <h:graphicImage id="i_logo_x" value="/Cliente/#{controleUsuarioBean.clienteString}/imagens/LogoCliente.png" width="120px" style="float: left" />
+                                <h:graphicImage id="i_logo_x" value="/Cliente/#{controleUsuarioBean.clienteString}/imagens/logo_cliente.png" width="120px" style="float: left" />
                             </h:column>
                             <br /><br />
                             <p:panel style="float: right; border: 0px; top:0px">
