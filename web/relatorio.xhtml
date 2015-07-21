@@ -57,6 +57,12 @@
                                         </h:panelGrid>
                                     </h:column>
                                     <h:column />
+                                    <h:column>
+                                        <p:selectBooleanCheckbox value="#{relatorioBean.relatorio.principal}" itemLabel="Default da rotina" disabled="#{relatorioBean.relatorio.id == null}">
+                                            <p:ajax event="change" update="@this" listener="#{relatorioBean.listener(1)}"/>
+                                        </p:selectBooleanCheckbox>
+                                    </h:column>
+                                    <h:column />
                                     <p:selectBooleanCheckbox value="#{relatorioBean.relatorio.porFolha}" itemLabel="Imprime relatório por folha">
                                         <p:ajax event="change" update="@this" />
                                     </p:selectBooleanCheckbox>
@@ -68,6 +74,22 @@
                                     </p:selectBooleanCheckbox>                                    
                                     <h:outputLabel value="Campos excel:" rendered="#{relatorioBean.relatorio.excel}"/>
                                     <p:inputTextarea maxlength="255" value="#{relatorioBean.relatorio.camposExcel}" rendered="#{relatorioBean.relatorio.excel}" placeholder="Delimitar com ; (ponto e virgula)" rows="5" cols="100"/>
+                                </h:panelGrid>
+                            </p:panel>
+
+                            <p:panel styleClass="margin-top-max" header="Complementar">
+                                <h:panelGrid style="width: 100%;" cellpadding="5">
+                                    <h:column>
+                                        <p:selectBooleanCheckbox value="#{relatorioBean.relatorio.montaQuery}" itemLabel="Monta query sem objeto">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:selectBooleanCheckbox>
+                                    </h:column>                                    
+                                    <h:outputLabel value="Query String:" />
+                                    <h:column>
+                                        <p:inputTextarea value="#{relatorioBean.relatorio.queryString}" rows="5" cols="100">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:inputTextarea>                                        
+                                    </h:column>
                                 </h:panelGrid>
                             </p:panel>
 

@@ -26,10 +26,10 @@
                                 <p:ajax event="change" update="@this id_panel_relatorios id_acao" global="false" listener="#{relatorioFuncionarioBean.clear(1)}"/>
                                 <f:selectItems value="#{relatorioFuncionarioBean.listRelatorios}"/>
                             </p:selectOneMenu>
-                            <p:outputLabel value="Ordenação: " rendered="#{not empty relatorioFuncionarioBean.listaRelatorioOrdem}"/>
-                            <p:selectOneMenu value="#{relatorioFuncionarioBean.index[1]}" style="padding-right: 10px;" rendered="#{not empty relatorioFuncionarioBean.listaRelatorioOrdem}" >
+                            <p:outputLabel value="Ordenação: " rendered="#{not empty relatorioFuncionarioBean.listRelatorioOrdem}"/>
+                            <p:selectOneMenu value="#{relatorioFuncionarioBean.index[1]}" style="padding-right: 10px;" rendered="#{not empty relatorioFuncionarioBean.listRelatorioOrdem}" >
                                 <p:ajax event="change" update="@this" global="false"/>
-                                <f:selectItems value="#{relatorioFuncionarioBean.listaRelatorioOrdem}"/>
+                                <f:selectItems value="#{relatorioFuncionarioBean.listRelatorioOrdem}"/>
                             </p:selectOneMenu>
                         </h:panelGrid>
                     </p:panel>                  
@@ -64,6 +64,9 @@
                                             <p:selectBooleanButton value="#{relatorioFuncionarioBean.filter[5]}" onLabel="Idade" offLabel="Idade" offIcon="ui-icon-circle-plus" onIcon="ui-icon-circle-minus" style="width: 180px; text-align: left;" >
                                                 <p:ajax event="change" update="@this :form_relatorio:id_panel_relatorio :form_relatorio:id_panel_relatorio" listener="#{relatorioFuncionarioBean.clear}" />
                                             </p:selectBooleanButton>
+                                            <p:selectBooleanButton value="#{relatorioFuncionarioBean.filter[6]}" onLabel="Foto" offLabel="Foto" offIcon="ui-icon-circle-plus" onIcon="ui-icon-circle-minus" style="width: 180px; text-align: left;" >
+                                                <p:ajax event="change" update="@this :form_relatorio:id_panel_relatorio :form_relatorio:id_panel_relatorio" listener="#{relatorioFuncionarioBean.clear}" />
+                                            </p:selectBooleanButton>
                                         </h:panelGrid>                                        
                                     </h:panelGrid>
                                 </p:tab>
@@ -81,6 +84,16 @@
                                             </h:panelGrid>
                                         </h:column>
                                     </h:panelGrid>
+                                </p:column>
+                                <p:column rendered="#{relatorioFuncionarioBean.filter[6]}">
+                                    <p:panel styleClass="margin-top-max">
+                                        <h:panelGrid columns="4"  styleClass="margin-top">                                            
+                                            <p:selectBooleanCheckbox itemLabel="Cadastro com foto" value="#{relatorioFuncionarioBean.filter[7]}">
+                                                <p:ajax event="change" update="@this" />
+                                            </p:selectBooleanCheckbox>
+                                            <p:commandButton icon="ui-icon-close" action="#{relatorioFuncionarioBean.close('foto')}" title="Remover filtro"/>
+                                        </h:panelGrid>                                                                                
+                                    </p:panel>
                                 </p:column>
                                 <p:column rendered="#{relatorioFuncionarioBean.filter[1]}">
                                     <p:panel header="Cidades" styleClass="margin-top-max">
