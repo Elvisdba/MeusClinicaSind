@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
 
-public class RelatorioFuncionarioDao extends DB {
+public class RelatorioContratoDao extends DB {
 
     private String order = "";
 
@@ -20,19 +20,25 @@ public class RelatorioFuncionarioDao extends DB {
     /**
      *
      * @param cliente_id
-     * @param fisica_id
+     * @param paciente_id
+     * @param responsavel_id
      * @param in_cidades
-     * @param data_cadastro_I
-     * @param data_cadastro_F
+     * @param data_contrato_I
+     * @param data_contrato_F
+     * @param data_internacao_I
+     * @param data_internacao_F
+     * @param data_rescisao_I
+     * @param data_rescisao_F
      * @param data_nascimento_I
      * @param data_nascimento_F
      * @param idade
      * @param sexo
-     * @param filial_juridica_id
-     * @param fisica_foto
+     * @param in_filial_atual
+     * @param in_internacao_motivo
+     * @param in_desligamento_motivo
      * @return
      */
-    public List find(Integer cliente_id, Integer fisica_id, String in_cidades, String data_cadastro_I, String data_cadastro_F, String data_nascimento_I, String data_nascimento_F, Integer[] idade, String sexo, Integer filial_juridica_id, Boolean fisica_foto) {
+    public List find(Integer cliente_id, Integer paciente_id, Integer responsavel_id, String in_cidades, String data_contrato_I, String data_contrato_F, String data_internacao_I, String data_internacao_F, String data_rescisao_I, String data_rescisao_F, String data_nascimento_I, String data_nascimento_F, Integer[] idade, String sexo, String in_filial_atual, String in_internacao_motivo, String in_desligamento_motivo) {
         List listWhere = new ArrayList();
         Registro r = new RegistroDao().pesquisaRegistroPorCliente(SessaoCliente.get().getId());
         try {
@@ -58,48 +64,92 @@ public class RelatorioFuncionarioDao extends DB {
                     + "            P.ds_telefone1               AS pessoa_telefone1,                      \n" // 16 - TELEFONE 1
                     + "            P.ds_email1                  AS pessoa_email1,                         \n" // 17 - EMAIL 1
                     + "            P.ds_telefone2               AS pessoa_telefone2,                      \n" // 18 - CELULAR 2
-                    + "            L.ds_descricao || ' ' || DE.ds_descricao || ', ' || PE.ds_numero || ' ' || PE.ds_complemento || ' - ' ||  B.ds_descricao || ' - ' || C.ds_cidade || ' / ' || C.ds_uf || ' - CEP: ' || E.ds_cep AS pessoa_endereco_completo               \n" // 19 - ENDEREÇO COMPLETO
+                    + "            TI.ds_descricao              AS contrato_tipo_internacao,              \n" // 19 - TIPO INTERNAÇÃO
+                    + "            TD.ds_descricao              AS contrato_tipo_desligamento,            \n" // 20 - TIPO DESLIGAMENTO
+                    + "            CTR.dt_cadastro              AS contrato_data_contrato,                \n" // 21 - DATA CONTRATO
+                    + "            CTR.dt_internacao            AS contrato_data_internacao,              \n" // 22 - DATA INTERNAÇÃO
+                    + "            CTR.dt_rescisao              AS contrato_data_desligamento,            \n" // 23 - TIPO DESLIGAMENTO
+                    + "            CTR.id                       AS contrato_numero,                       \n" // 24 - CONTRATO NÚMERO
+                    + "            -- RESPONSAVEL                                                         \n"
+                    + "            R.ds_nome                    AS responsavel_nome,                      \n" // 25 - RESPOSÁVEL NOME
+                    + "            R.ds_documento               AS responsavel_documento,                 \n" // 26 - RESPOSÁVEL DOCUMENTO
+                    + "            R.ds_telefone1               AS responsavel_telefone1,                 \n" // 27 - RESPOSÁVEL TELEFONE 1
+                    + "            R.ds_email1                  AS responsavel_email1,                    \n" // 28 - RESPOSÁVEL EMAIL 1
+                    + "            L.ds_descricao || ' ' || DE.ds_descricao || ', ' || PE.ds_numero || ' ' || PE.ds_complemento || ' - ' ||  B.ds_descricao || ' - ' || C.ds_cidade || ' / ' || C.ds_uf || ' - CEP: ' || E.ds_cep AS pessoa_endereco_completo               \n" // 29 - ENDEREÇO COMPLETO
                     // FROM
-                    + "       FROM pes_fisica               AS F                                        \n"
-                    + " INNER JOIN pes_pessoa               AS P  ON  P.id = F.id_pessoa                \n"
+                    + "       FROM ctr_contrato             AS CTR                                      \n"
+                    + " INNER JOIN pes_pessoa               AS P  ON  P.id = CTR.id_paciente            \n"
+                    + " INNER JOIN pes_pessoa               AS R  ON  R.id = CTR.id_responsavel         \n"
+                    + " INNER JOIN pes_fisica               AS F  ON  F.id_pessoa = P.id                \n"
+                    + " INNER JOIN ctr_tipo_internacao      AS TI ON  TI.id = CTR.id_tipo_internacao    \n"
                     + "  LEFT JOIN pes_pessoa_endereco      AS PE ON PE.id_pessoa = F.id_pessoa         \n"
                     + "            AND PE.id_tipo_endereco = 1                                          \n"
                     + "  LEFT JOIN end_endereco             AS E  ON  E.id = PE.id_endereco             \n"
+                    + "  LEFT JOIN ctr_tipo_desligamento    AS TD ON  TD.id = CTR.id_tipo_desligamento  \n"
                     + "  LEFT JOIN end_cidade               AS C  ON  C.id = E.id_cidade                \n"
                     + "  LEFT JOIN end_logradouro           AS L  ON  L.id = E.id_logradouro            \n"
-                    + "  LEFT JOIN end_descricao_endereco   AS DE ON DE.id = E.id_descricao_endereco    \n"
-                    + "  LEFT JOIN end_bairro               AS B  ON  B.id = E.id_bairro                \n"
-                    + " INNER JOIN pes_pessoa_empresa       AS EM ON  EM.id_fisica = F.id               \n"
-                    + "        AND EM.dt_demissao IS NULL                                               \n";
+                    + "  LEFT JOIN end_descricao_endereco   AS DE ON  DE.id = E.id_descricao_endereco   \n"
+                    + "  LEFT JOIN end_bairro               AS B  ON  B.id = E.id_bairro                \n";
             // WHERE
-            if (filial_juridica_id == null || filial_juridica_id == 0) {
-                listWhere.add("EM.id_juridica IN (SELECT FIL.id_filial FROM pes_filial AS FIL WHERE FIL.id_matriz = " + r.getFilial().getId() + ")");
-            } else {
-                listWhere.add("EM.id_juridica IN (" + filial_juridica_id + ") ");
-            }
             // CLIENTE
             if (cliente_id != null) {
                 listWhere.add("P.id_cliente = " + cliente_id);
             }
+            // PACIENTE
+            if (paciente_id != null) {
+                listWhere.add("CTR.id_paciente = " + paciente_id);
+            }
+            // RESPONSÁVEL
+            if (responsavel_id != null) {
+                listWhere.add("CTR.id_responsavel = " + responsavel_id);
+            }
             // CIDADE
             if (!in_cidades.isEmpty()) {
-                listWhere.add("C.id IN (" + in_cidades + ")");
+                listWhere.add("CTR.id IN (" + in_cidades + ")");
+            }
+            // MOTIVO INTERNACAO
+            if (!in_internacao_motivo.isEmpty()) {
+                listWhere.add("CTR.id_tipo_internacao IN (" + in_internacao_motivo + ")");
+            }
+            // MOTIVO DESLIGAMENTO
+            if (!in_desligamento_motivo.isEmpty()) {
+                listWhere.add("CTR.id_tipo_desligamento IN (" + in_desligamento_motivo + ")");
+            }
+            // FILIAL ATUAL
+            if (!in_filial_atual.isEmpty() && !in_filial_atual.equals("0")) {
+                listWhere.add("CTR.id_filial_atual IN (" + in_filial_atual + ")");
             }
             // DATAS
-            // CADASTRO
-            if (!data_cadastro_I.isEmpty() || !data_cadastro_F.isEmpty()) {
+            // CONTRATO
+            if (!data_contrato_I.isEmpty() || !data_contrato_F.isEmpty()) {
                 // IGUAIS
-                if (data_cadastro_I.equals(data_nascimento_F)) {
-                    listWhere.add("P.dt_criacao = " + data_nascimento_I);
+                if (data_contrato_I.equals(data_nascimento_F)) {
+                    listWhere.add("CTR.dt_cadastro = " + data_contrato_I);
                     // MAIOR OU IGUAL A INICIAL
-                } else if (!data_cadastro_I.isEmpty() && data_cadastro_F.isEmpty()) {
-                    listWhere.add("P.dt_criacao >= '" + data_cadastro_I + "'");
+                } else if (!data_contrato_I.isEmpty() && data_contrato_F.isEmpty()) {
+                    listWhere.add("CTR.dt_cadastro >= '" + data_contrato_I + "'");
                     // MAIOR OU IGUAL A FINAL
-                } else if (data_cadastro_I.isEmpty() && !data_cadastro_F.isEmpty()) {
-                    listWhere.add("P.dt_criacao <= '" + data_cadastro_F + "'");
+                } else if (data_contrato_I.isEmpty() && !data_contrato_F.isEmpty()) {
+                    listWhere.add("CTR.dt_cadastro <= '" + data_contrato_F + "'");
                     // DIFERENTES
-                } else if (!data_cadastro_I.isEmpty() && !data_cadastro_F.isEmpty()) {
-                    listWhere.add("P.dt_criacao BETWEEN '" + data_cadastro_I + "' AND '" + data_cadastro_F + "'");
+                } else if (!data_contrato_I.isEmpty() && !data_contrato_F.isEmpty()) {
+                    listWhere.add("CTR.dt_cadastro BETWEEN '" + data_contrato_I + "' AND '" + data_contrato_F + "'");
+                }
+            }
+            // INTERNAÇÃO
+            if (!data_internacao_I.isEmpty() || !data_internacao_F.isEmpty()) {
+                // IGUAIS
+                if (data_internacao_I.equals(data_nascimento_F)) {
+                    listWhere.add("CTR.dt_internacao = " + data_internacao_I);
+                    // MAIOR OU IGUAL A INICIAL
+                } else if (!data_internacao_I.isEmpty() && data_internacao_F.isEmpty()) {
+                    listWhere.add("CTR.dt_internacao >= '" + data_internacao_F + "'");
+                    // MAIOR OU IGUAL A FINAL
+                } else if (data_internacao_I.isEmpty() && !data_internacao_F.isEmpty()) {
+                    listWhere.add("CTR.dt_internacao <= '" + data_internacao_F + "'");
+                    // DIFERENTES
+                } else if (!data_internacao_I.isEmpty() && !data_internacao_F.isEmpty()) {
+                    listWhere.add("CTR.dt_internacao BETWEEN '" + data_internacao_I + "' AND '" + data_internacao_F + "'");
                 }
             }
             // NASCIMENTO
@@ -118,13 +168,7 @@ public class RelatorioFuncionarioDao extends DB {
                     listWhere.add("F.dt_nascimento BETWEEN '" + data_nascimento_I + "' AND '" + data_nascimento_F + "'");
                 }
             }
-            if (fisica_foto != null) {
-                if (fisica_foto) {
-                    listWhere.add("F.dt_foto IS NOT NULL");
-                } else {
-                    listWhere.add("F.dt_foto IS NULL");
-                }
-            }
+
             // IDADE
             if (idade[0] != 0 || idade[1] != 0) {
                 if (idade[0].equals(idade[1])) {

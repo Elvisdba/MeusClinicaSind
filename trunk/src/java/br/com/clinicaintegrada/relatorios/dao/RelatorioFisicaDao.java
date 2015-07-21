@@ -11,6 +11,8 @@ public class RelatorioFisicaDao extends DB {
     private String order = "";
 
     private Relatorios relatorios;
+    private Boolean IS_QUERY = false;
+    private String QUERY = "";
 
     /**
      *
@@ -46,21 +48,22 @@ public class RelatorioFisicaDao extends DB {
                     + "            B.ds_descricao               AS pessoa_bairro,                         \n" // 12 - BAIRRO
                     + "            C.ds_cidade                  AS pessoa_cidade,                         \n" // 13 - CIDADE
                     + "            C.ds_uf                      AS pessoa_uf,                             \n" // 14 - UF
-                    + "            E.ds_cep                     AS pessoa_cadastro,                       \n" // 15 - CEP
+                    + "            E.ds_cep                     AS pessoa_cep,                            \n" // 15 - CEP
                     + "            P.ds_telefone1               AS pessoa_telefone1,                      \n" // 16 - TELEFONE 1
                     + "            P.ds_email1                  AS pessoa_email1,                         \n" // 17 - EMAIL 1
-                    + "            P.ds_telefone2               AS pessoa_telefone2                       \n" // 18 - CELULAR 2
+                    + "            P.ds_telefone2               AS pessoa_telefone2,                      \n" // 18 - CELULAR 2
+                    + "            L.ds_descricao || ' ' || DE.ds_descricao || ', ' || PE.ds_numero || ' ' || PE.ds_complemento || ' - ' ||  B.ds_descricao || ' - ' || C.ds_cidade || ' / ' || C.ds_uf || ' - CEP: ' || E.ds_cep AS pessoa_endereco_completo               \n" // 19 - ENDEREÇO COMPLETO
                     // FROM
                     + "       FROM pes_fisica               AS F                                        \n"
                     + " INNER JOIN pes_pessoa               AS P  ON  P.id = F.id_pessoa                \n"
-                    + "  LEFT JOIN pes_pessoa_endereco      AS PE ON PE.id = F.id_pessoa                \n"
-                    + "  LEFT JOIN end_endereco             AS E  ON  E.id = PE.id_pessoa               \n"
+                    + "  LEFT JOIN pes_pessoa_endereco      AS PE ON PE.id_pessoa = F.id_pessoa         \n"
+                    + "            AND PE.id_tipo_endereco = 1                                          \n"
+                    + "  LEFT JOIN end_endereco             AS E  ON  E.id = PE.id_endereco             \n"
                     + "  LEFT JOIN end_cidade               AS C  ON  C.id = E.id_cidade                \n"
                     + "  LEFT JOIN end_logradouro           AS L  ON  L.id = E.id_logradouro            \n"
                     + "  LEFT JOIN end_descricao_endereco   AS DE ON DE.id = E.id_descricao_endereco    \n"
                     + "  LEFT JOIN end_bairro               AS B  ON  B.id = E.id_bairro                \n";
             // WHERE
-            listWhere.add("PE.id_tipo_endereco = 1");
             // CLIENTE
             if (cliente_id != null) {
                 listWhere.add("P.id_cliente = " + cliente_id);
@@ -116,6 +119,10 @@ public class RelatorioFisicaDao extends DB {
             if (sexo != null && !sexo.isEmpty()) {
                 listWhere.add("F.ds_sexo LIKE '" + sexo + "'");
             }
+            if (!relatorios.getQry().isEmpty()) {
+                listWhere.add(relatorios.getQry());
+            }
+            relatorios = new Relatorios();
             if (!listWhere.isEmpty()) {
                 queryString += " WHERE ";
                 for (int i = 0; i < listWhere.size(); i++) {
@@ -125,8 +132,17 @@ public class RelatorioFisicaDao extends DB {
                     queryString += listWhere.get(i).toString();
                 }
             }
-            Query query = getEntityManager().createNativeQuery(queryString);
-            return query.getResultList();
+            if (!order.isEmpty()) {
+                queryString += " ORDER BY " + order;
+            }
+            if (IS_QUERY) {
+                QUERY = queryString;
+                IS_QUERY = false;
+                return new ArrayList();
+            } else {
+                Query query = getEntityManager().createNativeQuery(queryString);
+                return query.getResultList();
+            }
         } catch (Exception e) {
             return new ArrayList();
         }
@@ -146,5 +162,21 @@ public class RelatorioFisicaDao extends DB {
 
     public void setOrder(String order) {
         this.order = order;
+    }
+
+    public Boolean getIS_QUERY() {
+        return IS_QUERY;
+    }
+
+    public void setIS_QUERY(Boolean IS_QUERY) {
+        this.IS_QUERY = IS_QUERY;
+    }
+
+    public String getQUERY() {
+        return QUERY;
+    }
+
+    public void setQUERY(String QUERY) {
+        this.QUERY = QUERY;
     }
 }
