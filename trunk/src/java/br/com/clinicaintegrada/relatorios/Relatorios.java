@@ -35,6 +35,12 @@ public class Relatorios implements Serializable {
     private Boolean excel;
     @Column(name = "ds_campos_excel", length = 255)
     private String camposExcel;
+    @Column(name = "is_monta_query_string", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean montaQuery;
+    @Column(name = "ds_query_string")
+    private String queryString;
+    @Column(name = "is_default", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean principal;
 
     public Relatorios() {
         this.id = null;
@@ -46,9 +52,12 @@ public class Relatorios implements Serializable {
         this.nomeGrupo = "";
         this.excel = false;
         this.camposExcel = "";
+        this.montaQuery = false;
+        this.queryString = "";
+        this.principal = false;
     }
 
-    public Relatorios(Integer id, Rotina rotina, String nome, String jasper, String qry, Boolean porFolha, String nomeGrupo, Boolean excel, String camposExcel) {
+    public Relatorios(Integer id, Rotina rotina, String nome, String jasper, String qry, Boolean porFolha, String nomeGrupo, Boolean excel, String camposExcel, Boolean montaQuery, String queryString, Boolean principal) {
         this.id = id;
         this.rotina = rotina;
         this.nome = nome;
@@ -58,6 +67,9 @@ public class Relatorios implements Serializable {
         this.nomeGrupo = nomeGrupo;
         this.excel = excel;
         this.camposExcel = camposExcel;
+        this.montaQuery = montaQuery;
+        this.queryString = queryString;
+        this.principal = principal;
     }
 
     public Integer getId() {
@@ -132,18 +144,33 @@ public class Relatorios implements Serializable {
         this.camposExcel = camposExcel;
     }
 
+    public Boolean getMontaQuery() {
+        return montaQuery;
+    }
+
+    public void setMontaQuery(Boolean montaQuery) {
+        this.montaQuery = montaQuery;
+    }
+
+    public String getQueryString() {
+        return queryString;
+    }
+
+    public void setQueryString(String queryString) {
+        this.queryString = queryString;
+    }
+
+    public Boolean getPrincipal() {
+        return principal;
+    }
+
+    public void setPrincipal(Boolean principal) {
+        this.principal = principal;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 59 * hash + Objects.hashCode(this.id);
-        hash = 59 * hash + Objects.hashCode(this.rotina);
-        hash = 59 * hash + Objects.hashCode(this.nome);
-        hash = 59 * hash + Objects.hashCode(this.jasper);
-        hash = 59 * hash + Objects.hashCode(this.qry);
-        hash = 59 * hash + Objects.hashCode(this.porFolha);
-        hash = 59 * hash + Objects.hashCode(this.nomeGrupo);
-        hash = 59 * hash + Objects.hashCode(this.excel);
-        hash = 59 * hash + Objects.hashCode(this.camposExcel);
+        int hash = 7;
         return hash;
     }
 
@@ -156,39 +183,12 @@ public class Relatorios implements Serializable {
             return false;
         }
         final Relatorios other = (Relatorios) obj;
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        if (!Objects.equals(this.rotina, other.rotina)) {
-            return false;
-        }
-        if (!Objects.equals(this.nome, other.nome)) {
-            return false;
-        }
-        if (!Objects.equals(this.jasper, other.jasper)) {
-            return false;
-        }
-        if (!Objects.equals(this.qry, other.qry)) {
-            return false;
-        }
-        if (!Objects.equals(this.porFolha, other.porFolha)) {
-            return false;
-        }
-        if (!Objects.equals(this.nomeGrupo, other.nomeGrupo)) {
-            return false;
-        }
-        if (!Objects.equals(this.excel, other.excel)) {
-            return false;
-        }
-        if (!Objects.equals(this.camposExcel, other.camposExcel)) {
-            return false;
-        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "Relatorios{" + "id=" + id + ", rotina=" + rotina + ", nome=" + nome + ", jasper=" + jasper + ", qry=" + qry + ", porFolha=" + porFolha + ", nomeGrupo=" + nomeGrupo + ", excel=" + excel + ", camposExcel=" + camposExcel + '}';
+        return "Relatorios{" + "id=" + id + ", rotina=" + rotina + ", nome=" + nome + ", jasper=" + jasper + ", qry=" + qry + ", porFolha=" + porFolha + ", nomeGrupo=" + nomeGrupo + ", excel=" + excel + ", camposExcel=" + camposExcel + ", montaQuery=" + montaQuery + ", queryString=" + queryString + ", principal=" + principal + '}';
     }
 
 }
