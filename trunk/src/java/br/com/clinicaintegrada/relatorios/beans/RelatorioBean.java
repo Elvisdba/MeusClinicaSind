@@ -3,6 +3,7 @@ package br.com.clinicaintegrada.relatorios.beans;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.relatorios.RelatorioOrdem;
 import br.com.clinicaintegrada.relatorios.Relatorios;
+import br.com.clinicaintegrada.relatorios.dao.RelatorioDao;
 import br.com.clinicaintegrada.relatorios.dao.RelatorioOrdemDao;
 import br.com.clinicaintegrada.seguranca.Rotina;
 import br.com.clinicaintegrada.seguranca.Usuario;
@@ -198,11 +199,13 @@ public class RelatorioBean implements Serializable {
         rotina_id = 0;
     }
 
-    public String edit(Relatorios rela) {
-        this.relatorio = rela;
+    public String edit(Relatorios r) {
+        this.relatorio = r;
         Sessions.put("linkClicado", true);
         listRotina.clear();
         getListRotina();
+        listRelatorioOrdem.clear();
+        relatorioOrdem = new RelatorioOrdem();
         rotina_id = relatorio.getRotina().getId();
         return "relatorio";
     }
@@ -291,7 +294,7 @@ public class RelatorioBean implements Serializable {
             rcd.orderContador();
             list = rcd.findRotinasByRotinaTela(RotinaBean.getRotinaAtual().getId(), ((Usuario) Sessions.getObject("sessaoUsuario")).getId());
         }
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             listRotina.clear();
             for (int i = 0; i < list.size(); i++) {
                 if (i == 0) {
@@ -299,6 +302,25 @@ public class RelatorioBean implements Serializable {
                 }
                 listRotina.add(new SelectItem(list.get(i).getId(), list.get(i).getRotina()));
             }
+        }
+    }
+
+    /**
+     * 1 - Update no relatório default para a rotina
+     *
+     * @param tcase
+     */
+    public void listener(Integer tcase) {
+        // 1 - Update no relatório default para a rotina
+        switch (tcase) {
+            case 1:
+                if (new RelatorioDao().defineDefault(relatorio)) {
+                    Messages.info("Sucesso", "Definido como default desta rotina");
+                    relatorio = (Relatorios) new Dao().rebind(relatorio);
+                } else {
+                    Messages.warn("Erro", "Ao definir como default!");
+                }
+                break;
         }
     }
 }
