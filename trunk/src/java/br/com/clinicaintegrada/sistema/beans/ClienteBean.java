@@ -112,6 +112,7 @@ public class ClienteBean implements Serializable {
     public String edit(Object o) {
         Dao dao = new Dao();
         cliente = (Cliente) dao.rebind(o);
+        juridica = (Juridica) dao.find(new Juridica(), cliente.getIdJuridica());
         Sessions.put("linkClicado", true);
         Sessions.put("clientePesquisa", cliente);
         return (String) Sessions.getString("urlRetorno");
