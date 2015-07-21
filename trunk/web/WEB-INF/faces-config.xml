@@ -569,14 +569,20 @@
         </navigation-case>
         
         <navigation-case>
+            <from-outcome>relatorioPaciente</from-outcome>
+            <to-view-id>/relatorioPaciente.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
             <from-outcome>relatorioCliente</from-outcome>
             <to-view-id>/relatorioCliente.jsf</to-view-id>
             <redirect/>
         </navigation-case>
         
         <navigation-case>
-            <from-outcome>relatorioPaciente</from-outcome>
-            <to-view-id>/relatorioPaciente.jsf</to-view-id>
+            <from-outcome>relatorioContrato</from-outcome>
+            <to-view-id>/relatorioContrato.jsf</to-view-id>
             <redirect/>
         </navigation-case>
         
