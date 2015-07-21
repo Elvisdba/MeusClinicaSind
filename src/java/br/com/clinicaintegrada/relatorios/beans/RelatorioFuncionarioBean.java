@@ -5,6 +5,7 @@ import br.com.clinicaintegrada.endereco.dao.CidadeDao;
 import br.com.clinicaintegrada.pessoa.Filial;
 import br.com.clinicaintegrada.pessoa.Fisica;
 import br.com.clinicaintegrada.pessoa.dao.FilialDao;
+import br.com.clinicaintegrada.principal.DBExternal;
 import br.com.clinicaintegrada.relatorios.RelatorioOrdem;
 import br.com.clinicaintegrada.relatorios.Relatorios;
 import br.com.clinicaintegrada.relatorios.dao.RelatorioDao;
@@ -12,7 +13,6 @@ import br.com.clinicaintegrada.relatorios.dao.RelatorioFuncionarioDao;
 import br.com.clinicaintegrada.relatorios.dao.RelatorioOrdemDao;
 import br.com.clinicaintegrada.relatorios.impressao.ParametroFisica;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
-import br.com.clinicaintegrada.utils.AnaliseString;
 // import br.com.clinicaintegrada.utils.AnaliseString;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.DataHoje;
@@ -69,6 +69,8 @@ public class RelatorioFuncionarioBean implements Serializable {
         filter[3] = false; // FILIAL
         filter[4] = false; // SEXO        
         filter[5] = false; // IDADE
+        filter[6] = false; // FOTO
+        filter[7] = false; // CHECKBOX FOTO
         listSelectItem = new ArrayList[3];
         listSelectItem[0] = new ArrayList<>();
         listSelectItem[1] = new ArrayList<>();
@@ -149,18 +151,37 @@ public class RelatorioFuncionarioBean implements Serializable {
             }
             listDetalhePesquisa.add(" Sexo: " + sexoString + "");
         }
+        Boolean foto = null;
+        if(filter[6]) {
+            foto = filter[7];
+        }
         if (fisica.getId() != -1) {
             fisica_id = fisica.getId();
             // listDetalhePesquisa.add(" Empresa por Física CPF: " + aluno.getDocumento() + " - " + aluno.getNome());
         }
         RelatorioFuncionarioDao rfd = new RelatorioFuncionarioDao();
+        rfd.setRelatorios(r);
+        rfd.setIS_QUERY(r.getMontaQuery());
         String in_cidades = inIdCidades();
-        List list = rfd.find(SessaoCliente.get().getId(), fisica_id, in_cidades, data_cadastro_I, data_cadastro_F, data_nascimento_I, data_nascimento_F, idade, sexo, index[2]);
-        if (list.isEmpty()) {
-            Messages.info("Sistema", "Não existem registros para o relatório selecionado");
-            return;
+        rfd.setRelatorios(r);
+        List list;
+        DBExternal dBExternal = new DBExternal();
+        list = rfd.find(SessaoCliente.get().getId(), fisica_id, in_cidades, data_cadastro_I, data_cadastro_F, data_nascimento_I, data_nascimento_F, idade, sexo, index[2], foto);
+        if (!r.getMontaQuery() && rfd.getQUERY().isEmpty()) {
+            if (list.isEmpty()) {
+                Messages.info("Sistema", "Não existem registros para o relatório selecionado");
+                return;
+            }
+        } else {
+            if (r.getMontaQuery()) {
+                dBExternal.setDatabase(SessaoCliente.get().getPersistence());
+                dBExternal.setPassword("989899");
+                dBExternal.setUrl("192.168.1.60");
+                Jasper.IS_REPORT_CONNECTION = true;
+                Jasper.dbe = dBExternal;
+                Jasper.IS_QUERY_STRING = r.getMontaQuery();
+            }
         }
-
         if (listDetalhePesquisa.isEmpty()) {
             detalheRelatorio += "Pesquisar todos registros!";
         } else {
@@ -175,72 +196,89 @@ public class RelatorioFuncionarioBean implements Serializable {
         }
         List<ParametroFisica> pfs = new ArrayList<>();
         ParametroFisica pf;
+        int i = 0;
         // ÍNDICE DA LISTA
-        for (int i = 0; i < list.size(); i++) {
-            // POSIÇÕES DOS ÍNDICES
-            List object = (List) list.get(i);
-            pf = new ParametroFisica();
-            // PESSOA
-            pf.setPessoa_nome(object.get(1));
-            pf.setPessoa_documento(object.get(2));
-            pf.setPessoa_telefone1(object.get(16));
-            pf.setPessoa_telefone2(object.get(18));
-            pf.setPessoa_cadastro(object.get(7));
+        try {
+            for (i = 0; i < list.size(); i++) {
+                // POSIÇÕES DOS ÍNDICES
+                List object = (List) list.get(i);
+                pf = new ParametroFisica();
+                // PESSOA
+                pf.setPessoa_nome(object.get(1));
+                pf.setPessoa_documento(object.get(2));
+                pf.setPessoa_telefone1(object.get(16));
+                pf.setPessoa_telefone2(object.get(18));
+                pf.setPessoa_cadastro(object.get(7));
+                pf.setPessoa_email1(object.get(17));
 
-            // PESSOA ENDEREÇO 
-            String enderecoString = "";
-            // LOGRADOURO
-            if (object.get(8) == null) {
-                pf.setPessoa_logradouro(object.get(8).toString());
-                enderecoString += " " + object.get(8).toString();
-            }
-            // DESCRICAO ENDEREÇO
-            if (object.get(9) == null) {
-                pf.setPessoa_descricao_endereco(object.get(9).toString());
-                enderecoString += " " + object.get(9).toString();
-            }
-            // NÚMERO
-            if (object.get(10) == null) {
-                pf.setPessoa_numero(object.get(10).toString());
-                enderecoString += ", " + object.get(10).toString();
-            }
-            // COMPLEMENTO
-            if (object.get(11) == null) {
-                pf.setPessoa_complemento(object.get(11).toString());
-                enderecoString += " " + object.get(11).toString();
-            }
-            // BAIRRO
-            if (object.get(12) != null) {
-                pf.setPessoa_bairro(object.get(12));
-                enderecoString += " - " + object.get(12).toString();
-            }
-            // CIDADE
-            pf.setPessoa_cidade(object.get(13));
-            // UF
-            if (object.get(14) != null) {
-                pf.setPessoa_uf(object.get(12));
-            }
-            // CEP
-            if (object.get(15) != null) {
-                pf.setPessoa_cep(object.get(15));
-                enderecoString += " - CEP: " + object.get(15).toString();
-            }
-            pf.setPessoa_endereco_completo(enderecoString);
+                // PESSOA ENDEREÇO 
+                String enderecoString = "";
+                // LOGRADOURO
+                if (object.get(8) != null) {
+                    pf.setPessoa_logradouro(object.get(8).toString());
+                    enderecoString += " " + object.get(8).toString();
+                }
+                // DESCRICAO ENDEREÇO
+                if (object.get(9) != null) {
+                    pf.setPessoa_descricao_endereco(object.get(9).toString());
+                    enderecoString += " " + object.get(9).toString();
+                }
+                // NÚMERO
+                if (object.get(10) != null) {
+                    pf.setPessoa_numero(object.get(10).toString());
+                    enderecoString += ", " + object.get(10).toString();
+                }
+                // COMPLEMENTO
+                if (object.get(11) != null) {
+                    pf.setPessoa_complemento(object.get(11).toString());
+                    enderecoString += " " + object.get(11).toString();
+                }
+                // BAIRRO
+                if (object.get(12) != null) {
+                    pf.setPessoa_bairro(object.get(12));
+                    enderecoString += " - " + object.get(12).toString();
+                }
+                // CIDADE
+                if (object.get(13) != null) {
+                    pf.setPessoa_cidade(object.get(13));
+                    enderecoString += " - " + object.get(13).toString();
+                }
+                // UF
+                if (object.get(14) != null) {
+                    pf.setPessoa_uf(object.get(14));
+                }
+                // CEP
+                if (object.get(15) != null) {
+                    pf.setPessoa_cep(object.get(15));
+                    enderecoString += " - CEP: " + object.get(15).toString();
+                }
+                pf.setPessoa_endereco_completo(enderecoString);
 
-            // FÍSICA
-            pf.setFisica_nascimento(object.get(3));
-            pf.setFisica_rg(object.get(6));
-            pf.setFisica_sexo(object.get(5));
-            pfs.add(pf);
+                // FÍSICA
+                pf.setFisica_nascimento(object.get(3));
+                pf.setFisica_rg(object.get(6));
+                pf.setFisica_sexo(object.get(5));
+                pfs.add(pf);
+            }
+        } catch (Exception e) {
+
         }
-        if (!pfs.isEmpty()) {
-            if (relatorios.getExcel()) {
-                Jasper.EXCEL_FIELDS = relatorios.getCamposExcel();
+        if (!pfs.isEmpty() || r.getMontaQuery()) {
+            if (r.getExcel()) {
+                Jasper.EXCEL_FIELDS = r.getCamposExcel();
             } else {
                 Jasper.EXCEL_FIELDS = "";
             }
-            Jasper.printReports(relatorios.getJasper(), "fisica", (Collection) pfs);
-
+            if (r.getMontaQuery()) {
+                if (!rfd.getQUERY().isEmpty()) {
+                    if (!r.getQueryString().isEmpty()) {
+                        Jasper.QUERY_STRING = r.getQueryString();
+                    } else {
+                        Jasper.QUERY_STRING = rfd.getQUERY();
+                    }
+                }
+            }
+            Jasper.printReports(r.getJasper(), "funcionario", (Collection) pfs);
         }
 
     }
@@ -303,6 +341,10 @@ public class RelatorioFuncionarioBean implements Serializable {
             idade[0] = 0;
             idade[1] = 0;
         }
+        if (!filter[6]) {
+            filter[6] = false;
+            filter[7] = false;
+        }
     }
 
     public void clear(Integer tcase) {
@@ -346,6 +388,10 @@ public class RelatorioFuncionarioBean implements Serializable {
                 filter[5] = false;
                 idade[0] = 0;
                 idade[1] = 0;
+                break;
+            case "foto":
+                filter[6] = false;
+                filter[7] = false;
                 break;
         }
         PF.update("form_relatorio:id_panel");
@@ -393,6 +439,8 @@ public class RelatorioFuncionarioBean implements Serializable {
      * <li>[3] -- </li>
      * <li>[4] SEXO</li>
      * <li>[5] IDADE</li>
+     * <li>[6] FOTO</li>
+     * <li>[7] CHECKBOX FOTO</li>
      * </ul>
      *
      * @return boolean
@@ -552,12 +600,15 @@ public class RelatorioFuncionarioBean implements Serializable {
         return ids;
     }
 
-    public List<SelectItem> getListaRelatorioOrdem() {
+    public List<SelectItem> getListRelatorioOrdem() {
         if (index[0] != null && !getListRelatorios().isEmpty()) {
             RelatorioOrdemDao relatorioOrdemDao = new RelatorioOrdemDao();
             List<RelatorioOrdem> list = relatorioOrdemDao.findAllByRelatorio(index[0]);
             for (int i = 0; i < list.size(); i++) {
                 if (i == 0) {
+                    index[1] = list.get(i).getId();
+                }
+                if (list.get(i).getPrincipal()) {
                     index[1] = list.get(i).getId();
                 }
                 listSelectItem[1].add(new SelectItem(list.get(i).getId(), list.get(i).getNome()));
