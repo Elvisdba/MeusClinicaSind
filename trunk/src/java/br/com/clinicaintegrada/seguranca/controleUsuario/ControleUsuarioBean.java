@@ -73,12 +73,18 @@ public class ControleUsuarioBean implements Serializable {
             Messages.warn("Validação", msgErro);
             return pagina;
         }
+        String usuario_login = usuario.getLogin();
+        if(usuario.getLogin().equals("admin")) {
+            if(SessaoCliente.get().getIdentifica().equals("FundacaoPenteado")) {
+                usuario_login = SessaoCliente.get().getIdentifica();
+            }
+        }        
         if (usuario.getSenha().equals("") || usuario.getSenha().equals("Senha")) {
             msgErro = "@ Informar senha!";
             Messages.warn("Validação", msgErro);
             return pagina;
         }
-        usuario = db.ValidaUsuario(usuario.getLogin(), usuario.getSenha());
+        usuario = db.ValidaUsuario(usuario_login, usuario.getSenha());
         Logger log = new Logger();
         if (usuario != null) {
             Cliente c = usuario.getCliente();
