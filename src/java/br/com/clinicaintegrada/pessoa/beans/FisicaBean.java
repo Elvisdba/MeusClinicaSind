@@ -603,7 +603,9 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
                 fExiste.delete();
             }
         }
+        enderecoCompleto = "";
         listPessoaEndereco.clear();
+        getListPessoaEndereco();
         PessoaEmpresaDao peDao = new PessoaEmpresaDao();
         PessoaProfissaoDao ppDao = new PessoaProfissaoDao();
         Sessions.put("fisicaPesquisa", fisica);
@@ -1623,6 +1625,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
                             PessoaEndereco pe = listPessoaEndereco.get(i);
                             enderecoCompleto = pe.getEndereco().getLogradouro().getDescricao() + " "
                                     + pe.getEndereco().getDescricaoEndereco().getDescricao() + ", "
+                                    + pe.getNumero() + " - Bairro: "
                                     + pe.getEndereco().getBairro().getDescricao() + " - "
                                     + pe.getEndereco().getCidade().getCidade() + " - "
                                     + pe.getEndereco().getCidade().getUf() + " - "
