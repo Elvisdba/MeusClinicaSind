@@ -39,6 +39,10 @@
                                 </p:column>
                                 <p:outputLabel value="Identificador: " />
                                 <p:inputText value="#{clienteBean.cliente.identifica}" />
+                                <p:outputLabel value="Unidade: " />
+                                <p:inputText value="#{clienteBean.cliente.persistence}">
+                                    <p:ajax event="change" update="@this" />                                
+                                </p:inputText>
                                 <p:outputLabel value="Acessos: " />
                                 <p:inputText value="#{clienteBean.cliente.acessos}" disabled="true"/>
                                 <p:outputLabel value="Ativo: " />
