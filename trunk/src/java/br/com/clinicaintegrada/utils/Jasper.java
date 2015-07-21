@@ -145,7 +145,7 @@ public class Jasper implements Serializable {
     /**
      * Database
      */
-    private static DBExternal dbe;
+    public static DBExternal dbe;
     /**
      * Query
      */
