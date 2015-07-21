@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -28,108 +29,167 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRGroup;
+import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.design.JRDesignQuery;
+import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
 import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 @ManagedBean(name = "jasperBean")
-public class Jasper {
+@ViewScoped
+public class Jasper implements Serializable {
 
     /**
      * Diretório do arquivo
      */
-    public static String PATH = "downloads/relatorios";
+    public static String PATH;
     /**
      * Nome extra do arquivo
      */
-    public static String PART_NAME = "relatorio";
+    public static String PART_NAME;
     /**
      * Baixar arquivo (Default true);
      */
-    public static Boolean IS_DOWNLOAD = true;
+    public static Boolean IS_DOWNLOAD;
     /**
      * Remover arquivo após gerar (Default true);
      */
-    public static Boolean IS_REMOVE_FILE = true;
+    public static Boolean IS_REMOVE_FILE;
     /**
      * Uso interno
      */
-    public static byte[] BYTES = null;
+    public static byte[] BYTES;
     /**
      * Se o arquivo vai ter configuração com cabeçalho (SUBREPORT)
      */
-    public static Boolean IS_HEADER = false;
+    public static Boolean IS_HEADER;
     /**
      * Impressão por folha (configurar grupo)
      */
-    public static Boolean IS_BY_LEAF = false;
+    public static Boolean IS_BY_LEAF;
     /**
      * Nome do grupo
      */
-    public static String GROUP_NAME = "";
+    public static String GROUP_NAME;
     /**
      * Se o arquivo é comprimido
      */
-    public static Boolean COMPRESS_FILE = false;
+    public static Boolean COMPRESS_FILE;
     /**
      * Limite da compressão do arquivo
      */
-    public static Integer COMPRESS_LIMIT = 0;
+    public static Integer COMPRESS_LIMIT;
     /**
      * Define a extensão do arquivo compactado
      */
-    public static String COMPRESS_EXTENSION = "zip";
+    public static String COMPRESS_EXTENSION;
     /**
-     * Uso interno
+     * Uso interno (2GB)
      */
-    private static final int MEGABYTE = (1024 * 1024);
-    /**
-     * Retorna o nome do arquivo gerado
-     */
-    public static String FILE_NAME_GENERATED = "";
+    private static int MEGABYTE;
     /**
      * Retorna o nome do arquivo gerado
      */
-    public static List LIST_FILE_GENERATED = new ArrayList();
+    public static String FILE_NAME_GENERATED;
+    /**
+     * Retorna o nome do arquivo gerado
+     */
+    public static List LIST_FILE_GENERATED;
     /**
      * set: retrato or paisagem
      */
-    public static String TYPE = "";
+    public static String TYPE;
     /**
      * Nome do arquivo subreport
      */
-    public static String SUBREPORT_NAME = "";
+    public static String SUBREPORT_NAME;
     /**
      * Impressão por folha (configurar grupo)
      */
-    public static Boolean IS_REPORT_CONNECTION = false;
+    public static Boolean IS_REPORT_CONNECTION;
     /**
      * Exporta para excel
      */
-    public static Boolean EXPORT_TO_EXCEL = false;
+    public static Boolean EXPORT_TO_EXCEL;
     /**
      * Campos Excel
      */
-    public static String EXCEL_FIELDS = "";
+    public static String EXCEL_FIELDS;
     /**
      * Não permite finalizar a compressão, para se obter a lista de arquivos
      * gerados
      */
-    public static Boolean NO_COMPACT = false;
+    public static Boolean NO_COMPACT;
+    /**
+     * Ignora uso de código único na String do nome do relaório
+     */
+    public static Boolean IGNORE_UUID;
+    /**
+     * Database
+     */
+    private static DBExternal dbe;
+    /**
+     * Query
+     */
+    public static String QUERY_STRING;
+    /**
+     * Query Srint
+     */
+    public static Boolean IS_QUERY_STRING;
+
+    static {
+        load();
+    }
+
+    @PostConstruct
+    public void init() {
+        load();
+    }
+
+    public static void load() {
+        PATH = "downloads/relatorios";
+        PART_NAME = "relatorio";
+        IS_DOWNLOAD = true;
+        IS_REMOVE_FILE = true;
+        BYTES = null;
+        IS_HEADER = false;
+        IS_BY_LEAF = false;
+        GROUP_NAME = "";
+        COMPRESS_FILE = false;
+        COMPRESS_LIMIT = 0;
+        COMPRESS_EXTENSION = "zip";
+        MEGABYTE = (1024 * 2056);
+        FILE_NAME_GENERATED = "";
+        LIST_FILE_GENERATED = new ArrayList();
+        TYPE = "";
+        SUBREPORT_NAME = "";
+        IS_REPORT_CONNECTION = false;
+        EXPORT_TO_EXCEL = false;
+        EXCEL_FIELDS = "";
+        NO_COMPACT = false;
+        IGNORE_UUID = false;
+        dbe = null;
+        IS_QUERY_STRING = false;
+        QUERY_STRING = "";
+    }
 
     public static void printReports(String jasperName, String fileName, Collection c) {
         printReports(jasperName, fileName, c, null);
@@ -160,13 +220,13 @@ public class Jasper {
         byte[] bytesComparer = null;
         byte[] b = null;
         if (jasperListExport.isEmpty()) {
-            if (fileName.isEmpty() || jasperName.isEmpty() || c.isEmpty()) {
+            if ((fileName.isEmpty() || jasperName.isEmpty() || c.isEmpty()) && !IS_QUERY_STRING) {
                 Messages.info("Sistema", "Erro ao criar relatório!");
                 return;
             }
             jasperName = jasperName.trim();
         } else {
-            if (fileName.isEmpty()) {
+            if (fileName.isEmpty() && !IS_QUERY_STRING) {
                 Messages.info("Sistema", "Erro ao criar relatório!");
                 return;
             }
@@ -222,7 +282,7 @@ public class Jasper {
         List listFilesZip = new ArrayList();
         List listTemp = new ArrayList();
         String realPath = "";
-        JasperPrint print;
+        JasperPrint print = null;
         JRBeanCollectionDataSource dtSource;
 
         // DEU ERRO NO MOMENTO EM QUE FOI IMPRIMIR UM RELATÓRIO PELA WEB, ONDE NÃO SE TEM Usuario
@@ -252,6 +312,10 @@ public class Jasper {
         }
         UUID uuidX = UUID.randomUUID();
         String uuid = uuidX.toString().replace("-", "_");
+        if (IGNORE_UUID) {
+            uuid = "";
+        }
+        DBExternal con = new DBExternal();
         if (EXPORT_TO_EXCEL) {
             List<?> list = (List) c;
             Class classx = list.get(0).getClass();
@@ -363,22 +427,31 @@ public class Jasper {
                         }
                     }
                     if (IS_REPORT_CONNECTION) {
-                        DBExternal con = new DBExternal();
-                        con.setDatabase(Sessions.getString("sessaoCliente"));
+                        if (dbe != null) {
+                            con = dbe;
+                        } else {
+                            con.setDatabase(SessaoCliente.get().getPersistence());
+                        }
                         if (new File(subreport).exists()) {
                             parameters.put("REPORT_CONNECTION", con.getConnection());
                         }
+                        dbe = null;
                     }
                     JasperReport jasper = null;
+                    String jasper_path = "";
                     if (jasperListExport.isEmpty()) {
                         if (new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/relatorios/" + jasperName)).exists()) {
-                            jasper = (JasperReport) JRLoader.loadObject(new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/relatorios/" + jasperName)));
+                            jasper_path = ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/relatorios/" + jasperName);
+                            jasper = (JasperReport) JRLoader.loadObject(new File(jasper_path));
                         } else if (new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "" + jasperName)).exists()) {
-                            jasper = (JasperReport) JRLoader.loadObject(new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "" + jasperName)));
-                        } else if (new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/"+ jasperName)).exists()) {
-                            jasper = (JasperReport) JRLoader.loadObject(new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/"+ jasperName)));
+                            jasper_path = ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "" + jasperName);
+                            jasper = (JasperReport) JRLoader.loadObject(new File(jasper_path));
+                        } else if (new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/" + jasperName)).exists()) {
+                            jasper_path = ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/" + jasperName);
+                            jasper = (JasperReport) JRLoader.loadObject(new File(jasper_path));
                         } else {
-                            jasper = (JasperReport) JRLoader.loadObject(new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath(jasperName)));
+                            jasper_path = ((ServletContext) faces.getExternalContext().getContext()).getRealPath(jasperName);
+                            jasper = (JasperReport) JRLoader.loadObject(new File(jasper_path));
                         }
                         if (!GROUP_NAME.isEmpty()) {
                             JRGroup[] jRGroups = jasper.getGroups();
@@ -408,7 +481,7 @@ public class Jasper {
                     if (COMPRESS_FILE && COMPRESS_LIMIT > 0) {
                         if (!jasperListExport.isEmpty()) {
                             Messages.info("Sistema", "Não é possível comprimir uma lista de Jasper!");
-                            destroy();
+                            clear();
                             return;
                         }
                         List listCollection = (List) c;
@@ -502,8 +575,25 @@ public class Jasper {
                             File file = new File(dirPath + "/" + downloadName);
                             if (jasperListExport.isEmpty()) {
                                 jasper.setProperty(fileName, PATH);
-                                dtSource = new JRBeanCollectionDataSource(c);
-                                print = JasperFillManager.fillReport(jasper, parameters, dtSource);
+                                if (IS_QUERY_STRING) {
+                                    if (!QUERY_STRING.isEmpty()) {
+                                        String jasper_jrxml = jasper_path.replace(".jasper", ".jrxml");
+                                        JRDesignQuery query = new JRDesignQuery();
+                                        JasperDesign jasperDesign = JRXmlLoader.load(jasper_jrxml);
+                                        // update the data query
+                                        JRDesignQuery jRDesignQuery = new JRDesignQuery();
+                                        jRDesignQuery.setText(QUERY_STRING);
+                                        jasperDesign.setQuery(jRDesignQuery);
+                                        jasper = JasperCompileManager.compileReport(jasperDesign);
+                                        if (con != null) {
+                                            parameters.put("REPORT_CONNECTION", con.getConnection());
+                                            print = JasperFillManager.fillReport(jasper, parameters);
+                                        }
+                                    }
+                                } else {
+                                    dtSource = new JRBeanCollectionDataSource(c);
+                                    print = JasperFillManager.fillReport(jasper, parameters, dtSource);
+                                }
                                 if (bytesComparer == BYTES) {
                                     b = JasperExportManager.exportReportToPdf(print);
                                 } else {
@@ -602,10 +692,10 @@ public class Jasper {
         } catch (Exception e) {
             e.getMessage();
         }
-        destroy();
+        clear();
     }
 
-    public static void destroy() {
+    public static void clear() {
         PATH = "downloads/relatorios";
         PART_NAME = "relatorio";
         IS_DOWNLOAD = true;
@@ -622,6 +712,10 @@ public class Jasper {
         IS_REPORT_CONNECTION = false;
         NO_COMPACT = false;
         EXCEL_FIELDS = "";
+        dbe = null;
+        IGNORE_UUID = false;
+        QUERY_STRING = "";
+        IS_QUERY_STRING = false;
     }
 
     public String classAnnotationValue(Class classType, Class annotationType, String attributeName) {
