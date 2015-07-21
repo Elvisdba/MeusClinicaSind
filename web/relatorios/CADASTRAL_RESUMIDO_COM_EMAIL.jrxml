@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CADASTRAL_RESUMIDO_COM_EMAIL" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="782" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="657a3011-3442-41d0-bd4c-f41ba92103fb">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.7715610000000013"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="filtro" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new String("")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="di" class="java.util.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").parse("15/02/2010 00:00:00")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="df" class="java.util.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").parse("15/02/2010 00:00:00")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="diaI" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer(1)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="diaF" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer(30)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="mes" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer(1)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="tipoData" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer(1)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="empresa" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new String("*")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cidade" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new String("*")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="sexo" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new String("*")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\JASPER_MODELS\\CABECALHO_PAISAGEM.jasper"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="companhia_nome" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_documento" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_site" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_logradouro" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_endereco" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_numero" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_complemento" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_bairro" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_cidade" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_uf" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_cep" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_logo" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="template_dir" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA["C:\\JASPER_MODELS\\CABECALHO_PAISAGEM.jasper"]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+'' AS pessoa_nome,
+'' AS pessoa_documento,
+'' AS fisica_rg,
+'' AS fisica_sexo,
+-- ENDEREÇO
+'' AS pessoa_logradouro,
+'' AS pessoa_descricao_endereco,
+'' AS pessoa_numero,
+'' AS pessoa_complemento,
+'' AS pessoa_bairro,
+'' AS pessoa_cidade,
+'' AS pessoa_uf,
+'' AS pessoa_cep,
+'' AS pessoa_endereco_completo,
+-- EXTRAS
+'' AS pessoa_telefone1,
+'' AS pessoa_telefone2,
+'' AS pessoa_email1,
+current_date AS fisica_nascimento,
+current_date AS pessoa_cadastro;]]>
+	</queryString>
+	<field name="pessoa_nome" class="java.lang.String"/>
+	<field name="pessoa_documento" class="java.lang.String"/>
+	<field name="fisica_rg" class="java.lang.String"/>
+	<field name="fisica_sexo" class="java.lang.String"/>
+	<field name="pessoa_logradouro" class="java.lang.String"/>
+	<field name="pessoa_descricao_endereco" class="java.lang.String"/>
+	<field name="pessoa_numero" class="java.lang.String"/>
+	<field name="pessoa_complemento" class="java.lang.String"/>
+	<field name="pessoa_bairro" class="java.lang.String"/>
+	<field name="pessoa_cidade" class="java.lang.String"/>
+	<field name="pessoa_uf" class="java.lang.String"/>
+	<field name="pessoa_cep" class="java.lang.String"/>
+	<field name="pessoa_endereco_completo" class="java.lang.String"/>
+	<field name="pessoa_telefone1" class="java.lang.String"/>
+	<field name="pessoa_telefone2" class="java.lang.String"/>
+	<field name="pessoa_email1" class="java.lang.String"/>
+	<field name="fisica_nascimento" class="java.sql.Date"/>
+	<field name="pessoa_cadastro" class="java.sql.Date"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="66">
+			<subreport isUsingCache="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="200" height="66" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" uuid="68cf498e-9abb-4e84-8913-841391a05f9e"/>
+				<subreportParameter name="companhia_nome">
+					<subreportParameterExpression><![CDATA[$P{companhia_nome}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="companhia_documento">
+					<subreportParameterExpression><![CDATA[$P{companhia_documento}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="companhia_site">
+					<subreportParameterExpression><![CDATA[$P{companhia_site}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="companhia_logradouro">
+					<subreportParameterExpression><![CDATA[$P{companhia_logradouro}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="companhia_endereco">
+					<subreportParameterExpression><![CDATA[$P{companhia_endereco}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="companhia_numero">
+					<subreportParameterExpression><![CDATA[$P{companhia_numero}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="companhia_complemento">
+					<subreportParameterExpression><![CDATA[$P{companhia_complemento}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="companhia_bairro">
+					<subreportParameterExpression><![CDATA[$P{companhia_bairro}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="companhia_cidade">
+					<subreportParameterExpression><![CDATA[$P{companhia_cidade}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="companhia_uf">
+					<subreportParameterExpression><![CDATA[$P{companhia_uf}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="companhia_cep">
+					<subreportParameterExpression><![CDATA[$P{companhia_cep}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="companhia_logo">
+					<subreportParameterExpression><![CDATA[$P{companhia_logo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{template_dir}]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="40" splitType="Stretch">
+			<printWhenExpression><![CDATA[$V{PAGE_NUMBER}  == 1]]></printWhenExpression>
+			<staticText>
+				<reportElement key="staticText" isPrintRepeatedValues="false" x="1" y="0" width="781" height="40" isPrintInFirstWholeBand="true" uuid="ec6c3d96-b788-43de-8162-61538b1fb888"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="30"/>
+				</textElement>
+				<text><![CDATA[Resumido com Email]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="16" splitType="Stretch">
+			<rectangle radius="2">
+				<reportElement key="rectangle-13" mode="Opaque" x="368" y="1" width="111" height="15" backcolor="#CCCCFF" uuid="e2a0028d-0cad-4f28-bbf9-26cd95e2873e"/>
+			</rectangle>
+			<rectangle radius="2">
+				<reportElement key="rectangle-10" mode="Opaque" x="316" y="1" width="52" height="15" backcolor="#CCCCFF" uuid="ea1c240d-058f-4707-9e44-3e947299435b"/>
+			</rectangle>
+			<rectangle radius="2">
+				<reportElement key="rectangle-13" mode="Opaque" x="551" y="1" width="126" height="15" backcolor="#CCCCFF" uuid="233e6768-9726-4d7e-979d-9558f829b329"/>
+			</rectangle>
+			<rectangle radius="2">
+				<reportElement key="rectangle-13" mode="Opaque" x="730" y="1" width="52" height="15" backcolor="#CCCCFF" uuid="f9825eb1-d2a7-4d12-bd88-08f709fdac51"/>
+			</rectangle>
+			<rectangle radius="2">
+				<reportElement key="rectangle-13" mode="Opaque" x="678" y="1" width="52" height="15" backcolor="#CCCCFF" uuid="1570d1aa-621d-447b-8a8c-c6f2050e6bef"/>
+			</rectangle>
+			<staticText>
+				<reportElement key="staticText-8" x="732" y="3" width="50" height="12" uuid="3bbf590d-ef20-4287-82d8-67f16362020a"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[CADASTRO]]></text>
+			</staticText>
+			<rectangle radius="2">
+				<reportElement key="rectangle-8" mode="Opaque" x="1" y="1" width="237" height="15" backcolor="#CCCCFF" uuid="f71ff526-4077-45be-97d5-f72cbc9eb38a"/>
+			</rectangle>
+			<rectangle radius="2">
+				<reportElement key="rectangle-9" mode="Opaque" x="238" y="1" width="78" height="15" backcolor="#CCCCFF" uuid="2d221ec3-dfb9-4c01-950a-6172f5696c68"/>
+			</rectangle>
+			<staticText>
+				<reportElement key="staticText-4" x="84" y="3" width="55" height="12" uuid="f2a5d657-0520-4522-a180-6ae92ad0cf65"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[NOME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-5" x="240" y="1" width="75" height="14" uuid="cd8cfcff-5e1e-4aee-83e4-2a45daa2da14"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[DOCUMENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-8" x="680" y="2" width="50" height="13" uuid="df884e87-cba8-45cc-a6c3-ac11eb5d1533"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[SEXO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-8" x="551" y="2" width="125" height="14" uuid="c61c872d-004a-4eb9-8d93-99d276e901e6"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[EMAIL]]></text>
+			</staticText>
+			<rectangle radius="2">
+				<reportElement key="rectangle-13" mode="Opaque" x="479" y="1" width="72" height="15" backcolor="#CCCCFF" uuid="3270bcdd-be19-4e1f-a708-9b0ee943d287"/>
+			</rectangle>
+			<staticText>
+				<reportElement key="staticText-8" x="481" y="3" width="69" height="13" uuid="32e6f911-1f91-48b3-a969-e45cf3091c68"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[TELEFONE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-6" x="317" y="1" width="50" height="14" uuid="cb1226f4-a20a-4ecf-bc95-c727699e609b"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[NASCIMENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-8" x="368" y="0" width="110" height="15" uuid="6a132e28-7c6b-4228-9bcf-e996b778d24c"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[CIDADE]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<rectangle>
+				<reportElement key="rectangle-4" mode="Transparent" x="238" y="0" width="78" height="13" uuid="62b61cb0-cbe1-41eb-8fd8-719511ef5ed9"/>
+			</rectangle>
+			<rectangle>
+				<reportElement key="rectangle-14" mode="Transparent" x="551" y="0" width="126" height="13" uuid="bf2c8eab-4662-4b35-86f7-b2f553bf5150"/>
+			</rectangle>
+			<rectangle>
+				<reportElement key="rectangle-14" mode="Transparent" x="730" y="0" width="52" height="13" uuid="b72e713e-3172-4462-817d-9e83db093e49"/>
+			</rectangle>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" x="4" y="0" width="233" height="13" forecolor="#000000" uuid="444f6768-daaa-4cf2-891a-d5e59ac10a92"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pessoa_nome}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement key="rectangle-3" mode="Transparent" x="1" y="0" width="237" height="13" uuid="b9c0c77c-cef1-41d0-95d2-e49089c11af9"/>
+			</rectangle>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-3" x="241" y="0" width="75" height="13" forecolor="#000000" uuid="b9e75071-b83e-41a3-a2ac-29e3269b51c3"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pessoa_documento}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField-6" x="732" y="0" width="49" height="13" forecolor="#000000" uuid="9733aabc-9619-4afe-b8d4-558af2fe2b66"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pessoa_cadastro}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement key="rectangle-14" mode="Transparent" x="678" y="0" width="52" height="13" uuid="8604862f-61d2-4acb-b34e-bb7aa6de4d78"/>
+			</rectangle>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField-6" x="680" y="-1" width="49" height="13" forecolor="#000000" uuid="f507713d-9618-495c-954b-5530c0c4cb04"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fisica_sexo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField-6" x="551" y="0" width="125" height="13" forecolor="#000000" uuid="ea9d4503-5f1e-4ed6-b495-db34794ad4ea"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pessoa_email1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField-6" x="480" y="0" width="70" height="13" forecolor="#000000" uuid="45d8851a-ab59-4a6c-9dbd-e22d67730b6a"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pessoa_telefone1}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement key="rectangle-14" mode="Transparent" x="479" y="0" width="72" height="13" uuid="2ec58ea5-98a9-4c68-9201-c8feef7e7d67"/>
+			</rectangle>
+			<rectangle>
+				<reportElement key="rectangle-5" mode="Transparent" x="316" y="0" width="52" height="13" uuid="514fe087-7ed9-4975-8604-7362ecff8e7b"/>
+			</rectangle>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField-4" x="315" y="0" width="49" height="13" forecolor="#000000" uuid="1b7a23ee-69fc-4cd3-8a8c-1849366aec3b"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fisica_nascimento}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement key="rectangle-14" mode="Transparent" x="368" y="0" width="111" height="13" uuid="8e427629-73b1-4fa0-8fee-cdfc7bd08eda"/>
+			</rectangle>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField-6" x="370" y="0" width="108" height="13" forecolor="#000000" uuid="25961c6d-5005-4f67-995c-04832bc9269d"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pessoa_cidade}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="27" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" x="323" y="4" width="170" height="19" forecolor="#000000" uuid="4f46cb05-8bf8-4d3e-9cb4-6236233ef02e"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Transparent" x="496" y="4" width="36" height="19" forecolor="#000000" backcolor="#FFFFFF" uuid="d6d50f54-a2ff-4eb4-b530-ea6aea1bf52d"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField" x="1" y="6" width="209" height="19" forecolor="#000000" uuid="e8657765-7adf-446b-aecc-64a1795bd887"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-2" x="323" y="3" width="123" height="13" forecolor="#000000" uuid="be417ef9-450e-4131-a944-6e1e240cc2fd"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Total Geral de Registros:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField-2" x="453" y="3" width="77" height="13" forecolor="#000000" uuid="58021e00-1ab3-43f7-b81f-a62f94711132"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>
