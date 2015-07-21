@@ -27,4 +27,30 @@ public class RelatorioDao extends DB {
         }
         return null;
     }
+
+    public Boolean defineDefault(Relatorios r) {
+        if (r.getId() == null) {
+            return false;
+        }
+        try {
+            getEntityManager().getTransaction().begin();
+            Query query = getEntityManager().createNativeQuery("UPDATE sis_relatorios SET is_default = false WHERE id_rotina = " + r.getRotina().getId());
+            if (query.executeUpdate() == 0) {
+                getEntityManager().getTransaction().rollback();
+                return false;
+            }
+            if (r.getPrincipal()) {
+                query = getEntityManager().createNativeQuery("UPDATE sis_relatorios SET is_default = true WHERE id = " + r.getId());
+                if (query.executeUpdate() == 0) {
+                    getEntityManager().getTransaction().rollback();
+                    return false;
+                }
+            }
+            getEntityManager().getTransaction().commit();
+        } catch (Exception e) {
+            getEntityManager().getTransaction().rollback();
+            return false;
+        }
+        return true;
+    }
 }
