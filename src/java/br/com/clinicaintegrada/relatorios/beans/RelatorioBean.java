@@ -72,9 +72,11 @@ public class RelatorioBean implements Serializable {
                 message = "Ao atualizar registro!";
             }
         }
-        if (!defaultRelatorioOrdem(relatorioOrdem)) {
-            sucess = false;
-            message = "Ao definir default!";
+        if(sucess) {
+            if (!defaultRelatorioOrdem(relatorioOrdem)) {
+                sucess = false;
+                message = "Ao definir default!";
+            }            
         }
         if (sucess) {
             Messages.info("Sucesso", message);
@@ -264,7 +266,7 @@ public class RelatorioBean implements Serializable {
 
     public List<RelatorioOrdem> getListRelatorioOrdem() {
         if (relatorio.getId() != null) {
-            if (listRelatorioOrdem == null) {
+            if (listRelatorioOrdem == null || listRelatorioOrdem.isEmpty()) {
                 RelatorioOrdemDao relatorioOrdemDao = new RelatorioOrdemDao();
                 listRelatorioOrdem = relatorioOrdemDao.findAllByRelatorio(relatorio.getId());
                 for (int i = 0; i < listRelatorioOrdem.size(); i++) {
