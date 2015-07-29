@@ -202,10 +202,10 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
 
     }
 
-    public void clear() {
+    public String clear() {
         Sessions.remove("fisicaBean");
         clear(0);
-
+        return "pessoaFisica";
     }
 
     public void clear(Integer tCase) {
