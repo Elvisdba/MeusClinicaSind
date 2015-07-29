@@ -61,11 +61,15 @@ public class Sessions implements Serializable {
 
     public static String getString(String sessionName, boolean remove) {
         String string = "";
-        if (exists(sessionName)) {
-            string = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(sessionName);
-            if (remove) {
-                remove(sessionName);
+        try {
+            if (exists(sessionName)) {
+                string = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get(sessionName);
+                if (remove) {
+                    remove(sessionName);
+                }
             }
+        } catch (Exception e) {
+
         }
         return string;
     }

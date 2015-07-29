@@ -154,6 +154,10 @@ public class Jasper implements Serializable {
      * Query Srint
      */
     public static Boolean IS_QUERY_STRING;
+    /**
+     * Relatório Título
+     */
+    public static String TITLE;
 
     static {
         load();
@@ -189,6 +193,7 @@ public class Jasper implements Serializable {
         dbe = null;
         IS_QUERY_STRING = false;
         QUERY_STRING = "";
+        TITLE = "";
     }
 
     public static void printReports(String jasperName, String fileName, Collection c) {
@@ -256,6 +261,9 @@ public class Jasper implements Serializable {
         }
         if (parameters == null) {
             parameters = new HashMap();
+        }
+        if (TITLE != null && !TITLE.isEmpty()) {
+            parameters.put("relatorio_titulo", TITLE);
         }
         if (IS_HEADER) {
             List list = new PessoaEnderecoDao().listaPessoaEnderecoPorPessoaTipo(juridica.getPessoa().getId(), 2);

@@ -164,6 +164,9 @@ public class RelatorioFuncionarioBean implements Serializable {
         rfd.setIS_QUERY(r.getMontaQuery());
         String in_cidades = inIdCidades();
         rfd.setRelatorios(r);
+        if(!getListRelatorioOrdem().isEmpty()) {
+            rfd.setOrder(((RelatorioOrdem) new Dao().find(new RelatorioOrdem(), index[1])).getQuery());
+        }
         List list;
         DBExternal dBExternal = new DBExternal();
         list = rfd.find(SessaoCliente.get().getId(), fisica_id, in_cidades, data_cadastro_I, data_cadastro_F, data_nascimento_I, data_nascimento_F, idade, sexo, index[2], foto);
@@ -179,7 +182,7 @@ public class RelatorioFuncionarioBean implements Serializable {
                 dBExternal.setUrl("192.168.1.60");
                 Jasper.IS_REPORT_CONNECTION = true;
                 Jasper.dbe = dBExternal;
-                Jasper.IS_QUERY_STRING = r.getMontaQuery();
+                Jasper.IS_QUERY_STRING = r.getMontaQuery();                
             }
         }
         if (listDetalhePesquisa.isEmpty()) {
@@ -264,6 +267,7 @@ public class RelatorioFuncionarioBean implements Serializable {
 
         }
         if (!pfs.isEmpty() || r.getMontaQuery()) {
+            Jasper.TITLE = r.getNome();
             if (r.getExcel()) {
                 Jasper.EXCEL_FIELDS = r.getCamposExcel();
             } else {
@@ -602,16 +606,18 @@ public class RelatorioFuncionarioBean implements Serializable {
 
     public List<SelectItem> getListRelatorioOrdem() {
         if (index[0] != null && !getListRelatorios().isEmpty()) {
-            RelatorioOrdemDao relatorioOrdemDao = new RelatorioOrdemDao();
-            List<RelatorioOrdem> list = relatorioOrdemDao.findAllByRelatorio(index[0]);
-            for (int i = 0; i < list.size(); i++) {
-                if (i == 0) {
-                    index[1] = list.get(i).getId();
+            if(listSelectItem[1].isEmpty()) {
+                RelatorioOrdemDao relatorioOrdemDao = new RelatorioOrdemDao();
+                List<RelatorioOrdem> list = relatorioOrdemDao.findAllByRelatorio(index[0]);
+                for (int i = 0; i < list.size(); i++) {
+                    if (i == 0) {
+                        index[1] = list.get(i).getId();
+                    }
+                    if (list.get(i).getPrincipal()) {
+                        index[1] = list.get(i).getId();
+                    }
+                    listSelectItem[1].add(new SelectItem(list.get(i).getId(), list.get(i).getNome()));
                 }
-                if (list.get(i).getPrincipal()) {
-                    index[1] = list.get(i).getId();
-                }
-                listSelectItem[1].add(new SelectItem(list.get(i).getId(), list.get(i).getNome()));
             }
         }
         return listSelectItem[1];

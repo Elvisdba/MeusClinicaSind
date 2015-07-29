@@ -89,8 +89,8 @@ public class RelatorioFuncionarioDao extends DB {
             // CADASTRO
             if (!data_cadastro_I.isEmpty() || !data_cadastro_F.isEmpty()) {
                 // IGUAIS
-                if (data_cadastro_I.equals(data_nascimento_F)) {
-                    listWhere.add("P.dt_criacao = " + data_nascimento_I);
+                if (data_cadastro_I.equals(data_cadastro_F)) {
+                    listWhere.add("P.dt_criacao = '" + data_cadastro_I + "'");
                     // MAIOR OU IGUAL A INICIAL
                 } else if (!data_cadastro_I.isEmpty() && data_cadastro_F.isEmpty()) {
                     listWhere.add("P.dt_criacao >= '" + data_cadastro_I + "'");
@@ -106,7 +106,7 @@ public class RelatorioFuncionarioDao extends DB {
             if (!data_nascimento_I.isEmpty() || !data_nascimento_F.isEmpty()) {
                 // IGUAIS
                 if (data_nascimento_I.equals(data_nascimento_F)) {
-                    listWhere.add("F.dt_nascimento = " + data_nascimento_I);
+                    listWhere.add("F.dt_nascimento = '" + data_nascimento_I + "'");
                     // MAIOR OU IGUAL A INICIAL
                 } else if (!data_nascimento_I.isEmpty() && data_nascimento_F.isEmpty()) {
                     listWhere.add("F.dt_nascimento >= '" + data_nascimento_I + "'");
