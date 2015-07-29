@@ -267,6 +267,7 @@ public class RelatorioFisicaBean implements Serializable {
                     }
                 }
             }
+            Jasper.TITLE = r.getNome();
             Jasper.printReports(r.getJasper(), "fisica", (Collection) pfs);
         }
 

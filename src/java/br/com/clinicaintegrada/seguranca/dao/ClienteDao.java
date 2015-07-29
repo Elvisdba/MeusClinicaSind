@@ -8,6 +8,19 @@ import javax.persistence.Query;
 
 public class ClienteDao extends DB {
 
+    public Cliente findByIdentificador(String identificador) {
+        try {
+            Query query = getEntityManager().createQuery(" SELECT C FROM Cliente AS C WHERE C.identifica = :identificador ");
+            query.setParameter("identificador", identificador);
+            if (!query.getResultList().isEmpty()) {
+                return (Cliente) query.getSingleResult();
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
+    }
+
     public boolean existeIdentificador(Cliente cliente) {
         try {
             Query query = getEntityManager().createQuery(" SELECT C FROM Cliente AS C WHERE C.identifica = :identificador ");

@@ -302,6 +302,7 @@ public class RelatorioContratoBean implements Serializable {
                     }
                 }
             }
+            Jasper.TITLE = r.getNome();
             Jasper.printReports(r.getJasper(), "paciente", (Collection) pfs);
         }
 

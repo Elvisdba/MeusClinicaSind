@@ -57,7 +57,7 @@ public class RegistroBean implements Serializable {
         idSisEmailProtocolo = 0;
         listaDataVencimento = new ArrayList<>();
         if (registro != null) {
-            if (registro.getId() == -1) {
+            if (registro.getId() == null) {
                 RegistroDao registroDao = new RegistroDao();
                 registro = (Registro) registroDao.pesquisaRegistroPorCliente(SessaoCliente.get().getId());
                 if (registro == null) {

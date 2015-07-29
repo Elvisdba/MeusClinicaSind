@@ -2,12 +2,18 @@ package br.com.clinicaintegrada.seguranca.controleUsuario;
 
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.seguranca.Cliente;
+import br.com.clinicaintegrada.seguranca.LiberaAcesso;
 import br.com.clinicaintegrada.seguranca.MacFilial;
+import br.com.clinicaintegrada.seguranca.Registro;
 import br.com.clinicaintegrada.seguranca.Usuario;
+import br.com.clinicaintegrada.seguranca.dao.ClienteDao;
+import br.com.clinicaintegrada.seguranca.dao.LiberaAcessoDao;
 import br.com.clinicaintegrada.seguranca.dao.MacFilialDao;
+import br.com.clinicaintegrada.seguranca.dao.RegistroDao;
 import br.com.clinicaintegrada.seguranca.dao.UsuarioDao;
 import br.com.clinicaintegrada.sistema.ContadorAcessos;
 import br.com.clinicaintegrada.sistema.dao.AtalhoDao;
+import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.Dirs;
 import br.com.clinicaintegrada.utils.Messages;
 import br.com.clinicaintegrada.utils.Sessions;
@@ -64,7 +70,25 @@ public class ControleUsuarioBean implements Serializable {
             Sessions.put("acessoFilial", null);
             filial = "";
         }
+        LiberaAcesso liberaAcesso = null;
+        Cliente c = new ClienteDao().findByIdentificador(SessaoCliente.get().getIdentifica());
+        Registro registro = new RegistroDao().pesquisaRegistroPorCliente(c.getId());
         String pagina = null;
+        if (registro != null && !registro.getLiberaAcesso()) {
+            if(!usuario.getLogin().equals("admin")) {
+                if (macFilial == null || macFilial.getId() == null || macFilial.getId() == -1) {
+                    msgErro = "Computador não registrado ou sem mac específicado.";
+                    Messages.warn("Validação", msgErro);
+                    return pagina;
+                }                
+                liberaAcesso = new LiberaAcessoDao().findByMac(macFilial);
+                if (liberaAcesso == null) {
+                    msgErro = "Nenhum pedido de acesso encontrado. Rodar novamente o aplicativo de acesso.";
+                    Messages.warn("Validação", msgErro);
+                    return pagina;
+                }
+            }
+        }
         Sessions.put("indicaAcesso", "local");
         UsuarioDao db = new UsuarioDao();
         String user = usuario.getLogin(), senh = usuario.getSenha();
@@ -74,11 +98,11 @@ public class ControleUsuarioBean implements Serializable {
             return pagina;
         }
         String usuario_login = usuario.getLogin();
-        if(usuario.getLogin().equals("admin")) {
-            if(SessaoCliente.get().getIdentifica().equals("FundacaoPenteado")) {
+        if (usuario.getLogin().equals("admin")) {
+            if (SessaoCliente.get().getIdentifica().equals("FundacaoPenteado")) {
                 usuario_login = SessaoCliente.get().getIdentifica();
             }
-        }        
+        }
         if (usuario.getSenha().equals("") || usuario.getSenha().equals("Senha")) {
             msgErro = "@ Informar senha!";
             Messages.warn("Validação", msgErro);
@@ -87,7 +111,8 @@ public class ControleUsuarioBean implements Serializable {
         usuario = db.ValidaUsuario(usuario_login, usuario.getSenha());
         Logger log = new Logger();
         if (usuario != null) {
-            Cliente c = usuario.getCliente();
+            c = new Cliente();
+            c = usuario.getCliente();
             if (!c.getAtivo()) {
                 msgErro = "@ Cliente inátivo.";
                 return pagina;
@@ -111,6 +136,9 @@ public class ControleUsuarioBean implements Serializable {
             usuario = new Usuario();
             msgErro = "@ Usuário e/ou Senha inválidas! Tente novamente.";
             Messages.warn("Validação", msgErro);
+        }
+        if (liberaAcesso != null) {
+            new Dao().delete(liberaAcesso, true);
         }
         return pagina;
     }

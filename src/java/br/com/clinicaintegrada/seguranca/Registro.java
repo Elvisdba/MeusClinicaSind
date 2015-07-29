@@ -1,6 +1,5 @@
 package br.com.clinicaintegrada.seguranca;
 
-import br.com.clinicaintegrada.pessoa.Filial;
 import br.com.clinicaintegrada.pessoa.Juridica;
 import java.io.Serializable;
 import javax.persistence.*;
@@ -35,16 +34,18 @@ public class Registro implements Serializable {
     @JoinColumn(name = "id_email_protocolo", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     private SisEmailProtocolo sisEmailProtocolo;
-    @Column(name = "sis_is_email_marketing", columnDefinition = "boolean default false")
+    @Column(name = "sis_is_email_marketing", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean sisEmailMarketing;
-    @Column(name = "sis_is_email_autenticado", columnDefinition = "boolean default false")
+    @Column(name = "sis_is_email_autenticado", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean sisEmailAutenticado;
     @JoinColumn(name = "id_filial", referencedColumnName = "id", nullable = true)
     @ManyToOne(fetch = FetchType.EAGER)
     private Juridica filial;
+    @Column(name = "seg_is_libera_acesso", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean liberaAcesso;
 
     public Registro() {
-        this.id = -1;
+        this.id = null;
         this.cliente = new Cliente();
         this.sisEmail = "";
         this.sisSenha = "";
@@ -57,9 +58,10 @@ public class Registro implements Serializable {
         this.sisEmailMarketing = false;
         this.sisEmailAutenticado = false;
         this.filial = new Juridica();
+        this.liberaAcesso = false;
     }
 
-    public Registro(Integer id, Cliente cliente, String sisEmail, String sisSenha, String sisSmtp, String sisUrlPath, Boolean enviarEmailAnexo, String sisEmailResposta, int sisEmailPorta, SisEmailProtocolo sisEmailProtocolo, Boolean sisEmailMarketing, Boolean sisEmailAutenticado, Juridica filial) {
+    public Registro(Integer id, Cliente cliente, String sisEmail, String sisSenha, String sisSmtp, String sisUrlPath, Boolean enviarEmailAnexo, String sisEmailResposta, int sisEmailPorta, SisEmailProtocolo sisEmailProtocolo, Boolean sisEmailMarketing, Boolean sisEmailAutenticado, Juridica filial, Boolean liberaAcesso) {
         this.id = id;
         this.cliente = cliente;
         this.sisEmail = sisEmail;
@@ -73,6 +75,7 @@ public class Registro implements Serializable {
         this.sisEmailMarketing = sisEmailMarketing;
         this.sisEmailAutenticado = sisEmailAutenticado;
         this.filial = filial;
+        this.liberaAcesso = liberaAcesso;
     }
 
     public Integer getId() {
@@ -178,4 +181,36 @@ public class Registro implements Serializable {
     public void setFilial(Juridica filial) {
         this.filial = filial;
     }
+
+    public Boolean getLiberaAcesso() {
+        return liberaAcesso;
+    }
+
+    public void setLiberaAcesso(Boolean liberaAcesso) {
+        this.liberaAcesso = liberaAcesso;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Registro other = (Registro) obj;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Registro{" + "id=" + id + ", cliente=" + cliente + ", sisEmail=" + sisEmail + ", sisSenha=" + sisSenha + ", sisSmtp=" + sisSmtp + ", sisUrlPath=" + sisUrlPath + ", enviarEmailAnexo=" + enviarEmailAnexo + ", sisEmailResposta=" + sisEmailResposta + ", sisEmailPorta=" + sisEmailPorta + ", sisEmailProtocolo=" + sisEmailProtocolo + ", sisEmailMarketing=" + sisEmailMarketing + ", sisEmailAutenticado=" + sisEmailAutenticado + ", filial=" + filial + ", liberaAcesso=" + liberaAcesso + '}';
+    }
+
 }

@@ -1,10 +1,11 @@
 package br.com.clinicaintegrada.sistema;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import org.primefaces.event.FileUploadEvent;
 
-public class ConfiguracaoUpload {
+public class ConfiguracaoUpload implements Serializable {
 
     private String diretorio;
     private String arquivo;
