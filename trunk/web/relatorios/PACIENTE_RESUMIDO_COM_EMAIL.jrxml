@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.7715610000000013"/>
-	<property name="ireport.x" value="670"/>
+	<property name="ireport.x" value="668"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -57,6 +57,7 @@
 		<parameterDescription><![CDATA["C:\\JASPER_MODELS\\CABECALHO_PAISAGEM.jasper"]]></parameterDescription>
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
+	<parameter name="relatorio_titulo" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT
 '' AS pessoa_nome,
