@@ -44,6 +44,7 @@
                                         <p:menuitem value="Rotina"                  action="#{chamadaPaginaBean.rotina}" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}" />
                                         <p:menuitem value="Níveis"                  action="#{chamadaPaginaBean.nivel}" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}"/>
                                         <p:menuitem value="Filial Departamento"     action="#{chamadaPaginaBean.pagina('filialDepartamento')}" rendered="#{!controleAcessoBean.view('filialDepartamento')}" />
+                                        <p:menuitem value="Filial Rotina"           action="#{chamadaPaginaBean.pagina('filialRotina')}" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}" />
                                     </p:submenu>  
                                     <p:submenu label="Configurações">  
                                         <p:menuitem value="Coordenação"         action="#{chamadaPaginaBean.pagina('configuracaoCoordenacao')}" />
@@ -53,9 +54,10 @@
                                     <p:menuitem value="Pesquisar Logs"              action="#{chamadaPaginaBean.pagina('pesquisaLog')}" title="Registro de atividades" rendered="#{!controleAcessoBean.view('pesquisaLog')}"/>
                                     <p:submenu label="Sistema">
                                         <p:menuitem value="Cliente"       action="#{chamadaPaginaBean.pagina('cliente')}" rendered="#{controleUsuarioBean.clienteString eq 'ClinicaIntegrada'}"/>
+                                        <p:menuitem value="Testes"        action="#{chamadaPaginaBean.pagina('testes')}"  rendered="#{controleUsuarioBean.clienteString eq 'ClinicaIntegrada'}"/>
                                         <p:menuitem value="Relatórios"    action="#{chamadaPaginaBean.pagina('relatorio')}" rendered="#{!controleAcessoBean.view('relatorio')}" />
                                     </p:submenu>
-                                    <p:menuitem value="Sair do Sistema" action="#{usuarioBean.sairSistema}" /> 
+                                    <p:menuitem value="Sair do Sistema" action="#{usuarioBean.sairSistema}" onclick="window.close()"/> 
                                 </p:submenu>                                 
                                 <p:submenu label="Ferramentas" icon="ui-icon-document" style="margin-right: 15px">  
                                     <p:submenu label="Pessoa" icon="ui-icon-contact">
