@@ -314,13 +314,11 @@
                             </h:panelGrid>
 
 
-                            <h:panelGrid columns="1" style="width: 100%; text-align: left; margin-top: 10px; color: ">
-                                <h:column>
-                                    <p:commandButton value="Salvar" disabled="#{controleAcessoBean.save}" onclick="PF('dlg_save').show()"/>
-                                    <p:commandButton value="Novo" action="#{juridicaBean.clear()}" update=":form_pessoa_juridica:"/>
-                                    <p:commandButton value="Excluir" disabled="#{controleAcessoBean.delete}" onclick="PF('dlg_delete').show()"/>
-                                    <p:commandButton value="Pesquisar" action="#{chamadaPaginaBean.pagina('pesquisaPessoaJuridica')}"/>
-                                </h:column>
+                            <h:panelGrid columns="4" styleClass="margin-top-max">
+                                <p:commandButton value="Salvar" disabled="#{controleAcessoBean.save}" onclick="PF('dlg_save').show()"/>
+                                <p:commandButton value="Novo" action="#{juridicaBean.clear()}" update=":form_pessoa_juridica:"/>
+                                <p:commandButton value="Excluir" disabled="#{controleAcessoBean.delete}" onclick="PF('dlg_delete').show()"/>
+                                <p:commandButton value="Pesquisar" action="#{chamadaPaginaBean.pagina('pesquisaPessoaJuridica')}"/>
                             </h:panelGrid>
 
                             <p:dialog widgetVar="dlg_save" modal="true" header="Salvar Jurídica" width="400" resizable="false">

@@ -142,6 +142,7 @@
                                             <h:column>
                                                 <p:calendar value="#{relatorioFuncionarioBean.dataCadastro[0]}" pattern="dd/MM/yyyy" size="10" navigator="true" mask="99/99/9999">
                                                     <p:ajax event="dateSelect" listener="#{relatorioFuncionarioBean.selectedCadastroI}" />
+                                                    <p:ajax event="change" listener="#{relatorioFuncionarioBean.selectedCadastroI}" />
                                                 </p:calendar>
                                             </h:column>
 
@@ -149,6 +150,7 @@
                                             <h:column>
                                                 <p:calendar value="#{relatorioFuncionarioBean.dataNascimento[0]}" pattern="dd/MM/yyyy" size="10" navigator="true" mask="99/99/9999">
                                                     <p:ajax event="dateSelect" listener="#{relatorioFuncionarioBean.selectedNascimentoI}" />
+                                                    <p:ajax event="change" listener="#{relatorioFuncionarioBean.selectedNascimentoI}" />
                                                 </p:calendar>
                                             </h:column>
 
@@ -163,6 +165,7 @@
                                             <h:column>
                                                 <p:calendar value="#{relatorioFuncionarioBean.dataCadastro[1]}" pattern="dd/MM/yyyy"  size="10" navigator="true" mask="99/99/9999">
                                                     <p:ajax event="dateSelect" listener="#{relatorioFuncionarioBean.selectedCadastroF}" />
+                                                    <p:ajax event="change" listener="#{relatorioFuncionarioBean.selectedCadastroF}" />
                                                 </p:calendar>
                                             </h:column>
 
@@ -170,6 +173,7 @@
                                             <h:column>
                                                 <p:calendar value="#{relatorioFuncionarioBean.dataNascimento[1]}" pattern="dd/MM/yyyy"  size="10" navigator="true" mask="99/99/9999">
                                                     <p:ajax event="dateSelect" listener="#{relatorioFuncionarioBean.selectedNascimentoF}" />
+                                                    <p:ajax event="change" listener="#{relatorioFuncionarioBean.selectedNascimentoF}" />
                                                 </p:calendar>
                                             </h:column>
 
