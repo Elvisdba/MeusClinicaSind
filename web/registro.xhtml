@@ -27,73 +27,78 @@
                         <f:facet name="header">Nome Empresa: #{registroBean.registro.filial.pessoa.nome}</f:facet>
                         <p:tabView>
                             <p:ajax event="tabChange" listener="#{registroBean.onChange}"/>                            
-                            <h:column rendered="#{registroBean.codigoModulo == 0}">
-                                <p:tab title="Cadastro">
-                                    <p:panelGrid columns="3" columnClasses="verticalAlignTop,verticalAlignTop" styleClass="sbb">
-                                        <p:outputLabel value="Email: "/>
-                                        <p:inputText id="idEmail" size="50" value="#{registroBean.registro.sisEmail}" autocomplete="off" validatorMessage="Email inválido #{registroBean.registro.sisEmailResposta}" required="false" placeholder="Formato: meuemail@provedor.com" title="Não pode ter validação automática" disabled="#{registroBean.registro.sisEmailMarketing}">
-                                            <p:ajax event="blur" update="i_message_email" />
-                                            <!-- <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" /> -->
-                                        </p:inputText>                                                
-                                        <p:message for="idEmail" id="i_message_email" />
-                                        <p:outputLabel value="Senha: " />
-                                        <h:inputSecret id="idSenha" size="15" value="#{registroBean.senha}" autocomplete="off" disabled="#{registroBean.registro.sisEmailMarketing}"/>
-                                        <p:column />
-                                        <p:outputLabel value="Confirmar Senha: " />
-                                        <h:inputSecret id="idConSenha" size="15" value="#{registroBean.confirmaSenha}" autocomplete="off" disabled="#{registroBean.registro.sisEmailMarketing}"/>
-                                        <p:column />                                        
-                                        <p:column />
-                                        <p:column>
-                                            <p:selectBooleanCheckbox id="i_aut" value="#{registroBean.registro.sisEmailAutenticado}" itemLabel="Usar email autenticado" disabled="#{registroBean.registro.sisEmailMarketing}">
-                                                <p:ajax event="change" listener="#{registroBean.save}" update=":form_registro_empresarial:id_messages" global="true"/>
-                                            </p:selectBooleanCheckbox>
-                                        </p:column>
-                                        <p:column />
-                                        <h:column>
-                                            <h:panelGrid columns="1">
-                                                <p:outputLabel value="Servidor Smtp: " />
-                                            </h:panelGrid>
-                                        </h:column>
-                                        <h:column>
-                                            <h:panelGrid columns="3">
-                                                <p:inputText size="30" value="#{registroBean.registro.sisSmtp}" disabled="#{registroBean.registro.sisEmailMarketing}"/>
-                                                <p:outputLabel value="Porta: " />
-                                                <p:inputText size="3" value="#{registroBean.registro.sisEmailPorta}" styleClass="text-center" disabled="#{registroBean.registro.sisEmailMarketing}">
-                                                    <f:ajax event="change" render="@this" />
-                                                </p:inputText>
-                                            </h:panelGrid>
-                                        </h:column>
-                                        <p:column />
-                                        <p:outputLabel value="Servidor Protocolo: " />
-                                        <p:selectOneMenu value="#{registroBean.idSisEmailProtocolo}" disabled="#{registroBean.registro.sisEmailMarketing}">
-                                            <f:selectItems value="#{registroBean.listaSisEmailProtocolo}" />
-                                        </p:selectOneMenu>
-                                        <p:column />
-                                        <p:outputLabel value="Url path: " />
-                                        <p:inputText size="30" value="#{registroBean.registro.sisUrlPath}"/>
-                                        <p:column />
-                                        <h:outputLabel value="Email Resposta: "/>
-                                        <p:column>
-                                            <p:inputText id="idEmailResposta" size="50" value="#{registroBean.registro.sisEmailResposta}" autocomplete="off" validatorMessage="Email resposta inválido #{registroBean.registro.sisEmailResposta}" required="false" placeholder="Formato: meuemail@provedor.com">
-                                                <p:ajax event="blur" update="i_message_email_resposta" />
-                                                <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
-                                            </p:inputText>
-                                            <div class="float-left">
-                                                <p:message for="idEmailResposta" id="i_message_email_resposta"/>
-                                            </div>
-                                        </p:column>
-                                        <p:column colspan="3">
-                                            <h:outputLabel value="Apelido/aliás dado ao e-mail principal, caso esse seja de um servidor externo." />
-                                        </p:column>
-                                        <h:outputLabel value="Email do sistema: "/>
-                                        <p:selectBooleanCheckbox value="#{registroBean.registro.sisEmailMarketing}" itemLabel="Habilita E-mail Marketing">
-                                            <p:ajax event="change" update=":form_registro_empresarial:" listener="#{registroBean.salvarSemSenha}" />
+                            <p:tab title="Cadastro">
+                                <p:panelGrid columns="3" columnClasses="verticalAlignTop,verticalAlignTop" styleClass="sbb">
+                                    <p:outputLabel value="Email: "/>
+                                    <p:inputText id="idEmail" size="50" value="#{registroBean.registro.sisEmail}" autocomplete="off" validatorMessage="Email inválido #{registroBean.registro.sisEmailResposta}" required="false" placeholder="Formato: meuemail@provedor.com" title="Não pode ter validação automática" disabled="#{registroBean.registro.sisEmailMarketing}">
+                                        <p:ajax event="blur" update="i_message_email" />
+                                        <!-- <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" /> -->
+                                    </p:inputText>                                                
+                                    <p:message for="idEmail" id="i_message_email" />
+                                    <p:outputLabel value="Senha: " />
+                                    <h:inputSecret id="idSenha" size="15" value="#{registroBean.senha}" autocomplete="off" disabled="#{registroBean.registro.sisEmailMarketing}"/>
+                                    <p:column />
+                                    <p:outputLabel value="Confirmar Senha: " />
+                                    <h:inputSecret id="idConSenha" size="15" value="#{registroBean.confirmaSenha}" autocomplete="off" disabled="#{registroBean.registro.sisEmailMarketing}"/>
+                                    <p:column />                                        
+                                    <p:column />
+                                    <p:column>
+                                        <p:selectBooleanCheckbox id="i_aut" value="#{registroBean.registro.sisEmailAutenticado}" itemLabel="Usar email autenticado" disabled="#{registroBean.registro.sisEmailMarketing}">
+                                            <p:ajax event="change" listener="#{registroBean.save}" update=":form_registro_empresarial:id_messages" global="true"/>
                                         </p:selectBooleanCheckbox>
-                                        <p:column></p:column>
-                                    </p:panelGrid>
-                                    <p:commandButton value="Testar Email" onclick="PF('dlg_test_mail').show()" type="button" styleClass="margin-top-max"/>
-                                </p:tab>
-                            </h:column>                            
+                                    </p:column>
+                                    <p:column />
+                                    <h:column>
+                                        <h:panelGrid columns="1">
+                                            <p:outputLabel value="Servidor Smtp: " />
+                                        </h:panelGrid>
+                                    </h:column>
+                                    <h:column>
+                                        <h:panelGrid columns="3">
+                                            <p:inputText size="30" value="#{registroBean.registro.sisSmtp}" disabled="#{registroBean.registro.sisEmailMarketing}"/>
+                                            <p:outputLabel value="Porta: " />
+                                            <p:inputText size="3" value="#{registroBean.registro.sisEmailPorta}" styleClass="text-center" disabled="#{registroBean.registro.sisEmailMarketing}">
+                                                <f:ajax event="change" render="@this" />
+                                            </p:inputText>
+                                        </h:panelGrid>
+                                    </h:column>
+                                    <p:column />
+                                    <p:outputLabel value="Servidor Protocolo: " />
+                                    <p:selectOneMenu value="#{registroBean.idSisEmailProtocolo}" disabled="#{registroBean.registro.sisEmailMarketing}">
+                                        <f:selectItems value="#{registroBean.listaSisEmailProtocolo}" />
+                                    </p:selectOneMenu>
+                                    <p:column />
+                                    <p:outputLabel value="Url path: " />
+                                    <p:inputText size="30" value="#{registroBean.registro.sisUrlPath}"/>
+                                    <p:column />
+                                    <h:outputLabel value="Email Resposta: "/>
+                                    <p:column>
+                                        <p:inputText id="idEmailResposta" size="50" value="#{registroBean.registro.sisEmailResposta}" autocomplete="off" validatorMessage="Email resposta inválido #{registroBean.registro.sisEmailResposta}" required="false" placeholder="Formato: meuemail@provedor.com">
+                                            <p:ajax event="blur" update="i_message_email_resposta" />
+                                            <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                                        </p:inputText>
+                                        <div class="float-left">
+                                            <p:message for="idEmailResposta" id="i_message_email_resposta"/>
+                                        </div>
+                                    </p:column>
+                                    <p:column colspan="3">
+                                        <h:outputLabel value="Apelido/aliás dado ao e-mail principal, caso esse seja de um servidor externo." />
+                                    </p:column>
+                                    <h:outputLabel value="Email do sistema: "/>
+                                    <p:selectBooleanCheckbox value="#{registroBean.registro.sisEmailMarketing}" itemLabel="Habilita E-mail Marketing">
+                                        <p:ajax event="change" update=":form_registro_empresarial:" listener="#{registroBean.salvarSemSenha}" />
+                                    </p:selectBooleanCheckbox>
+                                    <p:column></p:column>
+                                </p:panelGrid>
+                                <p:commandButton value="Testar Email" onclick="PF('dlg_test_mail').show()" type="button" styleClass="margin-top-max"/>
+                            </p:tab>
+                            <p:tab title="Segurança">
+                                <p:column>
+                                    <p:selectBooleanCheckbox value="#{registroBean.registro.liberaAcesso}" itemLabel="Libera acesso">
+                                        <p:ajax event="change" listener="#{registroBean.save}" update="@this" global="true"/>
+                                    </p:selectBooleanCheckbox>
+                                </p:column>                                   
+                            </p:tab>
                         </p:tabView>
                     </p:panel>
                     <div style="clear: both;"></div>
