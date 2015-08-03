@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.7715610000000013"/>
-	<property name="ireport.x" value="19"/>
+	<property name="ireport.x" value="72"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -27,6 +27,7 @@
 		<parameterDescription><![CDATA["C:\\JASPER_MODELS\\CABECALHO_PAISAGEM.jasper"]]></parameterDescription>
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
+	<parameter name="relatorio_titulo" class="java.lang.String" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[SELECT
 '' AS pessoa_nome,
@@ -144,19 +145,19 @@ current_date AS contrato_data_desligamento;]]>
 	<pageHeader>
 		<band height="40" splitType="Stretch">
 			<printWhenExpression><![CDATA[$V{PAGE_NUMBER}  == 1]]></printWhenExpression>
-			<staticText>
-				<reportElement key="staticText" isPrintRepeatedValues="false" x="1" y="0" width="781" height="40" isPrintInFirstWholeBand="true" uuid="ec6c3d96-b788-43de-8162-61538b1fb888"/>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-4" x="1" y="0" width="780" height="40" forecolor="#000000" uuid="949b352e-599f-433d-9a49-beca5fc1bed9"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center">
-					<font size="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="30" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
 				</textElement>
-				<text><![CDATA[Resumido]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{relatorio_titulo}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
