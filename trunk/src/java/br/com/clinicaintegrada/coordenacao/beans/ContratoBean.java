@@ -109,6 +109,7 @@ public class ContratoBean implements Serializable {
     private boolean disabledSave;
     private Boolean imprimeVerso;
     private String[] mensagem;
+    private Integer numeroParcelasTaxa;
 
     @PostConstruct
     public void init() {
@@ -150,6 +151,7 @@ public class ContratoBean implements Serializable {
         mensagem = new String[2];
         mensagem[0] = "";
         mensagem[1] = "";
+        numeroParcelasTaxa = 1;
     }
 
     @PreDestroy
@@ -162,8 +164,9 @@ public class ContratoBean implements Serializable {
         Sessions.remove("pesquisaResponsavelContrato");
     }
 
-    public void clear() {
+    public String clear() {
         Sessions.remove("contratoBean");
+        return "contrato";
     }
 
     public void action(int tcase) {
@@ -206,6 +209,10 @@ public class ContratoBean implements Serializable {
     public void save() {
         if (listTipoInternacao.isEmpty()) {
             Messages.warn("Validação", "Cadastrar tipos de internação!");
+            return;
+        }
+        if (contrato.getDataCadastroString().isEmpty()) {
+            Messages.warn("Validação", "Informar data de cadastro!");
             return;
         }
         if (contrato.getResponsavel().getId() == -1) {
@@ -594,6 +601,9 @@ public class ContratoBean implements Serializable {
             Dao dao = new Dao();
             List<TipoInternacao> list = (List<TipoInternacao>) dao.list(new TipoInternacao(), true);
             for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).getDescricao().toUpperCase().contains("INVOLUNTÁRIA")) {
+                    idTipoInternacao = i;
+                }
                 listTipoInternacao.add(new SelectItem(i, list.get(i).getDescricao(), "" + list.get(i).getId()));
             }
 
@@ -823,56 +833,80 @@ public class ContratoBean implements Serializable {
 
     public void addTaxa() {
         DataHoje dh = new DataHoje();
-        Movimento m = new Movimento();
         Dao dao = new Dao();
         int tam = listMovimentoContrato.size();
         if (tam > 0) {
             tam = listMovimentoContrato.size() - 1;
         }
-        Taxas t = ((Taxas) dao.find(new Taxas(), Integer.parseInt(listTaxas.get(idTaxa).getDescription())));
-        String nrCtrBoleto = listMovimentoContrato.get(tam).getNrCtrBoleto() + Long.toString(DataHoje.calculoDosDias(DataHoje.converte("07/10/1997"), DataHoje.converte(vencimentoString)));
-        m.setPessoa(contrato.getResponsavel());
-        m.setTipoDocumento(t.getServicos().getTipoDocumento());
-        m.setServicos(t.getServicos());
-        m.setTipoServico((TipoServico) dao.find(new TipoServico(), 5));
-        m.setEs("E");
-        m.setNrCtrBoleto(null);
-        m.setVencimento(DataHoje.converte(vencimentoString));
-        m.setReferencia(DataHoje.dataReferencia(vencimentoString));
-        m.setDocumento("");
-        m.setLote(null);
-        m.setAtivo(true);
-        m.setEvento(null);
-        m.setValorString(valorServico);
-        if (m.getValor() <= 0) {
-            Messages.warn("Validação", "Valor da taxa deve ser superior a 0!");
-            return;
-        }
-        m.setBaixa(null);
-        if (contrato.getId() != -1) {
-            //m.setTipoDocumento((FTipoDocumento) dao.find(new FTipoDocumento(), 1));
-            m.setLote(listMovimento.get(0).getLote());
-            if (dao.save(m, true)) {
-                listMovimento.clear();
-                listMovimentoTaxa.clear();
-                Messages.info("Sucesso", "Taxa adicionada!");
-            } else {
-                Messages.warn("Validação", "Erro ao adicionar taxa!");
-            }
-            listTaxas.clear();
+        float valorTaxaParcelada = 0;
+        int size = 0;
+        if (numeroParcelasTaxa == 0) {
+            size = 1;
         } else {
-            listTaxas.remove(idTaxa);
-            List<?> list = listTaxas;
-            List<SelectItem> listSelectItem = new ArrayList();
-            for (int i = 0; i < list.size(); i++) {
-                listSelectItem.add(new SelectItem(i, listTaxas.get(i).getLabel(), listTaxas.get(i).getDescription()));
-            }
-            listTaxas = listSelectItem;
-            idTaxa = 0;
-            selectedServico();
-            Messages.info("Sucesso", "Taxa adicionada!");
-            listMovimentoTaxa.add(m);
+            size = numeroParcelasTaxa;
         }
+        if (!valorServico.isEmpty()) {
+            valorTaxaParcelada = Moeda.converteUS$(valorServico) / numeroParcelasTaxa;
+        } else {
+            if (numeroParcelasTaxa > 1 && valorServico.isEmpty()) {
+                Messages.warn("Validação", "Informar valor da taxa, quando houver número de parcelas maior que 1!");
+                return;
+            }
+        }
+        Taxas t = ((Taxas) dao.find(new Taxas(), Integer.parseInt(listTaxas.get(idTaxa).getDescription())));
+        listTaxas.remove(idTaxa);
+        Boolean success = null;
+        dao.openTransaction();
+        for (int i = 0; i < size; i++) {
+            Movimento m = new Movimento();
+            m.setPessoa(contrato.getResponsavel());
+            m.setTipoDocumento(t.getServicos().getTipoDocumento());
+            m.setServicos(t.getServicos());
+            m.setTipoServico((TipoServico) dao.find(new TipoServico(), 5));
+            m.setEs("E");
+            m.setNrCtrBoleto(null);
+            if (i == 0) {
+                m.setVencimento(DataHoje.converte(vencimentoString));
+            } else {
+                m.setVencimentoString(dh.incrementarMeses(i + 1, vencimentoString));
+            }
+            m.setReferencia(DataHoje.dataReferencia(vencimentoString));
+            m.setDocumento("");
+            m.setLote(null);
+            m.setAtivo(true);
+            m.setEvento(null);
+            m.setValor(valorTaxaParcelada);
+            if (m.getValor() <= 0) {
+                Messages.warn("Erro", "Valor da taxa deve ser superior a 0!");
+                return;
+            }
+            m.setBaixa(null);
+            if (contrato.getId() != -1) {
+                if (i == 0) {
+                    success = false;
+                }
+                m.setLote(listMovimento.get(0).getLote());
+                if (dao.save(m)) {
+                    listMovimentoTaxa.add(m);
+                    listMovimento.add(m);
+                    success = true;
+                } else {
+                    Messages.warn("Erro", "Erro ao adicionar taxa!");
+                    dao.rollback();
+                    return;
+                }                
+            } else {
+                success = true;
+                listMovimentoTaxa.add(m);
+            }
+        }
+        List<?> list = listTaxas;
+        List<SelectItem> listSelectItem = new ArrayList();
+        for (int j = 0; j < list.size(); j++) {
+            listSelectItem.add(new SelectItem(j, listTaxas.get(j).getLabel(), listTaxas.get(j).getDescription()));
+        }
+        listTaxas = listSelectItem;        
+        idTaxa = 0;
         getListMovimentoTaxa();
         // getListTaxas();
         valorServico = "0,00";
@@ -884,38 +918,53 @@ public class ContratoBean implements Serializable {
         }
         valorTotalTaxa = Moeda.converteR$Float(vt);
         float sd = Moeda.converteUS$(saldoDevedor);
-        saldoDevedor = Moeda.converteR$Float(sd + m.getValor());
+        saldoDevedor = Moeda.converteR$Float(sd + Moeda.converteUS$(valorServico));
+        if (success != null) {
+            if (success) {
+                listTaxas.clear();
+                getListTaxas();
+                dao.commit();
+                listMovimento.clear();
+                listMovimentoTaxa.clear();
+                Messages.info("Sucesso", "Taxa adicionada!");
+            }
+        }
+        selectedServico();
+        numeroParcelasTaxa = 1;
     }
 
-    public void removeTaxa(int index) {
-        Servicos s = new Servicos();
+    public void removeTaxa(Servicos s) {
         float vs = 0;
-        for (int i = 0; i < listMovimentoTaxa.size(); i++) {
-            if (i == index) {
-                s = listMovimentoTaxa.get(i).getServicos();
-                break;
-            }
-        }
+        Boolean success = null;
+        List<Movimento> listRemove = new ArrayList<>();
         Dao dao = new Dao();
-        if (contrato.getId() != -1) {
-            vs = listMovimentoTaxa.get(index).getValor();
-            if (dao.delete(listMovimentoTaxa.get(index), true)) {
-                listMovimentoTaxa.clear();
-                listMovimento.clear();
-                getListMovimentoTaxa();
-                Messages.info("Sucesso", "Taxa removida!");
-                listTaxas.clear();
+        dao.openTransaction();
+        for (int i = 0; i < listMovimentoTaxa.size(); i++) {
+                if (contrato.getId() != -1) {
+                if (i == 0) {
+                    success = false;
+                }
+                if (s.getId() == listMovimentoTaxa.get(i).getServicos().getId()) {
+                    listRemove.add(listMovimentoTaxa.get(i));
+                    vs += listMovimentoTaxa.get(i).getValor();
+                    if (dao.delete(listMovimentoTaxa.get(i))) {
+                        success = true;
+                    } else {
+                        Messages.warn("Validação", "Erro ao remover taxa!");
+                        dao.rollback();
+                        return;
+                    }
+                }
             } else {
-                Messages.warn("Validação", "Erro ao remover taxa!");
+                if (s.getId() == listMovimentoTaxa.get(i).getServicos().getId()) {
+                    listRemove.add(listMovimentoTaxa.get(i));
+                    vs += listMovimentoTaxa.get(i).getValor();
+                }
             }
-        } else {
-            Messages.info("Sucesso", "Taxa removida!");
-            vs = listMovimentoTaxa.get(index).getValor();
-            listTaxas.add(new SelectItem(listTaxas.size(), listMovimentoTaxa.get(index).getServicos().getDescricao(), "" + new TaxasDao().findTaxaByServicos(listMovimentoTaxa.get(index).getServicos().getId()).getId()));
-            listMovimentoTaxa.remove(index);
-            idTaxa = 0;
-            selectedServico();
         }
+        listMovimentoTaxa.removeAll(listRemove);
+        listTaxas.add(new SelectItem(listTaxas.size(), s.getDescricao(), "" + new TaxasDao().findTaxaByServicos(s.getId()).getId()));
+        idTaxa = 0;
         getListTaxas();
         float vt = 0;
         for (int i = 0; i < listMovimentoTaxa.size(); i++) {
@@ -925,7 +974,23 @@ public class ContratoBean implements Serializable {
         valorTotalTaxa = Moeda.converteR$Float(vt);
         saldoDevedor = Moeda.converteR$Float(sd - vs);
         idTaxa = 0;
-
+        if (success != null) {
+            if (success) {
+                dao.commit();
+                listMovimentoTaxa.clear();
+                listMovimento.clear();
+                listTaxas.clear();
+                getListMovimentoTaxa();
+                Messages.info("Sucesso", "Taxa removida!");
+            } else {
+                dao.rollback();
+            }
+        }
+        try {
+            selectedServico();            
+        } catch (Exception e) {
+            
+        }
     }
 
     public void selectedServico() {
@@ -1837,5 +1902,28 @@ public class ContratoBean implements Serializable {
             }
         }
         updateMovimento = new Movimento();
+    }
+
+    public Integer getNumeroParcelasTaxa() {
+        return numeroParcelasTaxa;
+    }
+
+    public void setNumeroParcelasTaxa(Integer numeroParcelasTaxa) {
+        this.numeroParcelasTaxa = numeroParcelasTaxa;
+    }
+
+    public String getNumeroParcelasTaxaString() {
+        return Integer.toString(numeroParcelasTaxa);
+    }
+
+    public void setNumeroParcelasTaxaString(String numeroParcelasTaxaString) {
+        try {
+            this.numeroParcelasTaxa = Integer.parseInt(numeroParcelasTaxaString);
+            if (this.numeroParcelasTaxa < 0) {
+                this.numeroParcelasTaxa = 0;
+            }
+        } catch (Exception e) {
+
+        }
     }
 }
