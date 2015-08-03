@@ -609,6 +609,18 @@
             <to-view-id>/pesquisaRelatorio.jsf</to-view-id>
             <redirect/>
         </navigation-case>          
+        
+        <navigation-case>
+            <from-outcome>testes</from-outcome>
+            <to-view-id>/testes.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>          
+        
+        <navigation-case>
+            <from-outcome>filialRotina</from-outcome>
+            <to-view-id>/filialRotina.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>          
 
                                     
         <!-- 

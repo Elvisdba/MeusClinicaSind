@@ -9,7 +9,7 @@
     <context-param>
         <description>State saving method: "client" or "server" (= default) See JSF Specification 2.5.2</description> 
         <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
-        <param-value>client</param-value>
+        <param-value>server</param-value> <!-- DEFAULT server -->
     </context-param>
     
     <context-param>  
@@ -24,27 +24,59 @@
         <param-value>Development</param-value>
     </context-param>
     
+    <filter>
+        <filter-name>UrlRewriteFilter</filter-name>
+        <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>UrlRewriteFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+	
     <context-param>  
         <description>Primefaces Tema Bootstrap</description>
         <param-name>primefaces.THEME</param-name>  
         <param-value>bootstrap</param-value>  
     </context-param>
+        
+    <filter>
+        <filter-name>PrimeFaces FileUpload Filter</filter-name>
+        <filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>PrimeFaces FileUpload Filter</filter-name>
+        <servlet-name>Faces Servlet</servlet-name>
+    </filter-mapping>
+	
+    <context-param>
+        <param-name>primefaces.UPLOADER</param-name>
+        <param-value>auto</param-value>
+    </context-param>
     
     <context-param>
         <param-name>facelets.FACELETS_BUFFER_SIZE</param-name>
         <param-value>500000</param-value>
-    </context-param>    
+    </context-param>
     
-    <filter>
-        <filter-name>UrlRewriteFilter</filter-name>
-        <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
-    </filter>
-        
+    <context-param>
+        <param-name>facelets.DEVELOPMENT</param-name>
+        <param-value>true</param-value>
+    </context-param>          
+    
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    
+    <context-param>
+        <param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+        <param-value>.xhtml</param-value>
+    </context-param>    
     
     <servlet-mapping>  
         <servlet-name>Faces Servlet</servlet-name>  
@@ -59,16 +91,22 @@
     
     <welcome-file-list>
         <welcome-file>index.xhtml</welcome-file>
-    </welcome-file-list>    
+    </welcome-file-list>
     
-    <filter-mapping>
-        <filter-name>UrlRewriteFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-        <dispatcher>INCLUDE</dispatcher>  
-        <dispatcher>ERROR</dispatcher>         
-    </filter-mapping>
+    <!-- 
+    <servet>
+        <servet-name>Push Servlet</servet-name>
+        <servet-class>org.primefaces.push.PushServlet</servet-class>
+        <async-suported>true</async-suported>
+    </servet>    
+    
+    <servet-mapping>
+        <servlet-name>Push Servlet</servlet-name>  
+        <url-pattern>/primepush/*</url-pattern> 
+    </servet-mapping>    -->
+    
+    
+    
     <!-- ERRORS AND EXCEPTIONS -->    
     <!-- <error-page>
         <exception-type>javax.servlet.ServletException</exception-type>
@@ -77,10 +115,12 @@
     <error-page>
         <exception-type>javax.faces.application.ViewExpiredException</exception-type>
         <location>/index.xhtml</location>
-    </error-page>   
-    <!-- ERRORS AND EXCEPTIONS -->
-    <!-- LISTENERS -->
-    <!-- LISTENERS -->
+    </error-page>
+    <!-- ERRORS AND EXCEPTIONS 
+    <env-entry>
+        <env-entry-name>com.sun.faces.ClientStateSavingPassword</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+    </env-entry>-->
 	    
     
 </web-app>
