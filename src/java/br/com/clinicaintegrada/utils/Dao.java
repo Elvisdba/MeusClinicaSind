@@ -341,7 +341,8 @@ public class Dao extends DB implements DaoInterface {
             return null;
         }
         if (objectId == null) {
-            int id;
+            Integer id;
+            Object o = object;
             try {
                 Class classe = object.getClass();
                 Method metodo = classe.getMethod("getId", new Class[]{});
@@ -365,7 +366,13 @@ public class Dao extends DB implements DaoInterface {
                 Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
                 return null;
             }
-            object = getEntityManager().find(object.getClass(), id);
+            try {
+                object = getEntityManager().find(o.getClass(), id);
+                if(object == null) {
+                    object = getEntityManager().find(o.getClass(), (Object) id);                    
+                }
+            } catch (Exception e) {
+            }
         } else {
             try {
                 object = getEntityManager().find(object.getClass(), objectId);
