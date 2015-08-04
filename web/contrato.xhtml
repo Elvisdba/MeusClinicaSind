@@ -74,8 +74,8 @@
                                 <h:panelGrid columns="2">
                                     <p:outputLabel value="Data Contratual:" styleClass="bold" />
                                     <p:calendar value="#{contratoBean.contrato.dataCadastro}" pattern="dd/MM/yyyy" mask="99/99/9999" size="8" styleClass="text-center">
-                                        <p:ajax event="dateSelect" update="@this" listener="#{contratoBean.contrato.selectedDataCadastro}" global="false"/> 
-                                        <p:ajax event="change" update="@this" listener="#{contratoBean.contrato.selectedDataCadastro}" global="false"/> 
+                                        <p:ajax event="dateSelect" update="@this :form_contrato:" listener="#{contratoBean.selectedDataCadastro}" global="false"/> 
+                                        <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.selectedDataCadastro}" global="false"/> 
                                     </p:calendar>
                                 </h:panelGrid>
                                 <p:panel  styleClass="margin-top-max">
@@ -113,8 +113,8 @@
                                     <hr />
                                     <h:panelGrid columns="11" styleClass="margin-top-max" width="960">
                                         <p:outputLabel value="Data internação:" />
-                                        <p:calendar value="#{contratoBean.contrato.dataCadastro}" pattern="dd/MM/yyyy" mask="99/99/9999" size="8" styleClass="text-center">
-                                            <p:ajax event="dateSelect" update="@this" listener="#{contratoBean.contrato.selectedDataCadastro}" global="false"/> 
+                                        <p:calendar value="#{contratoBean.contrato.dataInternacao}" pattern="dd/MM/yyyy" mask="99/99/9999" size="8" styleClass="text-center">
+                                            <p:ajax event="dateSelect" update="@this" listener="#{contratoBean.contrato.selectedDataInternacao}" global="false"/> 
                                         </p:calendar>                                        
                                         <p:outputLabel value="Tipo de internação:" />
                                         <p:selectOneMenu value="#{contratoBean.idTipoInternacao}">
@@ -214,7 +214,9 @@
                                         <p:column headerText="Documento" width="100" styleClass="text-center" style="font-size: 7.5pt!important">#{movimento.documento}</p:column>
                                         <p:column headerText="Serviços" styleClass="text-center">#{movimento.servicos.descricao}</p:column>
                                         <p:column headerText="Data do Vencimento" styleClass="text-center">
-                                            <p:inputMask value="#{movimento.vencimentoString}" mask="99/99/9999" size="8" styleClass="text-center" rendered="#{movimento.id == -1}" />
+                                            <p:inputMask value="#{movimento.vencimentoString}" mask="99/99/9999" size="8" styleClass="text-center" rendered="#{movimento.id == -1}">
+                                                <p:ajax event="change" update="@this" />
+                                            </p:inputMask>
                                             <h:outputLabel value="#{movimento.vencimentoString}"  rendered="#{movimento.id != -1}" />
                                         </p:column>
                                         <p:column headerText="Valor Parcela" styleClass="text-center">
