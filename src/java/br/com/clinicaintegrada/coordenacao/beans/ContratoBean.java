@@ -25,12 +25,15 @@ import br.com.clinicaintegrada.financeiro.dao.MovimentoDao;
 import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.Filial;
 import br.com.clinicaintegrada.pessoa.Fisica;
+import br.com.clinicaintegrada.pessoa.Fotos;
 import br.com.clinicaintegrada.pessoa.Pessoa;
 import br.com.clinicaintegrada.pessoa.PessoaEndereco;
 import br.com.clinicaintegrada.pessoa.beans.FotosEvolucaoBean;
 import br.com.clinicaintegrada.pessoa.dao.FilialDao;
 import br.com.clinicaintegrada.pessoa.dao.FisicaDao;
+import br.com.clinicaintegrada.pessoa.dao.FotosDao;
 import br.com.clinicaintegrada.pessoa.dao.PessoaEnderecoDao;
+import br.com.clinicaintegrada.seguranca.Cliente;
 import br.com.clinicaintegrada.seguranca.MacFilial;
 import br.com.clinicaintegrada.seguranca.controleUsuario.ControleUsuarioBean;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
@@ -58,6 +61,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -69,6 +73,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
+import org.primefaces.event.SelectEvent;
 
 @ManagedBean
 @SessionScoped
@@ -434,6 +439,36 @@ public class ContratoBean implements Serializable {
         Logger logger = new Logger();
         dao.openTransaction();
         if (contrato.getId() != -1) {
+            FotosDao fotosDao = new FotosDao();
+            List<Fotos> listFotos = fotosDao.findFotosByContrato(contrato.getId());
+            for (int i = 0; i < listFotos.size(); i++) {
+                File file = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ((Cliente) Sessions.getObject("sessaoCliente")).getIdentifica() + "/imagens/evolucao/" + listFotos.get(i).getId() + ".png"));
+                try {
+                    if (file.exists()) {
+                        if (file.delete()) {
+                            if (!dao.delete(listFotos.get(i))) {
+                                Messages.warn("Erro", "Erro ao remover foto!");
+                                dao.rollback();
+                                return;
+                            }
+                        } else {
+                            Messages.warn("Erro", "Erro ao remover foto!");
+                            dao.rollback();
+                            return;
+                        }
+                    } else {
+                        if (!dao.delete(listFotos.get(i))) {
+                            Messages.warn("Erro", "Erro ao remover foto!");
+                            dao.rollback();
+                            return;
+                        }
+                    }
+                } catch (Exception e) {
+                    Messages.warn("Erro", "Erro ao remover foto!");
+                    dao.rollback();
+                    return;
+                }
+            }
             for (int i = 0; i < list.size(); i++) {
                 if (!dao.delete(list.get(i))) {
                     Messages.warn("Erro", "Erro ao remover movimento!");
@@ -720,7 +755,6 @@ public class ContratoBean implements Serializable {
                         m.setVencimento(DataHoje.converte(dh.incrementarDias(addDias, contrato.getDataCadastroString())));
                         isEntrada = true;
                     } else {
-                        m.setVencimentoString(DataHoje.data());
                         m.setVencimento(contrato.getDataCadastro());
                     }
                     m.setPessoa(contrato.getResponsavel());
@@ -740,7 +774,12 @@ public class ContratoBean implements Serializable {
                     listMovimentoContrato.add(m);
                     m = new Movimento();
                 }
-                String dataVencimento = DataHoje.alterDay(diaVencimento, DataHoje.data());
+                String dataVencimento = "";
+                if (contrato.getDataCadastroString().equals(DataHoje.data())) {
+                    dataVencimento = DataHoje.alterDay(diaVencimento, DataHoje.data());
+                } else {
+                    dataVencimento = DataHoje.alterDay(diaVencimento, contrato.getDataCadastroString());
+                }
                 if (dataVencimento.equals("")) {
                     diaVencimento = diaVencimento - 1;
                     dataVencimento = DataHoje.alterDay(diaVencimento, DataHoje.data());
@@ -894,7 +933,7 @@ public class ContratoBean implements Serializable {
                     Messages.warn("Erro", "Erro ao adicionar taxa!");
                     dao.rollback();
                     return;
-                }                
+                }
             } else {
                 success = true;
                 listMovimentoTaxa.add(m);
@@ -905,7 +944,7 @@ public class ContratoBean implements Serializable {
         for (int j = 0; j < list.size(); j++) {
             listSelectItem.add(new SelectItem(j, listTaxas.get(j).getLabel(), listTaxas.get(j).getDescription()));
         }
-        listTaxas = listSelectItem;        
+        listTaxas = listSelectItem;
         idTaxa = 0;
         getListMovimentoTaxa();
         // getListTaxas();
@@ -920,13 +959,20 @@ public class ContratoBean implements Serializable {
         float sd = Moeda.converteUS$(saldoDevedor);
         saldoDevedor = Moeda.converteR$Float(sd + Moeda.converteUS$(valorServico));
         if (success != null) {
-            if (success) {
-                listTaxas.clear();
-                getListTaxas();
-                dao.commit();
-                listMovimento.clear();
-                listMovimentoTaxa.clear();
-                Messages.info("Sucesso", "Taxa adicionada!");
+            if(contrato.getId() != -1) {
+                if (success) {
+                    listTaxas.clear();
+                    getListTaxas();
+                    dao.commit();
+                    listMovimento.clear();
+                    listMovimentoTaxa.clear();
+                    Messages.info("Sucesso", "Taxa adicionada!");
+                }
+            } else {
+                if (success) {
+                    getListTaxas();
+                    Messages.info("Sucesso", "Taxa adicionada!");
+                }
             }
         }
         selectedServico();
@@ -940,7 +986,7 @@ public class ContratoBean implements Serializable {
         Dao dao = new Dao();
         dao.openTransaction();
         for (int i = 0; i < listMovimentoTaxa.size(); i++) {
-                if (contrato.getId() != -1) {
+            if (contrato.getId() != -1) {
                 if (i == 0) {
                     success = false;
                 }
@@ -987,9 +1033,9 @@ public class ContratoBean implements Serializable {
             }
         }
         try {
-            selectedServico();            
+            selectedServico();
         } catch (Exception e) {
-            
+
         }
     }
 
@@ -1926,4 +1972,30 @@ public class ContratoBean implements Serializable {
 
         }
     }
+
+    /**
+     * <ul>
+     * <li>1 - Dia de Vencimento;</li>
+     * </ul>
+     *
+     * @param tcase
+     */
+    public void listener(Integer tcase) {
+        switch (tcase) {
+            case 1:
+                if (contrato.getDataCadastroString().equals(DataHoje.data())) {
+                    diaVencimento = Integer.parseInt(DataHoje.livre(new Date(), "dd"));
+                } else {
+                    diaVencimento = Integer.parseInt(DataHoje.livre(contrato.getDataCadastro(), "dd"));
+                }
+                break;
+        }
+    }
+
+    public void selectedDataCadastro(SelectEvent event) {
+        SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
+        contrato.setDataCadastro(DataHoje.converte(format.format(event.getObject())));
+        listener(1);
+    }
+
 }
