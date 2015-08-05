@@ -1,5 +1,6 @@
 package br.com.clinicaintegrada.coordenacao;
 
+import br.com.clinicaintegrada.administrativo.TipoContrato;
 import br.com.clinicaintegrada.administrativo.TipoDesligamento;
 import br.com.clinicaintegrada.administrativo.TipoInternacao;
 import br.com.clinicaintegrada.pessoa.Filial;
@@ -69,6 +70,9 @@ public class Contrato implements Serializable {
     private String observacaoRescisao;
     @Column(name = "is_impresso")
     private Boolean impresso;
+    @JoinColumn(name = "id_tipo_contrato", referencedColumnName = "id", nullable = false)
+    @OneToOne
+    private TipoContrato tipoContrato;
 
     public Contrato() {
         this.id = -1;
@@ -90,9 +94,10 @@ public class Contrato implements Serializable {
         this.quantidadeParcelas = 1;
         this.observacaoRescisao = "";
         this.impresso = false;
+        this.tipoContrato = null;
     }
 
-    public Contrato(Integer id, Cliente cliente, Filial filial, Filial filialAtual, String senha, Date dataCadastro, Date dataInternacao, Date dataRescisao, Pessoa responsavel, Pessoa paciente, TipoInternacao tipoInternacao, int previsaoDias, TipoDesligamento tipoDesligamento, String observacao, Float valorTotal, Float valorEntrada, Integer quantidadeParcelas, String observacaoRescisao, Boolean impresso) {
+    public Contrato(Integer id, Cliente cliente, Filial filial, Filial filialAtual, String senha, Date dataCadastro, Date dataInternacao, Date dataRescisao, Pessoa responsavel, Pessoa paciente, TipoInternacao tipoInternacao, int previsaoDias, TipoDesligamento tipoDesligamento, String observacao, Float valorTotal, Float valorEntrada, Integer quantidadeParcelas, String observacaoRescisao, Boolean impresso, TipoContrato tipoContrato) {
         this.id = id;
         this.cliente = cliente;
         this.filial = filial;
@@ -112,6 +117,7 @@ public class Contrato implements Serializable {
         this.quantidadeParcelas = quantidadeParcelas;
         this.observacaoRescisao = observacaoRescisao;
         this.impresso = impresso;
+        this.tipoContrato = tipoContrato;
     }
 
     public Integer getId() {
@@ -317,6 +323,22 @@ public class Contrato implements Serializable {
         this.valorEntrada = valorEntrada;
     }
 
+    public Boolean getImpresso() {
+        return impresso;
+    }
+
+    public void setImpresso(Boolean impresso) {
+        this.impresso = impresso;
+    }
+
+    public TipoContrato getTipoContrato() {
+        return tipoContrato;
+    }
+
+    public void setTipoContrato(TipoContrato tipoContrato) {
+        this.tipoContrato = tipoContrato;
+    }
+
     public void selectedDataCadastro(SelectEvent event) {
         SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
         this.dataCadastro = DataHoje.converte(format.format(event.getObject()));
@@ -330,14 +352,6 @@ public class Contrato implements Serializable {
     public void selectedDataRecisao(SelectEvent event) {
         SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
         this.dataRescisao = DataHoje.converte(format.format(event.getObject()));
-    }
-
-    public Boolean getImpresso() {
-        return impresso;
-    }
-
-    public void setImpresso(Boolean impresso) {
-        this.impresso = impresso;
     }
 
 }
