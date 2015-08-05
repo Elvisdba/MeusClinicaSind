@@ -199,7 +199,7 @@
                                             <p:inputText size="5" value="#{contratoBean.adicionarDias}" converter="#{thisNumber}" rendered="#{contratoBean.contrato.quantidadeParcelas == 1 or contratoBean.contrato.valorEntrada > 0}" title="Limite de dias contados a partir da data de vencimento da primeira parcela">
                                                 <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaSaldoDevedor}" global="false"/>
                                             </p:inputText>
-                                            <p:commandLink value="?" onclick="PF('dlg_example_1').show()" styleClass="margin-left bold font-color-red" title="O que é?" global="false"/>
+                                            <p:commandLink value="?" onclick="PF('dlg_example_1').show()" styleClass="margin-left bold font-color-red" title="O que é?" global="false" rendered="#{contratoBean.contrato.quantidadeParcelas == 1 or contratoBean.contrato.valorEntrada > 0}"/>
                                         </p:column>
                                     </p:row>
                                 </p:panelGrid>
