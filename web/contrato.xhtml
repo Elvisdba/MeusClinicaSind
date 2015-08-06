@@ -83,26 +83,10 @@
                                         <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.selectedDataCadastro}" global="false"/> 
                                     </p:calendar>
                                 </h:panelGrid>
-                                <p:panel styleClass="margin-top-max" rendered="#{contratoBean.disabled[1]}">
-                                    <f:facet name="header">
-                                        <h:panelGrid columns="4">
-                                            <h:outputLabel value="Entidade Voluntária" styleClass="bold"/>
-                                        </h:panelGrid>
-                                    </f:facet>
-                                    <h:panelGrid columns="5" cellpadding="5">
-                                        <p:outputLabel value="CNPJ:" styleClass="margin-lef-max"/>
-                                        <p:inputMask mask="99.999.999/9999-99" placeholder="99.999.999/9999-99" size="15" title="Digite o CNPJ da entidade de cobrança">
-                                            <p:ajax event="change" update="@this :form_contrato:" />
-                                        </p:inputMask>                                            
-                                        <p:commandButton icon="ui-icon-search" title="Pesquisar responsável" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaJuridica')}" disabled="#{controleAcessoBean.view('pesquisaPessoaFisica')}" actionListener="#{contratoBean.putValidacao('responsavel')}" global="false"/>
-                                        <p:outputLabel />
-                                        <p:commandButton icon="ui-icon-close" action="#{contratoBean.clear(5)}" update=":form_contrato:" />
-                                    </h:panelGrid>
-                                </p:panel>
                                 <p:panel  styleClass="margin-top-max">
                                     <f:facet name="header">
                                         <h:panelGrid columns="4">
-                                            <h:outputLabel value="Responsável" styleClass="bold"/>
+                                            <h:outputLabel value="Responsável (Credor 1)" styleClass="bold"/>
                                         </h:panelGrid>
                                     </f:facet>
                                     <h:panelGrid columns="5" cellpadding="5">
@@ -115,6 +99,22 @@
                                         <p:commandButton icon="ui-icon-close" action="#{contratoBean.clear(1)}" update=":form_contrato:" rendered="#{contratoBean.contrato.responsavel.id != -1}" />
                                     </h:panelGrid>
                                 </p:panel>
+                                <p:panel styleClass="margin-top-max" rendered="#{contratoBean.disabled[1]}" style="color: red;">
+                                    <f:facet name="header">
+                                        <h:panelGrid columns="4">
+                                            <h:outputLabel value="Entidade / Responsável 2 (Credor 2)" styleClass="bold"/>
+                                        </h:panelGrid>
+                                    </f:facet>
+                                    <h:panelGrid columns="5" cellpadding="5">
+                                        <p:outputLabel value="CNPJ:" styleClass="margin-lef-max"/>
+                                        <p:inputMask mask="99.999.999/9999-99" placeholder="99.999.999/9999-99" size="15" value="#{contratoBean.contrato.cobranca2.documento}" title="Digite o CNPJ da entidade de cobrança" disabled="#{contratoBean.contrato.responsavel.id == -1}">
+                                            <p:ajax event="change" update="@this :form_contrato:" />
+                                        </p:inputMask>                                            
+                                        <p:commandButton icon="ui-icon-search" title="Pesquisar entidade de cobrança" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaJuridica')}" disabled="#{contratoBean.contrato.responsavel.id == -1}"/>
+                                        <p:outputLabel value="#{contratoBean.contrato.cobranca2.nome}"  />
+                                        <p:commandButton icon="ui-icon-close" action="#{contratoBean.clear(5)}" update=":form_contrato:" rendered="#{contratoBean.contrato.cobranca2.id == -1}"  />
+                                    </h:panelGrid>
+                                </p:panel>                                
                                 <p:panel styleClass="margin-top-max">
                                     <f:facet name="header">
                                         <h:panelGrid columns="2">
@@ -510,7 +510,7 @@
                                         <f:selectItem itemValue="17" itemLabel="17" />
                                         <f:selectItem itemValue="18" itemLabel="18" />
                                         <f:selectItem itemValue="19" itemLabel="19" />
-                                        <f:selectItem itemValue="21" itemLabel="20" />
+                                        <f:selectItem itemValue="20" itemLabel="20" />
                                         <f:selectItem itemValue="21" itemLabel="21" />
                                         <f:selectItem itemValue="22" itemLabel="22" />
                                         <f:selectItem itemValue="23" itemLabel="23" />
