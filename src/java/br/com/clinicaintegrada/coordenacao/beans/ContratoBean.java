@@ -3,6 +3,7 @@ package br.com.clinicaintegrada.coordenacao.beans;
 import br.com.clinicaintegrada.administrativo.ModeloContrato;
 import br.com.clinicaintegrada.administrativo.ModeloDocumentos;
 import br.com.clinicaintegrada.administrativo.Taxas;
+import br.com.clinicaintegrada.administrativo.TipoContrato;
 import br.com.clinicaintegrada.administrativo.TipoDesligamento;
 import br.com.clinicaintegrada.administrativo.TipoInternacao;
 import br.com.clinicaintegrada.administrativo.dao.ModeloContratoDao;
@@ -65,6 +66,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -94,6 +96,7 @@ public class ContratoBean implements Serializable {
     private List<ModeloDocumentos> listModeloDocumentos;
     private String calculaValorMovimentoAlterado;
     private List<SelectItem> listFTipoDocumento;
+    private List<SelectItem> listTipoContrato;
     private List<Contrato> listContratos;
     private List<SelectItem> listFilial;
     private List<SelectItem> listFilialAtual;
@@ -103,16 +106,18 @@ public class ContratoBean implements Serializable {
     private List<Movimento> listMovimentoContrato;
     private List<Movimento> listMovimentoTaxa;
     private Movimento updateMovimento;
-    private int idFilial;
-    private int idFilialAtual;
-    private int idTipoInternacao;
-    private int idTipoDesligamento;
+    private Integer idFilial;
+    private Integer idFilialAtual;
+    private Integer idTipoInternacao;
+    private Integer idTipoDesligamento;
+    private Integer idTipoContrato;
     private int idTaxa;
     private int indexList;
     private int diaVencimento;
     private boolean pesquisaResponsavel;
     private boolean disabledSave;
     private Boolean imprimeVerso;
+    private Boolean[] disabled;
     private String[] mensagem;
     private Integer numeroParcelasTaxa;
 
@@ -126,11 +131,13 @@ public class ContratoBean implements Serializable {
         listFilialAtual = new ArrayList<>();
         listTipoInternacao = new ArrayList<>();
         listTipoDesligamento = new ArrayList<>();
+        listTipoContrato = new ArrayList<>();
         listMovimento = new ArrayList<>();
         listMovimentoContrato = new ArrayList<>();
         listMovimentoTaxa = new ArrayList<>();
         idFilial = 0;
         idFilialAtual = 0;
+        idTipoContrato = 0;
         idTipoInternacao = 0;
         idTipoDesligamento = 0;
         pesquisaResponsavel = false;
@@ -157,6 +164,7 @@ public class ContratoBean implements Serializable {
         mensagem[0] = "";
         mensagem[1] = "";
         numeroParcelasTaxa = 1;
+        disabled = new Boolean[]{false, false};
     }
 
     @PreDestroy
@@ -192,6 +200,11 @@ public class ContratoBean implements Serializable {
         }
     }
 
+    /**
+     * 5 - Entidade
+     *
+     * @param tcase
+     */
     public void clear(int tcase) {
         switch (tcase) {
             case 1:
@@ -208,64 +221,70 @@ public class ContratoBean implements Serializable {
             case 4:
                 listModeloDocumentos.clear();
                 break;
+            case 5:
+
+                break;
         }
     }
 
     public void save() {
-        if (listTipoInternacao.isEmpty()) {
-            Messages.warn("Validação", "Cadastrar tipos de internação!");
-            return;
-        }
-        if (contrato.getDataCadastroString().isEmpty()) {
-            Messages.warn("Validação", "Informar data de cadastro!");
-            return;
-        }
-        if (contrato.getResponsavel().getId() == -1) {
-            Messages.warn("Validação", "Pesquisar responsável!");
-            return;
-        }
-        if (contrato.getPaciente().getId() == -1) {
-            Messages.warn("Validação", "Pesquisar paciente!");
-            return;
-        }
-        if (contrato.getValorTotal() == 0) {
-            Messages.warn("Validação", "Informar o valor do contrato!");
-            return;
-        }
-        if (disabledSave) {
-            Messages.warn("Validação", getCalculaValorMovimentoAlterado());
-            return;
-
-        }
-        Dao dao = new Dao();
-        contrato.setTipoInternacao((TipoInternacao) dao.find(new TipoInternacao(), Integer.parseInt(listTipoInternacao.get(idTipoInternacao).getDescription())));
-        Logger logger = new Logger();
-        dao.openTransaction();
-        FunctionsDao functionsDao = new FunctionsDao();
-        if (contrato.getSenha().isEmpty()) {
-            contrato.setSenha(PasswordGenerator.create());
-        }
-        if (contrato.getId() == -1) {
-            contrato.setCliente(SessaoCliente.get());
-            contrato.setFilial(MacFilial.getAcessoFilial().getFilial());
-            contrato.setFilialAtual((Filial) dao.find(new Filial(), Integer.parseInt(listFilialAtual.get(idFilialAtual).getDescription())));
-            ContratoDao contratoDao = new ContratoDao();
-            if (contratoDao.existeContrato(contrato)) {
-                Messages.warn("Validação", "Contrato já existe!");
+        try {
+            if (listTipoInternacao.isEmpty()) {
+                Messages.warn("Validação", "Cadastrar tipos de internação!");
                 return;
             }
-            contrato.setTipoDesligamento(null);
-            if (dao.save(contrato)) {
-                listMovimento.addAll(listMovimentoContrato);
-                listMovimento.addAll(listMovimentoTaxa);
-                float valorTotal = 0;
-                if (!listMovimentoTaxa.isEmpty()) {
-                    for (int i = 0; i < listMovimentoTaxa.size(); i++) {
-                        valorTotal += listMovimentoTaxa.get(i).getValor();
-                    }
+            if (contrato.getDataCadastroString().isEmpty()) {
+                Messages.warn("Validação", "Informar data de cadastro!");
+                return;
+            }
+            if (contrato.getResponsavel().getId() == -1) {
+                Messages.warn("Validação", "Pesquisar responsável!");
+                return;
+            }
+            if (contrato.getPaciente().getId() == -1) {
+                Messages.warn("Validação", "Pesquisar paciente!");
+                return;
+            }
+            Dao dao = new Dao();
+            contrato.setTipoContrato((TipoContrato) dao.find(new TipoContrato(), Integer.parseInt(listTipoContrato.get(idTipoContrato).getDescription())));
+            if (contrato.getTipoContrato().getId() != 2) {
+                if (contrato.getValorTotal() == 0) {
+                    Messages.warn("Validação", "Informar o valor do contrato!");
+                    return;
                 }
-                valorTotal = valorTotal + contrato.getValorTotal();
-                if (!listMovimento.isEmpty()) {
+            }
+            if (disabledSave) {
+                Messages.warn("Validação", getCalculaValorMovimentoAlterado());
+                return;
+
+            }
+            contrato.setTipoInternacao((TipoInternacao) dao.find(new TipoInternacao(), Integer.parseInt(listTipoInternacao.get(idTipoInternacao).getDescription())));
+            Logger logger = new Logger();
+            dao.openTransaction();
+            FunctionsDao functionsDao = new FunctionsDao();
+            if (contrato.getSenha().isEmpty()) {
+                contrato.setSenha(PasswordGenerator.create());
+            }
+            if (contrato.getId() == null) {
+                contrato.setCliente(SessaoCliente.get());
+                contrato.setFilial(MacFilial.getAcessoFilial().getFilial());
+                contrato.setFilialAtual((Filial) dao.find(new Filial(), Integer.parseInt(listFilialAtual.get(idFilialAtual).getDescription())));
+                ContratoDao contratoDao = new ContratoDao();
+                if (contratoDao.existeContrato(contrato)) {
+                    Messages.warn("Validação", "Contrato já existe!");
+                    return;
+                }
+                contrato.setTipoDesligamento(null);
+                if (dao.save(contrato)) {
+                    listMovimento.addAll(listMovimentoContrato);
+                    listMovimento.addAll(listMovimentoTaxa);
+                    float valorTotal = 0;
+                    if (!listMovimentoTaxa.isEmpty()) {
+                        for (int i = 0; i < listMovimentoTaxa.size(); i++) {
+                            valorTotal += listMovimentoTaxa.get(i).getValor();
+                        }
+                    }
+                    valorTotal = valorTotal + contrato.getValorTotal();
                     Lote lote = new Lote();
                     lote.setCliente(SessaoCliente.get());
                     lote.setValor(valorTotal);
@@ -289,76 +308,131 @@ public class ContratoBean implements Serializable {
                         dao.rollback();
                         return;
                     }
-                    for (int i = 0; i < listMovimento.size(); i++) {
-                        listMovimento.get(i).setLote(lote);
-                        if (!dao.save(listMovimento.get(i))) {
-                            Messages.warn("Erro", "Ao gerar movimento!");
+                    if (contrato.getTipoContrato().getId() == 2) {
+                        DataHoje dh = new DataHoje();
+                        boolean isEntrada = false;
+                        Servicos s1 = (Servicos) dao.find(new Servicos(), 1);
+                        Movimento m = new Movimento();
+                        int addDias;
+                        try {
+                            addDias = Integer.parseInt(adicionarDias);
+                        } catch (Exception e) {
+                            addDias = 0;
+                        }
+                        if (addDias > 0) {
+                            m.setVencimento(DataHoje.converte(dh.incrementarDias(addDias, contrato.getDataCadastroString())));
+                            isEntrada = true;
+                        } else {
+                            m.setVencimento(contrato.getDataCadastro());
+                        }
+                        m.setPessoa(contrato.getResponsavel());
+                        m.setTipoDocumento(s1.getTipoDocumento());
+                        m.setServicos(s1);
+                        m.setTipoServico((TipoServico) dao.find(new TipoServico(), 1));
+                        m.setEs("E");
+                        m.setNrCtrBoleto(null);
+                        m.setReferencia(DataHoje.dataReferencia(m.getVencimentoString()));
+                        m.setDocumento("");
+                        m.setLote(lote);
+                        m.setAtivo(true);
+                        m.setEvento(null);
+                        m.setValor(0);
+                        m.setBaixa(null);
+                        if (addDias > 0) {
+                            m.setVencimento(DataHoje.converte(dh.incrementarDias(addDias, contrato.getDataCadastroString())));
+                            isEntrada = true;
+                        } else {
+                            m.setVencimento(contrato.getDataCadastro());
+                        }
+                        if (!dao.save(m)) {
+                            Messages.warn("Erro", "Ao salvar movimento!");
                             dao.rollback();
                             return;
                         }
+                    } else if (contrato.getTipoContrato().getId() == 3) {
+                        Messages.warn("Validação", "Informar entidade voluntária (cobrança)");
+                        dao.rollback();
+                        return;
                     }
+                    if (!listMovimento.isEmpty()) {
+                        for (int i = 0; i < listMovimento.size(); i++) {
+                            listMovimento.get(i).setLote(lote);
+                            if (!dao.save(listMovimento.get(i))) {
+                                Messages.warn("Erro", "Ao gerar movimento!");
+                                dao.rollback();
+                                return;
+                            }
+                        }
+                    }
+                    dao.commit();
+                    logger.save(
+                            "ID: " + contrato.getId()
+                            + " - Filial: [" + contrato.getFilial().getFilial().getPessoa().getId() + "] - " + contrato.getFilial().getFilial().getPessoa().getNome()
+                            + " - Filial Atual: [" + contrato.getFilialAtual().getFilial().getPessoa().getId() + "] - " + contrato.getFilialAtual().getFilial().getPessoa().getNome()
+                            + " - Tipo Contrato: [" + contrato.getTipoContrato().getId() + "] - " + contrato.getTipoContrato().getDescricao()
+                            + " - Responsável: [" + contrato.getResponsavel().getId() + "] - " + contrato.getResponsavel().getNome()
+                            + " - Paciente: [" + contrato.getPaciente().getId() + "] - " + contrato.getPaciente().getNome()
+                    );
+                    Messages.info("Sucesso", "Registro inserido!");
+                    functionsDao.gerarBoletos();
+                    listTaxas.clear();
+                    getListMovimentoTaxa();
+                    getListTaxas();
+                    listMovimento.clear();
+                    listMovimentoTaxa.clear();
+                    listMovimentoContrato.clear();
+                    getListMovimentoContrato();
+                } else {
+                    dao.rollback();
+                    Messages.warn("Erro", "Erro ao inserir registro!");
                 }
-                dao.commit();
-                logger.save(
-                        "ID: " + contrato.getId()
-                        + " - Filial: [" + contrato.getFilial().getFilial().getPessoa().getId() + "] - " + contrato.getFilial().getFilial().getPessoa().getNome()
-                        + " - Filial Atual: [" + contrato.getFilialAtual().getFilial().getPessoa().getNome() + "] - " + contrato.getFilialAtual().getFilial().getPessoa().getNome()
-                        + " - Responsável: [" + contrato.getResponsavel().getId() + "] - " + contrato.getResponsavel().getNome()
-                        + " - Paciente: [" + contrato.getPaciente().getId() + "] - " + contrato.getPaciente().getNome()
-                );
-                Messages.info("Sucesso", "Registro inserido!");
-                functionsDao.gerarBoletos();
-                listTaxas.clear();
-                getListMovimentoTaxa();
-                getListTaxas();
-                listMovimento.clear();
-                listMovimentoTaxa.clear();
-                listMovimentoContrato.clear();
-                getListMovimentoContrato();
             } else {
-                dao.rollback();
-                Messages.warn("Erro", "Erro ao inserir registro!");
-            }
-        } else {
-            if (contrato.getDataRescisao() != null) {
-                if (getListTipoDesligamento().isEmpty()) {
-                    Messages.warn("Validação", "Cadastrar tipos de desligamento!");
-                    return;
+                if (contrato.getDataRescisao() != null) {
+                    if (getListTipoDesligamento().isEmpty()) {
+                        Messages.warn("Validação", "Cadastrar tipos de desligamento!");
+                        return;
+                    }
+                    contrato.setTipoDesligamento((TipoDesligamento) dao.find(new TipoDesligamento(), Integer.parseInt(listTipoDesligamento.get(idTipoDesligamento).getDescription())));
                 }
-                contrato.setTipoDesligamento((TipoDesligamento) dao.find(new TipoDesligamento(), Integer.parseInt(listTipoDesligamento.get(idTipoDesligamento).getDescription())));
+                Contrato c = (Contrato) dao.find(new Contrato(), contrato.getId());
+                String beforeUpdate
+                        = "ID: " + c.getId()
+                        + " - Filial: [" + c.getFilial().getFilial().getPessoa().getId() + "] - " + c.getFilial().getFilial().getPessoa().getNome()
+                        + " - Filial Atual: [" + c.getFilialAtual().getFilial().getPessoa().getId() + "] - " + c.getFilialAtual().getFilial().getPessoa().getNome()
+                        + " - Tipo Contrato: [" + contrato.getTipoContrato().getId() + "] - " + contrato.getTipoContrato().getDescricao()
+                        + " - Responsável: [" + c.getResponsavel().getId() + "] - " + c.getResponsavel().getNome()
+                        + " - Paciente: [" + c.getPaciente().getId() + "] - " + c.getPaciente().getNome();
+                if (dao.update(contrato)) {
+                    dao.commit();
+                    Messages.info("Sucesso", "Registro atualizado!");
+                    logger.update(beforeUpdate,
+                            "ID: " + contrato.getId()
+                            + " - Filial: [" + contrato.getFilial().getFilial().getPessoa().getId() + "] - " + contrato.getFilial().getFilial().getPessoa().getNome()
+                            + " - Filial Atual: [" + contrato.getFilialAtual().getFilial().getPessoa().getId() + "] - " + contrato.getFilialAtual().getFilial().getPessoa().getNome()
+                            + " - Tipo Contrato: [" + contrato.getTipoContrato().getId() + "] - " + contrato.getTipoContrato().getDescricao()
+                            + " - Responsável: [" + contrato.getResponsavel().getId() + "] - " + contrato.getResponsavel().getNome()
+                            + " - Paciente: [" + contrato.getPaciente().getId() + "] - " + contrato.getPaciente().getNome()
+                    );
+                    functionsDao.gerarBoletos();
+                    listTaxas.clear();
+                    getListMovimentoTaxa();
+                    getListTaxas();
+                    listMovimento.clear();
+                    listMovimentoTaxa.clear();
+                    listMovimentoContrato.clear();
+                    getListMovimentoContrato();
+                } else {
+                    dao.rollback();
+                    Messages.warn("Erro", "Erro ao atualizar registro!");
+                }
             }
-            Contrato c = (Contrato) dao.find(new Contrato(), contrato.getId());
-            String beforeUpdate
-                    = "ID: " + c.getId()
-                    + " - Filial: [" + c.getFilial().getFilial().getPessoa().getId() + "] - " + c.getFilial().getFilial().getPessoa().getNome()
-                    + " - Filial Atual: [" + c.getFilialAtual().getFilial().getPessoa().getNome() + "] - " + c.getFilialAtual().getFilial().getPessoa().getNome()
-                    + " - Responsável: [" + c.getResponsavel().getId() + "] - " + c.getResponsavel().getNome()
-                    + " - Paciente: [" + c.getPaciente().getId() + "] - " + c.getPaciente().getNome();
-            if (dao.update(contrato)) {
-                dao.commit();
-                Messages.info("Sucesso", "Registro atualizado!");
-                logger.update(beforeUpdate,
-                        "ID: " + contrato.getId()
-                        + " - Filial: [" + contrato.getFilial().getFilial().getPessoa().getId() + "] - " + contrato.getFilial().getFilial().getPessoa().getNome()
-                        + " - Filial Atual: [" + contrato.getFilialAtual().getFilial().getPessoa().getNome() + "] - " + contrato.getFilialAtual().getFilial().getPessoa().getNome()
-                        + " - Responsável: [" + contrato.getResponsavel().getId() + "] - " + contrato.getResponsavel().getNome()
-                        + " - Paciente: [" + contrato.getPaciente().getId() + "] - " + contrato.getPaciente().getNome()
-                );
-                functionsDao.gerarBoletos();
-                listTaxas.clear();
-                getListMovimentoTaxa();
-                getListTaxas();
-                listMovimento.clear();
-                listMovimentoTaxa.clear();
-                listMovimentoContrato.clear();
-                getListMovimentoContrato();
-            } else {
-                dao.rollback();
-                Messages.warn("Erro", "Erro ao atualizar registro!");
+
+            if (contrato.getId()
+                    != -1) {
+                new FotosEvolucaoBean().execute(contrato);
             }
-        }
-        if (contrato.getId() != -1) {
-            new FotosEvolucaoBean().execute(contrato);
+        } catch (Exception e) {
+            Messages.warn("Sistema", e.getMessage());
         }
 
     }
@@ -419,6 +493,7 @@ public class ContratoBean implements Serializable {
         } else {
             return "contrato";
         }
+        listener(2);
         return "contrato";
     }
 
@@ -438,7 +513,7 @@ public class ContratoBean implements Serializable {
         }
         Logger logger = new Logger();
         dao.openTransaction();
-        if (contrato.getId() != -1) {
+        if (contrato.getId() != null) {
             FotosDao fotosDao = new FotosDao();
             List<Fotos> listFotos = fotosDao.findFotosByContrato(contrato.getId());
             for (int i = 0; i < listFotos.size(); i++) {
@@ -487,6 +562,7 @@ public class ContratoBean implements Serializable {
                         "ID: " + contrato.getId()
                         + " - Filial: [" + contrato.getFilial().getFilial().getPessoa().getId() + "] - " + contrato.getFilial().getFilial().getPessoa().getNome()
                         + " - Filial Atual: [" + contrato.getFilialAtual().getFilial().getPessoa().getNome() + "] - " + contrato.getFilialAtual().getFilial().getPessoa().getNome()
+                        + " - Tipo Contrato: [" + contrato.getTipoContrato().getId() + "] - " + contrato.getTipoContrato().getDescricao()
                         + " - Responsável: [" + contrato.getResponsavel().getId() + "] - " + contrato.getResponsavel().getNome()
                         + " - Paciente: [" + contrato.getPaciente().getId() + "] - " + contrato.getPaciente().getNome()
                 );
@@ -516,7 +592,7 @@ public class ContratoBean implements Serializable {
                 }
             }
             //list.clear();
-            if (contrato.getId() == -1) {
+            if (contrato.getId() == null) {
                 saldoDevedor = Float.toString((contrato.getValorTotal()) + t);
             } else {
                 list = getListMovimentoContrato();
@@ -670,35 +746,35 @@ public class ContratoBean implements Serializable {
         this.listTipoDesligamento = listTipoDesligamento;
     }
 
-    public int getIdFilial() {
+    public Integer getIdFilial() {
         return idFilial;
     }
 
-    public void setIdFilial(int idFilial) {
+    public void setIdFilial(Integer idFilial) {
         this.idFilial = idFilial;
     }
 
-    public int getIdFilialAtual() {
+    public Integer getIdFilialAtual() {
         return idFilialAtual;
     }
 
-    public void setIdFilialAtual(int idFilialAtual) {
+    public void setIdFilialAtual(Integer idFilialAtual) {
         this.idFilialAtual = idFilialAtual;
     }
 
-    public int getIdTipoInternacao() {
+    public Integer getIdTipoInternacao() {
         return idTipoInternacao;
     }
 
-    public void setIdTipoInternacao(int idTipoInternacao) {
+    public void setIdTipoInternacao(Integer idTipoInternacao) {
         this.idTipoInternacao = idTipoInternacao;
     }
 
-    public int getIdTipoDesligamento() {
+    public Integer getIdTipoDesligamento() {
         return idTipoDesligamento;
     }
 
-    public void setIdTipoDesligamento(int idTipoDesligamento) {
+    public void setIdTipoDesligamento(Integer idTipoDesligamento) {
         this.idTipoDesligamento = idTipoDesligamento;
     }
 
@@ -726,7 +802,7 @@ public class ContratoBean implements Serializable {
     }
 
     public void geraParcelas() {
-        if (contrato.getId() == -1) {
+        if (contrato.getId() == null) {
             if (contrato.getQuantidadeParcelas() == 0) {
                 Messages.warn("Validação", "Informar número de parcelas maior que 0, Ex. 1");
                 return;
@@ -829,7 +905,7 @@ public class ContratoBean implements Serializable {
     }
 
     public List<Movimento> getListMovimento() {
-        if (contrato.getId() != -1) {
+        if (contrato.getId() != null) {
             if (listMovimento.isEmpty()) {
                 LoteDao loteDao = new LoteDao();
                 Lote l = loteDao.findLoteByContrato(contrato.getId());
@@ -862,11 +938,11 @@ public class ContratoBean implements Serializable {
 
     }
 
-    public int getDiaVencimento() {
+    public Integer getDiaVencimento() {
         return diaVencimento;
     }
 
-    public void setDiaVencimento(int diaVencimento) {
+    public void setDiaVencimento(Integer diaVencimento) {
         this.diaVencimento = diaVencimento;
     }
 
@@ -920,7 +996,7 @@ public class ContratoBean implements Serializable {
                 return;
             }
             m.setBaixa(null);
-            if (contrato.getId() != -1) {
+            if (contrato.getId() != null) {
                 if (i == 0) {
                     success = false;
                 }
@@ -959,11 +1035,13 @@ public class ContratoBean implements Serializable {
         float sd = Moeda.converteUS$(saldoDevedor);
         saldoDevedor = Moeda.converteR$Float(sd + Moeda.converteUS$(valorServico));
         if (success != null) {
-            if(contrato.getId() != -1) {
+            if (contrato.getId() != null) {
                 if (success) {
                     listTaxas.clear();
                     getListTaxas();
                     dao.commit();
+                    FunctionsDao functionsDao = new FunctionsDao();
+                    functionsDao.gerarBoletos();
                     listMovimento.clear();
                     listMovimentoTaxa.clear();
                     Messages.info("Sucesso", "Taxa adicionada!");
@@ -986,7 +1064,7 @@ public class ContratoBean implements Serializable {
         Dao dao = new Dao();
         dao.openTransaction();
         for (int i = 0; i < listMovimentoTaxa.size(); i++) {
-            if (contrato.getId() != -1) {
+            if (contrato.getId() != null) {
                 if (i == 0) {
                     success = false;
                 }
@@ -1049,7 +1127,7 @@ public class ContratoBean implements Serializable {
             TaxasDao taxasDao = new TaxasDao();
             List<Taxas> list;
             Boolean b = false;
-            if (contrato.getId() == -1) {
+            if (contrato.getId() == null) {
                 list = taxasDao.pesquisaTodasTaxasPorCliente(SessaoCliente.get().getId());
                 if (list.size() == listMovimentoTaxa.size()) {
                     list.clear();
@@ -1106,11 +1184,11 @@ public class ContratoBean implements Serializable {
         this.valorServico = valorServico;
     }
 
-    public int getIdTaxa() {
+    public Integer getIdTaxa() {
         return idTaxa;
     }
 
-    public void setIdTaxa(int idTaxa) {
+    public void setIdTaxa(Integer idTaxa) {
         this.idTaxa = idTaxa;
     }
 
@@ -1159,7 +1237,7 @@ public class ContratoBean implements Serializable {
             Messages.warn("Sistema", "Necessário gerar movimento para imprimir esse contrato!");
             return;
         }
-        if (contrato.getId() != -1) {
+        if (contrato.getId() != null) {
             Dao dao = new Dao();
             String contratoDiaSemana = "";
             ModeloContrato modeloContrato = new ModeloContrato();
@@ -1210,7 +1288,7 @@ public class ContratoBean implements Serializable {
                 estadoPacienteString = pessoaEnderecoPaciente.getEndereco().getCidade().getUf();
                 cepPacienteString = pessoaEnderecoPaciente.getEndereco().getCep();
             }
-            if (contrato.getResponsavel().getId() != contrato.getPaciente().getId()) {
+            if (!Objects.equals(contrato.getResponsavel().getId(), contrato.getPaciente().getId())) {
                 // Tipo Documento - CPF
                 if (contrato.getResponsavel().getTipoDocumento().getId() == 1) {
                     idTipoEndereco = 1;
@@ -1435,7 +1513,7 @@ public class ContratoBean implements Serializable {
                         Download download = new Download(fileName, pathPasta, "application/pdf", FacesContext.getCurrentInstance());
                         download.open();
                         download.close();
-                        if (contrato.getId() != -1) {
+                        if (contrato.getId() != null) {
                             contrato.setImpresso(true);
                             dao.update(contrato, true);
                         }
@@ -1496,7 +1574,7 @@ public class ContratoBean implements Serializable {
 
     public String imprimirOutros(int idModeloContratoDocumentos, Boolean compact) {
 
-        if (contrato.getId() != -1) {
+        if (contrato.getId() != null) {
             Dao dao = new Dao();
             String contratoDiaSemana = "";
             ModeloContrato modeloContrato = new ModeloContrato();
@@ -1710,7 +1788,7 @@ public class ContratoBean implements Serializable {
     }
 
     public String getCalculaValorMovimentoAlterado() {
-        if (contrato.getId() == -1) {
+        if (contrato.getId() == null) {
             disabledSave = false;
             float v = 0;
             float vn = 0;
@@ -1724,7 +1802,9 @@ public class ContratoBean implements Serializable {
                 if (vn > 0) {
                     return "Existe uma difereça na soma das parcelas do contrato: Acrescentar R$ " + Moeda.converteR$Float(vn) + ".  Corrigir para salvar.";
                 } else if (vn < 0) {
-                    return "Existe uma difereça na soma das parcelas do contrato: Remover R$ " + Moeda.converteR$Float(vn) + ".  Corrigir para salvar.";
+                    if (!listMovimentoContrato.isEmpty()) {
+                        return "Existe uma difereça na soma das parcelas do contrato: Remover R$ " + Moeda.converteR$Float(vn) + ".  Corrigir para salvar.";
+                    }
                 } else {
                     return "";
                 }
@@ -1800,11 +1880,11 @@ public class ContratoBean implements Serializable {
         this.updateMovimento = updateMovimento;
     }
 
-    public int getIndexList() {
+    public Integer getIndexList() {
         return indexList;
     }
 
-    public void setIndexList(int indexList) {
+    public void setIndexList(Integer indexList) {
         this.indexList = indexList;
     }
 
@@ -1989,6 +2069,22 @@ public class ContratoBean implements Serializable {
                     diaVencimento = Integer.parseInt(DataHoje.livre(contrato.getDataCadastro(), "dd"));
                 }
                 break;
+            case 2:
+                Integer tipo_contrato_id = ((TipoContrato) new Dao().find(new TipoContrato(), Integer.parseInt(listTipoContrato.get(idTipoContrato).getDescription()))).getId();
+                if (tipo_contrato_id == 2) {
+                    contrato.setValorEntrada(new Float(0));
+                    contrato.setValorTotal(new Float(0));
+                    contrato.setQuantidadeParcelas(0);
+                    disabled[0] = true;
+                } else {
+                    disabled[0] = false;
+                }
+                if (tipo_contrato_id == 3) {
+                    disabled[1] = true;
+                } else {
+                    disabled[1] = false;
+                }
+                break;
         }
     }
 
@@ -1996,6 +2092,49 @@ public class ContratoBean implements Serializable {
         SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
         contrato.setDataCadastro(DataHoje.converte(format.format(event.getObject())));
         listener(1);
+    }
+
+    public List<SelectItem> getListTipoContrato() {
+        if (listTipoContrato.isEmpty()) {
+            Dao dao = new Dao();
+            List<TipoContrato> list = (List<TipoContrato>) dao.list(new TipoContrato());
+            for (int i = 0; i < list.size(); i++) {
+                if (i == 0) {
+                    idTipoContrato = i;
+                }
+                boolean disabled = false;
+                if (list.get(i).getId() == 3) {
+                    disabled = true;
+                }
+                listTipoContrato.add(new SelectItem(i, list.get(i).getDescricao(), "" + list.get(i).getId(), false));
+            }
+        }
+        return listTipoContrato;
+    }
+
+    public void setListTipoContrato(List<SelectItem> listTipoContrato) {
+        this.listTipoContrato = listTipoContrato;
+    }
+
+    public Integer getIdTipoContrato() {
+        return idTipoContrato;
+    }
+
+    public void setIdTipoContrato(Integer idTipoContrato) {
+        this.idTipoContrato = idTipoContrato;
+    }
+
+    /**
+     * 1 - Social 2 - Entidade
+     *
+     * @return
+     */
+    public Boolean[] getDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(Boolean[] disabled) {
+        this.disabled = disabled;
     }
 
 }
