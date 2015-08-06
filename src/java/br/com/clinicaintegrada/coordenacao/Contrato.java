@@ -75,7 +75,7 @@ public class Contrato implements Serializable {
     private TipoContrato tipoContrato;
 
     public Contrato() {
-        this.id = -1;
+        this.id = null;
         this.cliente = new Cliente();
         this.filial = new Filial();
         this.filialAtual = new Filial();
@@ -268,7 +268,7 @@ public class Contrato implements Serializable {
         return valorTotal;
     }
 
-    public void setValorTotal(float valorTotal) {
+    public void setValorTotal(Float valorTotal) {
         this.valorTotal = valorTotal;
     }
 
