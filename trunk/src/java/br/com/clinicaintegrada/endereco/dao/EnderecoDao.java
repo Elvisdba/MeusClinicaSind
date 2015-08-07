@@ -70,7 +70,7 @@ public class EnderecoDao extends DB {
     public List pesquisaEndereco(int idDescricao, int idCidade, int idBairro, int idLogradouro) {
         try {
             Query qry = getEntityManager().createNativeQuery(""
-                    + "SELECT end.*                                             "
+                    + "SELECT ENDE.*                                            "
                     + "  FROM end_endereco AS ENDE                              "
                     + " WHERE ENDE.id_descricao_endereco    = " + idDescricao
                     + "   AND ENDE.id_cidade                = " + idCidade
