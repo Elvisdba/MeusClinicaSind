@@ -73,6 +73,13 @@ public class Contrato implements Serializable {
     @JoinColumn(name = "id_tipo_contrato", referencedColumnName = "id", nullable = false)
     @OneToOne
     private TipoContrato tipoContrato;
+    @Column(name = "nr_entrada2", nullable = true)
+    private Float valorEntrada2;
+    @Column(name = "nr_valor_total2", nullable = true)
+    private Float valorTotal2;
+    @JoinColumn(name = "id_cobranca2", referencedColumnName = "id", nullable = true)
+    @OneToOne
+    private Pessoa cobranca2;
 
     public Contrato() {
         this.id = null;
@@ -95,9 +102,12 @@ public class Contrato implements Serializable {
         this.observacaoRescisao = "";
         this.impresso = false;
         this.tipoContrato = null;
+        this.valorEntrada2 = new Float(0);
+        this.valorTotal2 = new Float(0);
+        this.cobranca2 = new Pessoa();
     }
 
-    public Contrato(Integer id, Cliente cliente, Filial filial, Filial filialAtual, String senha, Date dataCadastro, Date dataInternacao, Date dataRescisao, Pessoa responsavel, Pessoa paciente, TipoInternacao tipoInternacao, int previsaoDias, TipoDesligamento tipoDesligamento, String observacao, Float valorTotal, Float valorEntrada, Integer quantidadeParcelas, String observacaoRescisao, Boolean impresso, TipoContrato tipoContrato) {
+    public Contrato(Integer id, Cliente cliente, Filial filial, Filial filialAtual, String senha, Date dataCadastro, Date dataInternacao, Date dataRescisao, Pessoa responsavel, Pessoa paciente, TipoInternacao tipoInternacao, int previsaoDias, TipoDesligamento tipoDesligamento, String observacao, Float valorTotal, Float valorEntrada, Integer quantidadeParcelas, String observacaoRescisao, Boolean impresso, TipoContrato tipoContrato, Float valorEntrada2, Float valorTotal2, Pessoa cobranca2) {
         this.id = id;
         this.cliente = cliente;
         this.filial = filial;
@@ -118,6 +128,7 @@ public class Contrato implements Serializable {
         this.observacaoRescisao = observacaoRescisao;
         this.impresso = impresso;
         this.tipoContrato = tipoContrato;
+        this.cobranca2 = cobranca2;
     }
 
     public Integer getId() {
@@ -294,7 +305,10 @@ public class Contrato implements Serializable {
 
     public void setQuantidadeParcelas(Integer quantidadeParcelas) {
         if (quantidadeParcelas < 0) {
-            quantidadeParcelas = 0;
+            return;
+        }
+        if (quantidadeParcelas > 12) {
+            return;
         }
         this.quantidadeParcelas = quantidadeParcelas;
     }
@@ -337,6 +351,51 @@ public class Contrato implements Serializable {
 
     public void setTipoContrato(TipoContrato tipoContrato) {
         this.tipoContrato = tipoContrato;
+    }
+
+    public Float getValorEntrada2() {
+        return valorEntrada2;
+    }
+
+    public void setValorEntrada2(Float valorEntrada2) {
+        this.valorEntrada2 = valorEntrada2;
+    }
+
+    public Float getValorTotal2() {
+        return valorTotal2;
+    }
+
+    public void setValorTotal2(Float valorTotal2) {
+        this.valorTotal2 = valorTotal2;
+    }
+
+    public String getValorTotal2String() {
+        return Moeda.converteR$Float(valorTotal2);
+    }
+
+    public void setValorTotal2String(String valorTotal2String) {
+        this.valorTotal2 = Moeda.converteUS$(valorTotal2String);
+    }
+
+    public String getValorEntrada2String() {
+        return Moeda.converteR$Float(valorEntrada2);
+    }
+
+    public void setValorEntrada2String(String valorEntrada2String) {
+        this.valorEntrada2 = Moeda.converteUS$(valorEntrada2String);
+    }
+
+    /**
+     * 2º Credor para cobrança
+     *
+     * @return
+     */
+    public Pessoa getCobranca2() {
+        return cobranca2;
+    }
+
+    public void setCobranca2(Pessoa cobranca2) {
+        this.cobranca2 = cobranca2;
     }
 
     public void selectedDataCadastro(SelectEvent event) {
