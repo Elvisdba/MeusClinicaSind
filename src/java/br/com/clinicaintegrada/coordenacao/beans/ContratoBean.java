@@ -27,12 +27,14 @@ import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.Filial;
 import br.com.clinicaintegrada.pessoa.Fisica;
 import br.com.clinicaintegrada.pessoa.Fotos;
+import br.com.clinicaintegrada.pessoa.Juridica;
 import br.com.clinicaintegrada.pessoa.Pessoa;
 import br.com.clinicaintegrada.pessoa.PessoaEndereco;
 import br.com.clinicaintegrada.pessoa.beans.FotosEvolucaoBean;
 import br.com.clinicaintegrada.pessoa.dao.FilialDao;
 import br.com.clinicaintegrada.pessoa.dao.FisicaDao;
 import br.com.clinicaintegrada.pessoa.dao.FotosDao;
+import br.com.clinicaintegrada.pessoa.dao.JuridicaDao;
 import br.com.clinicaintegrada.pessoa.dao.PessoaEnderecoDao;
 import br.com.clinicaintegrada.seguranca.Cliente;
 import br.com.clinicaintegrada.seguranca.MacFilial;
@@ -120,6 +122,9 @@ public class ContratoBean implements Serializable {
     private Boolean[] disabled;
     private String[] mensagem;
     private Integer numeroParcelasTaxa;
+    private Juridica cobranca2;
+    private Float valorTotalResponsavel;
+    private Float valorTotalCobranca2;
 
     @PostConstruct
     public void init() {
@@ -165,6 +170,9 @@ public class ContratoBean implements Serializable {
         mensagem[1] = "";
         numeroParcelasTaxa = 1;
         disabled = new Boolean[]{false, false};
+        cobranca2 = new Juridica();
+        valorTotalResponsavel = new Float(0);
+        valorTotalCobranca2 = new Float(0);
     }
 
     @PreDestroy
@@ -210,9 +218,11 @@ public class ContratoBean implements Serializable {
             case 1:
                 contrato.setResponsavel(new Pessoa());
                 contrato.setPaciente(new Pessoa());
+                contrato.setCobranca2(new Pessoa());
                 break;
             case 2:
                 contrato.setPaciente(new Pessoa());
+                contrato.setCobranca2(new Pessoa());
                 break;
             // DESFAZER RESCISÃO
             case 3:
@@ -222,13 +232,20 @@ public class ContratoBean implements Serializable {
                 listModeloDocumentos.clear();
                 break;
             case 5:
-
+                contrato.setCobranca2(new Pessoa());
                 break;
         }
     }
 
     public void save() {
         try {
+            if (contrato.getId() != null) {
+                Contrato c = (Contrato) new Dao().find(new Contrato(), contrato.getId());
+                if (c == null) {
+                    Messages.warn("Sistema", "Erro ao inserir cadastro, por favor limpe os dados e tente novamente!");
+                    return;
+                }
+            }
             if (listTipoInternacao.isEmpty()) {
                 Messages.warn("Validação", "Cadastrar tipos de internação!");
                 return;
@@ -246,12 +263,21 @@ public class ContratoBean implements Serializable {
                 return;
             }
             Dao dao = new Dao();
-            contrato.setTipoContrato((TipoContrato) dao.find(new TipoContrato(), Integer.parseInt(listTipoContrato.get(idTipoContrato).getDescription())));
+            contrato.setTipoContrato(getTipoContrato());
             if (contrato.getTipoContrato().getId() != 2) {
                 if (contrato.getValorTotal() == 0) {
                     Messages.warn("Validação", "Informar o valor do contrato!");
                     return;
                 }
+            }
+            if (contrato.getTipoContrato().getId() == 3) {
+                if (contrato.getCobranca2().getId() == -1) {
+                    Messages.warn("Validação", "Pesquisar responsável 2!");
+                    contrato.setValorTotal2(valorTotalCobranca2);
+                    return;
+                }
+            } else {
+                contrato.setCobranca2(null);
             }
             if (disabledSave) {
                 Messages.warn("Validação", getCalculaValorMovimentoAlterado());
@@ -284,7 +310,7 @@ public class ContratoBean implements Serializable {
                             valorTotal += listMovimentoTaxa.get(i).getValor();
                         }
                     }
-                    valorTotal = valorTotal + contrato.getValorTotal();
+                    valorTotal = valorTotal + contrato.getValorTotal() + contrato.getValorTotal2();
                     Lote lote = new Lote();
                     lote.setCliente(SessaoCliente.get());
                     lote.setValor(valorTotal);
@@ -349,10 +375,6 @@ public class ContratoBean implements Serializable {
                             dao.rollback();
                             return;
                         }
-                    } else if (contrato.getTipoContrato().getId() == 3) {
-                        Messages.warn("Validação", "Informar entidade voluntária (cobrança)");
-                        dao.rollback();
-                        return;
                     }
                     if (!listMovimento.isEmpty()) {
                         for (int i = 0; i < listMovimento.size(); i++) {
@@ -468,6 +490,15 @@ public class ContratoBean implements Serializable {
                 }
             }
         }
+        if (contrato.getTipoContrato() != null) {
+            for (int i = 0; i < listTipoContrato.size(); i++) {
+                if (contrato.getTipoContrato().getId() == Integer.parseInt(listTipoContrato.get(i).getDescription())) {
+                    idTipoContrato = i;
+                    break;
+                }
+            }
+        }
+        find(1);
         saldoDevedor = "";
         listMovimento.clear();
         getListMovimento();
@@ -604,7 +635,6 @@ public class ContratoBean implements Serializable {
                 }
                 saldoDevedor = Float.toString((contrato.getValorTotal()) + t - d);
             }
-            float result = (contrato.getValorTotal() - contrato.getValorEntrada()) / contrato.getQuantidadeParcelas();
             geraParcelas();
         } else {
             saldoDevedor = "0";
@@ -819,14 +849,8 @@ public class ContratoBean implements Serializable {
             Dao dao = new Dao();
             Servicos s1 = (Servicos) dao.find(new Servicos(), 1);
             if (listMovimentoContrato.isEmpty()) {
-                String nrCtrBoletoResp = "";
-                for (int x = 0; x < (Integer.toString(contrato.getResponsavel().getId())).length(); x++) {
-                    nrCtrBoletoResp += 0;
-                }
-                nrCtrBoletoResp += contrato.getResponsavel().getId();
-                String nrCtrBoleto = "";
                 boolean isEntrada = false;
-                if (contrato.getValorEntrada() > 0) {
+                if (contrato.getValorEntrada() > 0 || contrato.getValorEntrada2() > 0) {
                     if (addDias > 0) {
                         m.setVencimento(DataHoje.converte(dh.incrementarDias(addDias, contrato.getDataCadastroString())));
                         isEntrada = true;
@@ -838,7 +862,6 @@ public class ContratoBean implements Serializable {
                     m.setServicos(s1);
                     m.setTipoServico((TipoServico) dao.find(new TipoServico(), 1));
                     m.setEs("E");
-                    nrCtrBoleto = nrCtrBoletoResp + Long.toString(DataHoje.calculoDosDias(DataHoje.converte("07/10/1997"), DataHoje.converte(m.getVencimentoString())));
                     m.setNrCtrBoleto(null);
                     m.setReferencia(DataHoje.dataReferencia(m.getVencimentoString()));
                     m.setDocumento("");
@@ -872,7 +895,12 @@ public class ContratoBean implements Serializable {
                     int vencto = 0;
                     int h = 0;
                     // float v = (Moeda.substituiVirgulaFloat(getSaldoDevedor()) - contrato.getValorEntrada()) / contrato.getQuantidadeParcelas();
-                    float v = (Moeda.substituiVirgulaFloat(contrato.getValorTotalString()) - contrato.getValorEntrada()) / contrato.getQuantidadeParcelas();
+                    float v = 0;
+                    if (valorTotalCobranca2 == 0) {
+                        v = (Moeda.substituiVirgulaFloat(contrato.getValorTotalString()) - contrato.getValorEntrada()) / contrato.getQuantidadeParcelas();
+                    } else if (valorTotalCobranca2 > 0) {
+                        v = (Moeda.substituiVirgulaFloat(contrato.getValorTotalString()) - contrato.getValorEntrada() - valorTotalCobranca2) / contrato.getQuantidadeParcelas();
+                    }
                     for (int i = 0; i < contrato.getQuantidadeParcelas(); i++) {
                         if (!isEntrada && i == 0 && addDias > 0) {
                             m.setVencimentoString(dh.incrementarMeses(i + 1, dataVencimento));
@@ -880,7 +908,6 @@ public class ContratoBean implements Serializable {
                         } else {
                             m.setVencimentoString(dh.incrementarMeses(i + 1, dataVencimento));
                         }
-                        nrCtrBoleto = nrCtrBoletoResp + Long.toString(DataHoje.calculoDosDias(DataHoje.converte("07/10/1997"), DataHoje.converte(m.getVencimentoString())));
                         m.setPessoa(contrato.getResponsavel());
                         m.setTipoDocumento(s1.getTipoDocumento());
                         m.setServicos(s1);
@@ -896,6 +923,63 @@ public class ContratoBean implements Serializable {
                         m.setBaixa(null);
                         listMovimentoContrato.add(m);
                         m = new Movimento();
+                    }
+                }
+                TipoContrato tc = getTipoContrato();
+                if (tc.getId().equals(3)) {
+                    if (contrato.getValorEntrada() > 0) {
+                        if (addDias > 0) {
+                            m.setVencimento(DataHoje.converte(dh.incrementarDias(addDias, contrato.getDataCadastroString())));
+                            isEntrada = true;
+                        } else {
+                            m.setVencimento(contrato.getDataCadastro());
+                        }
+                        m.setPessoa(contrato.getCobranca2());
+                        m.setTipoDocumento(s1.getTipoDocumento());
+                        m.setServicos(s1);
+                        m.setTipoServico((TipoServico) dao.find(new TipoServico(), 1));
+                        m.setEs("E");
+                        m.setNrCtrBoleto(null);
+                        m.setReferencia(DataHoje.dataReferencia(m.getVencimentoString()));
+                        m.setDocumento("");
+                        m.setLote(null);
+                        m.setAtivo(true);
+                        m.setEvento(null);
+                        m.setValor(contrato.getValorEntrada2());
+                        m.setBaixa(null);
+                        listMovimentoContrato.add(m);
+                        m = new Movimento();
+                    }
+                }
+                if (tc.getId().equals(3)) {
+                    if (contrato.getValorTotal2() > 0 || contrato.getValorEntrada2() > 0) {
+                        int vencto = 0;
+                        int h = 0;
+                        // float v = (Moeda.substituiVirgulaFloat(getSaldoDevedor()) - contrato.getValorEntrada()) / contrato.getQuantidadeParcelas();
+                        float v = (contrato.getValorTotal2() - contrato.getValorEntrada2()) / contrato.getQuantidadeParcelas();
+                        for (int i = 0; i < contrato.getQuantidadeParcelas(); i++) {
+                            if (!isEntrada && i == 0 && addDias > 0) {
+                                m.setVencimentoString(dh.incrementarMeses(i + 1, dataVencimento));
+                                m.setVencimento(DataHoje.converte(dh.incrementarDias(addDias, m.getVencimentoString())));
+                            } else {
+                                m.setVencimentoString(dh.incrementarMeses(i + 1, dataVencimento));
+                            }
+                            m.setPessoa(contrato.getCobranca2());
+                            m.setTipoDocumento(s1.getTipoDocumento());
+                            m.setServicos(s1);
+                            m.setTipoServico((TipoServico) dao.find(new TipoServico(), 1));
+                            m.setEs("E");
+                            m.setNrCtrBoleto(null);
+                            m.setReferencia(DataHoje.dataReferencia(m.getVencimentoString()));
+                            m.setDocumento("");
+                            m.setLote(null);
+                            m.setAtivo(true);
+                            m.setEvento(null);
+                            m.setValor(v);
+                            m.setBaixa(null);
+                            listMovimentoContrato.add(m);
+                            m = new Movimento();
+                        }
                     }
                 }
                 //listMovimento.addAll(listMovimentoTaxa);
@@ -1053,6 +1137,7 @@ public class ContratoBean implements Serializable {
                 }
             }
         }
+        calculaSaldoDevedor();
         selectedServico();
         numeroParcelasTaxa = 1;
     }
@@ -1994,10 +2079,12 @@ public class ContratoBean implements Serializable {
     }
 
     public Boolean disabledPrint(Movimento m) {
-        if (m.getLote().getContrato().getId() == -1) {
-            return true;
-        } else if (m.getBaixa() != null) {
-            return true;
+        if (m.getLote() != null) {
+            if (m.getLote().getContrato().getId() == null) {
+                return true;
+            } else if (m.getBaixa() != null) {
+                return true;
+            }
         }
         return false;
     }
@@ -2044,9 +2131,15 @@ public class ContratoBean implements Serializable {
 
     public void setNumeroParcelasTaxaString(String numeroParcelasTaxaString) {
         try {
-            this.numeroParcelasTaxa = Integer.parseInt(numeroParcelasTaxaString);
-            if (this.numeroParcelasTaxa < 0) {
-                this.numeroParcelasTaxa = 0;
+            Integer np = Integer.parseInt(numeroParcelasTaxaString);
+            if (np < 0) {
+                return;
+            }
+            if (Integer.parseInt(numeroParcelasTaxaString) > contrato.getQuantidadeParcelas()) {
+                this.numeroParcelasTaxa = contrato.getQuantidadeParcelas();
+                Messages.warn("Validação", "Número de parcelas da taxa deve ser menor ou igual ao número de parcelas do contrato!");
+            } else {
+                this.numeroParcelasTaxa = Integer.parseInt(numeroParcelasTaxaString);
             }
         } catch (Exception e) {
 
@@ -2070,7 +2163,7 @@ public class ContratoBean implements Serializable {
                 }
                 break;
             case 2:
-                Integer tipo_contrato_id = ((TipoContrato) new Dao().find(new TipoContrato(), Integer.parseInt(listTipoContrato.get(idTipoContrato).getDescription()))).getId();
+                Integer tipo_contrato_id = getTipoContrato().getId();
                 if (tipo_contrato_id == 2) {
                     contrato.setValorEntrada(new Float(0));
                     contrato.setValorTotal(new Float(0));
@@ -2089,9 +2182,13 @@ public class ContratoBean implements Serializable {
     }
 
     public void selectedDataCadastro(SelectEvent event) {
-        SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
-        contrato.setDataCadastro(DataHoje.converte(format.format(event.getObject())));
-        listener(1);
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("d/M/yyyy");
+            contrato.setDataCadastro(DataHoje.converte(format.format(event.getObject())));
+            listener(1);
+        } catch (Exception e) {
+
+        }
     }
 
     public List<SelectItem> getListTipoContrato() {
@@ -2102,11 +2199,7 @@ public class ContratoBean implements Serializable {
                 if (i == 0) {
                     idTipoContrato = i;
                 }
-                boolean disabled = false;
-                if (list.get(i).getId() == 3) {
-                    disabled = true;
-                }
-                listTipoContrato.add(new SelectItem(i, list.get(i).getDescricao(), "" + list.get(i).getId(), false));
+                listTipoContrato.add(new SelectItem(i, list.get(i).getDescricao(), "" + list.get(i).getId()));
             }
         }
         return listTipoContrato;
@@ -2137,4 +2230,118 @@ public class ContratoBean implements Serializable {
         this.disabled = disabled;
     }
 
+    public Juridica getCobranca2() {
+        if (Sessions.exists("juridicaPesquisa")) {
+            contrato.setCobranca2(((Juridica) Sessions.getObject("juridicaPesquisa", true)).getPessoa());
+            find(1);
+
+        }
+        return cobranca2;
+    }
+
+    public TipoContrato getTipoContrato() {
+        TipoContrato tc = (TipoContrato) new Dao().find(new TipoContrato(), Integer.parseInt(listTipoContrato.get(idTipoContrato).getDescription()));
+        if (tc == null) {
+            return new TipoContrato();
+        } else {
+            return tc;
+        }
+    }
+
+    /**
+     * 1 - Pesquisa pessoa jurídica;
+     *
+     * @param tcase
+     */
+    public void find(Integer tcase) {
+        switch (tcase) {
+            case 1:
+                if(contrato.getCobranca2() != null) {
+                    cobranca2 = new JuridicaDao().pesquisaJuridicaPorPessoa(contrato.getCobranca2().getId());                    
+                }
+                break;
+        }
+
+    }
+
+    public Float getValorTotalResponsavel() {
+        return valorTotalResponsavel;
+    }
+
+    public void setValorTotalResponsavel(Float valorTotalResponsavel) {
+        this.valorTotalResponsavel = valorTotalResponsavel;
+    }
+
+    public String getValorTotalResponsavelString() {
+        return Moeda.converteR$Float(valorTotalResponsavel);
+    }
+
+    public void setValorTotalResponsavelString(String valorTotalResponsavelString) {
+        this.valorTotalResponsavel = Moeda.converteUS$(valorTotalResponsavelString);
+        if (this.valorTotalResponsavel < 0) {
+            this.valorTotalResponsavel = new Float(0);
+        }
+        if (valorTotalResponsavel > contrato.getValorTotal()) {
+            valorTotalResponsavel = new Float(0);
+            valorTotalCobranca2 = new Float(0);
+        }
+    }
+
+    public Float getValorTotalCobranca2() {
+        return valorTotalResponsavel;
+    }
+
+    public void setValorTotalCobranca2(Float valorTotalCobranca2) {
+        this.valorTotalCobranca2 = valorTotalCobranca2;
+    }
+
+    public String getValorTotalCobranca2String() {
+        return Moeda.converteR$Float(valorTotalCobranca2);
+    }
+
+    public void setValorTotalCobranca2String(String valorTotalCobrancaString) {
+        this.valorTotalCobranca2 = Moeda.converteUS$(valorTotalCobrancaString);
+        if (this.valorTotalCobranca2 < 0) {
+            this.valorTotalCobranca2 = new Float(0);
+        }
+        if (valorTotalCobranca2 > contrato.getValorTotal()) {
+            valorTotalCobranca2 = new Float(0);
+            valorTotalResponsavel = contrato.getValorTotal();
+        }
+    }
+
+    public void calculaValoresTotais() {
+        calculaValoresTotais(1);
+    }
+
+    public void calculaValoresTotais(Integer tcase) {
+        if (valorTotalResponsavel == 0 && valorTotalCobranca2 == 0) {
+            valorTotalResponsavel = contrato.getValorTotal();
+        }
+        if (tcase == 1) {
+            if (valorTotalResponsavel > 0 && !valorTotalResponsavel.equals(contrato.getValorTotal()) && valorTotalCobranca2 == 0) {
+                valorTotalCobranca2 = contrato.getValorTotal() - valorTotalResponsavel;
+            }
+            if (valorTotalResponsavel > 0 && !valorTotalResponsavel.equals(contrato.getValorTotal()) && valorTotalCobranca2 > 3) {
+                valorTotalCobranca2 = contrato.getValorTotal() - valorTotalResponsavel;
+            }
+        }
+        if (tcase == 2) {
+            if (valorTotalCobranca2 == 0) {
+                valorTotalResponsavel = contrato.getValorTotal();
+            }
+            if (valorTotalCobranca2 > contrato.getValorTotal()) {
+                valorTotalResponsavel = contrato.getValorTotal();
+                valorTotalCobranca2 = new Float(0);
+            }
+            if (valorTotalCobranca2 >= valorTotalResponsavel) {
+                valorTotalResponsavel = contrato.getValorTotal() - valorTotalCobranca2;
+            }
+            if (valorTotalCobranca2 < valorTotalResponsavel) {
+                valorTotalResponsavel = contrato.getValorTotal() - valorTotalCobranca2;
+            }
+        }
+        contrato.setValorTotal2(valorTotalCobranca2);
+        calculaSaldoDevedor();
+    }
 }
