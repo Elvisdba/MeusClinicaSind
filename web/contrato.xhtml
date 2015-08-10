@@ -79,14 +79,14 @@
                                     </p:selectOneMenu>                                        
                                     <p:outputLabel value="Data Contratual:" styleClass="bold" />
                                     <p:calendar value="#{contratoBean.contrato.dataCadastro}" pattern="dd/MM/yyyy" mask="99/99/9999" size="8" styleClass="text-center">
-                                        <p:ajax event="dateSelect" update="@this :form_contrato:" listener="#{contratoBean.selectedDataCadastro}" global="false"/> 
+                                        <p:ajax event="dateSelect" update="@this :form_contrato:" global="false"/> 
                                         <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.selectedDataCadastro}" global="false"/> 
                                     </p:calendar>
                                 </h:panelGrid>
                                 <p:panel  styleClass="margin-top-max">
                                     <f:facet name="header">
                                         <h:panelGrid columns="4">
-                                            <h:outputLabel value="Responsável (Credor 1)" styleClass="bold"/>
+                                            <h:outputLabel value="Responsável (Credor 1)" styleClass="bold font-color-blue"/>
                                         </h:panelGrid>
                                     </f:facet>
                                     <h:panelGrid columns="5" cellpadding="5">
@@ -102,17 +102,17 @@
                                 <p:panel styleClass="margin-top-max" rendered="#{contratoBean.disabled[1]}" style="color: red;">
                                     <f:facet name="header">
                                         <h:panelGrid columns="4">
-                                            <h:outputLabel value="Entidade / Responsável 2 (Credor 2)" styleClass="bold"/>
+                                            <h:outputLabel value="Entidade / Responsável 2 (Credor 2)" styleClass="bold" style="color: green"/>
                                         </h:panelGrid>
                                     </f:facet>
                                     <h:panelGrid columns="5" cellpadding="5">
                                         <p:outputLabel value="CNPJ:" styleClass="margin-lef-max"/>
-                                        <p:inputMask mask="99.999.999/9999-99" placeholder="99.999.999/9999-99" size="15" value="#{contratoBean.contrato.cobranca2.documento}" title="Digite o CNPJ da entidade de cobrança" disabled="#{contratoBean.contrato.responsavel.id == -1}">
+                                        <p:inputMask mask="99.999.999/9999-99" placeholder="99.999.999/9999-99" size="15" value="#{contratoBean.cobranca2.pessoa.documento}" title="Digite o CNPJ da entidade de cobrança" disabled="#{contratoBean.contrato.responsavel.id == -1}">
                                             <p:ajax event="change" update="@this :form_contrato:" />
                                         </p:inputMask>                                            
                                         <p:commandButton icon="ui-icon-search" title="Pesquisar entidade de cobrança" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaJuridica')}" disabled="#{contratoBean.contrato.responsavel.id == -1}"/>
                                         <p:outputLabel value="#{contratoBean.contrato.cobranca2.nome}"  />
-                                        <p:commandButton icon="ui-icon-close" action="#{contratoBean.clear(5)}" update=":form_contrato:" rendered="#{contratoBean.contrato.cobranca2.id == -1}"  />
+                                        <p:commandButton icon="ui-icon-close" action="#{contratoBean.clear(5)}" update=":form_contrato:" rendered="#{contratoBean.contrato.cobranca2.id != -1}"  />
                                     </h:panelGrid>
                                 </p:panel>                                
                                 <p:panel styleClass="margin-top-max">
@@ -135,7 +135,8 @@
                                     <h:panelGrid columns="11" styleClass="margin-top-max" width="960">
                                         <p:outputLabel value="Data internação:" />
                                         <p:calendar value="#{contratoBean.contrato.dataInternacao}" pattern="dd/MM/yyyy" mask="99/99/9999" size="8" styleClass="text-center">
-                                            <p:ajax event="dateSelect" update="@this" listener="#{contratoBean.contrato.selectedDataInternacao}" global="false"/> 
+                                            <p:ajax event="dateSelect" update="@this" global="false"/> 
+                                            <p:ajax event="change" update="@this" listener="#{contratoBean.contrato.selectedDataInternacao}" global="false"/> 
                                         </p:calendar>                                        
                                         <p:outputLabel value="Tipo de internação:" />
                                         <p:selectOneMenu value="#{contratoBean.idTipoInternacao}">
@@ -155,26 +156,25 @@
                                     <hr />
                                     <p:inputTextarea value="#{contratoBean.contrato.observacao}" cols="142" maxlength="255" placeholder="Observações"></p:inputTextarea>
                                 </p:panel>
-                                <p:panelGrid styleClass="margin-top-max" style="width: 960px;">
+                                <p style="font-size: 18pt!important; text-decoration: underline; color: blue">Financeiro</p>
+                                <h:panelGrid styleClass="margin-top-max" columns="2">
+                                    <p:outputLabel value="VALOR DO CONTRATO (R$): "  styleClass=" bold"/>
+                                    <p:inputText value="#{contratoBean.contrato.valorTotalString}" styleClass="text-center font-size-12" onclick="selectInputText(this)" converter="#{toCurrency}" readonly="#{contratoBean.contrato.impresso}" disabled="#{(contratoBean.contrato.responsavel.id == -1) or (contratoBean.disabled[0])}">
+                                        <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaValoresTotais}" global="false"/>
+                                    </p:inputText>
+                                </h:panelGrid>
+                                <p style="font-size: 14pt!important;" class="font-color-blue">CREDOR 1: <span style="color: black; font-size: 14pt!important;">#{contratoBean.contrato.responsavel.nome}</span></p>
+                                <p:panelGrid styleClass="margin-top-max">
                                     <f:facet name="header">
                                         <p:row>
-                                            <p:column colspan="4">
-                                                <p:outputLabel value="Financeiro" styleClass="bold"/>                                                
-                                            </p:column>
-                                        </p:row>
-                                        <p:row>
                                             <p:column>
-                                                <p:outputLabel value="Valor contrato" />                                                    
+                                                <p:outputLabel value="Valor" />                                                    
                                             </p:column>
                                             <p:column>
-                                                <p:outputLabel value="Valor taxa(s)" />                                                    
+                                                <p:outputLabel value="Valor da entrada" />                                                    
                                             </p:column>
                                             <p:column>
-                                                <p:outputLabel value="Valor entrada"  />                                                    
-                                            </p:column>
-                                            <p:column>
-                                                <p:outputLabel value="Saldo devedor" />                                                    
-                                            </p:column>
+                                                <p:outputLabel value="Valor taxa(s)" />                                                                                                </p:column>
                                             <p:column>
                                                 <p:outputLabel value="Parcelamento do contrato" />                                                    
                                             </p:column>
@@ -182,29 +182,25 @@
                                     </f:facet>
                                     <p:row>
                                         <p:column styleClass="text-center">
-                                            <p:inputText value="#{contratoBean.contrato.valorTotalString}" styleClass="text-center" onclick="selectInputText(this)" converter="#{toCurrency}" readonly="#{contratoBean.contrato.impresso}" disabled="#{(contratoBean.contrato.responsavel.id == -1) or (contratoBean.disabled[0])}">
+                                            <p:inputText styleClass="text-center" onclick="selectInputText(this)" converter="#{toCurrency}" readonly="#{contratoBean.contrato.impresso}" value="#{contratoBean.valorTotalResponsavelString}" id="i_taxax" disabled="#{(contratoBean.disabled[0]) or (contratoBean.contrato.valorTotal) == 0}" >
+                                                <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaValoresTotais(1)}" />
+                                            </p:inputText>                                        
+                                        </p:column>
+                                        <p:column styleClass="text-center">
+                                            <p:inputText value="#{contratoBean.contrato.valorEntradaString}" styleClass="text-center" onclick="selectInputText(this)" converter="#{toCurrency}" disabled="#{(contratoBean.contrato.responsavel.id == -1 ) or (contratoBean.disabled[0])}" readonly="#{contratoBean.contrato.impresso}">
                                                 <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaSaldoDevedor}" global="false"/>
                                             </p:inputText>                                        
                                         </p:column>
                                         <p:column styleClass="text-center">
-                                            <p:inputText styleClass="text-center" onclick="selectInputText(this)" converter="#{toCurrency}" readonly="true" value="#{contratoBean.valorTotalTaxa}" id="i_taxax" disabled="#{contratoBean.disabled[0]}">
-                                                <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaSaldoDevedor}" />
-                                            </p:inputText>                                        
-                                        </p:column>
-                                        <p:column styleClass="text-center">
-                                            <p:inputText value="#{contratoBean.contrato.valorEntradaString}" styleClass="text-center" onclick="selectInputText(this)" converter="#{toCurrency}" disabled="#{(contratoBean.contrato.responsavel.id == -1) or (contratoBean.disabled[0])}" readonly="#{contratoBean.contrato.impresso}">
-                                                <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaSaldoDevedor}" global="false"/>
-                                            </p:inputText>                                        
-                                        </p:column>
-                                        <p:column styleClass="text-center">
-                                            <p:inputText maxlength="3" styleClass="text-center" readonly="true" value="#{contratoBean.saldoDevedor}" disabled="#{contratoBean.disabled[0]}">
-                                                <p:ajax event="change" update="@this" />
-                                            </p:inputText>
+
                                         </p:column>
                                         <p:column styleClass="text-center">
                                             <p:inputText maxlength="3" styleClass="text-center" value="#{contratoBean.contrato.quantidadeParcelas}" disabled="#{(contratoBean.contrato.responsavel.id == -1) or (contratoBean.disabled[0])}"  readonly="#{contratoBean.contrato.impresso}">
                                                 <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaSaldoDevedor}" global="false"/>
-                                            </p:inputText>                                           
+                                            </p:inputText>                                            
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="Máximo: 12 parcelas" />
                                         </p:column>
                                     </p:row>
                                     <p:row rendered="#{contratoBean.contrato.id == null}">
@@ -224,7 +220,47 @@
                                         </p:column>
                                     </p:row>
                                 </p:panelGrid>
-                                <h:panelGrid id="i_obs" styleClass="margin-top-max ">
+                                <p:panelGrid styleClass="margin-top-max" rendered="#{contratoBean.disabled[1]}">
+                                    <p style="font-size: 14pt!important; color: green">CREDOR 2: <span style="color: black; font-size: 14pt!important;">#{contratoBean.contrato.cobranca2.nome}</span></p>
+                                    <f:facet name="header">
+                                        <p:row>
+                                            <p:column>
+                                                <p:outputLabel value="Valor" />                                                    
+                                            </p:column>
+                                            <p:column>
+                                                <p:outputLabel value="Valor entrada"  />                                                    
+                                            </p:column>
+                                        </p:row>
+                                    </f:facet>
+                                    <p:row>
+                                        <p:column styleClass="text-center">
+                                            <p:inputText value="#{contratoBean.valorTotalCobranca2String}" styleClass="text-center" onclick="selectInputText(this)" converter="#{toCurrency}" readonly="#{contratoBean.contrato.impresso}" disabled="#{(contratoBean.contrato.cobranca2.id == -1) or (contratoBean.disabled[0])}">
+                                                <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaValoresTotais(2)}" global="false"/>
+                                            </p:inputText>                                        
+                                        </p:column>
+                                        <p:column styleClass="text-center">
+                                            <p:inputText value="#{contratoBean.contrato.valorEntrada2String}" styleClass="text-center" onclick="selectInputText(this)" converter="#{toCurrency}" disabled="#{(contratoBean.contrato.cobranca2.id == -1) or (contratoBean.disabled[0])}" readonly="#{contratoBean.contrato.impresso}">
+                                                <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaSaldoDevedor}" global="false"/>
+                                            </p:inputText>                                        
+                                        </p:column>
+                                    </p:row>                                    
+                                </p:panelGrid>
+                                <p:panel id="id_calcula_saldo_devedor" style="background: #ccffcc; text-align: center; margin-top: 25px">
+                                    <h:panelGrid columns="4" cellpadding="5">
+                                        <p:outputLabel value="SALDO DEVEDOR: " style="color: red" styleClass="bold"/>
+                                        <p:inputText maxlength="3" styleClass="text-center font-size-12" readonly="true" value="#{contratoBean.saldoDevedor}" disabled="#{contratoBean.disabled[0]}">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:inputText>
+                                        <p:outputLabel value="TOTAL TAXAS: " styleClass="bold"/>
+                                        <p:inputText maxlength="3" styleClass="text-center font-size-12" readonly="true" value="#{contratoBean.valorTotalTaxa}" disabled="#{contratoBean.disabled[0]}">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:inputText>
+                                    </h:panelGrid>
+                                </p:panel>
+                                <p:panel  id="i_msg_financeiro" styleClass="margin" style="border: 0">
+                                    <p:messages showDetail="true" showIcon="true" autoUpdate="true" closable="true" />                                    
+                                </p:panel>
+                                <h:panelGrid id="i_obs">
                                     <p:outputLabel value="#{contratoBean.calculaValorMovimentoAlterado}" styleClass="bold font-color-red"/>
                                 </h:panelGrid>
                                 <h:panelGrid id="i_tbl">
@@ -232,6 +268,9 @@
                                         <f:facet name="header">
                                             Parcelas
                                         </f:facet>
+                                        <p:column width="25" styleClass="text-center">
+                                            <p:graphicImage value="#{movimento.pessoa.id == contratoBean.contrato.responsavel.id ? '/imagens/icon_family_32.png' : '/imagens/icon_partnership_32.png'}" title="Responsável pelo movimento: #{movimento.pessoa.id == contratoBean.contrato.responsavel.id ? 'Responsável 1' : 'Entidade (Credor 2)'}" />
+                                        </p:column>
                                         <p:column headerText="Documento" width="100" styleClass="text-center" style="font-size: 7.5pt!important">#{movimento.documento}</p:column>
                                         <p:column headerText="Serviços" styleClass="text-center">#{movimento.servicos.descricao}</p:column>
                                         <p:column headerText="Data do Vencimento" styleClass="text-center">
@@ -241,7 +280,7 @@
                                             <h:outputLabel value="#{movimento.vencimentoString}"  rendered="#{movimento.id != -1}" />
                                         </p:column>
                                         <p:column headerText="Valor Parcela" styleClass="text-center">
-                                            <p:inputText value="#{movimento.valorString}" converter="#{toCurrency}" styleClass="text-center" rendered="#{movimento.id == -1}" size="10" onclick="selectInputText(this)">
+                                            <p:inputText value="#{movimento.valorString}" converter="#{toCurrency}" styleClass="text-center  #{movimento.valor == contratoBean.contrato.valorEntrada ? '; bg-yellow-ligth' : ''} #{movimento.valor == contratoBean.contrato.valorEntrada2 ? '; bg-yellow-ligth' : ''}" rendered="#{movimento.id == -1}" size="10" onclick="selectInputText(this)">
                                                 <p:ajax update="@this :form_contrato:i_obs" event="change" global="false"/>
                                             </p:inputText>
                                             <h:outputLabel value="#{movimento.valorString}"  rendered="#{movimento.id != -1}" />
@@ -267,6 +306,9 @@
                                         <f:facet name="header">
                                             Taxas
                                         </f:facet>
+                                        <p:column width="25">
+
+                                        </p:column>
                                         <p:column width="100" styleClass="text-center" style="font-size: 7.5pt!important">#{movimento.documento}</p:column>
                                         <p:column styleClass="text-center">#{movimento.servicos.descricao}</p:column>
                                         <p:column styleClass="text-center">#{movimento.vencimentoString}</p:column>
