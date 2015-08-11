@@ -184,7 +184,7 @@ public class PessoaCardBean implements Serializable {
             PessoaEnderecoDao pessoaEnderecoDao = new PessoaEnderecoDao();
             if (fisica != null && fisica.getId() != -1) {
                 pessoaEndereco = (PessoaEndereco) pessoaEnderecoDao.pesquisaPessoaEnderecoPorPessoaTipo(fisica.getPessoa().getId(), 4);
-            } else if (juridica != null && juridica.getId() != -1) {
+            } else if (juridica != null && juridica.getId() != null) {
                 pessoaEndereco = (PessoaEndereco) pessoaEnderecoDao.pesquisaPessoaEnderecoPorPessoaTipo(juridica.getPessoa().getId(), 4);
             } else if (pessoa != null && pessoa.getId() != -1) {
                 pessoaEndereco = (PessoaEndereco) pessoaEnderecoDao.pesquisaPessoaEnderecoPorPessoaTipo(pessoa.getId(), 4);

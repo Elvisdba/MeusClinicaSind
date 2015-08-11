@@ -63,7 +63,7 @@ public class ClienteBean implements Serializable {
             return;
         }
 
-        if (getCliente().getId() == -1) {
+        if (getCliente().getId() == null) {
             ClienteDao clienteDao = new ClienteDao();
             if (clienteDao.existeIdentificador(cliente)) {
                 Messages.info("Validação", "Identificador já existe!");
@@ -97,7 +97,7 @@ public class ClienteBean implements Serializable {
     public void delete() {
         DaoInterface di = new Dao();
         di.openTransaction();
-        if (getCliente().getId() != -1) {
+        if (getCliente().getId() != null) {
             if (di.delete((Cliente) di.find(cliente))) {
                 di.commit();
                 cliente = new Cliente();

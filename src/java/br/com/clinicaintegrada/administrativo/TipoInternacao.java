@@ -19,7 +19,7 @@ public class TipoInternacao implements Serializable {
     private String descricao;
 
     public TipoInternacao() {
-        this.id = -1;
+        this.id = null;
         this.descricao = "";
     }
 

@@ -218,7 +218,7 @@ public class EmailBean implements Serializable {
             return;
         }
         email.setRascunho(true);
-        if (email.getUsuario().getId() == -1) {
+        if (email.getUsuario().getId() == null) {
             email.setUsuario((Usuario) Sessions.getObject("sessaoUsuario"));
         }
         email.setRotina((Rotina) di.find(new Rotina(), 112));

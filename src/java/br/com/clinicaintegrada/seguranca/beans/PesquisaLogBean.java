@@ -301,7 +301,7 @@ public class PesquisaLogBean implements Serializable {
                 hrFinal = hora[1];
             }
             if (filtro[1]) {
-                if (usuario.getId() != -1) {
+                if (usuario.getId() != null) {
                     idU = usuario.getId();
                 }
             }

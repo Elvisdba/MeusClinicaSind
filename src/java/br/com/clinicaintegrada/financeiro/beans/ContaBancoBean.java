@@ -271,7 +271,7 @@ public class ContaBancoBean implements Serializable {
                 listFilial.add(new SelectItem(i, listaFilial.get(i).getFilial().getPessoa().getNome(), Integer.toString(listaFilial.get(i).getId())));
             }
             if (contaBanco != null) {
-                if (contaBanco.getFilial().getId() != -1) {
+                if (contaBanco.getFilial().getId() != null) {
                     for (int i = 0; i < listFilial.size(); i++) {
                         if (Integer.parseInt(listFilial.get(i).getDescription()) == contaBanco.getFilial().getId()) {
                             setIdFilial(i);

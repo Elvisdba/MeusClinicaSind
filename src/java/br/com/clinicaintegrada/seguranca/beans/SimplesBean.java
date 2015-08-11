@@ -77,7 +77,7 @@ public class SimplesBean implements Serializable {
         sessoes = null;
         lista = new ArrayList();
         objeto = null;
-        id = -1;
+        id = null;
         cliente = new Cliente();
     }
 
@@ -104,7 +104,7 @@ public class SimplesBean implements Serializable {
                 Messages.warn("Erro", mensagem);
                 return;
             }
-            if (id == -1) {
+            if (id == null) {
                 cliente = SessaoCliente.get();
                 converteObjeto(sessoes[0]);
                 int t = objeto.getClass().getDeclaredFields().length;
@@ -120,7 +120,7 @@ public class SimplesBean implements Serializable {
                         descricao = "";
                         objeto = null;
                         lista.clear();
-                        id = -1;
+                        id = null;
                     } else {
                         Messages.warn("Erro", "Ao inserir registro " + nomeRotina + " ");
                     }
@@ -132,7 +132,7 @@ public class SimplesBean implements Serializable {
                         descricao = "";
                         objeto = null;
                         lista.clear();
-                        id = -1;
+                        id = null;
                     } else {
                         Messages.warn("Erro", "Ao inserir registro " + nomeRotina + " ");
                     }
@@ -180,7 +180,7 @@ public class SimplesBean implements Serializable {
             Messages.info("Sucesso", "Registro excluído");
             lista.clear();
             objeto = null;
-            id = -1;
+            id = null;
             descricao = "";
         }
     }
@@ -188,7 +188,7 @@ public class SimplesBean implements Serializable {
     public void clear() {
         rotina = new Rotina();
         mensagem = "";
-        id = -1;
+        id = null;
         objeto = null;
         descricao = "";
         cliente = new Cliente();

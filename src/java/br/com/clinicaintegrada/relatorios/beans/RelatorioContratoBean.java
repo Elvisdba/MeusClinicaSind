@@ -1,11 +1,13 @@
 package br.com.clinicaintegrada.relatorios.beans;
 
+import br.com.clinicaintegrada.administrativo.TipoContrato;
 import br.com.clinicaintegrada.administrativo.TipoDesligamento;
 import br.com.clinicaintegrada.administrativo.TipoInternacao;
 import br.com.clinicaintegrada.endereco.Cidade;
 import br.com.clinicaintegrada.endereco.dao.CidadeDao;
 import br.com.clinicaintegrada.pessoa.Filial;
 import br.com.clinicaintegrada.pessoa.Fisica;
+import br.com.clinicaintegrada.pessoa.Juridica;
 import br.com.clinicaintegrada.pessoa.dao.FilialDao;
 import br.com.clinicaintegrada.principal.DBExternal;
 import br.com.clinicaintegrada.relatorios.RelatorioOrdem;
@@ -15,7 +17,6 @@ import br.com.clinicaintegrada.relatorios.dao.RelatorioDao;
 import br.com.clinicaintegrada.relatorios.dao.RelatorioOrdemDao;
 import br.com.clinicaintegrada.relatorios.impressao.ParametroFisica;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
-// import br.com.clinicaintegrada.utils.AnaliseString;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.DataHoje;
 import br.com.clinicaintegrada.utils.Jasper;
@@ -44,10 +45,12 @@ import org.primefaces.event.TabChangeEvent;
 public class RelatorioContratoBean implements Serializable {
 
     private Boolean[] filter;
+    private Boolean[] disabled;
     private Integer[] idade;
     private Integer[] index;
     private Fisica paciente;
     private Fisica responsavel;
+    private Juridica cobranca2;
     /**
      * 0 - Relatórios; 1 - Relatório Ordem; 2 - Filiais
      */
@@ -57,7 +60,7 @@ public class RelatorioContratoBean implements Serializable {
     private Date dataDesligamento[];
     private Date dataNascimento[];
     private String tipoRelatorio;
-    private String tipo;
+    private String tipo = "paciente";
     private String indexAccordion;
     private String order;
     private String sexo;
@@ -68,16 +71,26 @@ public class RelatorioContratoBean implements Serializable {
     private List selectedTipoInternacao;
     private Map<String, Integer> listTipoDesligamento;
     private List selectedTipoDesligamento;
+    private Map<String, Integer> listTipoContrato;
+    private List selectedTipoContrato;
 
     @PostConstruct
     public void init() {
-        filter = new Boolean[12];
+        filter = new Boolean[10];
         filter[0] = false; // PESQUISA FÍSICA
         filter[1] = false; // CIDADE
         filter[2] = false; // DATAS
         filter[3] = false; // FILIAL
         filter[4] = false; // SEXO        
         filter[5] = false; // IDADE
+        filter[6] = false; // RESPONSÁVEL
+        filter[7] = false; // TIPO INTERNAÇÃO
+        filter[8] = false; // MOTIVO DESLIGAMENTO
+        filter[9] = false; // TIPO CONTRATO
+        disabled = new Boolean[3];
+        disabled[0] = true; // DESABILITA PACIENTE
+        disabled[1] = false; // DESABILITA RESPONSÁVEL
+        disabled[2] = false; // DESABILITA RESPONSÁVEL
         listSelectItem = new ArrayList[3];
         listSelectItem[0] = new ArrayList<>();
         listSelectItem[1] = new ArrayList<>();
@@ -106,8 +119,8 @@ public class RelatorioContratoBean implements Serializable {
         order = "PA.nome";
         paciente = new Fisica();
         responsavel = new Fisica();
+        cobranca2 = new Juridica();
         sexo = "";
-        tipo = "todos";
         relatorios = new Relatorios();
         selectedCidades = null;
         listCidades = null;
@@ -115,6 +128,8 @@ public class RelatorioContratoBean implements Serializable {
         listTipoInternacao = null;
         selectedTipoDesligamento = null;
         listTipoDesligamento = null;
+        selectedTipoContrato = null;
+        listTipoContrato = null;
     }
 
     @PreDestroy
@@ -145,6 +160,7 @@ public class RelatorioContratoBean implements Serializable {
         String detalheRelatorio = "";
         Integer paciente_id = null;
         Integer responsavel_id = null;
+        Integer cobranca2_id = null;
         String data_contrato_I = "";
         String data_contrato_F = "";
         String data_rescisao_I = "";
@@ -188,16 +204,21 @@ public class RelatorioContratoBean implements Serializable {
             responsavel_id = responsavel.getId();
             // listDetalhePesquisa.add(" Empresa por Física CPF: " + aluno.getDocumento() + " - " + aluno.getNome());
         }
+        if (cobranca2.getId() != null) {
+            cobranca2_id = cobranca2.getId();
+            // listDetalhePesquisa.add(" Empresa por Física CPF: " + aluno.getDocumento() + " - " + aluno.getNome());
+        }
         RelatorioContratoDao rcd = new RelatorioContratoDao();
         rcd.setRelatorios(r);
         rcd.setIS_QUERY(r.getMontaQuery());
         String in_cidades = inIdCidades();
+        String in_tipo_contrato = inIdTipoContrato();
         String in_tipo_internacao = inIdTipoInternacao();
         String in_tipo_desligamento = inIdTipoDesligamento();
         String in_filial_atual = "" + index[2];
         rcd.setRelatorios(r);
         List list;
-        list = rcd.find(paciente_id, paciente_id, responsavel_id, in_cidades, data_contrato_I, data_contrato_F, data_contrato_I, data_contrato_F, data_rescisao_I, data_rescisao_F, data_nascimento_I, data_nascimento_F, idade, sexo, in_filial_atual, in_tipo_internacao, in_tipo_desligamento);
+        list = rcd.find(SessaoCliente.get().getId(), paciente_id, responsavel_id, cobranca2_id, in_cidades, data_contrato_I, data_contrato_F, data_contrato_I, data_contrato_F, data_rescisao_I, data_rescisao_F, data_nascimento_I, data_nascimento_F, idade, sexo, in_tipo_contrato, in_filial_atual, in_tipo_internacao, in_tipo_desligamento);
         DBExternal dBExternal = new DBExternal();
         if (!r.getMontaQuery() && rcd.getQUERY().isEmpty()) {
             if (list.isEmpty()) {
@@ -303,7 +324,7 @@ public class RelatorioContratoBean implements Serializable {
                 }
             }
             Jasper.TITLE = r.getNome();
-            Jasper.printReports(r.getJasper(), "paciente", (Collection) pfs);
+            Jasper.printReports(r.getJasper(), tipo, (Collection) pfs);
         }
 
     }
@@ -311,12 +332,24 @@ public class RelatorioContratoBean implements Serializable {
     public List<SelectItem> getListRelatorios() {
         if (listSelectItem[0].isEmpty()) {
             RelatorioDao relatorioDao = new RelatorioDao();
-            List<Relatorios> list = (List<Relatorios>) relatorioDao.findByRotina(62);
+            List<Relatorios> list = new ArrayList();
+            switch (tipo) {
+                case "responsavel":
+                    list = (List<Relatorios>) relatorioDao.findByRotina(113);
+                    break;
+                case "paciente":
+                    list = (List<Relatorios>) relatorioDao.findByRotina(114);
+                    break;
+            }
             for (int i = 0; i < list.size(); i++) {
                 if (i == 0) {
                     index[0] = list.get(i).getId();
                 }
-                listSelectItem[0].add(new SelectItem(list.get(i).getId(), list.get(i).getNome()));
+                String nome = list.get(i).getNome().replace("Paciente", "");
+                nome = nome.replace("Responsável", "");
+                nome = nome.replace("(", "");
+                nome = nome.replace(")", "");
+                listSelectItem[0].add(new SelectItem(list.get(i).getId(), nome));
             }
             if (listSelectItem[0].isEmpty()) {
                 listSelectItem[0] = new ArrayList<>();
@@ -330,6 +363,7 @@ public class RelatorioContratoBean implements Serializable {
     }
 
     public void setTipoRelatorio(String tipoRelatorio) {
+        clear();
         this.tipoRelatorio = tipoRelatorio;
     }
 
@@ -384,6 +418,10 @@ public class RelatorioContratoBean implements Serializable {
         if (!filter[8]) {
             selectedTipoDesligamento = null;
             listTipoDesligamento = null;
+        }
+        if (!filter[9]) {
+            selectedTipoContrato = null;
+            listTipoContrato = null;
         }
     }
 
@@ -450,6 +488,11 @@ public class RelatorioContratoBean implements Serializable {
                 filter[8] = false;
                 selectedTipoDesligamento = null;
                 listTipoDesligamento = null;
+                break;
+            case "tipo_contrato":
+                filter[9] = false;
+                selectedTipoContrato = null;
+                listTipoContrato = null;
                 break;
         }
         PF.update("form_relatorio:id_panel");
@@ -735,18 +778,34 @@ public class RelatorioContratoBean implements Serializable {
         return ids;
     }
 
+    public String inIdTipoContrato() {
+        String ids = "";
+        if (selectedTipoContrato != null) {
+            for (int i = 0; i < selectedTipoContrato.size(); i++) {
+                if (ids.isEmpty()) {
+                    ids = "" + selectedTipoContrato.get(i);
+                } else {
+                    ids += "," + selectedTipoContrato.get(i);
+                }
+            }
+        }
+        return ids;
+    }
+
     public List<SelectItem> getListaRelatorioOrdem() {
-        if (index[0] != null && !getListRelatorios().isEmpty()) {
-            RelatorioOrdemDao relatorioOrdemDao = new RelatorioOrdemDao();
-            List<RelatorioOrdem> list = relatorioOrdemDao.findAllByRelatorio(index[0]);
-            for (int i = 0; i < list.size(); i++) {
-                if (i == 0) {
-                    index[1] = list.get(i).getId();
+        if (listSelectItem[1].isEmpty()) {
+            if (index[0] != null && !getListRelatorios().isEmpty()) {
+                RelatorioOrdemDao relatorioOrdemDao = new RelatorioOrdemDao();
+                List<RelatorioOrdem> list = relatorioOrdemDao.findAllByRelatorio(index[0]);
+                for (int i = 0; i < list.size(); i++) {
+                    if (i == 0) {
+                        index[1] = list.get(i).getId();
+                    }
+                    if (list.get(i).getPrincipal()) {
+                        index[1] = list.get(i).getId();
+                    }
+                    listSelectItem[1].add(new SelectItem(list.get(i).getId(), list.get(i).getNome()));
                 }
-                if (list.get(i).getPrincipal()) {
-                    index[1] = list.get(i).getId();
-                }
-                listSelectItem[1].add(new SelectItem(list.get(i).getId(), list.get(i).getNome()));
             }
         }
         return listSelectItem[1];
@@ -845,6 +904,56 @@ public class RelatorioContratoBean implements Serializable {
             Sessions.put("tipo_pesquisa_fisica", "paciente");
         } else if (tcase == 2) {
             Sessions.put("tipo_pesquisa_fisica", "responsavel");
+        } else if (tcase == 3) {
+            if (filter[10]) {
+                filter[11] = false;
+            }
+            if (filter[11]) {
+                filter[10] = false;
+            }
+        } else if (tcase == 4) {
+            if (filter[11]) {
+                filter[10] = false;
+            }
+            if (filter[10]) {
+                filter[11] = false;
+            }
+        } else if (tcase == 5) {
+            switch (tipo) {
+                case "paciente":
+                    disabled[0] = false;
+                    disabled[1] = true;
+                    disabled[2] = true;
+                    filter[0] = true;
+                    filter[6] = false;
+                    responsavel = new Fisica();
+                    index[0] = 0;
+                    listSelectItem[0].clear();
+                    listSelectItem[2].clear();
+                    break;
+                case "responsavel":
+                    index[0] = 0;
+                    disabled[0] = true;
+                    disabled[1] = false;
+                    disabled[2] = true;
+                    filter[0] = false;
+                    filter[6] = true;
+                    paciente = new Fisica();
+                    listSelectItem[0].clear();
+                    listSelectItem[2].clear();
+                    break;
+                case "cobranca2":
+                    index[0] = 0;
+                    disabled[0] = true;
+                    disabled[1] = true;
+                    disabled[2] = false;
+                    filter[0] = false;
+                    filter[6] = true;
+                    paciente = new Fisica();
+                    listSelectItem[0].clear();
+                    listSelectItem[2].clear();
+                    break;
+            }
         }
     }
 
@@ -866,5 +975,48 @@ public class RelatorioContratoBean implements Serializable {
 
     public void setSelectedTipoDesligamento(List selectedTipoDesligamento) {
         this.selectedTipoDesligamento = selectedTipoDesligamento;
+    }
+
+    public Map<String, Integer> getListTipoContrato() {
+        if (listTipoContrato == null) {
+            listTipoContrato = null;
+            listTipoContrato = new LinkedHashMap<>();
+            List<TipoContrato> list = (List<TipoContrato>) new Dao().list(new TipoContrato(), true);
+            for (int i = 0; i < list.size(); i++) {
+                listTipoContrato.put(list.get(i).getDescricao(), list.get(i).getId());
+            }
+        }
+        return listTipoContrato;
+    }
+
+    public void setListTipoContrato(Map<String, Integer> listTipoContrato) {
+        this.listTipoContrato = listTipoContrato;
+    }
+
+    public List getSelectedTipoContrato() {
+        return selectedTipoContrato;
+    }
+
+    public void setSelectedTipoContrato(List selectedTipoContrato) {
+        this.selectedTipoContrato = selectedTipoContrato;
+    }
+
+    public Boolean[] getDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(Boolean[] disabled) {
+        this.disabled = disabled;
+    }
+
+    public Juridica getCobranca2() {
+        if (cobranca2.getId() == null) {
+
+        }
+        return cobranca2;
+    }
+
+    public void setCobranca2(Juridica cobranca2) {
+        this.cobranca2 = cobranca2;
     }
 }

@@ -22,6 +22,7 @@ public class RelatorioContratoDao extends DB {
      * @param cliente_id
      * @param paciente_id
      * @param responsavel_id
+     * @param cobranca2_id
      * @param in_cidades
      * @param data_contrato_I
      * @param data_contrato_F
@@ -33,12 +34,13 @@ public class RelatorioContratoDao extends DB {
      * @param data_nascimento_F
      * @param idade
      * @param sexo
+     * @param in_tipo_contrato
      * @param in_filial_atual
      * @param in_internacao_motivo
      * @param in_desligamento_motivo
      * @return
      */
-    public List find(Integer cliente_id, Integer paciente_id, Integer responsavel_id, String in_cidades, String data_contrato_I, String data_contrato_F, String data_internacao_I, String data_internacao_F, String data_rescisao_I, String data_rescisao_F, String data_nascimento_I, String data_nascimento_F, Integer[] idade, String sexo, String in_filial_atual, String in_internacao_motivo, String in_desligamento_motivo) {
+    public List find(Integer cliente_id, Integer paciente_id, Integer responsavel_id, Integer cobranca2_id, String in_cidades, String data_contrato_I, String data_contrato_F, String data_internacao_I, String data_internacao_F, String data_rescisao_I, String data_rescisao_F, String data_nascimento_I, String data_nascimento_F, Integer[] idade, String sexo, String in_tipo_contrato, String in_filial_atual, String in_internacao_motivo, String in_desligamento_motivo) {
         List listWhere = new ArrayList();
         Registro r = new RegistroDao().pesquisaRegistroPorCliente(SessaoCliente.get().getId());
         try {
@@ -60,7 +62,7 @@ public class RelatorioContratoDao extends DB {
                     + "            B.ds_descricao               AS pessoa_bairro,                         \n" // 12 - BAIRRO
                     + "            C.ds_cidade                  AS pessoa_cidade,                         \n" // 13 - CIDADE
                     + "            C.ds_uf                      AS pessoa_uf,                             \n" // 14 - UF
-                    + "            E.ds_cep                     AS pessoa_cadastro,                       \n" // 15 - CEP
+                    + "            E.ds_cep                     AS pessoa_cep,                            \n" // 15 - CEP
                     + "            P.ds_telefone1               AS pessoa_telefone1,                      \n" // 16 - TELEFONE 1
                     + "            P.ds_email1                  AS pessoa_email1,                         \n" // 17 - EMAIL 1
                     + "            P.ds_telefone2               AS pessoa_telefone2,                      \n" // 18 - CELULAR 2
@@ -75,7 +77,8 @@ public class RelatorioContratoDao extends DB {
                     + "            R.ds_documento               AS responsavel_documento,                 \n" // 26 - RESPOSÁVEL DOCUMENTO
                     + "            R.ds_telefone1               AS responsavel_telefone1,                 \n" // 27 - RESPOSÁVEL TELEFONE 1
                     + "            R.ds_email1                  AS responsavel_email1,                    \n" // 28 - RESPOSÁVEL EMAIL 1
-                    + "            L.ds_descricao || ' ' || DE.ds_descricao || ', ' || PE.ds_numero || ' ' || PE.ds_complemento || ' - ' ||  B.ds_descricao || ' - ' || C.ds_cidade || ' / ' || C.ds_uf || ' - CEP: ' || E.ds_cep AS pessoa_endereco_completo               \n" // 29 - ENDEREÇO COMPLETO
+                    + "            L.ds_descricao || ' ' || DE.ds_descricao || ', ' || PE.ds_numero || ' ' || PE.ds_complemento || ' - ' ||  B.ds_descricao || ' - ' || C.ds_cidade || ' / ' || C.ds_uf || ' - CEP: ' || E.ds_cep AS pessoa_endereco_completo,              \n" // 29 - ENDEREÇO COMPLETO
+                    + "            PFA.ds_nome                  AS contrato_filial_atual                \n"
                     // FROM
                     + "       FROM ctr_contrato             AS CTR                                      \n"
                     + " INNER JOIN pes_pessoa               AS P  ON  P.id = CTR.id_paciente            \n"
@@ -89,7 +92,9 @@ public class RelatorioContratoDao extends DB {
                     + "  LEFT JOIN end_cidade               AS C  ON  C.id = E.id_cidade                \n"
                     + "  LEFT JOIN end_logradouro           AS L  ON  L.id = E.id_logradouro            \n"
                     + "  LEFT JOIN end_descricao_endereco   AS DE ON  DE.id = E.id_descricao_endereco   \n"
-                    + "  LEFT JOIN end_bairro               AS B  ON  B.id = E.id_bairro                \n";
+                    + "  LEFT JOIN end_bairro               AS B  ON  B.id = E.id_bairro                \n"
+                    + "  LEFT JOIN pes_juridica             AS JFA ON JFA.id = CTR.id_filial_atual      \n"
+                    + "  LEFT JOIN pes_pessoa               AS PFA ON PFA.id = JFA.id_pessoa            \n";
             // WHERE
             // CLIENTE
             if (cliente_id != null) {
@@ -111,12 +116,16 @@ public class RelatorioContratoDao extends DB {
             if (!in_internacao_motivo.isEmpty()) {
                 listWhere.add("CTR.id_tipo_internacao IN (" + in_internacao_motivo + ")");
             }
+            // TIPO CONTRATO
+            if (!in_tipo_contrato.isEmpty()) {
+                listWhere.add("CTR.id_tipo_contrato IN (" + in_tipo_contrato + ")");
+            }
             // MOTIVO DESLIGAMENTO
             if (!in_desligamento_motivo.isEmpty()) {
                 listWhere.add("CTR.id_tipo_desligamento IN (" + in_desligamento_motivo + ")");
             }
             // FILIAL ATUAL
-            if (!in_filial_atual.isEmpty() && !in_filial_atual.equals("0")) {
+            if (!in_filial_atual.equals("null") && !in_filial_atual.isEmpty() && !in_filial_atual.equals("0")) {
                 listWhere.add("CTR.id_filial_atual IN (" + in_filial_atual + ")");
             }
             // DATAS

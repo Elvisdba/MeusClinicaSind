@@ -20,7 +20,7 @@ public class TipoDesligamento implements Serializable {
     private String descricao;
 
     public TipoDesligamento() {
-        this.id = -1;
+        this.id = null;
         this.descricao = "";
     }
 

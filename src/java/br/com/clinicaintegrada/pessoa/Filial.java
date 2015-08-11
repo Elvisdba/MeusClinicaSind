@@ -38,7 +38,7 @@ public class Filial implements BaseEntity, Serializable {
     private Integer centroCusto;
 
     public Filial() {
-        this.id = -1;
+        this.id = null;
         this.matriz = new Juridica();
         this.filial = new Juridica();
         this.centroCusto = 0;

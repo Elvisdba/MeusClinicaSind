@@ -178,7 +178,7 @@ public class JuridicaBean implements Serializable {
     }
 
 //    public void pesquisaCnpj() {
-//        if (juridica.getId() != -1) {
+//        if (juridica.getId() != null) {
 //            return;
 //        }
 //
@@ -348,7 +348,7 @@ public class JuridicaBean implements Serializable {
 //        }
 //    }
 //    public void pesquisaCnpjXML(){
-//        if (juridica.getId() != -1){
+//        if (juridica.getId() != null){
 //            return;
 //        }
 //        
@@ -413,7 +413,7 @@ public class JuridicaBean implements Serializable {
     }
 
     public String getInadimplente() {
-        if (juridica.getId() != -1) {
+        if (juridica.getId() != null) {
             JuridicaDao juridicaDao = new JuridicaDao();
             int[] in = juridicaDao.listaInadimplencia(juridica.getPessoa().getId());
 
@@ -474,7 +474,7 @@ public class JuridicaBean implements Serializable {
             Messages.warn("Validação", "Informar o número do documento!");
             return null;
         }
-        if (juridica.getId() == -1) {
+        if (juridica.getId() == null) {
             if (juridica.getPessoa().getNome().isEmpty()) {
                 Messages.warn("Validação", "O campo nome não pode ser nulo!");
                 return null;
@@ -630,7 +630,7 @@ public class JuridicaBean implements Serializable {
     public String delete() {
         Dao dao = new Dao();
         PessoaEnderecoDao pessoaEnderecoDao = new PessoaEnderecoDao();
-        if (juridica.getId() == -1) {
+        if (juridica.getId() == null) {
             Messages.warn("Validação", "Pesquise uma empresa para ser excluída!");
             return null;
         }
@@ -887,7 +887,7 @@ public class JuridicaBean implements Serializable {
     public void savePessoaEndereco() {
         //VERIFICAR ENDERECO CONTABILIDADE
         verificarEndContabilidade();
-        if (juridica.getId() != -1) {
+        if (juridica.getId() != null) {
             Dao dao = new Dao();
             if (getPesquisaPessoaEnderecoPorPessoa().isEmpty()) {
                 for (int i = 0; i < listEnd.size(); i++) {
@@ -933,7 +933,7 @@ public class JuridicaBean implements Serializable {
 
     public void verificarEndContabilidade() {
         PessoaEnderecoDao pessoaEnderecoDao = new PessoaEnderecoDao();
-        if (juridica.getId() != -1) {
+        if (juridica.getId() != null) {
             if (juridica.getCobrancaEscritorio() && (juridica.getContabilidade() != null && juridica.getContabilidade().getId() != -1)) {
                 PessoaEndereco pesEndCon = pessoaEnderecoDao.pesquisaPessoaEnderecoPorPessoaTipo(juridica.getContabilidade().getPessoa().getId(), 3);
                 if ((!listEnd.isEmpty()) && pesEndCon != null) {
@@ -1051,7 +1051,7 @@ public class JuridicaBean implements Serializable {
     }
 
     public String btnExcluirContabilidadePertencente() {
-        if (juridica.getId() != -1) {
+        if (juridica.getId() != null) {
             //chkEndContabilidade = false;
             savePessoaEndereco();
             juridica.setContabilidade(null);
@@ -1117,7 +1117,7 @@ public class JuridicaBean implements Serializable {
     }
 
     public void enviarEmail() {
-        if (juridica.getId() != -1) {
+        if (juridica.getId() != null) {
             DaoInterface di = new Dao();
             Mail mail = new Mail();
             RegistroDao registroDao = new RegistroDao();
@@ -1211,7 +1211,7 @@ public class JuridicaBean implements Serializable {
     }
 
     public void atualizaEnvioEmails() {
-        if (juridica.getId() != -1) {
+        if (juridica.getId() != null) {
 //            envioEmails = new EnvioEmails();
 //            envioEmails.setEmail(juridica.getPessoa().getEmail1());
 //            envioEmails.setHistorico("Envio de Login e senha para Contribuinte.");
@@ -1262,7 +1262,7 @@ public class JuridicaBean implements Serializable {
     }
 
     public String getStrSimpleEndereco() {
-        if (juridica.getId() == -1) {
+        if (juridica.getId() == null) {
             strSimpleEndereco = "Adicionar Endereço";
         } else {
             strSimpleEndereco = "Mais Endereço";
@@ -1311,7 +1311,7 @@ public class JuridicaBean implements Serializable {
     }
 
     public void clearCnae() {
-        if (juridica.getId() != -1) {
+        if (juridica.getId() != null) {
             juridica.setCnae(null);
         }
     }
