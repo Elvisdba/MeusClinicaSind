@@ -669,7 +669,7 @@ public class AgendaTelefoneBean implements Serializable {
     }
 
     public Usuario getUsuario() {
-        if (usuario.getId() == -1) {
+        if (usuario.getId() == null) {
             usuario = (Usuario) Sessions.getObject("sessaoUsuario");
         }
         return usuario;

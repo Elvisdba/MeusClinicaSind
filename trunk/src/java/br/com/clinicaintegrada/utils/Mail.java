@@ -199,7 +199,7 @@ public class Mail extends MailTemplate implements Serializable {
                             emailPessoas.get(i).setPessoa(null);
                         }
                         if (email.getId() == -1) {
-                            if (email.getUsuario().getId() == -1) {
+                            if (email.getUsuario().getId() == null) {
                                 email.setUsuario((Usuario) Sessions.getObject("sessaoUsuario"));
                             }
                             email.setCliente(SessaoCliente.get());

@@ -211,7 +211,7 @@ public class FilialBean implements Serializable {
     }
 
     public String getRenderAdicionar() {
-        if (filial.getFilial().getId() != -1) {
+        if (filial.getFilial().getId() != null) {
             renderAdicionar = "true";
         } else {
             renderAdicionar = "false";

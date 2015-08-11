@@ -143,7 +143,7 @@ public class UsuarioBean implements Serializable {
         }
         Logger logger = new Logger();
         if (usuario.getId() == -1) {
-            if (usuario.getCliente() == null || usuario.getCliente().getId() == -1) {
+            if (usuario.getCliente() == null || usuario.getCliente().getId() == null) {
                 usuario.setCliente(SessaoCliente.get());
             }
             if (usuario.getPessoa().getId() == -1) {
@@ -193,7 +193,7 @@ public class UsuarioBean implements Serializable {
     }
 
     public String addUsuarioPermissao() {
-        if (usuario.getId() == -1) {
+        if (usuario.getId() == null) {
             return null;
         }
         PermissaoUsuario pu = new PermissaoUsuario();
@@ -277,7 +277,7 @@ public class UsuarioBean implements Serializable {
     public void delete() {
         DaoInterface di = new Dao();
         di.openTransaction();
-        if (usuario.getId() != -1) {
+        if (usuario.getId() != null) {
             if (!removePermissoes(di)) {
                 mensagem = "Erro ao excluir permissões!";
                 return;
@@ -403,7 +403,7 @@ public class UsuarioBean implements Serializable {
     }
 
     public boolean isDisSenha() {
-        if (usuario.getId() == -1) {
+        if (usuario.getId() == null) {
             disSenha = true;
         } else {
             disSenha = false;
@@ -416,7 +416,7 @@ public class UsuarioBean implements Serializable {
     }
 
     public boolean isDisStrSenha() {
-        if (usuario.getId() == -1) {
+        if (usuario.getId() ==null) {
             disStrSenha = false;
         } else {
             disStrSenha = true;
@@ -518,7 +518,7 @@ public class UsuarioBean implements Serializable {
 
     public List<PermissaoUsuario> getListPermissaoUsuario() {
         PermissaoUsuarioDao db = new PermissaoUsuarioDao();
-        if (usuario.getId() != -1 && !adicionado) {
+        if (usuario.getId() != null && !adicionado) {
             listPermissaoUsuario = db.pesquisaListaPermissaoPorUsuario(usuario.getId(), SessaoCliente.get().getId());
         }
         return listPermissaoUsuario;
@@ -617,7 +617,7 @@ public class UsuarioBean implements Serializable {
         int idR = Integer.parseInt(listRotinas.get(idRotina).getDescription());
         int idE = Integer.parseInt(listEventos.get(idEvento).getDescription());
         int idC = SessaoCliente.get().getId();
-        if (usuario.getId() != -1) {
+        if (usuario.getId() != null) {
             if (((UsuarioAcesso) (usuarioAcessoDao.pesquisaUsuarioAcessoModuloRotinaEvento(usuario.getId(), idM, idR, idE, idC))) == null) {
                 Permissao permissao = permissaoDao.pesquisaPermissaoModuloRotinaEvento(idM, idR, idE, idC);
                 UsuarioAcesso usuarioAcesso = new UsuarioAcesso();
@@ -645,7 +645,7 @@ public class UsuarioBean implements Serializable {
 
     public List<UsuarioAcesso> getListUsuarioAcesso() {
         listUsuarioAcesso.clear();
-        if (usuario.getId() != -1) {
+        if (usuario.getId() != null) {
             UsuarioAcessoDao usuarioAcessoDao = new UsuarioAcessoDao();
             int idM = 0;
             int idR = 0;
@@ -765,7 +765,7 @@ public class UsuarioBean implements Serializable {
     }
 
     public void salvarSenhaUsuarioPerfil() {
-        if (usuario.getId() != -1) {
+        if (usuario.getId() != null) {
             if (usuario.getPessoa().getId() == 1) {
                 mensagem = "Não é possível alterar a senha do administrador!";
                 Messages.warn("Validação", mensagem);

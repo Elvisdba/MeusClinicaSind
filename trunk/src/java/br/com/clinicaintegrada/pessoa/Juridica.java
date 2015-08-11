@@ -48,7 +48,7 @@ public class Juridica implements Serializable {
     private Boolean cobrancaEscritorio;
 
     public Juridica() {
-        this.id = -1;
+        this.id = null;
         this.pessoa = new Pessoa();
         this.fantasia = "";
         this.cnae = new Cnae();

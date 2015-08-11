@@ -20,7 +20,7 @@ public class TipoContrato implements Serializable {
     private String descricao;
 
     public TipoContrato() {
-        this.id = -1;
+        this.id = null;
         this.descricao = "";
     }
 

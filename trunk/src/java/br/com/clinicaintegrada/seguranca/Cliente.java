@@ -56,7 +56,7 @@ public class Cliente implements Serializable {
         this.senha = "";
     }
 
-    public Cliente(int Integer, String nomeCliente, String persistence, String caminhoSistema, String identifica, Integer idJuridica, Integer acessos, Date cadastro, Boolean ativo, String host, String senha) {
+    public Cliente(Integer id, String nomeCliente, String persistence, String caminhoSistema, String identifica, Integer idJuridica, Integer acessos, Date cadastro, Boolean ativo, String host, String senha) {
         this.id = id;
         this.nomeCliente = nomeCliente;
         this.persistence = persistence;

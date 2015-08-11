@@ -99,7 +99,7 @@ public class RegistroBean implements Serializable {
         Dao dao = new Dao();
         dao.openTransaction();
         registro.setSisEmailProtocolo((SisEmailProtocolo) dao.find(new SisEmailProtocolo(), Integer.parseInt(getListaSisEmailProtocolo().get(idSisEmailProtocolo).getDescription())));
-        if (registro.getFilial() == null || registro.getFilial().getId() == -1) {
+        if (registro.getFilial() == null || registro.getFilial().getId() == null) {
             registro.setFilial((Juridica) dao.find(new Juridica(), SessaoCliente.get().getIdJuridica()));
         }
         if (dao.update(registro)) {

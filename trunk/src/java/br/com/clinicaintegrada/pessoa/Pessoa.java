@@ -1,9 +1,7 @@
 package br.com.clinicaintegrada.pessoa;
 
-import br.com.clinicaintegrada.pessoa.dao.FisicaDao;
 import br.com.clinicaintegrada.seguranca.Cliente;
 import br.com.clinicaintegrada.utils.BaseEntity;
-import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.DataHoje;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -332,7 +330,6 @@ public class Pessoa implements BaseEntity, Serializable {
 //        }
 //        return fisica;
 //    }
-
     @Override
     public String toString() {
         return "Pessoa{" + "id=" + id + ", cliente=" + cliente + ", nome=" + nome + ", tipoDocumento=" + tipoDocumento + ", obs=" + obs + ", site=" + site + ", telefone1=" + telefone1 + ", telefone2=" + telefone2 + ", telefone3=" + telefone3 + ", email1=" + email1 + ", email2=" + email2 + ", email3=" + email3 + ", documento=" + documento + ", login=" + login + ", senha=" + senha + ", criacao=" + criacao + '}';

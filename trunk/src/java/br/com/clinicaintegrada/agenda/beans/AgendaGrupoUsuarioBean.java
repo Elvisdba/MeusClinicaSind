@@ -46,7 +46,7 @@ public class AgendaGrupoUsuarioBean implements Serializable {
     }
 
     public void save() {
-        if (usuario.getId() == -1) {
+        if (usuario.getId() == null) {
             Messages.warn("Validação", "Pesquisar usuário!");
             return;
         }

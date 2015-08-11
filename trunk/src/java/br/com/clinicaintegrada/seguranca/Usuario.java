@@ -35,7 +35,7 @@ public class Usuario implements Serializable {
     private Boolean acessoExterno;
 
     public Usuario() {
-        this.id = -1;
+        this.id = null;
         this.cliente = new Cliente();
         this.pessoa = new Pessoa();
         this.login = "";
