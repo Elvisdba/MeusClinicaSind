@@ -596,7 +596,7 @@
             <from-outcome>relatorioFuncionario</from-outcome>
             <to-view-id>/relatorioFuncionario.jsf</to-view-id>
             <redirect/>
-        </navigation-case>          
+        </navigation-case>
         
         <navigation-case>
             <from-outcome>relatorio</from-outcome>

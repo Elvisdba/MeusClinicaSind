@@ -122,7 +122,7 @@
                             <p:messages autoUpdate="true" showDetail="true" showSummary="true" closable="true" />
                             <h:panelGrid columns="2" columnClasses="verticalAlignTop, verticalAlignTop" styleClass="margin-top-max">
                                 <h:column>
-                                    <p:panel rendered="#{usuarioBean.usuario.id != -1}" style="width: 450px;">
+                                    <p:panel rendered="#{usuarioBean.usuario.id != null}" style="width: 450px;">
                                         <f:facet name="header">
                                             <h:panelGrid columns="2">
                                                 <p:outputLabel value="Permissões" />
@@ -156,7 +156,7 @@
                                     </p:panel>
                                 </h:column>
                                 <h:column>
-                                    <p:panel rendered="#{usuarioBean.usuario.id != -1}" style="width: 530px;">
+                                    <p:panel rendered="#{usuarioBean.usuario.id != null}" style="width: 530px;">
                                         <f:facet name="header">
                                             <h:panelGrid columns="3">
                                                 <p:outputLabel value="Permissões Personalizadas > "/>
