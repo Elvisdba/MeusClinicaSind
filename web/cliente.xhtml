@@ -34,8 +34,8 @@
                             <h:panelGrid columns="2">
                                 <p:commandButton icon="ui-icon-search" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaJuridica')}" title="Pesquisar pessoa jurídica" value="Pesquisar"/>
                                 <p:column>
-                                    <p:outputLabel value="Cliente: " rendered="#{clienteBean.juridica.id == -1}"/>
-                                    <p:outputLabel value="CNPJ: #{clienteBean.juridica.pessoa.documento} - #{clienteBean.juridica.pessoa.nome}" styleClass="fontePadraoNegrito" rendered="#{clienteBean.juridica.id != -1}"/>
+                                    <p:outputLabel value="Cliente: " rendered="#{clienteBean.juridica.id == null}"/>
+                                    <p:outputLabel value="CNPJ: #{clienteBean.juridica.pessoa.documento} - #{clienteBean.juridica.pessoa.nome}" styleClass="fontePadraoNegrito" rendered="#{clienteBean.juridica.id != null}"/>
                                 </p:column>
                                 <p:outputLabel value="Identificador: " />
                                 <p:inputText value="#{clienteBean.cliente.identifica}" />
