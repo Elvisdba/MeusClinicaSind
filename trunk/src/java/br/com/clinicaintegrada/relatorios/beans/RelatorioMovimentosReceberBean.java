@@ -163,7 +163,11 @@ public class RelatorioMovimentosReceberBean implements Serializable {
                 rmd.setOrder(ro.getQuery());
             }
         }
-        list = rmd.find(SessaoCliente.get().getId(), contrato_numero, tipo, pessoa_id, in_servicos, data_contrato_I, data_contrato_F, data_vencimento_I, data_vencimento_F, data_baixa_I, data_baixa_F, in_filial);
+        if(index[0] == 13) {
+            list = rmd.findResume(SessaoCliente.get().getId(), contrato_numero, tipo, pessoa_id, in_servicos, data_contrato_I, data_contrato_F, data_vencimento_I, data_vencimento_F, data_baixa_I, data_baixa_F, in_filial);
+        } else {
+            list = rmd.find(SessaoCliente.get().getId(), contrato_numero, tipo, pessoa_id, in_servicos, data_contrato_I, data_contrato_F, data_vencimento_I, data_vencimento_F, data_baixa_I, data_baixa_F, in_filial);
+        }
         DBExternal dBExternal = new DBExternal();
         if (!r.getMontaQuery() && rmd.getQUERY().isEmpty()) {
             if (list.isEmpty()) {
