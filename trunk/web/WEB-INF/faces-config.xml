@@ -621,6 +621,12 @@
             <to-view-id>/filialRotina.jsf</to-view-id>
             <redirect/>
         </navigation-case>          
+        
+        <navigation-case>
+            <from-outcome>relatorioMovimentosReceber</from-outcome>
+            <to-view-id>/relatorioMovimentosReceber.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>          
 
                                     
         <!-- 
