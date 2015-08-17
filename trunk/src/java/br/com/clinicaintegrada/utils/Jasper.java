@@ -641,8 +641,10 @@ public class Jasper implements Serializable {
                             System.out.println(e);
                             IS_DOWNLOAD = false;
                             COMPRESS_FILE = false;
+                            Messages.warn("Erro", e.getMessage());
                             return;
                         } catch (OutOfMemoryError e) {
+                            Messages.warn("Erro", e.getMessage());
                             IS_DOWNLOAD = false;
                             COMPRESS_FILE = false;
                             MemoryUsage heapUsage = memoryBean.getHeapMemoryUsage();
