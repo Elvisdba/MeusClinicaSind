@@ -1,5 +1,6 @@
 package br.com.clinicaintegrada.financeiro.beans;
 
+import br.com.clinicaintegrada.coordenacao.Contrato;
 import br.com.clinicaintegrada.financeiro.dao.MovimentosReceberDao;
 import br.com.clinicaintegrada.financeiro.Baixa;
 import br.com.clinicaintegrada.financeiro.ContaCobranca;
@@ -78,6 +79,10 @@ public class MovimentosReceberBean {
     private String descPesquisaBoleto;
     private List<SelectItem> listContas;
     private int indexConta;
+    private Boolean disabled;
+    private Contrato contrato;
+    private Float valorTotal;
+    private Float valorTotalBaixa;
 
     @PostConstruct
     public void init() {
@@ -105,13 +110,20 @@ public class MovimentosReceberBean {
         descPesquisaBoleto = "";
         listContas = new ArrayList();
         indexConta = 0;
+        disabled = false;
+        contrato = null;
+        valorTotal = new Float(0);
+        valorTotalBaixa = new Float(0);
     }
 
     @PreDestroy
     public void destroy() {
         Sessions.remove("movimentosReceberBean");
+        Sessions.remove("movimentosReceberDisabled");
         Sessions.remove("pessoaPesquisa");
         Sessions.remove("listMovimentos");
+        Sessions.remove("pessoaPesquisaList");
+        Sessions.remove("contratoPesquisa");
     }
 
     public List<SelectItem> getListContas() {
@@ -626,6 +638,8 @@ public class MovimentosReceberBean {
 
     public List<ListMovimentoReceber> getListMovimento() {
         if (listMovimento.isEmpty() && !listPessoa.isEmpty()) {
+            valorTotal = new Float(0);
+            valorTotalBaixa = new Float(0);
             MovimentosReceberDao movimentosReceberDao = new MovimentosReceberDao();
             String ids = "";
             for (int i = 0; i < listPessoa.size(); i++) {
@@ -634,7 +648,16 @@ public class MovimentosReceberBean {
                 }
                 ids = ids + String.valueOf(listPessoa.get(i).getId());
             }
-            List lista = movimentosReceberDao.listMovimentos(ids, porPesquisa);
+            List lista = new ArrayList();
+            if (contrato != null) {
+                if (contrato.getId() != null || contrato.getId() != -1) {
+                    lista = movimentosReceberDao.listMovimentos(ids, porPesquisa, contrato.getId());
+                } else {
+                    lista = movimentosReceberDao.listMovimentos(ids, porPesquisa);
+                }
+            } else {
+                lista = movimentosReceberDao.listMovimentos(ids, porPesquisa);
+            }
             //float soma = 0;
             boolean chk = false, disabled = false;
             String dataBaixa = "";
@@ -669,6 +692,8 @@ public class MovimentosReceberBean {
                 } else {
                     vencimento = "";
                 }
+                valorTotal += Moeda.converteUS$(Moeda.converteR$(AnaliseString.converteNullString(((List) lista.get(i)).get(4))));
+                valorTotalBaixa += Moeda.converteUS$(Moeda.converteR$(AnaliseString.converteNullString(((List) lista.get(i)).get(9))));
                 listMovimento.add(
                         new ListMovimentoReceber(
                                 /* selected     */chk,
@@ -867,6 +892,23 @@ public class MovimentosReceberBean {
             }
             calculoDesconto();
         }
+        if (Sessions.exists("pessoaPesquisaList")) {
+            List<Pessoa> list = (List<Pessoa>) Sessions.getList("pessoaPesquisaList", true);
+            for (int i = 0; i < list.size(); i++) {
+                if (i == 0) {
+                    pessoa = (Pessoa) list.get(i);
+                    listPessoa.add((Pessoa) list.get(i));
+                } else {
+                    listPessoa.add((Pessoa) list.get(i));
+                }
+            }
+            listMovimento.clear();
+            addMais = false;
+            calculoDesconto();
+        }
+        if (Sessions.exists("contratoPesquisa")) {
+            contrato = (Contrato) Sessions.getObject("contratoPesquisa", true);
+        }
         return pessoa;
     }
 
@@ -935,5 +977,56 @@ public class MovimentosReceberBean {
 
     public void setIndexConta(int indexConta) {
         this.indexConta = indexConta;
+    }
+
+    public Boolean getDisabled() {
+        if (Sessions.exists("movimentosReceberDisabled")) {
+            disabled = Sessions.getBoolean("movimentosReceberDisabled", true);
+        }
+        return disabled;
+    }
+
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public Float getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(Float valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    public String getValorTotalString() {
+        return Moeda.converteR$Float(valorTotal);
+    }
+
+    public void setValorTotalString(String valorTotalString) {
+        try {
+            this.valorTotal = Float.parseFloat(valorTotalString);
+        } catch (Exception e) {
+
+        }
+    }
+
+    public Float getValorTotalBaixa() {
+        return valorTotalBaixa;
+    }
+
+    public void setValorTotalBaixa(Float valorTotalBaixa) {
+        this.valorTotalBaixa = valorTotalBaixa;
+    }
+
+    public String getValorTotalBaixaString() {
+        return Moeda.converteR$Float(valorTotalBaixa);
+    }
+
+    public void setValorTotalBaixa(String valorTotalBaixaString) {
+        try {
+            this.valorTotalBaixa = Float.parseFloat(valorTotalBaixaString);
+        } catch (Exception e) {
+
+        }
     }
 }
