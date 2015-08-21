@@ -20,6 +20,7 @@ import br.com.clinicaintegrada.financeiro.Movimento;
 import br.com.clinicaintegrada.financeiro.Servicos;
 import br.com.clinicaintegrada.financeiro.TipoServico;
 import br.com.clinicaintegrada.financeiro.beans.ImpressaoBoleto;
+import br.com.clinicaintegrada.financeiro.beans.MovimentosReceberBean;
 import br.com.clinicaintegrada.financeiro.dao.BoletoDao;
 import br.com.clinicaintegrada.financeiro.dao.LoteDao;
 import br.com.clinicaintegrada.financeiro.dao.MovimentoDao;
@@ -38,6 +39,7 @@ import br.com.clinicaintegrada.pessoa.dao.JuridicaDao;
 import br.com.clinicaintegrada.pessoa.dao.PessoaEnderecoDao;
 import br.com.clinicaintegrada.seguranca.Cliente;
 import br.com.clinicaintegrada.seguranca.MacFilial;
+import br.com.clinicaintegrada.seguranca.controleUsuario.ChamadaPaginaBean;
 import br.com.clinicaintegrada.seguranca.controleUsuario.ControleUsuarioBean;
 import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import br.com.clinicaintegrada.utils.Compact;
@@ -183,6 +185,7 @@ public class ContratoBean implements Serializable {
         Sessions.remove("fisicaPesquisa");
         Sessions.remove("contratoPesquisa");
         Sessions.remove("pesquisaResponsavelContrato");
+        Sessions.remove("movimentosReceberDisabled");
     }
 
     public String clear() {
@@ -459,10 +462,41 @@ public class ContratoBean implements Serializable {
 
     }
 
-    public String edit(Object o) {
+    public String edit(Object o) throws IOException {
+        return edit(o, null);
+    }
+
+    public String edit(Object o, String redirect) throws IOException {
         contrato = new Contrato();
         Dao dao = new Dao();
         contrato = (Contrato) dao.rebind(o);
+        if (Sessions.getString("urlRetorno").equals("movimentosReceber") || redirect != null) {
+            List<Pessoa> list = new ArrayList();
+            list.add(contrato.getResponsavel());
+            if (contrato.getCobranca2() != null) {
+                list.add(contrato.getCobranca2());
+            }
+            if (redirect == null) {
+                Sessions.put("contratoPesquisa", contrato);
+                Sessions.put("pessoaPesquisaList", list);
+                Sessions.put("linkClicado", true);
+                return (String) Sessions.getString("urlRetorno");
+            } else {
+                Sessions.remove("movimentosReceberBean");
+                Sessions.remove("movimentosReceberDisabled");
+                Sessions.remove("pessoaPesquisa");
+                Sessions.remove("listMovimentos");
+                Sessions.remove("pessoaPesquisaList");
+                Sessions.put("pessoaPesquisaList", list);
+                MovimentosReceberBean movimentosReceberBean = new MovimentosReceberBean();
+                movimentosReceberBean.init();
+                Sessions.put("MovimentosReceberBean", movimentosReceberBean);
+                Sessions.put("contratoPesquisa", contrato);
+                Sessions.put("movimentosReceberDisabled", true);
+                return ((ChamadaPaginaBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("chamadaPaginaBean")).pagina(redirect);
+            }
+
+        }
         listContratos.clear();
         for (int i = 0; i < listFilial.size(); i++) {
             if (contrato.getFilial().getId() == Integer.parseInt(listFilial.get(i).getDescription())) {
@@ -514,8 +548,9 @@ public class ContratoBean implements Serializable {
             vt += listMovimentoTaxa.get(i).getValor();
         }
         valorTotalTaxa = Moeda.converteR$Float(vt);
-        calculaSaldoDevedor();
         Sessions.put("linkClicado", true);
+        listener(2);
+        calculaValoresTotais(3);
         if (Sessions.exists("urlRetorno")) {
             if (!Sessions.getString("urlRetorno").equals("menuPrincipal")) {
                 Sessions.put("contratoPesquisa", contrato);
@@ -524,7 +559,6 @@ public class ContratoBean implements Serializable {
         } else {
             return "contrato";
         }
-        listener(2);
         return "contrato";
     }
 
@@ -2349,6 +2383,27 @@ public class ContratoBean implements Serializable {
             }
             if (valorTotalCobranca2 < valorTotalResponsavel) {
                 valorTotalResponsavel = contrato.getValorTotal() - valorTotalCobranca2;
+            }
+        }
+        if (tcase == 3) {
+            float vt = contrato.getValorTotal();
+            float vt2 = 0;
+            float vc = 0;
+            float vr = 0;
+            if(contrato.getValorTotal2() == 0) {
+                valorTotalResponsavel = contrato.getValorTotal();
+                valorTotalCobranca2 = new Float(0);
+            } else if(contrato.getValorTotal2() != 0) {
+                vr = contrato.getValorTotal() - contrato.getValorTotal2();
+                if(vr == 0) {
+                    valorTotalCobranca2 = contrato.getValorTotal();                    
+                } else if(vr > contrato.getValorTotal2()) {
+                    valorTotalResponsavel = vr;
+                    valorTotalCobranca2 = contrato.getValorTotal() - vr;
+                } else if(vr < contrato.getValorTotal2()) {
+                    valorTotalResponsavel = contrato.getValorTotal() - contrato.getValorTotal2();
+                    valorTotalCobranca2 = contrato.getValorTotal2();
+                } 
             }
         }
         contrato.setValorTotal2(valorTotalCobranca2);

@@ -8,6 +8,10 @@ import javax.persistence.Query;
 public class MovimentosReceberDao extends DB {
 
     public List listMovimentos(String ids, String por_status) {
+        return listMovimentos(ids, por_status, null);
+    }
+
+    public List listMovimentos(String ids, String por_status, Integer contrato_id) {
         try {
             if (ids.isEmpty()) {
                 return new ArrayList();
@@ -52,14 +56,23 @@ public class MovimentosReceberDao extends DB {
             switch (por_status) {
                 case "todos":
                     ands = where + " WHERE M.id_pessoa IN (" + ids + ") AND M.is_ativo = true ";
+                    if (contrato_id != null) {
+                        ands += " AND L.id_contrato = " + contrato_id;
+                    }
                     order_by = " ORDER BY M.dt_vencimento ASC, P.ds_nome, S.ds_descricao ";
                     break;
                 case "abertos":
                     ands = where + " WHERE M.id_pessoa IN (" + ids + ") AND M.id_baixa IS NULL AND m.is_ativo = true ";
+                    if (contrato_id != null) {
+                        ands += " AND L.id_contrato = " + contrato_id;
+                    }
                     order_by = " ORDER BY M.dt_vencimento ASC, P.ds_nome, S.ds_descricao ";
                     break;
                 default:
                     ands = where + " WHERE M.id_pessoa IN (" + ids + ") AND m.id_baixa IS NOT NULL AND M.is_ativo = true ";
+                    if (contrato_id != null) {
+                        ands += " AND L.id_contrato = " + contrato_id;
+                    }
                     order_by = " ORDER BY B.dt_baixa ASC, M.dt_vencimento, P.ds_nome, S.ds_descricao ";
                     break;
             }
