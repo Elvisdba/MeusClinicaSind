@@ -123,8 +123,8 @@ public class UsuarioBean implements Serializable {
     }
 
     public void save() {
-        DaoInterface di = new Dao();
-        di.openTransaction();
+        Dao dao = new Dao();
+        dao.openTransaction();
 
         UsuarioDao db = new UsuarioDao();
 
@@ -142,8 +142,8 @@ public class UsuarioBean implements Serializable {
             return;
         }
         Logger logger = new Logger();
-        if (usuario.getId() == -1) {
-            if (usuario.getCliente() == null || usuario.getCliente().getId() == null) {
+        if (usuario.getId() == null) {
+            if (usuario.getCliente() == null || usuario.getCliente().getId() == null || usuario.getCliente().getId() == -1) {
                 usuario.setCliente(SessaoCliente.get());
             }
             if (usuario.getPessoa().getId() == -1) {
@@ -156,20 +156,20 @@ public class UsuarioBean implements Serializable {
                 return;
             }
             if (db.pesquisaLogin(usuario.getLogin(), usuario.getPessoa().getId()).isEmpty()) {
-                if (di.save(usuario)) {
-                    di.commit();
+                if (dao.save(usuario)) {
+                    dao.commit();
                     mensagem = "Login e senha salvos com Sucesso!";
                     logger.save("ID: " + usuario.getId() + " - Pessoa: " + usuario.getPessoa().getId() + " - " + usuario.getPessoa().getNome() + " - Login: " + usuario.getLogin() + " - Ativo: " + usuario.getAtivo());
                 } else {
-                    di.rollback();
-                    mensagem = "Erro ao Salvar Login e Senha!";
+                    dao.rollback();
+                    mensagem = "Erro ao Salvar Login e Senha! (" + dao.getException() + ")";
                 }
             } else {
-                di.rollback();
+                dao.rollback();
                 mensagem = "Este login já existe no Sistema.";
             }
         } else {
-            Usuario user = (Usuario) di.find(usuario);
+            Usuario user = (Usuario) dao.find(usuario);
             if (disNovaSenha) {
                 if (user.getSenha().equals(getSenhaAntiga()) && !usuario.getSenha().equals("")) {
                 } else {
@@ -179,15 +179,15 @@ public class UsuarioBean implements Serializable {
             } else {
                 usuario.setSenha(user.getSenha());
             }
-            Usuario usu = (Usuario) di.find(usuario);
+            Usuario usu = (Usuario) dao.find(usuario);
             String beforeUpdate = "ID: " + usu.getId() + " - Pessoa: (" + usu.getPessoa().getId() + ") " + usu.getPessoa().getNome() + " - Login: " + usu.getLogin() + " - Ativo: " + usu.getAtivo();
-            if (di.update(usuario)) {
-                di.commit();
+            if (dao.update(usuario)) {
+                dao.commit();
                 mensagem = "Login e senha salvos com Sucesso!";
                 logger.update(beforeUpdate, "ID: " + usuario.getId() + " - Pessoa: (" + usuario.getPessoa().getId() + ") " + usuario.getPessoa().getNome() + " - Login: " + usuario.getLogin() + " - Ativo: " + usuario.getAtivo());
             } else {
-                di.rollback();
-                mensagem = "Erro ao atualizar Usuario!";
+                dao.rollback();
+                mensagem = "Erro ao atualizar Usuario! (" + dao.getException() + ")";
             }
         }
     }
@@ -416,7 +416,7 @@ public class UsuarioBean implements Serializable {
     }
 
     public boolean isDisStrSenha() {
-        if (usuario.getId() ==null) {
+        if (usuario.getId() == null) {
             disStrSenha = false;
         } else {
             disStrSenha = true;

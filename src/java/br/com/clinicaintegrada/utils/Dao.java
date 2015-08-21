@@ -13,6 +13,8 @@ import javax.persistence.Query;
 @SuppressWarnings("unchecked")
 public class Dao extends DB implements DaoInterface {
 
+    private String exception = "";
+
     /**
      * <p>
      * <strong>Open Transaction</strong></p>
@@ -84,6 +86,7 @@ public class Dao extends DB implements DaoInterface {
             getEntityManager().flush();
             return true;
         } catch (Exception e) {
+            exception = e.getMessage();
             Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
             return false;
         }
@@ -111,6 +114,7 @@ public class Dao extends DB implements DaoInterface {
             getEntityManager().getTransaction().commit();
             return true;
         } catch (Exception e) {
+            exception = e.getMessage();
             getEntityManager().getTransaction().rollback();
             Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
             return false;
@@ -141,18 +145,23 @@ public class Dao extends DB implements DaoInterface {
                 return false;
             }
         } catch (IllegalAccessException e) {
+            exception = e.getMessage();
             Logger.getLogger(this.getClass().getName()).log(Level.WARNING, e.getMessage());
             return false;
         } catch (IllegalArgumentException e) {
+            exception = e.getMessage();
             Logger.getLogger(this.getClass().getName()).log(Level.WARNING, e.getMessage());
             return false;
         } catch (NoSuchMethodException e) {
+            exception = e.getMessage();
             Logger.getLogger(this.getClass().getName()).log(Level.WARNING, e.getMessage());
             return false;
         } catch (SecurityException e) {
+            exception = e.getMessage();
             Logger.getLogger(this.getClass().getName()).log(Level.WARNING, e.getMessage());
             return false;
         } catch (InvocationTargetException e) {
+            exception = e.getMessage();
             Logger.getLogger(this.getClass().getName()).log(Level.WARNING, e.getMessage());
             return false;
         }
@@ -161,6 +170,7 @@ public class Dao extends DB implements DaoInterface {
             getEntityManager().flush();
             return true;
         } catch (Exception e) {
+            exception = e.getMessage();
             Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
             return false;
         }
@@ -192,18 +202,23 @@ public class Dao extends DB implements DaoInterface {
                 return false;
             }
         } catch (IllegalAccessException e) {
+            exception = e.getMessage();
             Logger.getLogger(this.getClass().getName()).log(Level.WARNING, e.getMessage());
             return false;
         } catch (IllegalArgumentException e) {
+            exception = e.getMessage();
             Logger.getLogger(this.getClass().getName()).log(Level.WARNING, e.getMessage());
             return false;
         } catch (NoSuchMethodException e) {
+            exception = e.getMessage();
             Logger.getLogger(this.getClass().getName()).log(Level.WARNING, e.getMessage());
             return false;
         } catch (SecurityException e) {
+            exception = e.getMessage();
             Logger.getLogger(this.getClass().getName()).log(Level.WARNING, e.getMessage());
             return false;
         } catch (InvocationTargetException e) {
+            exception = e.getMessage();
             Logger.getLogger(this.getClass().getName()).log(Level.WARNING, e.getMessage());
             return false;
         }
@@ -214,6 +229,7 @@ public class Dao extends DB implements DaoInterface {
             getEntityManager().getTransaction().commit();
             return true;
         } catch (Exception e) {
+            exception = e.getMessage();
             getEntityManager().getTransaction().rollback();
             Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
             return false;
@@ -239,6 +255,7 @@ public class Dao extends DB implements DaoInterface {
             getEntityManager().flush();
             return true;
         } catch (Exception e) {
+            exception = e.getMessage();
             Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
             return false;
         }
@@ -267,6 +284,7 @@ public class Dao extends DB implements DaoInterface {
             getEntityManager().getTransaction().commit();
             return true;
         } catch (Exception e) {
+            exception = e.getMessage();
             getEntityManager().getTransaction().rollback();
             Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
             return false;
@@ -301,6 +319,7 @@ public class Dao extends DB implements DaoInterface {
             getEntityManager().flush();
             commit();
         } catch (Exception e) {
+            exception = e.getMessage();
             Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
         }
     }
@@ -351,32 +370,39 @@ public class Dao extends DB implements DaoInterface {
                     return null;
                 }
             } catch (IllegalAccessException e) {
+                exception = e.getMessage();
                 Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
                 return null;
             } catch (IllegalArgumentException e) {
+                exception = e.getMessage();
                 Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
                 return null;
             } catch (NoSuchMethodException e) {
+                exception = e.getMessage();
                 Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
                 return null;
             } catch (SecurityException e) {
+                exception = e.getMessage();
                 Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
                 return null;
             } catch (InvocationTargetException e) {
+                exception = e.getMessage();
                 Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
                 return null;
             }
             try {
                 object = getEntityManager().find(o.getClass(), id);
-                if(object == null) {
-                    object = getEntityManager().find(o.getClass(), (Object) id);                    
+                if (object == null) {
+                    object = getEntityManager().find(o.getClass(), (Object) id);
                 }
             } catch (Exception e) {
+                exception = e.getMessage();
             }
         } else {
             try {
                 object = getEntityManager().find(object.getClass(), objectId);
             } catch (Exception e) {
+                exception = e.getMessage();
                 Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
                 return null;
             }
@@ -488,6 +514,7 @@ public class Dao extends DB implements DaoInterface {
                 result = qry.getResultList();
             }
         } catch (Exception e) {
+            exception = e.getMessage();
             Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
         }
         return result;
@@ -504,6 +531,7 @@ public class Dao extends DB implements DaoInterface {
                 result = qry.getResultList();
             }
         } catch (Exception e) {
+            exception = e.getMessage();
             Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
         }
         return result;
@@ -541,6 +569,7 @@ public class Dao extends DB implements DaoInterface {
                 return list;
             }
         } catch (Exception e) {
+            exception = e.getMessage();
             Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
             return new ArrayList();
         }
@@ -571,6 +600,7 @@ public class Dao extends DB implements DaoInterface {
                 return list;
             }
         } catch (Exception e) {
+            exception = e.getMessage();
             Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
             return new ArrayList();
         }
@@ -666,6 +696,7 @@ public class Dao extends DB implements DaoInterface {
                 return list;
             }
         } catch (Exception e) {
+            exception = e.getMessage();
             Logger.getLogger(Dao.class.getName()).log(Level.WARNING, e.getMessage());
             return new ArrayList();
         }
@@ -840,6 +871,7 @@ public class Dao extends DB implements DaoInterface {
                 return list;
             }
         } catch (Exception e) {
+            exception = e.getMessage();
             return new ArrayList();
         }
         return new ArrayList();
@@ -872,6 +904,7 @@ public class Dao extends DB implements DaoInterface {
                 return list;
             }
         } catch (Exception e) {
+            exception = e.getMessage();
             return new ArrayList();
         }
         return new ArrayList();
@@ -885,6 +918,7 @@ public class Dao extends DB implements DaoInterface {
                 return true;
             }
         } catch (Exception e) {
+            exception = e.getMessage();
             return false;
         }
         return false;
@@ -895,7 +929,16 @@ public class Dao extends DB implements DaoInterface {
             Object o = getEntityManager().createNativeQuery(textQuery).getSingleResult();
             return o != null;
         } catch (Exception e) {
+            exception = e.getMessage();
             return false;
         }
+    }
+
+    public String getException() {
+        return exception;
+    }
+
+    public void setException(String exception) {
+        this.exception = exception;
     }
 }

@@ -60,6 +60,14 @@ public class ContratoDao extends DB {
                     pessoa = "id_responsavel";
                     whereSting = " WHERE P.ds_documento LIKE '" + s + text + f + "'";
                     break;
+                case "cobranca2_nome":
+                    pessoa = "id_cobranca2";
+                    whereSting = " WHERE UPPER(func_translate(P.ds_nome)) LIKE UPPER(func_translate('" + s + text + f + "'))  AND id_cobranca2 IS NOT NULL";
+                    break;
+                case "cobranca2_documento":
+                    pessoa = "id_cobranca2";
+                    whereSting = " WHERE P.ds_documento LIKE '" + s + text + f + "' AND id_cobranca2 IS NOT NULL";
+                    break;
                 case "contrato":
                     Integer nrContrato;
                     try {
