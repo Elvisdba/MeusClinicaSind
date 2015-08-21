@@ -379,12 +379,13 @@
                                     </h:panelGrid>
                                 </p:panel>
                                 <f:facet name="footer" >
-                                    <h:panelGrid columns="10">
+                                    <h:panelGrid columns="11">
                                         <p:commandButton value="Salvar" disabled="#{controleAcessoBean.save}" onclick="PF('dlg_save').show()" global="false"/>
                                         <p:commandButton action="#{contratoBean.clear}" value="Novo"  />
                                         <p:commandButton value="Excluir" disabled="#{controleAcessoBean.delete}" onclick="PF('dlg_delete').show()" rendered="#{contratoBean.contrato.id != null}"/>
                                         <p:commandButton action="#{chamadaPaginaBean.pesquisa('pesquisaContrato')}" value="Pesquisar" disabled="#{controleAcessoBean.view('pesquisaContrato')}"/>
                                         <p:commandButton value="Extrato" disabled="true" rendered="#{contratoBean.contrato.id != null}"/>
+                                        <p:commandButton value="Movimentos a Receber" action="#{contratoBean.edit(contratoBean.contrato, 'movimentosReceber')}" rendered="#{contratoBean.contrato.id != null}"  />
                                         <h:commandLink action="#{contratoBean.imprimir}" disabled="#{contratoBean.contrato.id == null}" rendered="#{contratoBean.contrato.id != null}">
                                             <p:button value="Imprimir Contrato" icon="ui-icon-print" />
                                         </h:commandLink>
