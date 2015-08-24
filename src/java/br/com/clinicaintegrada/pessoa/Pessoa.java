@@ -1,13 +1,19 @@
 package br.com.clinicaintegrada.pessoa;
 
+import br.com.clinicaintegrada.pessoa.dao.FisicaDao;
 import br.com.clinicaintegrada.seguranca.Cliente;
+import br.com.clinicaintegrada.seguranca.controleUsuario.ControleUsuarioBean;
 import br.com.clinicaintegrada.utils.BaseEntity;
+import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.DataHoje;
+import java.io.File;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
+import javax.faces.context.FacesContext;
 import javax.persistence.*;
+import javax.servlet.ServletContext;
 import org.primefaces.event.SelectEvent;
 
 @Entity
@@ -317,19 +323,63 @@ public class Pessoa implements BaseEntity, Serializable {
         return true;
     }
 
-//    public Fisica getFisica() {
-//        Fisica fisica = new Fisica();
-//        fisica.setPessoa(null);
-//        if (this.id != -1) {
-//            FisicaDao fisicaDao = new FisicaDao();
-//            fisica = fisicaDao.pesquisaFisicaPorPessoa(this.id);
-//            if (fisica.getId() != -1) {
-//                fisica = (Fisica) new Dao().rebind(fisica);
-//            }
-//            // fisica.setPessoa(null);
-//        }
-//        return fisica;
-//    }
+    public String getFoto() {
+        return getFoto(0);
+    }
+
+    public Fisica getFisica() {
+        Fisica fisica = new Fisica();
+        fisica.setPessoa(null);
+        if (this.id != -1) {
+            FisicaDao fisicaDao = new FisicaDao();
+            fisica = fisicaDao.pesquisaFisicaPorPessoa(this.id);
+            if (fisica.getId() != -1) {
+                fisica = (Fisica) new Dao().rebind(fisica);
+            }
+            fisica.setPessoa(null);
+        }
+        return fisica;
+    }
+
+    /**
+     * Retorna foto da pessoa
+     *
+     * @param waiting
+     * @return
+     */
+    public String getFoto(Integer waiting) {
+        if (waiting > 0) {
+            try {
+                Thread.sleep(waiting);
+            } catch (InterruptedException ex) {
+            }
+        }
+
+        String foto = "/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/fotos/" + id + ".png";
+        try {
+            File f = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(foto));
+            if (!f.exists()) {
+                foto = "/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/fotos/" + id + ".jpg";
+                f = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(foto));
+                if (!f.exists()) {
+                    try {
+                        if (getFisica().getSexo().equals("F")) {
+                            foto = "/imagens/user_female.png";
+                        } else {
+                            foto = "/imagens/user_male.png";
+                        }
+                    } catch (Exception e) {
+                        e.getMessage();
+                        return null;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            foto = "/imagens/user_male.png";
+        }
+        return foto;
+    }
+
     @Override
     public String toString() {
         return "Pessoa{" + "id=" + id + ", cliente=" + cliente + ", nome=" + nome + ", tipoDocumento=" + tipoDocumento + ", obs=" + obs + ", site=" + site + ", telefone1=" + telefone1 + ", telefone2=" + telefone2 + ", telefone3=" + telefone3 + ", email1=" + email1 + ", email2=" + email2 + ", email3=" + email3 + ", documento=" + documento + ", login=" + login + ", senha=" + senha + ", criacao=" + criacao + '}';

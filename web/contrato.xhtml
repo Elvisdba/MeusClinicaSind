@@ -60,12 +60,12 @@
                                         </h:column>
                                         <h:column>
                                             <h:outputLink id="id_paciente_foto" value="#">
-                                                <p:graphicImage value="#{pessoaUtilitariosBean.getFotoPessoaFisica(contratoBean.contrato.paciente.id)}" cache="false" width="80" rendered="#{contratoBean.contrato.paciente.id != -1}" style="float: left;"/>
+                                                <p:graphicImage value="#{contratoBean.contrato.paciente.foto}" cache="false" width="80" rendered="#{contratoBean.contrato.paciente.id != -1}" style="float: left;"/>
                                             </h:outputLink>
                                             <p:tooltip id="toolTipContent" for="id_paciente_foto" trackMouse="true">
                                                 <h:panelGrid columns="1">
                                                     <h:outputLabel value="Foto Paciente" />
-                                                    <p:graphicImage value="#{pessoaUtilitariosBean.getFotoPessoaFisica(contratoBean.contrato.paciente.id)}" />                                                    
+                                                    <p:graphicImage value="#{contratoBean.contrato.paciente.foto}" />                                                    
                                                 </h:panelGrid>
                                             </p:tooltip>
                                         </h:column>

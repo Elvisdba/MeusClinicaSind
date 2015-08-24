@@ -65,7 +65,9 @@
                             <p:panel styleClass="fundoCinza">
                                 <h:panelGrid columns="3" style="width: 100%">
                                     <p:column>
-                                        <p:commandButton onclick="PF('dlg_pesquisa').show()" value="Pesquisar" disabled="#{movimentosReceberBean.disabled}"/>
+                                        <p:commandButton value="Pesquisa Devedor" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoa')}" disabled="#{movimentosReceberBean.disabled}"/>
+                                        <p:commandButton value="Pesquisa Contrato" action="#{chamadaPaginaBean.pesquisa('pesquisaContrato')}"  disabled="#{movimentosReceberBean.disabled}"/>                                        
+                                        
                                         <p:commandButton value="Pesquisar outra Pessoa" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoa')}" rendered="#{movimentosReceberBean.pessoa.id != -1}" disabled="#{movimentosReceberBean.disabled}"/>
                                         <h:outputText value="#{movimentosReceberBean.pessoa.nome}" title="#{movimentosReceberBean.pessoa.nome}" style="margin-left: 20px; font-weight: bold"/>
                                     </p:column>
@@ -233,14 +235,7 @@
                                 <p:commandButton value="Sim"      type="submit" styleClass="ui-confirmdialog-yes" action="#{movimentosReceberBean.estornarBaixa()}" update="formMovimentosReceber" onclick="PF('i_dlg_estorno').hide()" style="clear: both; float: left" icon="ui-icon-check"/>  
                                 <p:commandButton value="Cancelar" type="button" styleClass="ui-confirmdialog-no" onclick="PF('i_dlg_estorno').hide()" style="float: left" icon="ui-icon-close"/>       
                             </p:dialog>
-
-                            <p:dialog widgetVar="dlg_pesquisa" header="Pesquisar por" resizable="false" width="400" modal="true">
-                                <h:panelGrid columns="2">
-                                    <p:commandButton value="por pessoa" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoa')}" rendered="#{movimentosReceberBean.pessoa.id == -1}" />
-                                    <p:commandButton value="por contrato" action="#{chamadaPaginaBean.pesquisa('pesquisaContrato')}"  />                                        
-                                </h:panelGrid>
-                            </p:dialog>
-
+                            
                             <p:dialog widgetVar="i_dlg_dados" header="Ver Mais" resizable="false" modal="true">
                                 <h:panelGrid id="i_dados">
                                     <h:panelGrid columns="4" style="width: 100%">

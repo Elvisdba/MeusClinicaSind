@@ -735,8 +735,14 @@ public class ContratoBean implements Serializable {
             FilialDao filialDao = new FilialDao();
             List<Filial> list = (List<Filial>) filialDao.pesquisaTodasCliente();
             for (int i = 0; i < list.size(); i++) {
-                if (MacFilial.getAcessoFilial().getFilial().getId().equals(list.get(i).getId())) {
-                    idFilial = i;
+                if (i == 0) {
+                    if (MacFilial.getAcessoFilial() != null && MacFilial.getAcessoFilial().getId() != null) {
+                        if (MacFilial.getAcessoFilial().getFilial().getId().equals(list.get(i).getId())) {
+                            idFilial = i;
+                        }
+                    } else {
+                        idFilial = i;
+                    }
                 }
                 listFilial.add(new SelectItem(i, list.get(i).getFilial().getPessoa().getNome(), "" + list.get(i).getId()));
             }
@@ -755,10 +761,16 @@ public class ContratoBean implements Serializable {
             MacFilial macFilial = MacFilial.getAcessoFilial();
             boolean isFilial = false;
             for (int i = 0; i < list.size(); i++) {
-                if (!isFilial) {
-                    if (macFilial.getFilial().getId().equals(list.get(i).getId())) {
+                if (MacFilial.getAcessoFilial() != null && MacFilial.getAcessoFilial().getId() != null) {
+                    if (!isFilial) {
+                        if (macFilial.getFilial().getId().equals(list.get(i).getId())) {
+                            idFilialAtual = i;
+                            isFilial = true;
+                        }
+                    }
+                } else {
+                    if(i == 0) {
                         idFilialAtual = i;
-                        isFilial = true;
                     }
                 }
                 listFilialAtual.add(new SelectItem(i, list.get(i).getFilial().getPessoa().getNome(), "" + list.get(i).getId()));
@@ -2390,20 +2402,20 @@ public class ContratoBean implements Serializable {
             float vt2 = 0;
             float vc = 0;
             float vr = 0;
-            if(contrato.getValorTotal2() == 0) {
+            if (contrato.getValorTotal2() == 0) {
                 valorTotalResponsavel = contrato.getValorTotal();
                 valorTotalCobranca2 = new Float(0);
-            } else if(contrato.getValorTotal2() != 0) {
+            } else if (contrato.getValorTotal2() != 0) {
                 vr = contrato.getValorTotal() - contrato.getValorTotal2();
-                if(vr == 0) {
-                    valorTotalCobranca2 = contrato.getValorTotal();                    
-                } else if(vr > contrato.getValorTotal2()) {
+                if (vr == 0) {
+                    valorTotalCobranca2 = contrato.getValorTotal();
+                } else if (vr > contrato.getValorTotal2()) {
                     valorTotalResponsavel = vr;
                     valorTotalCobranca2 = contrato.getValorTotal() - vr;
-                } else if(vr < contrato.getValorTotal2()) {
+                } else if (vr < contrato.getValorTotal2()) {
                     valorTotalResponsavel = contrato.getValorTotal() - contrato.getValorTotal2();
                     valorTotalCobranca2 = contrato.getValorTotal2();
-                } 
+                }
             }
         }
         contrato.setValorTotal2(valorTotalCobranca2);
