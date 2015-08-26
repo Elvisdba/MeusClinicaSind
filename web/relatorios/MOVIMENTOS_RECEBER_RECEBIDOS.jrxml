@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="2.1435888100000042"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="207"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -28,7 +28,7 @@
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="relatorio_titulo" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="relatorio_detalhes" class="java.lang.String"/>
+	<parameter name="relatorio_detalhes" class="java.lang.String" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[select
 c.id as contrato_numero,
@@ -516,7 +516,7 @@ where m.is_ativo=true and ds_es='E']]>
 	<summary>
 		<band height="24" splitType="Stretch">
 			<staticText>
-				<reportElement key="staticText-2" x="382" y="3" width="123" height="13" forecolor="#000000" uuid="be417ef9-450e-4131-a944-6e1e240cc2fd"/>
+				<reportElement key="staticText-2" x="422" y="3" width="123" height="13" forecolor="#000000" uuid="be417ef9-450e-4131-a944-6e1e240cc2fd"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -529,7 +529,7 @@ where m.is_ativo=true and ds_es='E']]>
 				<text><![CDATA[Total Geral de Registros:]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-2" x="512" y="3" width="77" height="13" forecolor="#000000" uuid="58021e00-1ab3-43f7-b81f-a62f94711132"/>
+				<reportElement key="textField-2" x="552" y="3" width="77" height="13" forecolor="#000000" uuid="58021e00-1ab3-43f7-b81f-a62f94711132"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -555,7 +555,7 @@ where m.is_ativo=true and ds_es='E']]>
 				<text><![CDATA[Valor Total:]]></text>
 			</staticText>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-2" x="70" y="4" width="77" height="13" forecolor="#000000" uuid="99c42b12-3bbe-4d18-a0e7-ad956215efd2"/>
+				<reportElement key="textField-2" x="60" y="4" width="71" height="13" forecolor="#000000" uuid="99c42b12-3bbe-4d18-a0e7-ad956215efd2"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -568,7 +568,7 @@ where m.is_ativo=true and ds_es='E']]>
 				<textFieldExpression><![CDATA[$V{VALOR_TOTAL}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-2" x="246" y="4" width="121" height="13" forecolor="#000000" uuid="e10ebe56-d5f3-47e9-bca8-51f01eac9f4b"/>
+				<reportElement key="textField-2" x="225" y="4" width="70" height="13" forecolor="#000000" uuid="e10ebe56-d5f3-47e9-bca8-51f01eac9f4b"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -581,7 +581,7 @@ where m.is_ativo=true and ds_es='E']]>
 				<textFieldExpression><![CDATA[$V{VALOR_TOTAL_QUITADO}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText-2" x="152" y="4" width="94" height="13" forecolor="#000000" uuid="ead59f69-3d16-422a-bdf1-0589d53b4d9e"/>
+				<reportElement key="staticText-2" x="132" y="4" width="90" height="13" forecolor="#000000" uuid="ead59f69-3d16-422a-bdf1-0589d53b4d9e"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -593,6 +593,32 @@ where m.is_ativo=true and ds_es='E']]>
 				</textElement>
 				<text><![CDATA[Valor Total Quitado:]]></text>
 			</staticText>
+			<staticText>
+				<reportElement key="staticText-2" x="305" y="4" width="42" height="13" forecolor="#000000" uuid="fd8d0954-f10a-499a-92c6-d6a6205c14fd"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saldo:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-2" x="352" y="4" width="55" height="13" forecolor="#000000" uuid="c7f85e7b-089a-4b8c-8cf0-3e3b35b86958"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{VALOR_TOTAL} - $V{VALOR_TOTAL_QUITADO}]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>
