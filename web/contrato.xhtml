@@ -86,7 +86,7 @@
                                 <p:panel  styleClass="margin-top-max">
                                     <f:facet name="header">
                                         <h:panelGrid columns="4">
-                                            <h:outputLabel value="Responsável (Credor 1)" styleClass="bold font-color-blue"/>
+                                            <h:outputLabel value="Responsável (Devedor 1)" styleClass="bold font-color-blue"/>
                                         </h:panelGrid>
                                     </f:facet>
                                     <h:panelGrid columns="5" cellpadding="5">
@@ -102,7 +102,7 @@
                                 <p:panel styleClass="margin-top-max" rendered="#{contratoBean.disabled[1]}" style="color: red;">
                                     <f:facet name="header">
                                         <h:panelGrid columns="4">
-                                            <h:outputLabel value="Entidade / Responsável 2 (Credor 2)" styleClass="bold" style="color: green"/>
+                                            <h:outputLabel value="Entidade / Responsável 2 (Devedor 2)" styleClass="bold" style="color: green"/>
                                         </h:panelGrid>
                                     </f:facet>
                                     <h:panelGrid columns="5" cellpadding="5">
@@ -166,9 +166,9 @@
                                     <p:inputText maxlength="2" styleClass="text-center font-size-12" value="#{contratoBean.contrato.quantidadeParcelas}" disabled="#{(contratoBean.contrato.responsavel.id == -1) or (contratoBean.disabled[0])}"  readonly="#{contratoBean.contrato.impresso}" size="2">
                                         <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaSaldoDevedor}" global="false"/>
                                     </p:inputText>
-                                    <p:outputLabel value="Máximo: 12 parcelas" />
+                                    <p:outputLabel value="Máximo: 24 parcelas" />
                                 </h:panelGrid>
-                                <p style="font-size: 14pt!important;" class="font-color-blue">CREDOR 1: <span style="color: black; font-size: 14pt!important;">#{contratoBean.contrato.responsavel.nome}</span></p>
+                                <p style="font-size: 14pt!important;" class="font-color-blue">DEVEDOR 1: <span style="color: black; font-size: 14pt!important;">#{contratoBean.contrato.responsavel.nome}</span></p>
                                 <p:panelGrid styleClass="margin-top-max">
                                     <f:facet name="header">
                                         <p:row>
@@ -208,7 +208,7 @@
                                     </p:row>
                                 </p:panelGrid>
                                 <p:panelGrid styleClass="margin-top-max" rendered="#{contratoBean.disabled[1]}">
-                                    <p style="font-size: 14pt!important; color: green">CREDOR 2: <span style="color: black; font-size: 14pt!important;">#{contratoBean.contrato.cobranca2.nome}</span></p>
+                                    <p style="font-size: 14pt!important; color: green">DEVEDOR 2: <span style="color: black; font-size: 14pt!important;">#{contratoBean.contrato.cobranca2.nome}</span></p>
                                     <f:facet name="header">
                                         <p:row>
                                             <p:column>
@@ -226,7 +226,7 @@
                                             </p:inputText>                                        
                                         </p:column>
                                         <p:column styleClass="text-center">
-                                            <p:inputText value="#{contratoBean.contrato.valorEntrada2String}" styleClass="text-center" onclick="selectInputText(this)" converter="#{toCurrency}" disabled="#{(contratoBean.contrato.cobranca2.id == -1) or (contratoBean.disabled[0]) or (contratoBean.valorTotalCobranca2 > 0)}" readonly="#{contratoBean.contrato.impresso}">
+                                            <p:inputText value="#{contratoBean.contrato.valorEntrada2String}" styleClass="text-center" onclick="selectInputText(this)" converter="#{toCurrency}" disabled="#{(contratoBean.contrato.cobranca2.id == -1) or (contratoBean.disabled[0])}" readonly="#{contratoBean.contrato.impresso}">
                                                 <p:ajax event="change" update="@this :form_contrato:" listener="#{contratoBean.calculaSaldoDevedor}" global="false"/>
                                             </p:inputText>                                        
                                         </p:column>
@@ -251,31 +251,34 @@
                                     <p:outputLabel value="#{contratoBean.calculaValorMovimentoAlterado}" styleClass="bold font-color-red"/>
                                 </h:panelGrid>
                                 <h:panelGrid id="i_tbl">
-                                    <p:dataTable value="#{contratoBean.listMovimentoContrato}" var="movimento" styleClass="margin-top-max" rowIndexVar="index" emptyMessage="Nenhum movimento gerado!">
+                                    <p:dataTable value="#{contratoBean.listMovimentoContrato}" var="movimento" styleClass="margin-top-max" rowIndexVar="index" emptyMessage="Nenhum movimento gerado!" rowStyleClass=" #{movimento.entrada ? '; bg-salmon' : ''}">
                                         <f:facet name="header">
                                             Parcelas
                                         </f:facet>
-                                        <p:column width="25" styleClass="text-center">
-                                            <p:graphicImage value="#{movimento.pessoa.id == contratoBean.contrato.responsavel.id ? '/imagens/icon_family_32.png' : '/imagens/icon_partnership_32.png'}" title="Responsável pelo movimento: #{movimento.pessoa.id == contratoBean.contrato.responsavel.id ? 'Responsável 1' : 'Entidade (Credor 2)'}" />
+                                        <p:column width="16" styleClass="text-center">
+                                            <p:graphicImage value="/imagens/icon_currency.png" title="Valor da entrada" rendered="#{movimento.entrada}" width="16"/>
+                                        </p:column>
+                                        <p:column width="20" styleClass="text-center">
+                                            <p:graphicImage value="#{movimento.pessoa.id == contratoBean.contrato.responsavel.id ? '/imagens/icon_family_32.png' : '/imagens/icon_partnership_32.png'}" title="Responsável pelo movimento: #{movimento.pessoa.id == contratoBean.contrato.responsavel.id ? 'Responsável 1' : 'Entidade (Devdor 2)'}" width="24"/>
                                         </p:column>
                                         <p:column headerText="Documento" width="100" styleClass="text-center" style="font-size: 7.5pt!important">#{movimento.documento}</p:column>
                                         <p:column headerText="Serviços" styleClass="text-center">#{movimento.servicos.descricao}</p:column>
                                         <p:column headerText="Data do Vencimento" styleClass="text-center">
-                                            <p:inputMask value="#{movimento.vencimentoString}" mask="99/99/9999" size="8" styleClass="text-center" rendered="#{movimento.id == -1}">
-                                                <p:ajax event="change" update="@this" />
+                                            <p:inputMask value="#{movimento.vencimentoString}" mask="99/99/9999" size="8" styleClass="text-center #{movimento.vencimento == null ? '' : ''}" rendered="#{movimento.id == -1}">
+                                                <p:ajax event="change" update="@this" listener="#{contratoBean.alterDataVencimentoContrato(index, movimento)}"/>
                                             </p:inputMask>
                                             <h:outputLabel value="#{movimento.vencimentoString}"  rendered="#{movimento.id != -1}" />
                                         </p:column>
                                         <p:column headerText="Valor Parcela" styleClass="text-center">
-                                            <p:inputText value="#{movimento.valorString}" converter="#{toCurrency}" styleClass="text-center  #{movimento.valor == contratoBean.contrato.valorEntrada ? '; bg-yellow-ligth' : ''} #{movimento.valor == contratoBean.contrato.valorEntrada2 ? '; bg-yellow-ligth' : ''}" rendered="#{movimento.id == -1}" size="10" onclick="selectInputText(this)">
+                                            <p:inputText value="#{movimento.valorString}" converter="#{toCurrency}" styleClass="text-center" rendered="#{movimento.id == -1}" size="10" onclick="selectInputText(this)">
                                                 <p:ajax update="@this :form_contrato:i_obs" event="change" global="false"/>
                                             </p:inputText>
-                                            <h:outputLabel value="#{movimento.valorString}"  rendered="#{movimento.id != -1}" />
+                                            <h:outputLabel value="#{movimento.valorString}"  rendered="#{movimento.id != -1}" styleClass="text-center #{movimento.entrada ? '; bold' : ''}" title="#{movimento.entrada ? 'Entrada' : ''}" />
                                         </p:column>
-                                        <p:column headerText="Data de Quitação" styleClass="text-center">
+                                        <p:column headerText="Data de Quitação" styleClass="text-center" width="100">
                                             <p:inputMask mask="99/99/9999" value="#{movimento.baixa.baixa}" styleClass="text-center" disabled="true" size="8"/>
                                         </p:column>
-                                        <p:column headerText="Tipo Documento" styleClass="text-center">
+                                        <p:column headerText="Tipo Documento" styleClass="text-center" width="80">
                                             <p:commandLink value="#{movimento.tipoDocumento.descricao}" action="#{contratoBean.editMovimento(index, movimento)}" oncomplete="PF('dlg_update_ftipo_documento_ctr').show();" update=":form_contrato:id_update_ftipo_documento_ctr" styleClass="font-color-red" disabled="#{movimento.id != -1}" global="false"/>
                                         </p:column>
                                         <p:column width="25" styleClass="text-center">
@@ -293,17 +296,27 @@
                                         <f:facet name="header">
                                             Taxas
                                         </f:facet>
-                                        <p:column width="25">
+                                        <p:column width="16">
+                                            
+                                        </p:column>
+                                        <p:column width="20">
 
                                         </p:column>
                                         <p:column width="100" styleClass="text-center" style="font-size: 7.5pt!important">#{movimento.documento}</p:column>
-                                        <p:column styleClass="text-center">#{movimento.servicos.descricao}</p:column>
-                                        <p:column styleClass="text-center">#{movimento.vencimentoString}</p:column>
-                                        <p:column styleClass="text-center">#{movimento.valorString}</p:column>
-                                        <p:column styleClass="text-center">
-                                            <p:inputMask mask="99/99/9999" value="#{movimento.baixa.baixa}" styleClass="text-center" disabled="true" size="8"/>
+                                        <p:column>
+                                            #{movimento.servicos.descricao}
                                         </p:column>
                                         <p:column styleClass="text-center">
+                                            <p:inputMask value="#{movimento.vencimentoString}" mask="99/99/9999" size="8" styleClass="text-center #{movimento.vencimento == null ? '' : ''}" rendered="#{movimento.id == -1}" converter="#{isDateString}">
+                                                <p:ajax event="change" update="@this" listener="#{contratoBean.alterDataVencimentoTaxa(index, movimento)}"/>
+                                            </p:inputMask>
+                                            <h:outputLabel value="#{movimento.vencimentoString}"  rendered="#{movimento.id != -1}" />
+                                        </p:column>
+                                        <p:column styleClass="text-center">#{movimento.valorString}</p:column>
+                                        <p:column styleClass="text-center" width="80">
+                                            <p:inputMask mask="99/99/9999" value="#{movimento.baixa.baixa}" styleClass="text-center" disabled="true" size="8" />
+                                        </p:column>
+                                        <p:column styleClass="text-center"  width="80">
                                             <p:commandLink value="#{movimento.tipoDocumento.descricao}" action="#{contratoBean.editMovimento(index, movimento)}" oncomplete="PF('dlg_update_ftipo_documento_taxas').show();" update=":form_contrato:id_update_ftipo_documento_taxas" styleClass="font-color-red" global="false"/>
                                         </p:column>
                                         <p:column width="25" styleClass="text-center">

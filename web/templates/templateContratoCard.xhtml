@@ -1,41 +1,57 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:c="http://java.sun.com/jsp/jstl/core"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:ui="http://java.sun.com/jsf/facelets" 
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html">
     <f:view>
-        <center>
-            <h:column rendered="#{pessoaCardBean.getImagemPessoa('imagens/Fotos') ne ''}">
-                <p:graphicImage value="#{pessoaCardBean.getImagemPessoa('imagens/Fotos')}" alt="Sem foto" style="border: 3px solid gray; margin-bottom: 15px" width="150"/>
-            </h:column>
-        </center>
         <f:facet name="header">
-            <h:outputLabel value="#{pessoaCardBean.pessoa.nome}"  />
-        </f:facet>
-        <h:panelGrid columns="2">
-            <h:outputLabel value="Tipo documento:"  />
-            <h:outputLabel value="#{pessoaCardBean.pessoa.tipoDocumento.descricao}"/>
-            <h:outputLabel value="Documento:"  />
-            <h:outputLabel value="#{pessoaCardBean.pessoa.documento}"  />
-            <h:outputLabel value="Cadastro desde:"  />
-            <h:outputLabel value="#{pessoaCardBean.pessoa.criacaoString}"  />
-            <h:outputLabel value="Telefone 1:"  />
-            <h:outputLabel value="#{pessoaCardBean.pessoa.telefone1}"  />
-            <h:outputLabel value="Telefone 2:"  />
-            <h:outputLabel value="#{pessoaCardBean.pessoa.telefone2}"  />
-            <h:outputLabel value="Email:"  />
-            <h:commandLink value="#{pessoaCardBean.pessoa.email1}" action="#{pessoaCardBean.enviaEmail(pessoaCardBean.pessoa.id)}" />
-        </h:panelGrid>     
-        <p:panel styleClass="margin-top-max" header="Endereço" rendered="#{pessoaCardBean.pessoaEndereco.id != -1}">
-            <h:outputLabel value="#{pessoaCardBean.pessoaEndereco.endereco.enderecoToString} - Nº. #{pessoaCardBean.pessoaEndereco.numero} - #{pessoaCardBean.pessoaEndereco.complemento}" />
-        </p:panel>         
-        <p:panel styleClass="margin-top-max" header="Local de trabalho" rendered="#{pessoaCardBean.pessoaEmpresa.id != -1}">
-            <h:panelGrid columns="1">
-                <h:outputLabel value="Admissão: #{pessoaCardBean.pessoaEmpresa.admissao}" />
-                <h:outputLabel value="Empresa: #{pessoaCardBean.pessoaEmpresa.juridica.pessoa.nome}" />
-                <h:outputLabel value="Profissão: #{pessoaCardBean.pessoaEmpresa.funcao.profissao}" />
+            <h:panelGrid id="id_dlg_contrato_title">
+                <h:outputLabel value="Contrato nº#{contratoDetalhesBean.contrato.id}"  />                
             </h:panelGrid>
-        </p:panel>         
+        </f:facet>
+        <h:panelGrid id="id_dlg_contrato">            
+            <p:panel header="Contrato">
+                <h:outputLabel value="Data Internação:"  />
+                <h:outputLabel value="#{contratoDetalhesBean.contrato.dataInternacaoString}" />
+            </p:panel>
+            <p:panel header="Paciente" styleClass="margin-top-max">
+                <p:graphicImage value="#{contratoDetalhesBean.contrato.paciente.foto}" alt="Sem foto" style="border: 3px solid gray; margin-bottom: 15px" width="150"/>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="Paciente:"  />
+                    <h:outputLabel value="#{contratoDetalhesBean.contrato.paciente.nome}"/>
+                    <h:outputLabel value="Endereço:"  />
+                    <h:outputLabel value="#{contratoDetalhesBean.contrato.paciente.pessoaEndereco.enderecoCompletoString}"/>                        
+                </h:panelGrid>
+            </p:panel>
+            <h:column>
+            </h:column>
+            <p:panel header="Responsável" styleClass="margin-top-max">
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="Documento:"  />
+                    <h:outputLabel value="#{contratoDetalhesBean.contrato.responsavel.documento}"  />
+                    <h:outputLabel value="Paciente:"  />
+                    <h:outputLabel value="#{contratoDetalhesBean.contrato.responsavel.nome}"/>
+                    <h:outputLabel value="Telefone:"  />
+                    <h:outputLabel value="#{contratoDetalhesBean.contrato.responsavel.telefone1}"/>
+                    <h:outputLabel value="Celular:"  />
+                    <h:outputLabel value="#{contratoDetalhesBean.contrato.responsavel.telefone2}"/>
+                    <h:outputLabel value="Endereço:"  />
+                    <h:outputLabel value="#{contratoDetalhesBean.contrato.responsavel.pessoaEndereco.enderecoCompletoString}"/>                
+                </h:panelGrid>            
+            </p:panel>
+            <p:panel header="Entidade (Credor 2)" styleClass="margin-top-max" rendered="#{contratoDetalhesBean.contrato.cobranca2 ne null}">
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="Documento:"  />
+                    <h:outputLabel value="#{contratoDetalhesBean.contrato.cobranca2.documento}"  />
+                    <h:outputLabel value="Paciente:"  />
+                    <h:outputLabel value="#{contratoDetalhesBean.contrato.cobranca2.nome}"/>
+                    <h:outputLabel value="Telefone:"  />
+                    <h:outputLabel value="#{contratoDetalhesBean.contrato.cobranca2.telefone1}"/>
+                    <h:outputLabel value="Endereço:"  />
+                    <h:outputLabel value="#{contratoDetalhesBean.contrato.cobranca2.pessoaEndereco.enderecoCompletoString}"/>
+                </h:panelGrid>            
+            </p:panel>                
+        </h:panelGrid>
     </f:view>
 </ui:composition>

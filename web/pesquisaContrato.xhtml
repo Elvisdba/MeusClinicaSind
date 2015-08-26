@@ -22,13 +22,13 @@
                                 <p:ajax event="change" update="@this" />
                             </p:inputMask>
                             <p:selectOneMenu value="#{contratoBean.porPesquisa}" style="padding-right: 20px">
-                                <p:ajax event="change" update="i_panel_pesquisa i_tbl" />                                
+                                <p:ajax event="change" update="i_panel_pesquisa" />                                
                                 <f:selectItem itemValue="paciente_nome"         itemLabel="Paciente > Nome"/>
                                 <f:selectItem itemValue="paciente_documento"    itemLabel="Paciente > Documento"/>
                                 <f:selectItem itemValue="responsavel_nome"      itemLabel="Responsável > Nome"/>
                                 <f:selectItem itemValue="responsavel_documento" itemLabel="Responsável > Documento"/>
-                                <f:selectItem itemValue="cobranca2_nome"      itemLabel="Entidade (Credor 2) > Nome"/>
-                                <f:selectItem itemValue="cobranca2_documento" itemLabel="Entidade (Credor 2) > Documento"/>
+                                <f:selectItem itemValue="cobranca2_nome"      itemLabel="Entidade (Devedor 2) > Nome"/>
+                                <f:selectItem itemValue="cobranca2_documento" itemLabel="Entidade (Devedor 2) > Documento"/>
                                 <f:selectItem itemValue="contrato"              itemLabel="Contrato"/>
                             </p:selectOneMenu>                        
                             <p:commandButton value="Pesquisar" action="#{contratoBean.acaoPesquisaInicial}" update="i_tbl" rendered="#{contratoBean.porPesquisa eq 'contrato'}"/>
@@ -48,17 +48,19 @@
                             <p:column headerText="Contrato" width="60" styleClass="text-center">
                                 <h:outputText value="#{contrato.id}"/>
                             </p:column>
+                            <p:column headerText="Paciente">
+                                <h:outputText value="#{contrato.paciente.nome}"/>
+                            </p:column>
                             <p:column headerText="Responsável">
                                 <h:outputText value="#{contrato.responsavel.nome}"/>
                             </p:column>
-                            <p:column headerText="Paciente">
-                                <h:outputText value="#{contrato.paciente.nome}"/>
+                            <p:column headerText="Entidade (Devedor 2)" rendered="#{contratoBean.porPesquisa eq 'cobranca2_nome' or contratoBean.porPesquisa eq 'cobranca2_documento'}">
+                                <h:outputText value="#{contrato.cobranca2.nome}"/>
                             </p:column>
                             <p:rowExpansion>
                                 <h:panelGrid columns="4" style="height: 40px" styleClass="sbb">
                                     <p:column rendered="#{contrato.cobranca2 != null}">
-                                        <h:outputText value="Entidade (Credor 2)" style="font-weight: bold"/><br />
-                                        <h:outputText value="#{contrato.cobranca2.nome}"/>
+                                        
                                     </p:column>
                                 </h:panelGrid>
                             </p:rowExpansion>

@@ -36,68 +36,63 @@
                     <p:panel styleClass="wrapper" style="border: 0px;">
                         <h:outputText value="Movimentos a Receber" styleClass="fonteHeader" />
                         <div class="clear"></div>
-                        <h:form id="formMovimentosReceberPesquisa">
-                            <p:panel header="Pesquisa por boleto">
+                        <h:form id="formMovimentosReceber">
+                            <p:panel>
                                 <h:panelGrid columns="3">
-                                    <p:column>
-                                        <h:outputLabel value="Conta banco" />
-                                        <br />
+                                    <p:commandButton value="Pesquisa Devedor" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoa')}" disabled="#{not empty movimentosReceberBean.listPessoa or movimentosReceberBean.disabled}"/>
+                                    <p:commandButton value="Pesquisa Contrato" action="#{chamadaPaginaBean.pesquisa('pesquisaContrato', 'contratoBean')}"  disabled="#{not empty movimentosReceberBean.listPessoa or movimentosReceberBean.disabled}"/>
+                                    <p:commandButton value="Limpar" action="#{movimentosReceberBean.clear}" disabled="#{movimentosReceberBean.disabled}" icon=" ui-icon-close" style="margin-left: 580px" title="Limpar"/>
+                                </h:panelGrid>
+                                <h:panelGrid id="i_dt_pessoa">
+                                    <p:dataTable value="#{movimentosReceberBean.listPessoa}" var="pessoa" id="tbl_list" rendered="#{not empty movimentosReceberBean.listPessoa}" styleClass="margin-top">
+                                        <f:facet name="header">
+                                            Devedores
+                                        </f:facet>
+                                        <p:column>
+                                            <h:outputLabel value="#{pessoa.nome}" />
+                                        </p:column>
+                                        <p:column width="30">
+                                            <p:commandButton icon="ui-icon-close" action="#{movimentosReceberBean.remove(index)}" rendered="#{index != 0}" update=":formMovimentosReceber" title="Clique para remover #{pessoa.nome} da Lista" disabled="#{movimentosReceberBean.disabled}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </h:panelGrid>
+                                <p:panel styleClass="margin-top-max" id="i_pg_advanced">
+                                    <h:panelGrid columns="5" cellpadding="5">
+                                        <h:outputLabel value="Conta Banco" />
+                                        <h:outputLabel value="Número do Boleto" />
+                                        <p:column />
+                                        <h:outputLabel value="Número do Contrato" />
+                                        <p:column />
                                         <p:selectOneMenu value="#{movimentosReceberBean.indexConta}" style="width: 300px" disabled="#{movimentosReceberBean.disabled}">
                                             <p:ajax event="change" global="false" update=":formMovimentosReceber"/>
                                             <f:selectItems value="#{movimentosReceberBean.listContas}" />
                                         </p:selectOneMenu>
-                                    </p:column>
-                                    <p:column>
-                                        <br />
-                                        <p:inputText placeholder="Número do Boleto" value="#{movimentosReceberBean.descPesquisaBoleto}" size="20" disabled="#{movimentosReceberBean.disabled}">
-                                            <p:ajax event="blur" update="@this" global="false"/>
+                                        <p:inputText placeholder="Número do Boleto" value="#{movimentosReceberBean.boleto_numero}" size="20" disabled="#{movimentosReceberBean.disabled}">
+                                            <p:ajax event="change" update="@this i_pg_advanced i_dt_pessoa" global="false"/>
                                         </p:inputText>
-                                    </p:column>
-                                    <p:column>
-                                        <br />
-                                        <p:commandButton icon="ui-icon-search" action="#{movimentosReceberBean.pesquisaBoleto()}" update=":formMovimentosReceber" title="Pesquisar pelo número do Boleto" disabled="#{movimentosReceberBean.disabled}"/>
-                                    </p:column>
-                                </h:panelGrid>
-                            </p:panel>
-                        </h:form>
-
-                        <h:form id="formMovimentosReceber">
-                            <p:panel styleClass="fundoCinza">
-                                <h:panelGrid columns="3" style="width: 100%">
-                                    <p:column>
-                                        <p:commandButton value="Pesquisa Devedor" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoa')}" disabled="#{movimentosReceberBean.disabled}"/>
-                                        <p:commandButton value="Pesquisa Contrato" action="#{chamadaPaginaBean.pesquisa('pesquisaContrato')}"  disabled="#{movimentosReceberBean.disabled}"/>                                        
-                                        
-                                        <p:commandButton value="Pesquisar outra Pessoa" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoa')}" rendered="#{movimentosReceberBean.pessoa.id != -1}" disabled="#{movimentosReceberBean.disabled}"/>
-                                        <h:outputText value="#{movimentosReceberBean.pessoa.nome}" title="#{movimentosReceberBean.pessoa.nome}" style="margin-left: 20px; font-weight: bold"/>
-                                    </p:column>
-
-                                    <p:column>
-                                        <p:commandButton ajax="false" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoa')}" actionListener="#{movimentosReceberBean.adicionarPesquisa()}" value="Adicionar mais Pessoas" rendered="#{movimentosReceberBean.listPessoa.size() > 0}" style="margin-left: 10px; cursor: pointer; float: right" disabled="#{movimentosReceberBean.disabled}"/>
-                                    </p:column>
-                                </h:panelGrid>
-
-                                <h:panelGrid style="clear: both;" rendered="#{movimentosReceberBean.listPessoa.size() > 1}">
-                                    <p:dataGrid value="#{movimentosReceberBean.listPessoa}" var="linha" id="tbl_list" rowIndexVar="index">
-                                        <h:outputLabel value="#{linha.nome}" rendered="#{index != 0}" />
-                                        <p:commandButton icon="ui-icon-trash" action="#{movimentosReceberBean.removerPessoaLista(index)}" rendered="#{index != 0}" update=":formMovimentosReceber" title="Clique para remover #{linha.nome} da Lista" disabled="#{movimentosReceberBean.disabled}"/>
-                                    </p:dataGrid>
-                                </h:panelGrid>
-                            </p:panel>
-
-                            <h:panelGrid style="float: left; clear: both; margin-top: 10px; margin-bottom: 10px" columns="8" id="i_panel" rendered="#{movimentosReceberBean.listMovimento.size() > 0 or movimentosReceberBean.pessoa.id != -1}">
-                                <p:column>
-                                    <h:outputText value="Filtrar por" /><br />
-                                    <p:selectOneMenu value="#{movimentosReceberBean.porPesquisa}" style="padding-right: 10px; margin-right: 20px">
+                                        <p:commandButton icon="ui-icon-search" action="#{movimentosReceberBean.find(0)}" update=":formMovimentosReceber" title="Pesquisar por número do boleto" disabled="#{movimentosReceberBean.disabled}" />
+                                        <p:inputText placeholder="Número do Contrato" value="#{movimentosReceberBean.contrato_numero}" size="20" disabled="#{movimentosReceberBean.disabled}" converter="#{thisNumber}">
+                                            <p:ajax event="change" update="@this i_pg_advanced i_dt_pessoa id_filter_status" global="false"/>
+                                        </p:inputText>
+                                        <p:commandButton icon="ui-icon-search" action="#{movimentosReceberBean.find(1)}" update=":formMovimentosReceber" title="Pesquisar por número contrato" disabled="#{movimentosReceberBean.disabled}"/>
+                                    </h:panelGrid>                                    
+                                </p:panel>
+                                <h:panelGrid columns="2" styleClass="margin-top-max" id="id_filter_status">
+                                    <h:outputText value="Filtrar por:" />
+                                    <p:selectOneMenu value="#{movimentosReceberBean.porPesquisa}">
                                         <p:ajax event="change" update="formMovimentosReceber" listener="#{movimentosReceberBean.atualizarStatus}"/>
                                         <f:selectItem itemValue="todos"    itemLabel="Todos"/>
                                         <f:selectItem itemValue="abertos"  itemLabel="Abertos"/>
                                         <f:selectItem itemValue="quitados" itemLabel="Quitados"/>
                                     </p:selectOneMenu>
-                                </p:column>
+                                </h:panelGrid>
+                            </p:panel>
+
+                            <h:panelGrid style="float: left; clear: both; margin-top: 10px; margin-bottom: 10px" columns="7" id="i_panel" rendered="#{movimentosReceberBean.listMovimento.size() > 0 or movimentosReceberBean.pessoa.id != -1}">
+
 
                                 <p:column>
-                                    <h:outputText value="Total em Aberto" /><br />
+                                    <h:outputText value="Valor da Baixa" /><br />
                                     <p:inputText readonly="true" size="10" value="#{movimentosReceberBean.total}" style="font-weight: bold; margin-right: 20px"/>
                                 </p:column>
 
@@ -114,7 +109,7 @@
                                 </p:column>
 
                                 <p:column>
-                                    <h:outputText value="Total Calculado em Aberto"/><br />
+                                    <h:outputText value="Valor Calculado"/><br />
                                     <p:inputText readonly="true" value="#{movimentosReceberBean.totalCalculado}" style="font-weight: bold; margin-right: 20px" />
                                 </p:column>
 
@@ -138,7 +133,7 @@
                                 <p:messages id="i_msg" showDetail="true" closable="true" />  
                             </h:panelGrid>
 
-                            <p:dataTable value="#{movimentosReceberBean.listMovimento}" var="listMovimentoReceber" style="clear: both; font-size: 8pt!important" id="tbl" paginator="true" rows="20" emptyMessage="Nenhuma pendência foi encontrada!" rowStyleClass="#{listMovimentoReceber.row_css}" reflow="true">
+                            <p:dataTable value="#{movimentosReceberBean.listMovimento}" var="listMovimentoReceber" style="clear: both; font-size: 8pt!important" id="tbl" paginator="true" rows="20" emptyMessage="Nenhuma pendência foi encontrada!" rowStyleClass="#{listMovimentoReceber.row_css}">
 
                                 <p:column width="25"> 
                                     <p:rowToggler />  
@@ -150,12 +145,12 @@
                                     </p:selectBooleanCheckbox>
                                 </p:column>
 
-                                <p:column headerText="Titular" rendered="#{movimentosReceberBean.listPessoa.size() > 1}">
+                                <p:column headerText="#{empty movimentosReceberBean.contrato_numero ? 'Titular' : 'Devedor'}">
                                     <p:commandLink value="#{listMovimentoReceber.pessoa_nome}" action="#{movimentosReceberBean.complementoPessoa(listMovimentoReceber)}" onclick="PF('i_dlg_dados').show()" update=":formMovimentosReceber:i_dados" style="font-size: 8pt!important"/>
                                 </p:column>
 
                                 <p:column headerText="CTR" width="35" styleClass="text-center" sortBy="#{listMovimentoReceber.movimento.lote.contrato.id}" >
-                                    <p:commandLink value="#{listMovimentoReceber.movimento.lote.contrato.id}" />
+                                    <p:commandLink value="#{listMovimentoReceber.movimento.lote.contrato.id}" action="#{contratoDetalhesBean.setContrato(listMovimentoReceber.movimento.lote.contrato)}" onclick="PF('dlg_contrato').show()" update=":formMovimentosReceber:id_dlg_contrato :formMovimentosReceber:id_dlg_contrato_title" title="Ver detalhes do contrato"/>
                                 </p:column>
 
                                 <p:column headerText="Serviços">
@@ -204,22 +199,34 @@
                                     </h:commandLink>
                                 </p:column>
                                 <p:columnGroup type="footer">  
+                                    <p:row>
+                                        <p:column colspan="15"/>
+                                    </p:row>
                                     <p:row style="height: 40px;">
-                                       <p:column />  
-                                       <p:column />
-                                       <p:column />
-                                       <p:column />
-                                       <p:column footerText="TOTAL:" styleClass="bold font-color-blue font-size-8" style="text-align: right"/>
-                                       <p:column footerText="#{movimentosReceberBean.valorTotalString}" styleClass="bold font-color-blue font-size-8" style="text-align: right; background: #e2e2e2"/>
-                                       <p:column />
-                                       <p:column />
-                                       <p:column />
-                                       <p:column />
-                                       <p:column footerText="#{movimentosReceberBean.valorTotalBaixaString}" styleClass="bold font-color-blue font-size-8" style="text-align: right; background: #e2e2e2" />
-                                       <p:column />
-                                       <p:column />
-                                       <p:column />
-                                    </p:row>  
+                                        <p:column />  
+                                        <p:column />  
+                                        <p:column />
+                                        <p:column />
+                                        <p:column />
+                                        <p:column footerText="TOTAL:" styleClass="bold font-color-blue font-size-8" style="text-align: right"/>
+                                        <p:column footerText="#{movimentosReceberBean.valorTotalString}" styleClass="bold font-color-blue font-size-8" style="text-align: right; background: #e2e2e2"/>
+                                        <p:column />
+                                        <p:column />
+                                        <p:column />
+                                        <p:column />
+                                        <p:column footerText="#{movimentosReceberBean.valorTotalBaixaString}" styleClass="bold font-color-blue font-size-8" style="text-align: right; background: #e2e2e2" />
+                                        <p:column />
+                                        <p:column />
+                                        <p:column />
+                                    </p:row>
+                                    <p:row style="height: 40px;">
+                                        <p:column colspan="4" footerText="Registros: #{movimentosReceberBean.listMovimento.size()}" styleClass="bold font-color-blue font-size-8"/>
+                                        <p:column colspan="2" footerText="TOTAL EM ABERTO" styleClass="bold font-color-blue font-size-8" style="text-align: right"/>
+                                        <p:column colspan="1" footerText="#{movimentosReceberBean.valorTotalAbertoString}" styleClass="bold font-color-blue font-size-8" style="text-align: left; background: #e2e2e2"/>
+                                        <p:column colspan="2" />
+                                        <p:column colspan="4"/>  
+                                        <p:column colspan="2"/>
+                                    </p:row>
                                 </p:columnGroup>                                
                                 <p:rowExpansion>
                                     <h:panelGrid columns="4" style="height: 40px" styleClass="sbb">
@@ -235,7 +242,11 @@
                                 <p:commandButton value="Sim"      type="submit" styleClass="ui-confirmdialog-yes" action="#{movimentosReceberBean.estornarBaixa()}" update="formMovimentosReceber" onclick="PF('i_dlg_estorno').hide()" style="clear: both; float: left" icon="ui-icon-check"/>  
                                 <p:commandButton value="Cancelar" type="button" styleClass="ui-confirmdialog-no" onclick="PF('i_dlg_estorno').hide()" style="float: left" icon="ui-icon-close"/>       
                             </p:dialog>
-                            
+
+                            <p:dialog widgetVar="dlg_contrato" resizable="false" modal="true">
+                                <ui:include src="templates/templateContratoCard.xhtml" />
+                            </p:dialog>
+
                             <p:dialog widgetVar="i_dlg_dados" header="Ver Mais" resizable="false" modal="true">
                                 <h:panelGrid id="i_dados">
                                     <h:panelGrid columns="4" style="width: 100%">
