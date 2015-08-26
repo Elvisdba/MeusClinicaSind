@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="2.1435888100000042"/>
-	<property name="ireport.x" value="285"/>
+	<property name="ireport.x" value="74"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -71,6 +71,7 @@ group by contrato_numero,responsavel_nome,paciente_nome,devedor_nome]]>
 	<field name="quitados" class="java.lang.Double"/>
 	<field name="saldo" class="java.lang.Double"/>
 	<field name="parcela_meses" class="java.lang.Long"/>
+	<sortField name="responsavel_nome"/>
 	<variable name="VALOR_TOTAL" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{total}]]></variableExpression>
 	</variable>
@@ -532,7 +533,7 @@ group by contrato_numero,responsavel_nome,paciente_nome,devedor_nome]]>
 				<text><![CDATA[Valor Total:]]></text>
 			</staticText>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-2" x="70" y="4" width="77" height="13" forecolor="#000000" uuid="99c42b12-3bbe-4d18-a0e7-ad956215efd2"/>
+				<reportElement key="textField-2" x="70" y="4" width="82" height="13" forecolor="#000000" uuid="99c42b12-3bbe-4d18-a0e7-ad956215efd2"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

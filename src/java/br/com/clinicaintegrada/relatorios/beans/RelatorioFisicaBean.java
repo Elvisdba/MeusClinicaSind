@@ -462,13 +462,13 @@ public class RelatorioFisicaBean implements Serializable {
         try {
             if (relatorios != null) {
                 if (relatorios.getId() != index[0]) {
-                    Jasper.EXPORT_TO_EXCEL = false;
+                    Jasper.EXPORT_TO = false;
                 }
                 relatorios = (Relatorios) new Dao().find(new Relatorios(), index[0]);
             }
         } catch (Exception e) {
             relatorios = new Relatorios();
-            Jasper.EXPORT_TO_EXCEL = false;
+            Jasper.EXPORT_TO = false;
         }
         return relatorios;
     }

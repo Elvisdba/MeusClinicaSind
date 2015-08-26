@@ -3,8 +3,8 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="2.143588810000005"/>
-	<property name="ireport.x" value="13"/>
-	<property name="ireport.y" value="129"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="147"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -28,7 +28,7 @@
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="relatorio_titulo" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="relatorio_detalhes" class="java.lang.String"/>
+	<parameter name="relatorio_detalhes" class="java.lang.String" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[select
 c.id as contrato_numero,
@@ -37,8 +37,8 @@ r.ds_nome as responsavel_nome,
 p.ds_nome as paciente_nome,
 d.ds_nome as devedor_nome,
 m.dt_vencimento as data_vencimento,
-m.nr_valor as valor,
-m.nr_valor_baixa as valor_baixa,
+cast(round(cast(m.nr_valor as numeric), 10) as double precision) as valor,
+cast(round(cast(m.nr_valor_baixa as numeric), 10) as double precision) as valor_baixa,
 b.dt_baixa as data_baixa,
 b.dt_importacao  as data_importacao,
 s.ds_descricao as servicos_descricao,
@@ -65,7 +65,7 @@ where m.is_ativo=true and ds_es='E']]>
 	<field name="data_importacao" class="java.sql.Date"/>
 	<field name="servicos_descricao" class="java.lang.String"/>
 	<field name="movimento_documento" class="java.lang.String"/>
-	<variable name="VALOR_TOTAL" class="java.lang.Double" calculation="Sum">
+	<variable name="VALOR_TOTAL" class="java.lang.Float" calculation="Sum">
 		<variableExpression><![CDATA[$F{valor}]]></variableExpression>
 	</variable>
 	<variable name="VALOR_TOTAL_QUITADO" class="java.lang.Double" calculation="Sum">
@@ -534,7 +534,7 @@ where m.is_ativo=true and ds_es='E']]>
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="24" splitType="Stretch">
+		<band height="40" splitType="Stretch">
 			<staticText>
 				<reportElement key="staticText-2" x="362" y="4" width="107" height="13" forecolor="#000000" uuid="be417ef9-450e-4131-a944-6e1e240cc2fd"/>
 				<box>
@@ -575,7 +575,7 @@ where m.is_ativo=true and ds_es='E']]>
 				<text><![CDATA[Valor Total:]]></text>
 			</staticText>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-2" x="49" y="4" width="59" height="13" forecolor="#000000" uuid="99c42b12-3bbe-4d18-a0e7-ad956215efd2"/>
+				<reportElement key="textField-2" x="51" y="4" width="61" height="13" forecolor="#000000" uuid="99c42b12-3bbe-4d18-a0e7-ad956215efd2"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
