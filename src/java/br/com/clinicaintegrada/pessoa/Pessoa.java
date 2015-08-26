@@ -1,6 +1,7 @@
 package br.com.clinicaintegrada.pessoa;
 
 import br.com.clinicaintegrada.pessoa.dao.FisicaDao;
+import br.com.clinicaintegrada.pessoa.dao.PessoaEnderecoDao;
 import br.com.clinicaintegrada.seguranca.Cliente;
 import br.com.clinicaintegrada.seguranca.controleUsuario.ControleUsuarioBean;
 import br.com.clinicaintegrada.utils.BaseEntity;
@@ -378,6 +379,17 @@ public class Pessoa implements BaseEntity, Serializable {
             foto = "/imagens/user_male.png";
         }
         return foto;
+    }
+
+    public PessoaEndereco getPessoaEndereco() {
+        PessoaEndereco pessoaEndereco = new PessoaEndereco();
+        if (this.id != -1) {
+            pessoaEndereco = new PessoaEnderecoDao().pesquisaPessoaEnderecoPorPessoaTipo(this.id, 4);
+            if (pessoaEndereco == null) {
+                pessoaEndereco = new PessoaEndereco();
+            }
+        }
+        return pessoaEndereco;
     }
 
     @Override

@@ -769,7 +769,7 @@ public class ContratoBean implements Serializable {
                         }
                     }
                 } else {
-                    if(i == 0) {
+                    if (i == 0) {
                         idFilialAtual = i;
                     }
                 }
@@ -894,9 +894,14 @@ public class ContratoBean implements Serializable {
             Movimento m = new Movimento();
             Dao dao = new Dao();
             Servicos s1 = (Servicos) dao.find(new Servicos(), 1);
+            if (contrato.getValorEntrada() > valorTotalResponsavel && contrato.getValorEntrada2() >= 0) {
+                contrato.setValorEntrada(new Float(0));
+            } else if (contrato.getValorEntrada2() > valorTotalCobranca2 && contrato.getValorEntrada() >= 0) {
+                contrato.setValorEntrada2(new Float(0));
+            }
             if (listMovimentoContrato.isEmpty()) {
                 boolean isEntrada = false;
-                if (contrato.getValorEntrada() > 0 || contrato.getValorEntrada2() > 0) {
+                if (contrato.getValorEntrada() > 0) {
                     if (addDias > 0) {
                         m.setVencimento(DataHoje.converte(dh.incrementarDias(addDias, contrato.getDataCadastroString())));
                         isEntrada = true;
@@ -916,6 +921,7 @@ public class ContratoBean implements Serializable {
                     m.setEvento(null);
                     m.setValor(contrato.getValorEntrada());
                     m.setBaixa(null);
+                    m.setEntrada(true);
                     listMovimentoContrato.add(m);
                     m = new Movimento();
                 }
@@ -947,7 +953,7 @@ public class ContratoBean implements Serializable {
                     } else if (valorTotalCobranca2 > 0) {
                         v = (Moeda.substituiVirgulaFloat(contrato.getValorTotalString()) - contrato.getValorEntrada() - valorTotalCobranca2) / contrato.getQuantidadeParcelas();
                     }
-                    if (valorTotalResponsavel > 0) {
+                    if (valorTotalResponsavel > 0 && v > 0) {
                         for (int i = 0; i < contrato.getQuantidadeParcelas(); i++) {
                             if (!isEntrada && i == 0 && addDias > 0) {
                                 m.setVencimentoString(dh.incrementarMeses(i + 1, dataVencimento));
@@ -996,6 +1002,7 @@ public class ContratoBean implements Serializable {
                             m.setEvento(null);
                             m.setValor(contrato.getValorEntrada2());
                             m.setBaixa(null);
+                            m.setEntrada(true);
                             listMovimentoContrato.add(m);
                             m = new Movimento();
                         }
@@ -1007,28 +1014,30 @@ public class ContratoBean implements Serializable {
                         int h = 0;
                         // float v = (Moeda.substituiVirgulaFloat(getSaldoDevedor()) - contrato.getValorEntrada()) / contrato.getQuantidadeParcelas();
                         float v = (contrato.getValorTotal2() - contrato.getValorEntrada2()) / contrato.getQuantidadeParcelas();
-                        for (int i = 0; i < contrato.getQuantidadeParcelas(); i++) {
-                            if (!isEntrada && i == 0 && addDias > 0) {
-                                m.setVencimentoString(dh.incrementarMeses(i + 1, dataVencimento));
-                                m.setVencimento(DataHoje.converte(dh.incrementarDias(addDias, m.getVencimentoString())));
-                            } else {
-                                m.setVencimentoString(dh.incrementarMeses(i + 1, dataVencimento));
+                        if (v > 0) {
+                            for (int i = 0; i < contrato.getQuantidadeParcelas(); i++) {
+                                if (!isEntrada && i == 0 && addDias > 0) {
+                                    m.setVencimentoString(dh.incrementarMeses(i + 1, dataVencimento));
+                                    m.setVencimento(DataHoje.converte(dh.incrementarDias(addDias, m.getVencimentoString())));
+                                } else {
+                                    m.setVencimentoString(dh.incrementarMeses(i + 1, dataVencimento));
+                                }
+                                m.setPessoa(contrato.getCobranca2());
+                                m.setTipoDocumento(s1.getTipoDocumento());
+                                m.setServicos(s1);
+                                m.setTipoServico((TipoServico) dao.find(new TipoServico(), 1));
+                                m.setEs("E");
+                                m.setNrCtrBoleto(null);
+                                m.setReferencia(DataHoje.dataReferencia(m.getVencimentoString()));
+                                m.setDocumento("");
+                                m.setLote(null);
+                                m.setAtivo(true);
+                                m.setEvento(null);
+                                m.setValor(v);
+                                m.setBaixa(null);
+                                listMovimentoContrato.add(m);
+                                m = new Movimento();
                             }
-                            m.setPessoa(contrato.getCobranca2());
-                            m.setTipoDocumento(s1.getTipoDocumento());
-                            m.setServicos(s1);
-                            m.setTipoServico((TipoServico) dao.find(new TipoServico(), 1));
-                            m.setEs("E");
-                            m.setNrCtrBoleto(null);
-                            m.setReferencia(DataHoje.dataReferencia(m.getVencimentoString()));
-                            m.setDocumento("");
-                            m.setLote(null);
-                            m.setAtivo(true);
-                            m.setEvento(null);
-                            m.setValor(v);
-                            m.setBaixa(null);
-                            listMovimentoContrato.add(m);
-                            m = new Movimento();
                         }
                     }
                 }
@@ -1066,6 +1075,40 @@ public class ContratoBean implements Serializable {
                         listMovimentoContrato.add(listMovimento.get(i));
                     }
                 }
+                Integer count = 0;
+                Boolean r = false;
+                Boolean c = false;
+                if (contrato.getValorEntrada() > 0) {
+                    count++;
+                    r = true;
+                }
+                if (contrato.getCobranca2() != null) {
+                    if (contrato.getValorEntrada2() > 0) {
+                        count++;
+                        c = true;
+                    }
+                }
+                for (int y = 0; y < listMovimentoContrato.size(); y++) {
+                    if (listMovimentoContrato.get(y).getValor() > 0) {
+                        if (r) {
+
+                            if (listMovimentoContrato.get(y).getValor() == contrato.getValorEntrada()) {
+                                listMovimentoContrato.get(y).setEntrada(true);
+                                r = false;
+                            }
+                        }
+                        if (c) {
+                            if (listMovimentoContrato.get(y).getValor() == contrato.getValorEntrada2()) {
+                                listMovimentoContrato.get(y).setEntrada(true);
+                                c = false;
+                            }
+                        }
+                    }
+                }
+                if (count > 0) {
+                    for (int x = 0; x < count; x++) {
+                    }
+                }
             }
         }
         return listMovimentoContrato;
@@ -1097,10 +1140,10 @@ public class ContratoBean implements Serializable {
         if (!valorServico.isEmpty()) {
             valorTaxaParcelada = Moeda.converteUS$(valorServico) / numeroParcelasTaxa;
         } else {
-            if (numeroParcelasTaxa > 1 && valorServico.isEmpty()) {
-                Messages.warn("Validação", "Informar valor da taxa, quando houver número de parcelas maior que 1!");
-                return;
-            }
+//            if (numeroParcelasTaxa > 1 && valorServico.isEmpty()) {
+//                Messages.warn("Validação", "Informar valor da taxa, quando houver número de parcelas maior que 1!");
+//                return;
+//            }
         }
         Taxas t = ((Taxas) dao.find(new Taxas(), Integer.parseInt(listTaxas.get(idTaxa).getDescription())));
         listTaxas.remove(idTaxa);
@@ -2186,8 +2229,9 @@ public class ContratoBean implements Serializable {
                 return;
             }
             if (Integer.parseInt(numeroParcelasTaxaString) > contrato.getQuantidadeParcelas()) {
-                this.numeroParcelasTaxa = contrato.getQuantidadeParcelas();
-                Messages.warn("Validação", "Número de parcelas da taxa deve ser menor ou igual ao número de parcelas do contrato!");
+//                this.numeroParcelasTaxa = contrato.getQuantidadeParcelas();
+//                Messages.warn("Validação", "Número de parcelas da taxa deve ser menor ou igual ao número de parcelas do contrato!");
+                this.numeroParcelasTaxa = Integer.parseInt(numeroParcelasTaxaString);
             } else {
                 this.numeroParcelasTaxa = Integer.parseInt(numeroParcelasTaxaString);
             }
@@ -2420,5 +2464,67 @@ public class ContratoBean implements Serializable {
         }
         contrato.setValorTotal2(valorTotalCobranca2);
         calculaSaldoDevedor();
+    }
+
+    public void alterDataVencimentoContrato(Integer index, Movimento m) {
+        if (index == 0) {
+            if (DataHoje.converteDataParaInteger(contrato.getDataCadastroString()) < DataHoje.converteDataParaInteger(m.getVencimentoString())) {
+                m.setVencimentoString(m.getVencimentoMemoriaString());
+            }
+        } else {
+            try {
+                if (m.getId() == listMovimentoContrato.get(index - 1).getId() && m.getPessoa().getId().equals(listMovimentoContrato.get(index - 1).getPessoa().getId())) {
+                    if (DataHoje.converteDataParaInteger(m.getVencimentoString()) >= DataHoje.converteDataParaInteger(listMovimentoContrato.get(index - 1).getVencimentoString())) {
+                        listMovimentoContrato.get(index).setVencimentoString(m.getVencimentoString());
+                    } else {
+                        listMovimentoContrato.get(index).setVencimentoString(m.getVencimentoMemoriaString());
+                    }
+                }
+            } catch (Exception e) {
+
+            }
+            try {
+                if (m.getId() == listMovimentoContrato.get(index + 1).getId() && m.getPessoa().getId().equals(listMovimentoContrato.get(index + 1).getPessoa().getId())) {
+                    if (DataHoje.converteDataParaInteger(m.getVencimentoString()) <= DataHoje.converteDataParaInteger(listMovimentoContrato.get(index + 1).getVencimentoString())) {
+                        listMovimentoContrato.get(index).setVencimentoString(m.getVencimentoString());
+                    } else {
+                        listMovimentoContrato.get(index).setVencimentoString(m.getVencimentoMemoriaString());
+                    }
+                }
+            } catch (Exception e) {
+
+            }
+        }
+    }
+
+    public void alterDataVencimentoTaxa(Integer index, Movimento m) {
+        if (index == 0) {
+            if (DataHoje.converteDataParaInteger(contrato.getDataCadastroString()) < DataHoje.converteDataParaInteger(m.getVencimentoString())) {
+                m.setVencimentoString(m.getVencimentoMemoriaString());
+            }
+        } else {
+            try {
+                if (m.getId() == listMovimentoTaxa.get(index - 1).getId() && m.getPessoa().getId().equals(listMovimentoTaxa.get(index - 1).getPessoa().getId())) {
+                    if (DataHoje.converteDataParaInteger(m.getVencimentoString()) >= DataHoje.converteDataParaInteger(listMovimentoTaxa.get(index - 1).getVencimentoString())) {
+                        listMovimentoTaxa.get(index).setVencimentoString(m.getVencimentoString());
+                    } else {
+                        listMovimentoTaxa.get(index).setVencimentoString(m.getVencimentoMemoriaString());
+                    }
+                }
+            } catch (Exception e) {
+
+            }
+            try {
+                if (m.getId() == listMovimentoTaxa.get(index + 1).getId() && m.getPessoa().getId().equals(listMovimentoTaxa.get(index + 1).getPessoa().getId())) {
+                    if (DataHoje.converteDataParaInteger(m.getVencimentoString()) <= DataHoje.converteDataParaInteger(listMovimentoTaxa.get(index + 1).getVencimentoString())) {
+                        listMovimentoTaxa.get(index).setVencimentoString(m.getVencimentoString());
+                    } else {
+                        listMovimentoTaxa.get(index).setVencimentoString(m.getVencimentoMemoriaString());
+                    }
+                }
+            } catch (Exception e) {
+
+            }
+        }
     }
 }

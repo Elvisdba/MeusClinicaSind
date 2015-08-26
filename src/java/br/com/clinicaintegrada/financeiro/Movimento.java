@@ -17,6 +17,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 @Entity
@@ -86,6 +87,12 @@ public class Movimento implements Serializable {
     @ManyToOne
     private Acordo acordo;
 
+    @Transient
+    private Boolean entrada;
+
+    @Transient
+    private Date vencimentoMemoria;
+
     public Movimento() {
         this.id = -1;
         this.lote = null;
@@ -111,6 +118,8 @@ public class Movimento implements Serializable {
         this.valorBaixa = 0;
         this.descontoAteVencimento = 0;
         this.acordo = null;
+        this.entrada = false;
+        this.vencimentoMemoria = null;
     }
 
     public Movimento(int id, Lote lote, Pessoa pessoa, Servicos servicos, Evento evento, TipoServico tipoServico, FTipoDocumento tipoDocumento, float valor, String nrCtrBoleto, String referencia, Date vencimento, int quantidade, boolean ativo, String es, String documento, Baixa baixa, float correcao, float juros, float multa, float desconto, float taxa, float valorBaixa, float descontoAteVencimento, Acordo acordo) {
@@ -221,6 +230,7 @@ public class Movimento implements Serializable {
     }
 
     public Date getVencimento() {
+        vencimentoMemoria = vencimento;
         return vencimento;
     }
 
@@ -354,6 +364,30 @@ public class Movimento implements Serializable {
 
     public void setAcordo(Acordo acordo) {
         this.acordo = acordo;
+    }
+
+    public Boolean getEntrada() {
+        return entrada;
+    }
+
+    public void setEntrada(Boolean entrada) {
+        this.entrada = entrada;
+    }
+
+    public Date getVencimentoMemoria() {
+        return vencimentoMemoria;
+    }
+
+    public void setVencimentoMemoria(Date vencimentoMemoria) {
+        this.vencimentoMemoria = vencimentoMemoria;
+    }
+
+    public String getVencimentoMemoriaString() {
+        return DataHoje.converteData(vencimentoMemoria);
+    }
+
+    public void setVencimentoMemoriaString(String vencimentoMemoriaString) {
+        this.vencimentoMemoria = DataHoje.converte(vencimentoMemoriaString);
     }
 
 }

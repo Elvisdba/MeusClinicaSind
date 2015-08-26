@@ -34,7 +34,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -76,13 +78,16 @@ public class MovimentosReceberBean {
     private Pessoa pessoa;
     private List<Pessoa> listPessoa;
     private String status;
-    private String descPesquisaBoleto;
+    private String boleto_numero;
+    private String contrato_numero;
     private List<SelectItem> listContas;
     private int indexConta;
     private Boolean disabled;
     private Contrato contrato;
     private Float valorTotal;
     private Float valorTotalBaixa;
+    private Float valorTotalSaldo;
+    private Float valorTotalAberto;
 
     @PostConstruct
     public void init() {
@@ -107,13 +112,16 @@ public class MovimentosReceberBean {
         pessoa = new Pessoa();
         listPessoa = new ArrayList();
         status = "";
-        descPesquisaBoleto = "";
+        boleto_numero = "";
+        contrato_numero = "";
         listContas = new ArrayList();
         indexConta = 0;
         disabled = false;
         contrato = null;
         valorTotal = new Float(0);
         valorTotalBaixa = new Float(0);
+        valorTotalSaldo = new Float(0);
+        valorTotalAberto = new Float(0);
     }
 
     @PreDestroy
@@ -124,6 +132,17 @@ public class MovimentosReceberBean {
         Sessions.remove("listMovimentos");
         Sessions.remove("pessoaPesquisaList");
         Sessions.remove("contratoPesquisa");
+    }
+
+    public String clear() {
+        clear(0);
+        return "movimentosReceber";
+    }
+
+    public void clear(Integer tcase) {
+        if (tcase == 0) {
+            Sessions.remove("movimentosReceberBean");
+        }
     }
 
     public List<SelectItem> getListContas() {
@@ -155,8 +174,32 @@ public class MovimentosReceberBean {
         return listContas;
     }
 
+    public void find(Integer tcase) {
+        if (tcase == 0) {
+            getBoleto_numero();
+            pesquisaBoleto();
+            listMovimento.clear();
+            loadMovimentos();
+        } else if (tcase == 1) {
+            listPessoa.clear();
+            listMovimento.clear();
+            contrato = null;
+            loadMovimentos();
+            String pessoa_id = "";
+            porPesquisa = "todos";
+            Map<Integer, Pessoa> map = new LinkedHashMap<>();
+            for (int i = 0; i < listMovimento.size(); i++) {
+                Pessoa p = (Pessoa) new Dao().find(new Pessoa(), Integer.parseInt(listMovimento.get(i).getPessoa_id()));
+                map.put(p.getId(), p);
+            }
+            for (Map.Entry<Integer, Pessoa> entry : map.entrySet()) {
+                listPessoa.add(entry.getValue());
+            }
+        }
+    }
+
     public void pesquisaBoleto() {
-        if (descPesquisaBoleto.isEmpty()) {
+        if (boleto_numero.isEmpty()) {
             if (pessoa.getId() != -1) {
                 porPesquisa = "todos";
                 listMovimento.clear();
@@ -167,7 +210,7 @@ public class MovimentosReceberBean {
         try {
             PessoaDao pessoaDao = new PessoaDao();
             ContaCobranca contaCobranca = (ContaCobranca) new Dao().find(new ContaCobranca(), Integer.parseInt(((SelectItem) listContas.get(indexConta)).getDescription()));
-            Pessoa p = pessoaDao.findPessoaByBoletoAndContaCobranca(descPesquisaBoleto, contaCobranca.getId());
+            Pessoa p = pessoaDao.findPessoaByBoletoAndContaCobranca(boleto_numero, contaCobranca.getId());
             listPessoa.clear();
             pessoa = new Pessoa();
 
@@ -179,7 +222,7 @@ public class MovimentosReceberBean {
             listMovimento.clear();
             getListMovimento();
         } catch (Exception e) {
-            descPesquisaBoleto = "";
+            boleto_numero = "";
             Messages.fatal("Atenção", "Digite um número de Boleto válido!");
         }
     }
@@ -312,9 +355,10 @@ public class MovimentosReceberBean {
         return "movimentosReceber";
     }
 
-    public String removerPessoaLista(int index) {
+    public String remove(int index) {
         listPessoa.remove(index);
         listMovimento.clear();
+        loadMovimentos();
         return "movimentosReceber";
     }
 
@@ -543,6 +587,11 @@ public class MovimentosReceberBean {
 
     public void atualizarStatus() {
         listMovimento.clear();
+        if (!contrato_numero.isEmpty() && listPessoa.isEmpty()) {
+            listPessoa.clear();
+            pessoa = new Pessoa();
+        }
+        loadMovimentos();
     }
 
     public String getTotal() {
@@ -636,10 +685,11 @@ public class MovimentosReceberBean {
         }
     }
 
-    public List<ListMovimentoReceber> getListMovimento() {
-        if (listMovimento.isEmpty() && !listPessoa.isEmpty()) {
+    public void loadMovimentos() {
+        if (listMovimento.isEmpty() && (!listPessoa.isEmpty() || !contrato_numero.isEmpty())) {
             valorTotal = new Float(0);
             valorTotalBaixa = new Float(0);
+            valorTotalAberto = new Float(0);
             MovimentosReceberDao movimentosReceberDao = new MovimentosReceberDao();
             String ids = "";
             for (int i = 0; i < listPessoa.size(); i++) {
@@ -650,13 +700,19 @@ public class MovimentosReceberBean {
             }
             List lista = new ArrayList();
             if (contrato != null) {
-                if (contrato.getId() != null || contrato.getId() != -1) {
-                    lista = movimentosReceberDao.listMovimentos(ids, porPesquisa, contrato.getId());
+                if ((contrato.getId() != null || contrato.getId() != -1)) {
+                    if (contrato.getId() != null) {
+                        lista = movimentosReceberDao.listMovimentos(ids, porPesquisa, contrato.getId());
+                    }
                 } else {
                     lista = movimentosReceberDao.listMovimentos(ids, porPesquisa);
                 }
             } else {
-                lista = movimentosReceberDao.listMovimentos(ids, porPesquisa);
+                if (!contrato_numero.isEmpty()) {
+                    lista = movimentosReceberDao.listMovimentos(ids, porPesquisa, Integer.parseInt(contrato_numero));
+                } else {
+                    lista = movimentosReceberDao.listMovimentos(ids, porPesquisa);
+                }
             }
             //float soma = 0;
             boolean chk = false, disabled = false;
@@ -694,6 +750,14 @@ public class MovimentosReceberBean {
                 }
                 valorTotal += Moeda.converteUS$(Moeda.converteR$(AnaliseString.converteNullString(((List) lista.get(i)).get(4))));
                 valorTotalBaixa += Moeda.converteUS$(Moeda.converteR$(AnaliseString.converteNullString(((List) lista.get(i)).get(9))));
+                String vb = Moeda.converteR$(AnaliseString.converteNullString(((List) lista.get(i)).get(9)));
+                if (dataBaixa.isEmpty()) {
+                    if (!vb.isEmpty() && !vb.equals("0,00")) {
+                        valorTotalAberto += Moeda.converteUS$(vb);
+                    } else {
+                        valorTotalAberto += Moeda.converteUS$(Moeda.converteR$(AnaliseString.converteNullString(((List) lista.get(i)).get(4))));
+                    }
+                }
                 listMovimento.add(
                         new ListMovimentoReceber(
                                 /* selected     */chk,
@@ -721,7 +785,7 @@ public class MovimentosReceberBean {
                                 /* usuário caixa*/ AnaliseString.converteNullString(((List) lista.get(i)).get(21)),
                                 /* m. baixa     */ AnaliseString.converteNullString(((List) lista.get(i)).get(22)),
                                 /* l. documento */ AnaliseString.converteNullString(((List) lista.get(i)).get(23)),
-                                /* css          */ (!descPesquisaBoleto.isEmpty() && descPesquisaBoleto.equals(AnaliseString.converteNullString(((List) lista.get(i)).get(17)))) ? "tblListaBoleto" : "", // BOLETO PESQUISADO -- ARG 28
+                                /* css          */ (!boleto_numero.isEmpty() && boleto_numero.equals(AnaliseString.converteNullString(((List) lista.get(i)).get(17)))) ? "tblListaBoleto" : "", // BOLETO PESQUISADO -- ARG 28
                                 /* disabled     */ disabled
                         )
                 );
@@ -760,7 +824,11 @@ public class MovimentosReceberBean {
 //                )
 //                );
             }
+            valorTotalSaldo = valorTotal - valorTotalBaixa;
         }
+    }
+
+    public List<ListMovimentoReceber> getListMovimento() {
         return listMovimento;
     }
 
@@ -876,38 +944,34 @@ public class MovimentosReceberBean {
     }
 
     public Pessoa getPessoa() {
+        Boolean load = false;
         if (Sessions.exists("pessoaPesquisa")) {
-            if (!addMais) {
-                pessoa = new Pessoa();
-                pessoa = (Pessoa) Sessions.getObject("pessoaPesquisa", true);
-
-                listPessoa.clear();
-
-                listPessoa.add(pessoa);
-                listMovimento.clear();
+            Pessoa p = (Pessoa) Sessions.getObject("pessoaPesquisa", true);
+            if (listPessoa.isEmpty()) {
+                listPessoa.add(p);
             } else {
-                listPessoa.add((Pessoa) Sessions.getObject("pessoaPesquisa", true));
-                listMovimento.clear();
-                addMais = false;
+                for (int i = 0; i < listPessoa.size(); i++) {
+                    listPessoa.add(p);
+                }
             }
-            calculoDesconto();
+            load = true;
         }
         if (Sessions.exists("pessoaPesquisaList")) {
             List<Pessoa> list = (List<Pessoa>) Sessions.getList("pessoaPesquisaList", true);
             for (int i = 0; i < list.size(); i++) {
-                if (i == 0) {
-                    pessoa = (Pessoa) list.get(i);
-                    listPessoa.add((Pessoa) list.get(i));
-                } else {
-                    listPessoa.add((Pessoa) list.get(i));
-                }
+                listPessoa.add(list.get(i));
             }
-            listMovimento.clear();
-            addMais = false;
-            calculoDesconto();
+            load = true;
         }
         if (Sessions.exists("contratoPesquisa")) {
+            load = true;
             contrato = (Contrato) Sessions.getObject("contratoPesquisa", true);
+            contrato_numero = "" + contrato.getId();
+        }
+        if (load) {
+            listMovimento.clear();
+            loadMovimentos();
+            calculoDesconto();
         }
         return pessoa;
     }
@@ -917,6 +981,7 @@ public class MovimentosReceberBean {
     }
 
     public List<Pessoa> getListPessoa() {
+        getPessoa();
         return listPessoa;
     }
 
@@ -956,15 +1021,21 @@ public class MovimentosReceberBean {
         this.id_baixa = id_baixa;
     }
 
-    public String getDescPesquisaBoleto() {
+    public String getBoleto_numero() {
         if (Sessions.exists("pessoaPesquisa")) {
-            descPesquisaBoleto = "";
+            boleto_numero = "";
         }
-        return descPesquisaBoleto;
+        return boleto_numero;
     }
 
-    public void setDescPesquisaBoleto(String descPesquisaBoleto) {
-        this.descPesquisaBoleto = descPesquisaBoleto;
+    public void setBoleto_numero(String boleto_numero) {
+        this.boleto_numero = boleto_numero;
+        if (!this.boleto_numero.isEmpty()) {
+            if (!this.contrato_numero.isEmpty()) {
+                this.contrato_numero = "";
+            }
+
+        }
     }
 
     public void setListContas(List<SelectItem> listContas) {
@@ -1025,6 +1096,48 @@ public class MovimentosReceberBean {
     public void setValorTotalBaixa(String valorTotalBaixaString) {
         try {
             this.valorTotalBaixa = Float.parseFloat(valorTotalBaixaString);
+        } catch (Exception e) {
+
+        }
+    }
+
+    public String getContrato_numero() {
+        return contrato_numero;
+    }
+
+    public void setContrato_numero(String contrato_numero) {
+        this.contrato_numero = contrato_numero;
+        if (!this.contrato_numero.isEmpty()) {
+            if (!this.boleto_numero.isEmpty()) {
+                this.boleto_numero = "";
+            }
+
+        }
+    }
+
+    public Float getValorTotalSaldo() {
+        return valorTotalSaldo;
+    }
+
+    public void setValorTotalSaldo(Float valorTotalSaldo) {
+        this.valorTotalSaldo = valorTotalSaldo;
+    }
+
+    public Float getValorTotalAberto() {
+        return valorTotalAberto;
+    }
+
+    public void setValorTotalAberto(Float valorTotalAberto) {
+        this.valorTotalAberto = valorTotalAberto;
+    }
+
+    public String getValorTotalAbertoString() {
+        return Moeda.converteR$Float(valorTotalAberto);
+    }
+
+    public void setValorTotalAbertoString(String valorTotalAbertoString) {
+        try {
+            this.valorTotalAberto = Float.parseFloat(valorTotalAbertoString);
         } catch (Exception e) {
 
         }

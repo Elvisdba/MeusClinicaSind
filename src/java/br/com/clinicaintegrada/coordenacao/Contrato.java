@@ -307,7 +307,7 @@ public class Contrato implements Serializable {
         if (quantidadeParcelas < 0) {
             return;
         }
-        if (quantidadeParcelas > 12) {
+        if (quantidadeParcelas > 24) {
             return;
         }
         this.quantidadeParcelas = quantidadeParcelas;

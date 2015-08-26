@@ -120,4 +120,28 @@ public class PessoaEndereco implements Serializable {
         }
         return enderecoString;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PessoaEndereco other = (PessoaEndereco) obj;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "PessoaEndereco{" + "id=" + id + ", endereco=" + endereco + ", tipoEndereco=" + tipoEndereco + ", pessoa=" + pessoa + ", numero=" + numero + ", complemento=" + complemento + '}';
+    }
+
 }
