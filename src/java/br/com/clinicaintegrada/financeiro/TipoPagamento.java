@@ -10,7 +10,7 @@ public class TipoPagamento implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Column(name = "ds_descricao", length = 20, unique = true)
     private String descricao;
 
@@ -24,11 +24,11 @@ public class TipoPagamento implements Serializable {
         this.descricao = descricao;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

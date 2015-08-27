@@ -68,9 +68,13 @@ public class DB {
          * BASE TESTE
          *
          */
+        if (clienteString.equals("ClinicaIntegradaProducao")) {
+            cliente.setCaminhoSistema("ClinicaIntegrada");
+            cliente.setPersistence("ClinicaIntegradaProducao");
+        } else {
+            cliente.setPersistence("ClinicaIntegrada");
+        }
         cliente.setCaminhoSistema(clienteString);
-        //cliente.setPersistence("ClinicaIntegrada");
-        cliente.setPersistence("ClinicaIntegradaProducao");
         cliente.setHost("192.168.1.60");
         cliente.setSenha("989899");
         /**

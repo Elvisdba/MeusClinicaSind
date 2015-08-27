@@ -41,6 +41,7 @@ import br.com.clinicaintegrada.utils.Dirs;
 import br.com.clinicaintegrada.utils.Messages;
 import br.com.clinicaintegrada.utils.Sessions;
 import br.com.clinicaintegrada.utils.Moeda;
+import br.com.clinicaintegrada.utils.PF;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -82,11 +83,11 @@ public class BaixaGeralBean {
     private List<SelectItem> listCartao;
     private List<SelectItem> listBanco;
     private List<SelectItem> listBancoSaida;
-    private int idConta;
-    private int idTipoPagamento;
-    private int idCartao;
-    private int idBanco;
-    private int idBancoSaida;
+    private Integer idConta;
+    private Integer idTipoPagamento;
+    private Integer idCartao;
+    private Integer idBanco;
+    private Integer idBancoSaida;
     private Rotina rotina;
     private Modulo modulo;
     private boolean desHabilitaConta;
@@ -101,6 +102,7 @@ public class BaixaGeralBean {
     private String banco;
     private String taxa;
     private String es;
+    private String dataCredito;
     private ChequeRec chequeRec;
     private List<FormaPagamento> lfp;
 
@@ -138,6 +140,7 @@ public class BaixaGeralBean {
         es = "";
         chequeRec = new ChequeRec();
         lfp = new ArrayList();
+        dataCredito = DataHoje.data();
     }
 
     @PreDestroy
@@ -146,7 +149,7 @@ public class BaixaGeralBean {
     }
 
     public void updateTipoPagamento() {
-        TipoPagamento tipoPagamento = (TipoPagamento) new Dao().find(new TipoPagamento(), Integer.parseInt(((SelectItem) getListTipoPagamento().get(idTipoPagamento)).getDescription()));
+        TipoPagamento tipoPagamento = getTipoPagamento();
         if (tipoPagamento.getId() == 6 || tipoPagamento.getId() == 7) {
             listCartao.clear();
             idCartao = 0;
@@ -346,7 +349,7 @@ public class BaixaGeralBean {
             } else {
                 valorF = 0;
             }
-            TipoPagamento tipoPagamento = (TipoPagamento) dao.find(new TipoPagamento(), Integer.parseInt(((SelectItem) getListTipoPagamento().get(idTipoPagamento)).getDescription()));
+            TipoPagamento tipoPagamento = getTipoPagamento();
             // CHEQUE
             PlanoDao planoDao = new PlanoDao();
             if (tipoPagamento.getId() == 4 || tipoPagamento.getId() == 5) {
@@ -427,9 +430,9 @@ public class BaixaGeralBean {
         ContaRotinaDao contaRotinaDao = new ContaRotinaDao();
         List select;
         if (verificaBaixaBoleto()) {
-            select = contaRotinaDao.pesquisaContasPorRotina(1);
+            select = contaRotinaDao.pesquisaContasPorRotina(1, SessaoCliente.get().getId());
         } else {
-            select = contaRotinaDao.pesquisaContasPorRotina();
+            select = contaRotinaDao.pesquisaContasPorRotina(SessaoCliente.get().getId());
         }
         for (int i = 0; i < select.size(); i++) {
             conta.add(new SelectItem(
@@ -445,9 +448,9 @@ public class BaixaGeralBean {
         List<SelectItem> selectItem = new ArrayList<>();
         List<TipoPagamento> listTipoPagamento;
         if (!getEs().isEmpty() && getEs().equals("S")) {
-            listTipoPagamento = dao.find("TipoPagamento", new int[]{3, 4, 5, 8, 9, 10});
+            listTipoPagamento = dao.find("TipoPagamento", new int[]{2, 3, 4, 5, 8, 9, 10});
         } else {
-            listTipoPagamento = dao.find("TipoPagamento", new int[]{3, 4, 5, 6, 7, 8, 9, 10, 11});
+            listTipoPagamento = dao.find("TipoPagamento", new int[]{2, 3, 4, 5, 6, 7, 8, 9, 10, 11});
         }
         for (int i = 0; i < listTipoPagamento.size(); i++) {
             selectItem.add(
@@ -508,7 +511,9 @@ public class BaixaGeralBean {
 
         PlanoDao planoDao = new PlanoDao();
         Usuario usuario = (Usuario) Sessions.getObject("sessaoUsuario");
-
+        if (getListaConta().isEmpty()) {
+            return mensagem = "Não existem plano de contas e/ou conta rotina cadastrada!";
+        }
         if (verificaBaixaBoleto()) {
             Dao dao = new Dao();
             plano5 = (Plano5) dao.find(new Plano5(), Integer.parseInt(((SelectItem) getListaConta().get(getIdConta())).getDescription()));
@@ -614,11 +619,11 @@ public class BaixaGeralBean {
         this.total = total;
     }
 
-    public int getIdConta() {
+    public Integer getIdConta() {
         return idConta;
     }
 
-    public void setIdConta(int idConta) {
+    public void setIdConta(Integer idConta) {
         this.idConta = idConta;
     }
 
@@ -638,11 +643,11 @@ public class BaixaGeralBean {
         this.list = list;
     }
 
-    public int getIdTipoPagamento() {
+    public Integer getIdTipoPagamento() {
         return idTipoPagamento;
     }
 
-    public void setIdTipoPagamento(int idTipoPagamento) {
+    public void setIdTipoPagamento(Integer idTipoPagamento) {
         this.idTipoPagamento = idTipoPagamento;
     }
 
@@ -687,7 +692,7 @@ public class BaixaGeralBean {
 
     public boolean isDesHabilitaNumero() {
         if (!getListTipoPagamento().isEmpty()) {
-            TipoPagamento tipoPagamento = (TipoPagamento) new Dao().find(new TipoPagamento(), Integer.parseInt(((SelectItem) getListTipoPagamento().get(idTipoPagamento)).getDescription()));
+            TipoPagamento tipoPagamento = getTipoPagamento();
             if (tipoPagamento.getId() == 3 || tipoPagamento.getId() == 6 || tipoPagamento.getId() == 7 || (!getEs().isEmpty() && getEs().equals("S"))) {
                 desHabilitaNumero = true;
                 numero = "";
@@ -705,7 +710,7 @@ public class BaixaGeralBean {
 
     public boolean isDesHabilitadoVencimento() {
         if (!getListTipoPagamento().isEmpty()) {
-            TipoPagamento tipoPagamento = (TipoPagamento) new Dao().find(new TipoPagamento(), Integer.parseInt(((SelectItem) getListTipoPagamento().get(idTipoPagamento)).getDescription()));
+            TipoPagamento tipoPagamento = getTipoPagamento();
             if (tipoPagamento.getId() == 5) {
                 desHabilitadoVencimento = false;
             } else {
@@ -837,7 +842,7 @@ public class BaixaGeralBean {
             if (!getListTipoPagamento().isEmpty()) {
                 Dao dao = new Dao();
                 List<Cartao> listCartoes = dao.list(new Cartao());
-                TipoPagamento tipoPagamento = (TipoPagamento) (new Dao()).find(new TipoPagamento(), Integer.parseInt(((SelectItem) getListTipoPagamento().get(idTipoPagamento)).getDescription()));
+                TipoPagamento tipoPagamento = getTipoPagamento();
                 int conta = 0;
                 for (Cartao c : listCartoes) {
                     String tipoString = c.getDebitoCredito().equals("D") ? "Débito" : "Crédito";
@@ -858,11 +863,11 @@ public class BaixaGeralBean {
         this.listCartao = listCartao;
     }
 
-    public int getIdCartao() {
+    public Integer getIdCartao() {
         return idCartao;
     }
 
-    public void setIdCartao(int idCartao) {
+    public void setIdCartao(Integer idCartao) {
         this.idCartao = idCartao;
     }
 
@@ -880,11 +885,11 @@ public class BaixaGeralBean {
         this.listBanco = listBanco;
     }
 
-    public int getIdBanco() {
+    public Integer getIdBanco() {
         return idBanco;
     }
 
-    public void setIdBanco(int idBanco) {
+    public void setIdBanco(Integer idBanco) {
         this.idBanco = idBanco;
     }
 
@@ -926,11 +931,69 @@ public class BaixaGeralBean {
         this.listBancoSaida = listBancoSaida;
     }
 
-    public int getIdBancoSaida() {
+    public Integer getIdBancoSaida() {
         return idBancoSaida;
     }
 
-    public void setIdBancoSaida(int idBancoSaida) {
+    public void setIdBancoSaida(Integer idBancoSaida) {
         this.idBancoSaida = idBancoSaida;
+    }
+
+    public String getDataCredito() {
+        return dataCredito;
+    }
+
+    public void setDataCredito(String dataCredito) {
+        this.dataCredito = dataCredito;
+    }
+
+    /**
+     *
+     * <ul>
+     * <li> <strong> TIPO DE PAGAMENTO </strong> <br /> </li>
+     * <li> 01 - Nota Fiscal </li>
+     * <li> 02 - Boleto </li>
+     * <li> 03 - Dinheiro </li>
+     * <li> 04 - Cheque </li>
+     * <li> 05 - Cheque-Pré </li>
+     * <li> 06 - Cartão de Crédito </li>
+     * <li> 07 - Cartão de Débito </li>
+     * <li> 08 - Depósito Bancário </li>
+     * <li> 09 - Doc Bancário </li>
+     * <li> 10 - Trans. Bancária </li>
+     * <li> 11 - Ticket </li>
+     * <li> 12 - Recibo </li>
+     * <li> 13 - Débito Automático </li>
+     * </ul>
+     *
+     * @return TipoPagamento
+     */
+    public TipoPagamento getTipoPagamento() {
+        try {
+            TipoPagamento tp = (TipoPagamento) new Dao().find(new TipoPagamento(), Integer.parseInt(((SelectItem) getListTipoPagamento().get(idTipoPagamento)).getDescription()));
+            if (tp == null) {
+                return new TipoPagamento();
+            }
+            return tp;
+        } catch (Exception e) {
+            return new TipoPagamento();
+        }
+    }
+
+    public Boolean allowTipoPagamento(String inIds) {
+        try {
+            inIds = inIds.replace(" ", ",");
+            inIds = inIds.trim();
+            String[] ids = inIds.split(",");
+            Integer tipo_pagamento_id = getTipoPagamento().getId();
+            for (int i = 0; i < ids.length; i++) {
+                if (tipo_pagamento_id.equals(Integer.parseInt(ids[i].trim()))) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+
+        }
+        return false;
     }
 }

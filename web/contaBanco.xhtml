@@ -27,8 +27,13 @@
                         <h:outputText value="Conta Banco" styleClass="fonteHeader" />
                         <h:form id="formContaBanco">  
                             <c:set scope="request" var="object" value="${contaBancoBean.contaBanco}"/>
-
                             <p:panel style="clear: both; border: 0px;" styleClass="fundoCinza">
+                                <h:panelGrid columns="1">
+                                    <h:outputLabel value="Filial" for="idFilial"/>
+                                    <p:selectOneMenu id="idFilial" value="#{contaBancoBean.idFilial}">
+                                        <f:selectItems value="#{contaBancoBean.listFilial}"/>
+                                    </p:selectOneMenu>
+                                </h:panelGrid>
                                 <h:panelGrid columns="4" styleClass="fundoCinza">
                                     <p:column>
                                         <h:outputLabel value="Agência" for="idAgencia"/><br />
@@ -50,7 +55,7 @@
 
                                     <p:column>
                                         <h:outputLabel value="Banco" for="idBanco" /><br />
-                                        <p:selectOneMenu id="idBanco" value="#{contaBancoBean.idBanco}" style="width: 450px;">
+                                        <p:selectOneMenu id="idBanco" value="#{contaBancoBean.idBanco}" >
                                             <f:selectItems value="#{contaBancoBean.listBancoCompleta}"/>
                                         </p:selectOneMenu>
                                     </p:column>
@@ -63,16 +68,7 @@
                                 </h:panelGrid>
                             </p:panel>
                             <p:messages id="i_msg" showDetail="true" closable="true" />  
-                            <h:panelGrid columns="1">
-                                <p:column> 
-                                    <h:outputLabel value="Filial" for="idFilial"/><br />
-                                    <p:selectOneMenu id="idFilial" value="#{contaBancoBean.idFilial}" style="width: 995px;">
-                                        <f:selectItems value="#{contaBancoBean.listFilial}"/>
-                                    </p:selectOneMenu>
-                                </p:column>
-                            </h:panelGrid>
-
-                            <h:panelGrid columns="3">
+                            <h:panelGrid columns="3"  styleClass="margin-top-max">
                                 <p:commandButton onclick="PF('i_dlg_s').show()" value="Salvar" disabled="#{controleAcessoBean.save}" title="Salvar esta Conta Banco"/>
                                 <p:commandButton ajax="false" value="Novo" title="Nova Conta Banco" action="#{contaBancoBean.novoGeral}"/>
                                 <p:commandButton onclick="PF('i_dlg_e').show()" value="Excluir" disabled="#{controleAcessoBean.delete}" title="Excluir exta Conta Banco"/>
@@ -88,23 +84,32 @@
                                 <p:commandButton value="Cancelar" type="button" styleClass="ui-confirmdialog-no" onclick="PF('i_dlg_e').hide()" style="float: left" icon="ui-icon-close"/>       
                             </p:dialog>
 
-                            <p:dataTable value="#{contaBancoBean.listContaBanco}" var="contaBanco" id="tbl" emptyMessage="Nenhuma Conta Banco encontrada">                        
-                                <p:column headerText="Banco">
-                                    <p:commandLink value="#{contaBanco.banco.numero} - #{contaBanco.banco.banco}" action="#{contaBancoBean.edit(contaBanco)}"/>
-                                </p:column>
+                            <h:panelGrid id="tbl">
+                                <p:dataTable value="#{contaBancoBean.listContaBanco}" var="contaBanco" emptyMessage="Nenhuma Conta Banco encontrada" styleClass="margin-top-max">
+                                    <p:column width="25">
+                                        <p:commandButton icon="ui-icon-link" action="#{contaBancoBean.edit(contaBanco)}" title="Editar"/>
+                                    </p:column>
+                                    <p:column headerText="Filial">
+                                        <p:commandLink value="#{contaBanco.filial.filial.pessoa.nome} / #{contaBanco.filial.filial.pessoa.documento}" action="#{contaBancoBean.edit(contaBanco)}" />
+                                    </p:column>
 
-                                <p:column headerText="Agência" style="text-align: center">
-                                    <p:commandLink value="#{contaBanco.agencia}" action="#{contaBancoBean.edit(contaBanco)}"/>
-                                </p:column>
+                                    <p:column headerText="Banco">
+                                        <p:commandLink value="#{contaBanco.banco.numero} - #{contaBanco.banco.banco}" action="#{contaBancoBean.edit(contaBanco)}"/>
+                                    </p:column>
 
-                                <p:column headerText="Conta">
-                                    <h:outputText value="#{contaBanco.conta}"/>
-                                </p:column>
+                                    <p:column headerText="Agência" style="text-align: center">
+                                        <p:commandLink value="#{contaBanco.agencia}" action="#{contaBancoBean.edit(contaBanco)}"/>
+                                    </p:column>
 
-                                <p:column headerText="Cidade">
-                                    <h:outputText value="#{contaBanco.cidade.cidade} - #{contaBanco.cidade.uf}"/>
-                                </p:column>
-                            </p:dataTable>
+                                    <p:column headerText="Conta">
+                                        <h:outputText value="#{contaBanco.conta}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Cidade">
+                                        <h:outputText value="#{contaBanco.cidade.cidade} - #{contaBanco.cidade.uf}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
                         </h:form>
                     </p:panel>
                 </f:view>

@@ -71,16 +71,21 @@ public class ControleUsuarioBean implements Serializable {
             filial = "";
         }
         LiberaAcesso liberaAcesso = null;
-        Cliente c = new ClienteDao().findByIdentificador(SessaoCliente.get().getIdentifica());
+        Cliente c;
+        if (SessaoCliente.get().getIdentifica().equals("ClinicaIntegradaProducao")) {
+            c = new ClienteDao().findByIdentificador("ClinicaIntegrada");
+        } else {
+            c = new ClienteDao().findByIdentificador(SessaoCliente.get().getIdentifica());
+        }
         Registro registro = new RegistroDao().pesquisaRegistroPorCliente(c.getId());
         String pagina = null;
         if (registro != null && !registro.getLiberaAcesso()) {
-            if(!usuario.getLogin().equals("admin")) {
+            if (!usuario.getLogin().equals("admin") && !usuario.getLogin().equals("FundacaoPenteado")) {
                 if (macFilial == null || macFilial.getId() == null || macFilial.getId() == -1) {
                     msgErro = "Computador não registrado ou sem mac específicado.";
                     Messages.warn("Validação", msgErro);
                     return pagina;
-                }                
+                }
                 liberaAcesso = new LiberaAcessoDao().findByMac(macFilial);
                 if (liberaAcesso == null) {
                     msgErro = "Nenhum pedido de acesso encontrado. Rodar novamente o aplicativo de acesso.";
@@ -113,6 +118,9 @@ public class ControleUsuarioBean implements Serializable {
         if (usuario != null) {
             c = new Cliente();
             c = usuario.getCliente();
+            if (SessaoCliente.get().getIdentifica().equals("ClinicaIntegradaProducao")) {
+                c.setIdentifica("ClinicaIntegradaProducao");
+            }
             if (!c.getAtivo()) {
                 msgErro = "@ Cliente inátivo.";
                 return pagina;

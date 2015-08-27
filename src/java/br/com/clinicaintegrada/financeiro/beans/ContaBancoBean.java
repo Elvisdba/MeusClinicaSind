@@ -30,9 +30,9 @@ public class ContaBancoBean implements Serializable {
     private ContaBanco contaBanco;
     private Banco banco;
     private String indice;
-    private int idBanco;
-    private int idPlanoContas;
-    private int idFilial;
+    private Integer idBanco;
+    private Integer idPlanoContas;
+    private Integer idFilial;
     private Cidade cidade;
     private Banco Sbanco;
     private Plano5 plano5;
@@ -233,6 +233,12 @@ public class ContaBancoBean implements Serializable {
                 }
             }
         }
+        for (int i = 0; i < listFilial.size(); i++) {
+            if (Integer.parseInt(listFilial.get(i).getDescription()) == contaBanco.getFilial().getId()) {
+                setIdFilial(i);
+                break;
+            }
+        }
         Sessions.put("contaBancoPesquisa", contaBanco);
         Sessions.put("linkClicado", true);
         if ((Sessions.getString("urlRetorno")).equals("menuFinanceiro")) {
@@ -325,16 +331,17 @@ public class ContaBancoBean implements Serializable {
         idBanco = 0;
         idPlanoContas = 0;
         salvar = false;
+        idFilial = 0;
         Sessions.remove("contaBancoPesquisa");
         listContaBanco.clear();
         return "contaBanco";
     }
 
-    public int getIdFilial() {
+    public Integer getIdFilial() {
         return idFilial;
     }
 
-    public void setIdFilial(int idFilial) {
+    public void setIdFilial(Integer idFilial) {
         this.idFilial = idFilial;
     }
 
@@ -362,19 +369,19 @@ public class ContaBancoBean implements Serializable {
         this.indice = indice;
     }
 
-    public int getIdBanco() {
+    public Integer getIdBanco() {
         return idBanco;
     }
 
-    public void setIdBanco(int idBanco) {
+    public void setIdBanco(Integer idBanco) {
         this.idBanco = idBanco;
     }
 
-    public int getIdPlanoContas() {
+    public Integer getIdPlanoContas() {
         return idPlanoContas;
     }
 
-    public void setIdPlanoContas(int idPlanoContas) {
+    public void setIdPlanoContas(Integer idPlanoContas) {
         this.idPlanoContas = idPlanoContas;
     }
 

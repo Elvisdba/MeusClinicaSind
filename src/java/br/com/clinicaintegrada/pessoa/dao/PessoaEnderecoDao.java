@@ -109,26 +109,26 @@ public class PessoaEnderecoDao extends DB {
             String or_desc = "", or_bairro = "";
             for (String d : descricao) {
                 if (descricao.length == 1) {
-                    queryString += " AND ( UPPER(TRANSLATE(DE.ds_descricao)) LIKE UPPER('%" + d + "%') ) ";
+                    queryString += " AND ( UPPER(FUNC_TRANSLATE(DE.ds_descricao)) LIKE UPPER('%" + d + "%') ) ";
                     break;
                 } else {
-                    or_desc += " OR TRANSLATE(TRANSLATE(DE.ds_descricao)) LIKE UPPER('%" + d + "%') ";
+                    or_desc += " OR FUNC_TRANSLATE(FUNC_TRANSLATE(DE.ds_descricao)) LIKE UPPER('%" + d + "%') ";
                 }
             }
             if (descricao.length > 1) {
-                queryString += " AND ( TRANSLATE(TRANSLATE(DE.ds_descricao)) LIKE UPPER('%" + descricao[0] + "%') " + or_desc + ") ";
+                queryString += " AND ( FUNC_TRANSLATE(FUNC_TRANSLATE(DE.ds_descricao)) LIKE UPPER('%" + descricao[0] + "%') " + or_desc + ") ";
             }
 
             for (String b : bairro) {
                 if (bairro.length == 1) {
-                    queryString += " AND ( UPPER(TRANSLATE(BA.ds_descricao)) LIKE UPPER('%" + b + "%') ) ";
+                    queryString += " AND ( UPPER(FUNC_TRANSLATE(BA.ds_descricao)) LIKE UPPER('%" + b + "%') ) ";
                     break;
                 } else {
-                    or_bairro += " OR UPPER(TRANSLATE(BA.ds_descricao)) LIKE UPPER('%" + b + "%') ";
+                    or_bairro += " OR UPPER(FUNC_TRANSLATE(BA.ds_descricao)) LIKE UPPER('%" + b + "%') ";
                 }
             }
             if (bairro.length > 1) {
-                queryString += " AND ( UPPER(TRANSLATE(BA.ds_descricao)) LIKE UPPER('%" + bairro[0] + "%') " + or_bairro + ") ";
+                queryString += " AND ( UPPER(FUNC_TRANSLATE(BA.ds_descricao)) LIKE UPPER('%" + bairro[0] + "%') " + or_bairro + ") ";
             }
 
             Query qry = getEntityManager().createNativeQuery(queryString);

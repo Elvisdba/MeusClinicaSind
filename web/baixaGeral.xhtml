@@ -15,7 +15,7 @@
         </style>
 
         <script type="text/javascript">
-
+            
         </script>
     </h:head>
     <h:body>
@@ -32,24 +32,24 @@
                         <h:outputText value="Baixa Geral" styleClass="fonteHeader" />
                         <h:form id="formBaixaGeral">
                             <p:panel styleClass="fundoCinza" style="clear: both">
-                                <h:panelGrid columns="2" rendered="#{baixaGeralBean.listMovimentos.size() > 0}">
+                                <h:panelGrid columns="2" rendered="#{not empty baixaGeralBean.listMovimentos}">
                                     <p:column>
                                         <h:outputLabel value="Valor total para Baixa" style="font-size: 12pt!important;"/><br />
                                         <p:inputText value="R$ #{baixaGeralBean.total}" readonly="true" styleClass="input-text-med bg-yellow-ligth no-border bold border-dashed font-color-red font-size-12" />
                                     </p:column>
 
                                     <p:column>
-                                        <h:outputLabel value="Tipo de Recebimento" rendered="#{baixaGeralBean.tipo == 'banco' or baixaGeralBean.tipo == 'caixa'}" style="font-size: 12pt!important;"/><br />
-                                        <p:selectOneMenu style="margin-right: 20px; padding-right: 10px" value="#{baixaGeralBean.idConta}" disabled="#{baixaGeralBean.desHabilitaConta}" rendered="#{baixaGeralBean.tipo == 'caixa'}">
+                                        <h:outputLabel value="Tipo de Recebimento" rendered="#{baixaGeralBean.tipo eq 'banco' or baixaGeralBean.tipo eq 'caixa'}" style="font-size: 12pt!important;"/><br />
+                                        <p:selectOneMenu style="margin-right: 20px; padding-right: 10px" value="#{baixaGeralBean.idConta}" disabled="#{baixaGeralBean.desHabilitaConta}" rendered="#{baixaGeralBean.tipo eq 'caixa'}">
                                             <f:selectItems value="#{baixaGeralBean.listaConta}"/>
                                         </p:selectOneMenu>
                                         <br />
-                                        <h:outputLabel value="#{baixaGeralBean.banco}" rendered="#{baixaGeralBean.tipo == 'banco'}" style="font-size: 11pt!important; font-weight: bold; margin-right: 20px"/>
+                                        <h:outputLabel value="#{baixaGeralBean.banco}" rendered="#{baixaGeralBean.tipo eq 'banco'}" style="font-size: 11pt!important; font-weight: bold; margin-right: 20px"/>
                                     </p:column>
 
                                 </h:panelGrid>
 
-                                <h:panelGrid id="i_recebimento" columns="8" style="margin-top: 10px">
+                                <h:panelGrid id="i_recebimento" columns="10" style="margin-top: 10px">
                                     <p:column>
                                         <h:outputLabel value="DT. Quitação" /><br />
                                         <p:inputMask value="#{baixaGeralBean.quitacao}" size="8" disabled="#{baixaGeralBean.desHabilitaQuitacao}" mask="99/99/9999" style="margin-right: 10px">
@@ -84,16 +84,23 @@
                                     <p:column>
                                         <h:outputLabel value="Número" rendered="#{!baixaGeralBean.desHabilitaNumero}"/><br />                                        
                                         <p:inputText value="#{baixaGeralBean.numero}" rendered="#{!baixaGeralBean.desHabilitaNumero}" style="margin-right: 10px;"/>
-                                    </p:column>
+                                    </p:column> 
 
+                                    <p:column rendered="#{baixaGeralBean.allowTipoPagamento('2,8,9,10')}">
+                                        <h:outputLabel value="DT. Crédito" /><br />
+                                        <p:inputMask value="#{baixaGeralBean.dataCredito}" converter="#{isDateString}" mask="99/99/9999" size="7">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:inputMask>
+                                    </p:column>                                    
+                                    
                                     <p:column>
                                         <h:outputLabel value="Vencimento" rendered="#{!baixaGeralBean.desHabilitadoVencimento}"/><br />                                        
                                         <p:inputMask value="#{baixaGeralBean.vencimento}" size="8" rendered="#{!baixaGeralBean.desHabilitadoVencimento}" mask="99/99/9999" style="margin-right: 10px;"/>
                                     </p:column>
 
                                     <p:column>
-                                        <h:outputText value="Taxa" rendered="#{baixaGeralBean.tipo == 'banco'}"/><br />
-                                        <p:inputText id="i_taxa" value="#{baixaGeralBean.taxa}" size="10" rendered="#{baixaGeralBean.tipo == 'banco'}" style="margin-right: 10px;">
+                                        <h:outputText value="Taxa" rendered="#{baixaGeralBean.tipo eq 'banco'}"/><br />
+                                        <p:inputText id="i_taxa" value="#{baixaGeralBean.taxa}" size="10" rendered="#{baixaGeralBean.tipo eq 'banco'}" style="margin-right: 10px;">
                                             <p:ajax event="blur" update="i_taxa" />
                                         </p:inputText>
                                     </p:column>
@@ -106,7 +113,7 @@
 
                                         <p:commandButton value="Adicionar Parcela Cartão" title="Continuar e Inserir dados do Cartão" onclick="PF('i_dlg_cartao').show()" rendered="#{baixaGeralBean.idTipoPagamento == 3 or baixaGeralBean.idTipoPagamento == 4}"/>
 
-                                        <p:commandButton value="Adicionar Parcela Banco" title="Continuar e Inserir dados do Banco" onclick="PF('i_dlg_banco').show()" rendered="#{baixaGeralBean.idTipoPagamento == 5 or baixaGeralBean.idTipoPagamento == 6 or baixaGeralBean.idTipoPagamento == 7}"/>
+                                        <p:commandButton value="Adicionar Parcela Banco" title="Continuar e Inserir dados do Banco" onclick="PF('i_dlg_banco').show()" rendered="#{baixaGeralBean.idTipoPagamento == 5 or baixaGeralBean.idTipoPagamento == 6 or baixaGeralBean.idTipoPagamento == 7}" update="i_banco"/>
                                     </p:column>
 
                                     <p:column rendered="#{baixaGeralBean.es == 'S'}">
@@ -115,7 +122,7 @@
 
                                         <p:commandButton value="Adicionar Parcela Cheque" title="Continuar e Inserir dados do Cheque" onclick="PF('i_dlg_cheque').show()" rendered="#{baixaGeralBean.idTipoPagamento == 1 or baixaGeralBean.idTipoPagamento == 2}"/>
 
-                                        <p:commandButton value="Adicionar Parcela Banco" title="Continuar e Inserir dados do Banco" onclick="PF('i_dlg_banco').show()" rendered="#{baixaGeralBean.idTipoPagamento == 3 or baixaGeralBean.idTipoPagamento == 4 or baixaGeralBean.idTipoPagamento == 5}"/>
+                                        <p:commandButton value="Adicionar Parcela Banco" title="Continuar e Inserir dados do Banco" onclick="PF('i_dlg_banco').show()" rendered="#{baixaGeralBean.idTipoPagamento == 3 or baixaGeralBean.idTipoPagamento == 4 or baixaGeralBean.idTipoPagamento == 5}" update="i_banco"/>
                                     </p:column>
                                 </h:panelGrid>
                             </p:panel>
@@ -142,9 +149,9 @@
                                 <p:column headerText="Vencimento" style="text-align: center">
                                     <h:outputText value="#{listMovimentoBaixaGeral.vencimento}"/>
                                 </p:column>
-                                
+
                                 <f:facet name="footer">
-                                    <p:commandButton value="Salvar Baixa" title="Baixar todos os valores da grid" action="#{baixaGeralBean.baixar}" oncomplete="PF('i_dlg_s').show()" update=":formBaixaGeral:i_mensagem" rendered="#{baixaGeralBean.list.size() > 0}" styleClass="float-left margin-top-max"/>
+                                    <p:commandButton value="Salvar Baixa" title="Baixar todos os valores da grid" action="#{baixaGeralBean.baixar}" oncomplete="PF('i_dlg_s').show()" update=":formBaixaGeral:i_mensagem" rendered="#{not empty baixaGeralBean.list}" styleClass="float-left margin-top-max"/>
                                 </f:facet>
                             </p:dataTable>
 
@@ -168,7 +175,7 @@
 
                             <p:dialog widgetVar="i_dlg_cheque" header="Dados do Cheque" resizable="false" width="400" modal="true">
                                 <h:panelGrid id="i_cheque" style="width: 100%">
-                                    <h:column rendered="#{baixaGeralBean.es != 'S'}">
+                                    <h:column rendered="#{baixaGeralBean.es ne 'S'}">
                                         <h:panelGrid columns="4">
                                             <p:column>
                                                 <h:outputText value="Agência" /><br />
@@ -187,7 +194,7 @@
                                         </h:panelGrid>
                                     </h:column>
 
-                                    <h:column rendered="#{baixaGeralBean.es == 'S'}">
+                                    <h:column rendered="#{baixaGeralBean.es eq 'S'}">
                                         <h:panelGrid id="i_x">
                                             <h:outputLabel value="Para a Conta" style="font-weight: bold"/>
                                             <p:selectOneMenu style="padding-right: 15px; width: 335px" value="#{baixaGeralBean.idBancoSaida}">
@@ -195,7 +202,7 @@
                                                 <f:selectItems value="#{baixaGeralBean.listBancoSaida}"/>
                                             </p:selectOneMenu>
                                         </h:panelGrid>
-                                        
+
 
                                         <h:panelGrid id="i_panel_ch_p">
                                             <h:outputLabel value="Número do Cheque" />
@@ -221,7 +228,7 @@
                                     <h:panelGrid columns="2">
                                         <p:column>
                                             <br />
-                                            <h:column rendered="#{baixaGeralBean.listCartao.size() > 0}">
+                                            <h:column rendered="#{not empty baixaGeralBean.listCartao}">
                                                 <p:selectOneMenu style="margin-right: 15px; padding-right: 15px" value="#{baixaGeralBean.idCartao}">
                                                     <f:selectItems value="#{baixaGeralBean.listCartao}"/>
                                                 </p:selectOneMenu>
@@ -242,11 +249,9 @@
                                     <h:panelGrid columns="2">
                                         <p:column>
                                             <br />
-                                            <!-- <h:column test="# {baixaGeralBean.listaCartao.size() > 0}"> -->
                                             <p:selectOneMenu style="padding-right: 15px; width: 250px" value="#{baixaGeralBean.idBanco}">
                                                 <f:selectItems value="#{baixaGeralBean.listBanco}"/>
                                             </p:selectOneMenu>
-                                            <!-- </h:column> -->
                                         </p:column>
 
                                         <p:column>

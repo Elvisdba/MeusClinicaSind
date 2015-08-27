@@ -109,7 +109,7 @@ public class SelectTranslate extends DB {
             value = Normalizer.normalize(value, Normalizer.Form.NFD);
             value = value.toLowerCase().replaceAll("[^\\p{ASCII}]", "");
 
-            where_text = " WHERE LOWER(TRANSLATE(" + field + ")) LIKE '" + value + "' ORDER BY " + field;
+            where_text = " WHERE LOWER(func_translate(" + field + ")) LIKE '" + value + "' ORDER BY " + field;
         }
 
         public List find() {

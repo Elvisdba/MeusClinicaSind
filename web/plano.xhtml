@@ -47,23 +47,23 @@
                                 <p:ajax event="page" global="false"/>
                                 <!-- PLANO 5 -->                                        
                                 <p:column styleClass="text-center" headerText="Plano 5" sortBy="#{listaPlanoContas.plano5.conta}" rendered="#{planoBean.visible[4]}">
-                                    <p:commandLink value="#{listaPlanoContas.plano5.numero} - #{listaPlanoContas.plano5.conta}" action="#{planoBean.edit(listaPlanoContas.plano5)}" update=":form_plano:" />
+                                    <p:commandLink value="#{listaPlanoContas.plano5.numero} - #{listaPlanoContas.plano5.conta}" action="#{planoBean.edit(listaPlanoContas.plano5)}" update=":form_plano:" title="#{listaPlanoContas.plano5.id}"/>
                                 </p:column>
                                 <!-- PLANO 4 -->
                                 <p:column styleClass="text-center" headerText="Plano 4" sortBy="#{listaPlanoContas.plano5.plano4.conta}" rendered="#{planoBean.visible[3]}">
-                                    <p:commandLink value="#{listaPlanoContas.plano5.plano4.numero} - #{listaPlanoContas.plano5.plano4.conta}" action="#{planoBean.edit(listaPlanoContas.plano5.plano4)}" update=":form_plano:" />
+                                    <p:commandLink value="#{listaPlanoContas.plano5.plano4.numero} - #{listaPlanoContas.plano5.plano4.conta}" action="#{planoBean.edit(listaPlanoContas.plano5.plano4)}" update=":form_plano:" title="#{listaPlanoContas.plano5.plano4.id}"/>
                                 </p:column>
                                 <!-- PLANO 3 -->
                                 <p:column styleClass="text-center" headerText="Plano 3" sortBy="#{listaPlanoContas.plano5.plano4.plano3.conta}" rendered="#{planoBean.visible[2]}">
-                                    <p:commandLink value="#{listaPlanoContas.plano5.plano4.plano3.numero} - #{listaPlanoContas.plano5.plano4.plano3.conta}" action="#{planoBean.edit(listaPlanoContas.plano5.plano4.plano3)}" update=":form_plano:"/>
+                                    <p:commandLink value="#{listaPlanoContas.plano5.plano4.plano3.numero} - #{listaPlanoContas.plano5.plano4.plano3.conta}" action="#{planoBean.edit(listaPlanoContas.plano5.plano4.plano3)}" update=":form_plano:" title="#{listaPlanoContas.plano5.plano4.plano3.id}"/>
                                 </p:column>
                                 <!-- PLANO 2 -->
                                 <p:column styleClass="text-center" headerText="Plano 2" sortBy="#{listaPlanoContas.plano5.plano4.plano3.plano2.conta}" rendered="#{planoBean.visible[1]}">
-                                    <p:commandLink value="#{listaPlanoContas.plano5.plano4.plano3.plano2.numero} - #{listaPlanoContas.plano5.plano4.plano3.plano2.conta}" action="#{planoBean.edit(listaPlanoContas.plano5.plano4.plano3.plano2)}" update=":form_plano:"/>
+                                    <p:commandLink value="#{listaPlanoContas.plano5.plano4.plano3.plano2.numero} - #{listaPlanoContas.plano5.plano4.plano3.plano2.conta}" action="#{planoBean.edit(listaPlanoContas.plano5.plano4.plano3.plano2)}" update=":form_plano:" title="#{listaPlanoContas.plano5.plano4.plano3.plano2.id}"/>
                                 </p:column>
                                 <!-- PLANO 1 -->
                                 <p:column styleClass="text-center" headerText="Plano 1" sortBy="#{listaPlanoContas.plano5.plano4.plano3.plano2.plano.conta}" rendered="#{planoBean.visible[0]}">
-                                    <p:commandLink value="#{listaPlanoContas.plano5.plano4.plano3.plano2.plano.numero} - #{listaPlanoContas.plano5.plano4.plano3.plano2.plano.conta}" action="#{planoBean.edit(listaPlanoContas.plano5.plano4.plano3.plano2.plano)}" update=":form_plano:" />
+                                    <p:commandLink value="#{listaPlanoContas.plano5.plano4.plano3.plano2.plano.numero} - #{listaPlanoContas.plano5.plano4.plano3.plano2.plano.conta}" action="#{planoBean.edit(listaPlanoContas.plano5.plano4.plano3.plano2.plano)}" update=":form_plano:" title="#{listaPlanoContas.plano5.plano4.plano3.plano2.plano.id}"/>
                                 </p:column>                                
                                 <p:column styleClass="text-center" rendered="#{!planoBean.visible[4]}" headerText="Novo #{planoBean.textNewPlano}" width="100">
                                     <p:commandButton icon="ui-icon-plus" title="Adicionar Novo #{planoBean.textNewPlano}" >

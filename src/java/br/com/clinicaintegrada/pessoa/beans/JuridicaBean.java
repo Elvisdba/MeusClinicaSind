@@ -38,6 +38,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
@@ -1182,11 +1183,14 @@ public class JuridicaBean implements Serializable {
     }
 
     public boolean isRenEnviarEmail() {
-        if (juridica.getId() == 1) {
-            return false;
-        } else {
-            return true;
+        if(juridica.getId() != null) {
+            if (Objects.equals(juridica.getId(), SessaoCliente.get().getIdJuridica())) {
+                return false;
+            } else {
+                return true;
+            }
         }
+        return true;
     }
 
     public void gerarLoginSenhaPessoa(Pessoa pessoa, Dao dao) {

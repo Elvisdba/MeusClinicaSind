@@ -37,9 +37,9 @@ public class EquipeDao extends DB {
                             break;
                     }
                     if (como.isEmpty()) {
-                        queryString += " AND TRANSLATE(UPPER(P." + por + ")) = '" + descricao + "'";
+                        queryString += " AND FUNC_TRANSLATE(UPPER(P." + por + ")) = '" + descricao + "'";
                     } else {
-                        queryString += " AND TRANSLATE(UPPER(P." + por + ")) LIKE '" + descricao + "'";
+                        queryString += " AND FUNC_TRANSLATE(UPPER(P." + por + ")) LIKE '" + descricao + "'";
                     }
                     break;
                 case "ds_documento":

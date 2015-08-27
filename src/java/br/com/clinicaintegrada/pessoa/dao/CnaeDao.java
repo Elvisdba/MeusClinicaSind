@@ -27,7 +27,7 @@ public class CnaeDao extends DB {
                 descricao = "%" + descricao + "%";
             }
             if (por.equals("numero")) {
-                queryString = "SELECT id FROM pes_cnae WHERE TRANSLATE(ds_numero, '.-/', '') LIKE '" + descricao + "'";
+                queryString = "SELECT id FROM pes_cnae WHERE FUNC_TRANSLATE(ds_numero, '.-/', '') LIKE '" + descricao + "'";
             } else {
                 queryString = "SELECT id FROM pes_cnae WHERE UPPER(ds_cnae) LIKE '" + descricao + "'";
             }

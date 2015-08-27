@@ -6,7 +6,7 @@ import br.com.clinicaintegrada.principal.DB;
 import java.util.List;
 import javax.persistence.Query;
 
-public class ContaRotinaDao extends DB  {
+public class ContaRotinaDao extends DB {
 
     public List pesquisaPlano5Partida(int rotina) {
         List result = null;
@@ -24,39 +24,42 @@ public class ContaRotinaDao extends DB  {
         return result;
     }
 
-
-    public List pesquisaContasPorRotina(int rotina) {
+    public List pesquisaContasPorRotina(Integer rotina_id, Integer cliente_id) {
         List result = null;
         try {
             Query qry = getEntityManager().createQuery(
-                    "select pl5"
-                    + "  from ContaRotina c, Plano5 pl5 "
-                    + " where c.partida  = 1"
-                    + "   and c.rotina.id = :rotina"
-                    + "   and c.plano4.id = pl5.plano4.id");
-            qry.setParameter("rotina", rotina);
+                    "  SELECT P5                            "
+                    + "  FROM ContaRotina AS CR,            "
+                    + "       Plano5 AS P5                  "
+                    + " WHERE CR.partida  = 1               "
+                    + "   AND CR.rotina.id = :rotina        "
+                    + "   AND CR.plano4.id = P5.plano4.id   "
+                    + "   AND CR.cliente.id = :cliente_id   ");
+            qry.setParameter("rotina", rotina_id);
+            qry.setParameter("cliente_id", cliente_id);
             result = (List) qry.getResultList();
         } catch (Exception e) {
         }
         return result;
     }
 
-
-    public List pesquisaContasPorRotina() {
+    public List pesquisaContasPorRotina(Integer cliente_id) {
         List result = null;
         try {
             Query qry = getEntityManager().createQuery(
-                    "select pl5"
-                    + "  from ContaRotina c, Plano5 pl5 "
-                    + " where c.partida  = 1"
-                    + "   and c.rotina.id in (1,2)"
-                    + "   and c.plano4.id = pl5.plano4.id");
+                    "  SELECT P5                            "
+                    + "  FROM ContaRotina AS CR,            "
+                    + "       Plano5 AS P5                  "
+                    + " WHERE CR.partida = 1                "
+                    + "   AND CR.rotina.id IN (1,2)         "
+                    + "   AND CR.plano4.id = P5.plano4.id   "
+                    + "   AND CR.cliente.id = :cliente_id   "
+            );
             result = (List) qry.getResultList();
         } catch (Exception e) {
         }
         return result;
     }
-
 
     public List pesquisaPlano4Grupo(int rotina, String pagRec) {
         List result = null;
@@ -75,7 +78,6 @@ public class ContaRotinaDao extends DB  {
         return result;
     }
 
-
     public List pesquisaPlano5(int p4, int rotina) {
         List result = null;
         try {
@@ -93,7 +95,6 @@ public class ContaRotinaDao extends DB  {
         return result;
     }
 
-
     public Plano4 pesquisaPlano4PorDescricao(String desc) {
         Plano4 result = null;
         try {
@@ -107,7 +108,6 @@ public class ContaRotinaDao extends DB  {
         }
         return result;
     }
-
 
     public ContaRotina pesquisaContaRotina(int id, int rot) {
         ContaRotina result = null;
@@ -125,7 +125,6 @@ public class ContaRotinaDao extends DB  {
         return result;
     }
 
-
     public int pesquisaRotina(int id_plano4) {
         int result = -1;
         try {
@@ -139,7 +138,6 @@ public class ContaRotinaDao extends DB  {
         }
         return result;
     }
-
 
     public int verificaRotinaParaConta(int id_plano5) {
         int result = 0;

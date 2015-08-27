@@ -11,7 +11,7 @@ public class DescricaoEnderecoDao extends DB {
     public DescricaoEndereco pesquisaDescricaoEnderecoPorDescricaoCliente(String descricao, int cliente) {
         descricao = descricao.toLowerCase().toUpperCase();
         try {
-            Query query = getEntityManager().createNativeQuery("SELECT DE.* FROM end_descricao_endereco AS DE WHERE UPPER(TRANSLATE(DE.ds_descricao)) = '" + AnaliseString.removerAcentos(descricao) + "' AND (DE.id_cliente = " + cliente + " OR DE.id_cliente IS NULL)", DescricaoEndereco.class);
+            Query query = getEntityManager().createNativeQuery("SELECT DE.* FROM end_descricao_endereco AS DE WHERE UPPER(FUNC_TRANSLATE(DE.ds_descricao)) = '" + AnaliseString.removerAcentos(descricao) + "' AND (DE.id_cliente = " + cliente + " OR DE.id_cliente IS NULL)", DescricaoEndereco.class);
             List list = query.getResultList();
             if (!list.isEmpty()) {
                 return (DescricaoEndereco) list.get(0);
