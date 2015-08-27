@@ -19,7 +19,7 @@ public class TipoPagamento implements Serializable {
         this.descricao = "";
     }
 
-    public TipoPagamento(int id, String descricao) {
+    public TipoPagamento(Integer id, String descricao) {
         this.id = id;
         this.descricao = descricao;
     }
