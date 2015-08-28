@@ -27,7 +27,7 @@ public class PessoaDao extends DB {
                 break;
         }
         try {
-            String queryString = "SELECT p.* FROM pes_pessoa AS p WHERE UPPER(FUNC_FUNC_TRANSLATE(p." + por + ")) LIKE '" + AnaliseString.removerAcentos(descricao) + "' AND p.id_cliente = " + cliente + " ORDER BY p.ds_nome";
+            String queryString = "SELECT p.* FROM pes_pessoa AS p WHERE UPPER(FUNC_TRANSLATE(p." + por + ")) LIKE '" + AnaliseString.removerAcentos(descricao) + "' AND p.id_cliente = " + cliente + " ORDER BY p.ds_nome";
             Query qry = getEntityManager().createNativeQuery(queryString, Pessoa.class);
             List list = qry.getResultList();
             if (!list.isEmpty()) {

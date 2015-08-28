@@ -357,6 +357,10 @@ public class MovimentosReceberBean {
 
     public String remove(int index) {
         listPessoa.remove(index);
+        if(listPessoa.isEmpty()) {
+            clear(0);
+            return "movimentosReceber";
+        }
         listMovimento.clear();
         loadMovimentos();
         return "movimentosReceber";
@@ -437,6 +441,7 @@ public class MovimentosReceberBean {
         }
         listMovimento.clear();
         chkSeleciona = true;
+        loadMovimentos();
         return null;
     }
 
@@ -510,6 +515,7 @@ public class MovimentosReceberBean {
         lista.add(movimento);
         Sessions.put("linkClicado", true);
         Sessions.put("listMovimento", lista);
+        Sessions.put("urlRetorno", "movimentoReceber");
         return ((ChamadaPaginaBean) Sessions.getObject("chamadaPaginaBean")).pagina("alterarMovimento");
     }
 

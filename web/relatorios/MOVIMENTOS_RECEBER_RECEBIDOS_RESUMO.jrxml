@@ -3,8 +3,8 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="2.1435888100000042"/>
-	<property name="ireport.x" value="74"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.x" value="633"/>
+	<property name="ireport.y" value="120"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -30,38 +30,44 @@
 	<parameter name="relatorio_titulo" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="relatorio_detalhes" class="java.lang.String" isForPrompting="false"/>
 	<queryString>
-		<![CDATA[select contrato_numero,responsavel_nome,paciente_nome,devedor_nome,sum(total) as total,sum(quitados) as quitados, sum(saldo) as saldo, count(*) as parcela_meses
-from
-(
-select
-c.id as contrato_numero,
-r.ds_nome as responsavel_nome,
-p.ds_nome as paciente_nome,
-d.ds_nome as devedor_nome,
-extract(month from m.dt_vencimento) as mes,
-extract(year from m.dt_vencimento) as ano,
-sum(m.nr_valor) total,
-sum(m.nr_valor_baixa) quitados,
-sum(m.nr_valor)-sum(m.nr_valor_baixa) saldo
-from fin_lote as l
-inner join fin_movimento as m on m.id_lote=l.id
-inner join fin_servicos as se on se.id=m.id_servicos
-left join ctr_contrato as c on c.id=l.id_contrato
-inner join pes_pessoa as r on r.id=l.id_pessoa
-inner join pes_pessoa as p on p.id=c.id_paciente
-inner join pes_pessoa as d on d.id=m.id_pessoa
-left join fin_baixa as b on b.id=m.id_baixa
-where m.is_ativo=true and ds_es='E'
-group by
-c.id,
-c.dt_cadastro,
-r.ds_nome,
-p.ds_nome,
-d.ds_nome,
-extract(month from m.dt_vencimento),
-extract(year from m.dt_vencimento)
-) as x
-group by contrato_numero,responsavel_nome,paciente_nome,devedor_nome]]>
+		<![CDATA[SELECT contrato_numero,
+            responsavel_nome,
+            paciente_nome,
+            devedor_nome,
+            sum(total)        AS total,
+            sum(quitados)     AS quitados,
+            cast(round(cast(sum(valor_aberto) AS numeric), 10) AS double precision) AS valor_aberto,
+            count(*)          AS parcela_meses
+      FROM (
+      SELECT C.id                                  AS contrato_numero,
+           R.ds_nome                             AS responsavel_nome,
+           P.ds_nome                             AS paciente_nome,
+           D.ds_nome                             AS devedor_nome,
+           extract(month FROM M.dt_vencimento)   AS mes,
+           extract(year FROM M.dt_vencimento)    AS ano,
+           cast(round(cast(sum(M.nr_valor) AS numeric), 10) AS double precision)  AS total,
+           cast(round(cast(sum(M.nr_valor_baixa) AS numeric), 10) AS double precision)  AS quitados,
+            sum(func_valor_aberto(m.nr_valor,m.id_baixa))  as valor_aberto
+      FROM fin_lote      AS L
+INNER JOIN fin_movimento AS M ON M.id_lote = L.id
+ LEFT JOIN ctr_contrato  AS C ON C.id = L.id_contrato
+INNER JOIN pes_pessoa    AS R ON R.id = L.id_pessoa
+INNER JOIN pes_pessoa    AS D ON D.id = M.id_pessoa
+INNER JOIN pes_pessoa    AS P ON P.id = C.id_paciente
+ LEFT JOIN fin_baixa     AS B ON B.id = M.id_baixa
+INNER JOIN fin_servicos  AS S ON S.id = M.id_servicos
+ WHERE M.is_ativo = true AND M.ds_es='E' AND L.id_cliente = 3 GROUP BY C.id,
+          C.dt_cadastro,
+          R.ds_nome,
+          P.ds_nome,
+          D.ds_nome,
+          extract(month FROM M.dt_vencimento),
+          extract(year FROM  M.dt_vencimento)
+) AS subquery
+ GROUP BY contrato_numero,
+          responsavel_nome,
+          paciente_nome,
+          devedor_nome;]]>
 	</queryString>
 	<field name="contrato_numero" class="java.lang.Integer"/>
 	<field name="responsavel_nome" class="java.lang.String"/>
@@ -69,7 +75,7 @@ group by contrato_numero,responsavel_nome,paciente_nome,devedor_nome]]>
 	<field name="devedor_nome" class="java.lang.String"/>
 	<field name="total" class="java.lang.Double"/>
 	<field name="quitados" class="java.lang.Double"/>
-	<field name="saldo" class="java.lang.Double"/>
+	<field name="valor_aberto" class="java.lang.Double"/>
 	<field name="parcela_meses" class="java.lang.Long"/>
 	<sortField name="responsavel_nome"/>
 	<variable name="VALOR_TOTAL" class="java.lang.Double" calculation="Sum">
@@ -78,8 +84,8 @@ group by contrato_numero,responsavel_nome,paciente_nome,devedor_nome]]>
 	<variable name="VALOR_TOTAL_QUITADO" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{quitados}]]></variableExpression>
 	</variable>
-	<variable name="VALOR_SALDO_TOTAL" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{saldo}]]></variableExpression>
+	<variable name="VALOR_TOTAL_ABERTO" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_aberto}]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -87,7 +93,9 @@ group by contrato_numero,responsavel_nome,paciente_nome,devedor_nome]]>
 	<title>
 		<band height="66">
 			<subreport isUsingCache="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="200" height="66" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" uuid="68cf498e-9abb-4e84-8913-841391a05f9e"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="200" height="66" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" uuid="68cf498e-9abb-4e84-8913-841391a05f9e">
+					<printWhenExpression><![CDATA[!$P{template_dir}.isEmpty()]]></printWhenExpression>
+				</reportElement>
 				<subreportParameter name="companhia_nome">
 					<subreportParameterExpression><![CDATA[$P{companhia_nome}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -198,10 +206,10 @@ group by contrato_numero,responsavel_nome,paciente_nome,devedor_nome]]>
 				<text><![CDATA[PARCELA]]></text>
 			</staticText>
 			<rectangle radius="2">
-				<reportElement key="rectangle-10" mode="Opaque" x="727" y="1" width="55" height="15" backcolor="#CCCCFF" uuid="8e8de57c-125c-4ee4-a79b-c68499f8c58f"/>
+				<reportElement key="rectangle-10" mode="Opaque" x="617" y="1" width="55" height="15" backcolor="#CCCCFF" uuid="8e8de57c-125c-4ee4-a79b-c68499f8c58f"/>
 			</rectangle>
 			<staticText>
-				<reportElement key="staticText-6" x="727" y="1" width="54" height="14" uuid="e7d0cb4b-862a-458c-a334-2ed49bb7dd96"/>
+				<reportElement key="staticText-6" x="617" y="1" width="54" height="14" uuid="e7d0cb4b-862a-458c-a334-2ed49bb7dd96"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -214,13 +222,13 @@ group by contrato_numero,responsavel_nome,paciente_nome,devedor_nome]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<rectangle radius="2">
-				<reportElement key="rectangle-10" mode="Opaque" x="672" y="1" width="55" height="15" backcolor="#CCCCFF" uuid="b4add679-b786-4719-b159-e689abbc580d"/>
+				<reportElement key="rectangle-10" mode="Opaque" x="727" y="1" width="55" height="15" backcolor="#CCCCFF" uuid="b4add679-b786-4719-b159-e689abbc580d"/>
 			</rectangle>
 			<rectangle radius="2">
-				<reportElement key="rectangle-10" mode="Opaque" x="617" y="1" width="55" height="15" backcolor="#CCCCFF" uuid="39f9dfb5-9215-4416-9ce2-a093dd37ba27"/>
+				<reportElement key="rectangle-10" mode="Opaque" x="672" y="1" width="55" height="15" backcolor="#CCCCFF" uuid="39f9dfb5-9215-4416-9ce2-a093dd37ba27"/>
 			</rectangle>
 			<staticText>
-				<reportElement key="staticText-6" x="672" y="2" width="55" height="14" uuid="49ce5603-a07d-4c21-8fa8-f0c256d6cefd"/>
+				<reportElement key="staticText-6" x="727" y="2" width="55" height="14" uuid="49ce5603-a07d-4c21-8fa8-f0c256d6cefd"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -228,12 +236,12 @@ group by contrato_numero,responsavel_nome,paciente_nome,devedor_nome]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[SALDO]]></text>
+				<text><![CDATA[VALOR ABERTO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-6" x="727" y="2" width="54" height="14" uuid="95e30c92-8d05-4686-ab3e-c90e42beabea"/>
+				<reportElement key="staticText-6" x="617" y="2" width="54" height="14" uuid="95e30c92-8d05-4686-ab3e-c90e42beabea"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -265,7 +273,7 @@ group by contrato_numero,responsavel_nome,paciente_nome,devedor_nome]]>
 				<text><![CDATA[Contrato]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-6" x="617" y="2" width="54" height="14" uuid="3c9ddafc-6fbf-4a04-bab4-25c153252af8"/>
+				<reportElement key="staticText-6" x="672" y="2" width="54" height="14" uuid="3c9ddafc-6fbf-4a04-bab4-25c153252af8"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -334,7 +342,7 @@ group by contrato_numero,responsavel_nome,paciente_nome,devedor_nome]]>
 				<textFieldExpression><![CDATA[$F{devedor_nome}]]></textFieldExpression>
 			</textField>
 			<rectangle>
-				<reportElement key="rectangle-3" mode="Transparent" x="617" y="0" width="55" height="21" uuid="c4e720dc-944a-42c3-9489-949e6076a685"/>
+				<reportElement key="rectangle-3" mode="Transparent" x="672" y="0" width="55" height="21" uuid="c4e720dc-944a-42c3-9489-949e6076a685"/>
 			</rectangle>
 			<rectangle>
 				<reportElement key="rectangle-3" mode="Transparent" x="30" y="0" width="180" height="21" uuid="1131c8c5-5faa-4aa1-8762-d385c99071b5"/>
@@ -353,7 +361,7 @@ group by contrato_numero,responsavel_nome,paciente_nome,devedor_nome]]>
 				<textFieldExpression><![CDATA[$F{responsavel_nome}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField" x="617" y="0" width="50" height="21" forecolor="#000000" uuid="c129a63f-5888-407d-a5ee-56a1356f3461"/>
+				<reportElement key="textField" x="672" y="0" width="50" height="21" forecolor="#000000" uuid="c129a63f-5888-407d-a5ee-56a1356f3461"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -369,13 +377,13 @@ group by contrato_numero,responsavel_nome,paciente_nome,devedor_nome]]>
 				<reportElement key="rectangle-3" mode="Transparent" x="576" y="0" width="41" height="21" uuid="58dcde5f-a573-4773-a846-550e9abdc476"/>
 			</rectangle>
 			<rectangle>
-				<reportElement key="rectangle-3" mode="Transparent" x="672" y="0" width="55" height="21" uuid="ac315247-4c00-4c5d-bf09-9d7aab31537b"/>
+				<reportElement key="rectangle-3" mode="Transparent" x="727" y="0" width="55" height="21" uuid="ac315247-4c00-4c5d-bf09-9d7aab31537b"/>
 			</rectangle>
 			<rectangle>
-				<reportElement key="rectangle-3" mode="Transparent" x="727" y="0" width="55" height="21" uuid="d19d7769-0f5a-4fb8-828e-cc3b40d2eddb"/>
+				<reportElement key="rectangle-3" mode="Transparent" x="617" y="0" width="55" height="21" uuid="d19d7769-0f5a-4fb8-828e-cc3b40d2eddb"/>
 			</rectangle>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField" x="730" y="0" width="44" height="21" forecolor="#000000" uuid="bab6e5f6-af3b-4f16-b70a-d7f2084fadba"/>
+				<reportElement key="textField" x="620" y="0" width="44" height="21" forecolor="#000000" uuid="bab6e5f6-af3b-4f16-b70a-d7f2084fadba"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -420,7 +428,7 @@ group by contrato_numero,responsavel_nome,paciente_nome,devedor_nome]]>
 				<textFieldExpression><![CDATA[$F{parcela_meses}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField" x="672" y="0" width="49" height="21" forecolor="#000000" uuid="b4b7601a-75cc-4d77-9264-fde4dacfdb6a"/>
+				<reportElement key="textField" x="727" y="0" width="49" height="21" forecolor="#000000" uuid="b4b7601a-75cc-4d77-9264-fde4dacfdb6a"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -430,7 +438,7 @@ group by contrato_numero,responsavel_nome,paciente_nome,devedor_nome]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{saldo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{valor_aberto}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-4" x="0" y="0" width="30" height="21" forecolor="#000000" uuid="2deb7e19-c7d1-464d-9a5d-7dc2376b9c9c"/>
@@ -582,10 +590,10 @@ group by contrato_numero,responsavel_nome,paciente_nome,devedor_nome]]>
 				<textElement textAlignment="Center">
 					<font size="9"/>
 				</textElement>
-				<text><![CDATA[Saldo Total:]]></text>
+				<text><![CDATA[Total em Aberto:]]></text>
 			</staticText>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-2" x="406" y="3" width="72" height="13" forecolor="#000000" uuid="dedc1e37-1f1d-4248-97bb-cd16e44f662d"/>
+				<reportElement key="textField-2" x="406" y="3" width="87" height="13" forecolor="#000000" uuid="dedc1e37-1f1d-4248-97bb-cd16e44f662d"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -595,7 +603,7 @@ group by contrato_numero,responsavel_nome,paciente_nome,devedor_nome]]>
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{VALOR_SALDO_TOTAL}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{VALOR_TOTAL_ABERTO}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

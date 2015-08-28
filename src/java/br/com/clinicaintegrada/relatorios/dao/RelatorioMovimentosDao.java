@@ -187,15 +187,15 @@ public class RelatorioMovimentosDao extends DB {
         List listWhere = new ArrayList();
         try {
             String queryString;
-            queryString = " SELECT contrato_numero,                  "
-                    + "            responsavel_nome,                 "
-                    + "            paciente_nome,                    "
-                    + "            devedor_nome,                     "
-                    + "            sum(total)       AS total,  "
-                    + "            sum(quitados)    AS quitados,     "
-                    + "            sum(saldo)       AS saldo,        "
-                    + "            count(*)         AS parcela_meses "
-                    + "      FROM (";
+            queryString = " SELECT contrato_numero,                   \n"
+                    + "            responsavel_nome,                  \n"
+                    + "            paciente_nome,                     \n"
+                    + "            devedor_nome,                      \n"
+                    + "            sum(total)        AS total,        \n"
+                    + "            sum(quitados)     AS quitados,     \n"
+                    + "            cast(round(cast(sum(valor_aberto) AS numeric), 10) AS double precision) AS valor_aberto, \n"
+                    + "            count(*)          AS parcela_meses \n"
+                    + "      FROM (\n";
             queryString
                     += // ALIAS
                     "      SELECT C.id                                  AS contrato_numero, \n"
@@ -206,7 +206,7 @@ public class RelatorioMovimentosDao extends DB {
                     + "           extract(year FROM M.dt_vencimento)    AS ano,             \n"
                     + "           cast(round(cast(sum(M.nr_valor) AS numeric), 10) AS double precision)  AS total,                      \n"
                     + "           cast(round(cast(sum(M.nr_valor_baixa) AS numeric), 10) AS double precision)  AS quitados,             \n"
-                    + "           cast(round(cast(sum(M.nr_valor)-sum(M.nr_valor_baixa) AS numeric), 10) AS double precision) AS saldo  \n"
+                    + "            sum(func_valor_aberto(m.nr_valor,m.id_baixa))  as valor_aberto                                       \n"
                     + "      FROM fin_lote      AS L                         \n"
                     + "INNER JOIN fin_movimento AS M ON M.id_lote = L.id     \n"
                     + " LEFT JOIN ctr_contrato  AS C ON C.id = L.id_contrato \n"

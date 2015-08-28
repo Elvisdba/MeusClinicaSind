@@ -54,7 +54,7 @@
                             <p:column headerText="Responsável">
                                 <h:outputText value="#{contrato.responsavel.nome}"/>
                             </p:column>
-                            <p:column headerText="Entidade (Devedor 2)" rendered="#{contratoBean.porPesquisa eq 'cobranca2_nome' or contratoBean.porPesquisa eq 'cobranca2_documento'}">
+                            <p:column headerText="Entidade (Devedor 2)">
                                 <h:outputText value="#{contrato.cobranca2.nome}"/>
                             </p:column>
                             <p:rowExpansion>

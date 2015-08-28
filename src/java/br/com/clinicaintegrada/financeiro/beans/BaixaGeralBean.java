@@ -309,8 +309,9 @@ public class BaixaGeralBean {
                     return "baixaBoleto";
                 case "movimentosReceber":
                     ((MovimentosReceberBean) Sessions.getObject("movimentosReceberBean")).getListMovimento().clear();
+                    ((MovimentosReceberBean) Sessions.getObject("movimentosReceberBean")).getListMovimento();
                     Sessions.put("linkClicado", true);
-                    return ((ChamadaPaginaBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("chamadaPaginaBean")).pagina("movimentosReceber");
+                    return ((ChamadaPaginaBean) Sessions.getObject("chamadaPaginaBean")).pesquisa("movimentosReceber");
                 case "lancamentoFinanceiro":
                     Sessions.put("linkClicado", true);
                     return "lancamentoFinanceiro";
@@ -398,7 +399,7 @@ public class BaixaGeralBean {
             } else if (tipoPagamento.getId() == 6 || tipoPagamento.getId() == 7) {
                 // CARTAO
                 list.add(new ListMovimentoBaixaGeral(vencimento, valor, numero, tipoPagamento, null, (Cartao) (new Dao()).find(new Cartao(), Integer.valueOf(listCartao.get(idCartao).getDescription()))));
-            } else if (tipoPagamento.getId() == 8 || tipoPagamento.getId() == 9 || tipoPagamento.getId() == 10) {
+            } else if (tipoPagamento.getId() == 2 || tipoPagamento.getId() == 8 || tipoPagamento.getId() == 9 || tipoPagamento.getId() == 10) {
                 Plano5 p5 = planoDao.findPlano5ByContaBanco(Integer.valueOf(listBanco.get(idBanco).getDescription()), SessaoCliente.get().getId());
                 list.add(new ListMovimentoBaixaGeral(vencimento, valor, numero, tipoPagamento, null, p5));
             } else {
@@ -693,7 +694,7 @@ public class BaixaGeralBean {
     public boolean isDesHabilitaNumero() {
         if (!getListTipoPagamento().isEmpty()) {
             TipoPagamento tipoPagamento = getTipoPagamento();
-            if (tipoPagamento.getId() == 3 || tipoPagamento.getId() == 6 || tipoPagamento.getId() == 7 || (!getEs().isEmpty() && getEs().equals("S"))) {
+            if (tipoPagamento.getId() == 2 || tipoPagamento.getId() == 3 || tipoPagamento.getId() == 6 || tipoPagamento.getId() == 7 || (!getEs().isEmpty() && getEs().equals("S"))) {
                 desHabilitaNumero = true;
                 numero = "";
             } else {

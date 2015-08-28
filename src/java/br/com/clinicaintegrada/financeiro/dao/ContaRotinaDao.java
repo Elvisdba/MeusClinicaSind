@@ -31,8 +31,7 @@ public class ContaRotinaDao extends DB {
                     "  SELECT P5                            "
                     + "  FROM ContaRotina AS CR,            "
                     + "       Plano5 AS P5                  "
-                    + " WHERE CR.partida  = 1               "
-                    + "   AND CR.rotina.id = :rotina        "
+                    + " WHERE CR.rotina.id = :rotina        "
                     + "   AND CR.plano4.id = P5.plano4.id   "
                     + "   AND CR.cliente.id = :cliente_id   ");
             qry.setParameter("rotina", rotina_id);

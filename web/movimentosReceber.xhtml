@@ -44,7 +44,7 @@
                                     <p:commandButton value="Limpar" action="#{movimentosReceberBean.clear}" disabled="#{movimentosReceberBean.disabled}" icon=" ui-icon-close" style="margin-left: 580px" title="Limpar"/>
                                 </h:panelGrid>
                                 <h:panelGrid id="i_dt_pessoa">
-                                    <p:dataTable value="#{movimentosReceberBean.listPessoa}" var="pessoa" id="tbl_list" rendered="#{not empty movimentosReceberBean.listPessoa}" styleClass="margin-top">
+                                    <p:dataTable value="#{movimentosReceberBean.listPessoa}" var="pessoa" id="tbl_list" rendered="#{not empty movimentosReceberBean.listPessoa}" styleClass="margin-top" rowIndexVar="index">
                                         <f:facet name="header">
                                             Devedores
                                         </f:facet>
@@ -52,7 +52,7 @@
                                             <h:outputLabel value="#{pessoa.nome}" />
                                         </p:column>
                                         <p:column width="30">
-                                            <p:commandButton icon="ui-icon-close" action="#{movimentosReceberBean.remove(index)}" rendered="#{index != 0}" update=":formMovimentosReceber" title="Clique para remover #{pessoa.nome} da Lista" disabled="#{movimentosReceberBean.disabled}"/>
+                                            <p:commandButton icon="ui-icon-close" action="#{movimentosReceberBean.remove(index)}" rendered="#{movimentosReceberBean.listPessoa.size() > 1}" update=":formMovimentosReceber" title="Clique para remover #{pessoa.nome} da Lista" disabled="#{movimentosReceberBean.disabled}"/>
                                         </p:column>
                                     </p:dataTable>
                                 </h:panelGrid>
@@ -233,6 +233,20 @@
                                         <p:column>
                                             <h:outputText value="Boleto" style="font-weight: bold"/><br />
                                             <h:outputText value="#{listMovimentoReceber.movimento.documento}"/>
+                                        </p:column>
+                                    </h:panelGrid>
+                                    <h:panelGrid columns="3" style="height: 40px" styleClass="sbb" rendered="#{listMovimentoReceber.movimento.lote.contrato != null}" columnClasses="verticalAlignTop verticalAlignTop verticalAlignTop">
+                                        <p:column>
+                                            <h:outputText value="Paciente" style="font-weight: bold"/><br />
+                                            <h:outputText value="#{listMovimentoReceber.movimento.lote.contrato.paciente.nome}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="Responsável" style="font-weight: bold"/><br />
+                                            <h:outputText value="#{listMovimentoReceber.movimento.lote.contrato.responsavel.nome}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="Entidade (Devedor 2)" style="font-weight: bold"/><br />
+                                            <h:outputText value="#{listMovimentoReceber.movimento.lote.contrato.cobranca2.nome}"/>
                                         </p:column>
                                     </h:panelGrid>
                                 </p:rowExpansion>
