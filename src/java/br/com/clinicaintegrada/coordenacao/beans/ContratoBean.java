@@ -51,6 +51,7 @@ import br.com.clinicaintegrada.utils.HtmlToPDF;
 import br.com.clinicaintegrada.utils.Mask;
 import br.com.clinicaintegrada.utils.Messages;
 import br.com.clinicaintegrada.utils.Moeda;
+import br.com.clinicaintegrada.utils.PF;
 import br.com.clinicaintegrada.utils.PasswordGenerator;
 import br.com.clinicaintegrada.utils.Sessions;
 import br.com.clinicaintegrada.utils.ValidDocuments;
@@ -2272,6 +2273,11 @@ public class ContratoBean implements Serializable {
                     disabled[1] = false;
                 }
                 break;
+            case 3:
+                diaVencimento = Integer.parseInt(DataHoje.livre(contrato.getDataCadastro(), "d"));
+                listMovimento.clear();
+                calculaSaldoDevedor();
+                break;
         }
     }
 
@@ -2468,8 +2474,8 @@ public class ContratoBean implements Serializable {
 
     public void alterDataVencimentoContrato(Integer index, Movimento m) {
         if (index == 0) {
-            if (DataHoje.converteDataParaInteger(contrato.getDataCadastroString()) < DataHoje.converteDataParaInteger(m.getVencimentoString())) {
-                m.setVencimentoString(m.getVencimentoMemoriaString());
+            if (DataHoje.converteDataParaInteger(m.getVencimentoString()) < DataHoje.converteDataParaInteger(contrato.getDataCadastroString())) {
+                m.setVencimentoString(contrato.getDataCadastroString());
             }
         } else {
             try {
@@ -2499,8 +2505,8 @@ public class ContratoBean implements Serializable {
 
     public void alterDataVencimentoTaxa(Integer index, Movimento m) {
         if (index == 0) {
-            if (DataHoje.converteDataParaInteger(contrato.getDataCadastroString()) < DataHoje.converteDataParaInteger(m.getVencimentoString())) {
-                m.setVencimentoString(m.getVencimentoMemoriaString());
+            if (DataHoje.converteDataParaInteger(m.getVencimentoString()) < DataHoje.converteDataParaInteger(contrato.getDataCadastroString())) {
+                m.setVencimentoString(contrato.getDataCadastroString());
             }
         } else {
             try {
@@ -2524,6 +2530,20 @@ public class ContratoBean implements Serializable {
                 }
             } catch (Exception e) {
 
+            }
+        }
+    }
+
+    public Date getDataCadastro() {
+        return contrato.getDataCadastro();
+    }
+
+    public void setDataCadastro(Date dataCadastro) {
+        contrato.setDataCadastro(dataCadastro);
+        if (contrato.getDataCadastro() != null) {
+            if (!listMovimentoContrato.isEmpty()) {
+                listener(3);
+                PF.update("form_contrato");
             }
         }
     }
