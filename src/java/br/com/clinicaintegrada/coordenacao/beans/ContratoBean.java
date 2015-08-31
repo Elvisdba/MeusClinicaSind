@@ -2539,12 +2539,23 @@ public class ContratoBean implements Serializable {
     }
 
     public void setDataCadastro(Date dataCadastro) {
-        contrato.setDataCadastro(dataCadastro);
-        if (contrato.getDataCadastro() != null) {
-            if (!listMovimentoContrato.isEmpty()) {
-                listener(3);
-                PF.update("form_contrato");
+        if (!DataHoje.converteData(dataCadastro).equals(DataHoje.data())) {
+            Boolean update = false;
+            if (!DataHoje.converteData(dataCadastro).equals(contrato.getDataCadastroString())) {
+                update = true;
             }
+            contrato.setDataCadastro(dataCadastro);
+            if (contrato.getDataCadastro() != null) {
+                if (!listMovimentoContrato.isEmpty()) {
+                    listener(3);
+                    if (update) {
+                        PF.update("form_contrato");
+                    }
+                }
+            }
+
+        } else {
+            contrato.setDataCadastro(dataCadastro);
         }
     }
 }

@@ -36,7 +36,15 @@
                                         <p:button icon="ui-icon-star" value="Administrador" rendered="#{usuarioBean.usuario.administrador}" title="Este usuário tem permissões especiais" style="background: greenyellow"/>
                                     </h:panelGrid>
                                 </f:facet>
-                                <h:panelGrid columns="2" id="i_panel_user">
+                                <h:panelGrid columns="2" id="i_panel_user" styleClass="bold">
+                                    <h:column>                            
+                                        <h:outputLabel value="CLIENTE:" />
+                                        <br /><br />
+                                    </h:column>
+                                    <h:column>                            
+                                        <h:outputLabel value="#{usuarioBean.usuario.pessoa.cliente.identifica}" styleClass="bold" />
+                                        <br /><br />
+                                    </h:column>
                                     <h:column>                            
                                         <p:commandButton id="idPesquisaPessoa" icon="ui-icon-search" onclick="PF('dlg_pesquisa_pessoa').show()" title="Pesquisar Pessoa"/>
                                     </h:column>

@@ -50,6 +50,7 @@ public class PermissaoDao extends DB {
                 return (Permissao) query.getSingleResult();
             }
         } catch (Exception e) {
+            return null;
         }
         return null;
     }
