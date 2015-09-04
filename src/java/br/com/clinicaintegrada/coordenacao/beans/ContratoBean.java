@@ -67,6 +67,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -471,6 +472,11 @@ public class ContratoBean implements Serializable {
         contrato = new Contrato();
         Dao dao = new Dao();
         contrato = (Contrato) dao.rebind(o);
+        if (Sessions.getString("urlRetorno").equals("questionarioCoordenacao")) {
+            Sessions.put("linkClicado", true);
+            Sessions.put("contratoPesquisa", contrato);
+            return "questionarioCoordenacao";
+        }
         if (Sessions.getString("urlRetorno").equals("movimentosReceber") || redirect != null) {
             List<Pessoa> list = new ArrayList();
             list.add(contrato.getResponsavel());
@@ -1968,24 +1974,31 @@ public class ContratoBean implements Serializable {
 
     public String getCalculaValorMovimentoAlterado() {
         if (contrato.getId() == null) {
-            disabledSave = false;
-            float v = 0;
-            float vn = 0;
-            for (int i = 0; i < listMovimentoContrato.size(); i++) {
-                v += listMovimentoContrato.get(i).getValor();
-            }
-            vn = v;
-            vn = contrato.getValorTotal() - v;
-            if (v != contrato.getValorTotal()) {
-                disabledSave = true;
-                if (vn > 0) {
-                    return "Existe uma difereça na soma das parcelas do contrato: Acrescentar R$ " + Moeda.converteR$Float(vn) + ".  Corrigir para salvar.";
-                } else if (vn < 0) {
-                    if (!listMovimentoContrato.isEmpty()) {
-                        return "Existe uma difereça na soma das parcelas do contrato: Remover R$ " + Moeda.converteR$Float(vn) + ".  Corrigir para salvar.";
+            if (!listMovimentoContrato.isEmpty()) {
+                try {
+                    disabledSave = false;
+                    BigDecimal vc = new BigDecimal(0);
+                    Float vn = new Float(0);
+                    Float v = new Float(0);
+                    for (int i = 0; i < listMovimentoContrato.size(); i++) {
+                        vc = vc.add(new BigDecimal(Float.toString(listMovimentoContrato.get(i).getValor())));
                     }
-                } else {
-                    return "";
+                    v = Float.parseFloat(vc.toString());
+                    vn = v;
+                    if (!v.equals(contrato.getValorTotal())) {
+                        disabledSave = true;
+                        if (vn > 0) {
+                            return "Existe uma difereça na soma das parcelas do contrato: Acrescentar R$ " + Moeda.converteR$Float(vn) + ".  Corrigir para salvar.";
+                        } else if (vn < 0) {
+                            if (!listMovimentoContrato.isEmpty()) {
+                                return "Existe uma difereça na soma das parcelas do contrato: Remover R$ " + Moeda.converteR$Float(vn) + ".  Corrigir para salvar.";
+                            }
+                        } else {
+                            return "";
+                        }
+                    }
+                } catch (Exception e) {
+                    return "Erro no valor";
                 }
             }
         }

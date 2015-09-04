@@ -3,7 +3,6 @@ package br.com.clinicaintegrada.pessoa;
 import br.com.clinicaintegrada.utils.DataHoje;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Objects;
 import javax.persistence.*;
 
 @Entity
@@ -48,7 +47,7 @@ public class Juridica implements Serializable {
     private Boolean cobrancaEscritorio;
 
     public Juridica() {
-        this.id = null;
+        this.id = -1;
         this.pessoa = new Pessoa();
         this.fantasia = "";
         this.cnae = new Cnae();
@@ -223,20 +222,7 @@ public class Juridica implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 79 * hash + this.id;
-        hash = 79 * hash + Objects.hashCode(this.pessoa);
-        hash = 79 * hash + Objects.hashCode(this.fantasia);
-        hash = 79 * hash + Objects.hashCode(this.cnae);
-        hash = 79 * hash + Objects.hashCode(this.inscricaoEstadual);
-        hash = 79 * hash + Objects.hashCode(this.inscricaoMunicipal);
-        hash = 79 * hash + Objects.hashCode(this.contato);
-        hash = 79 * hash + Objects.hashCode(this.responsavel);
-        hash = 79 * hash + Objects.hashCode(this.porte);
-        hash = 79 * hash + Objects.hashCode(this.dtAbertura);
-        hash = 79 * hash + Objects.hashCode(this.dtFechamento);
-        hash = 79 * hash + (this.emailEscritorio ? 1 : 0);
-        hash = 79 * hash + (this.cobrancaEscritorio ? 1 : 0);
+        int hash = 5;
         return hash;
     }
 
@@ -249,45 +235,6 @@ public class Juridica implements Serializable {
             return false;
         }
         final Juridica other = (Juridica) obj;
-        if (this.id != other.id) {
-            return false;
-        }
-        if (!Objects.equals(this.pessoa, other.pessoa)) {
-            return false;
-        }
-        if (!Objects.equals(this.fantasia, other.fantasia)) {
-            return false;
-        }
-        if (!Objects.equals(this.cnae, other.cnae)) {
-            return false;
-        }
-        if (!Objects.equals(this.inscricaoEstadual, other.inscricaoEstadual)) {
-            return false;
-        }
-        if (!Objects.equals(this.inscricaoMunicipal, other.inscricaoMunicipal)) {
-            return false;
-        }
-        if (!Objects.equals(this.contato, other.contato)) {
-            return false;
-        }
-        if (!Objects.equals(this.responsavel, other.responsavel)) {
-            return false;
-        }
-        if (!Objects.equals(this.porte, other.porte)) {
-            return false;
-        }
-        if (!Objects.equals(this.dtAbertura, other.dtAbertura)) {
-            return false;
-        }
-        if (!Objects.equals(this.dtFechamento, other.dtFechamento)) {
-            return false;
-        }
-        if (this.emailEscritorio != other.emailEscritorio) {
-            return false;
-        }
-        if (this.cobrancaEscritorio != other.cobrancaEscritorio) {
-            return false;
-        }
         return true;
     }
 
@@ -296,5 +243,4 @@ public class Juridica implements Serializable {
         return "Juridica{" + "id=" + id + ", pessoa=" + pessoa + ", fantasia=" + fantasia + ", cnae=" + cnae + ", inscricaoEstadual=" + inscricaoEstadual + ", inscricaoMunicipal=" + inscricaoMunicipal + ", contato=" + contato + ", responsavel=" + responsavel + ", porte=" + porte + ", dtAbertura=" + dtAbertura + ", dtFechamento=" + dtFechamento + ", emailEscritorio=" + emailEscritorio + ", cobrancaEscritorio=" + cobrancaEscritorio + '}';
     }
 
-    
 }

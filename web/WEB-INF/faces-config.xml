@@ -626,7 +626,43 @@
             <from-outcome>relatorioMovimentosReceber</from-outcome>
             <to-view-id>/relatorioMovimentosReceber.jsf</to-view-id>
             <redirect/>
-        </navigation-case>          
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>questionario</from-outcome>
+            <to-view-id>/questionario.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>questionarioGrupo</from-outcome>
+            <to-view-id>/questionarioGrupo.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>questionarioSubgrupo</from-outcome>
+            <to-view-id>/questionarioSubgrupo.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>questao</from-outcome>
+            <to-view-id>/questao.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>respostaFixa</from-outcome>
+            <to-view-id>/respostaFixa.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>questionarioCoordenacao</from-outcome>
+            <to-view-id>/questionarioCoordenacao.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
 
                                     
         <!-- 

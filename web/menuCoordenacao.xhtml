@@ -36,6 +36,13 @@
                                         <p:menuitem value="Tipos de Avaliação"  action="#{chamadaPaginaBean.paginaSimples('TiposAvaliacao', 'Tipos de Avaliação')}" />
                                         <p:menuitem value="Grupo de Avaliação"  action="#{chamadaPaginaBean.paginaSimples('GrupoAvaliacao', 'Grupos de Avaliação')}" />
                                     </p:submenu>                                    
+                                    <p:submenu label="Questionário" icon="ui-icon-document" style="margin-right: 15px" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}">
+                                        <p:menuitem value="Manutenção"        action="#{chamadaPaginaBean.pagina('questionario')}" />
+                                        <p:menuitem value="Grupo"               action="#{chamadaPaginaBean.pagina('questionarioGrupo')}" />
+                                        <p:menuitem value="Subgrupo"            action="#{chamadaPaginaBean.pagina('questionarioSubgrupo')}" />
+                                        <p:menuitem value="Questão"             action="#{chamadaPaginaBean.pagina('questao')}" />
+                                        <p:menuitem value="Resposta Fixa"       action="#{chamadaPaginaBean.pagina('respostaFixa')}" />
+                                    </p:submenu>
                                 </p:submenu>
                                 <p:submenu label="Movimento" icon="ui-icon-document" style="margin-right: 15px">
                                     <p:menuitem value="Pertence"                action="#{chamadaPaginaBean.pagina('pertence')}" />
@@ -58,6 +65,7 @@
                                         <p:menuitem value="Consulta resgate"    action="#{chamadaPaginaBean.pagina()}" />
                                     </p:submenu>
                                     <p:menuitem value="Transferência"           action="#{chamadaPaginaBean.pagina('transferencia')}" />
+                                    <p:menuitem value="Questionário"            action="#{chamadaPaginaBean.pagina('questionarioCoordenacao', 'qiestionarioRespostaBean')}" actionListener="#{questionarioRespostaBean.setRotina(121)}"/>
                                 </p:submenu>
                                 <p:submenu label="Relatório" icon="ui-icon-document" style="margin-right: 15px">
                                     <p:menuitem value="Frequência"     action="#{chamadaPaginaBean.pagina('relatorioFrequencia')}"/>

@@ -220,4 +220,16 @@ public class RotinaDao extends DB {
         }
         return null;
     }
+
+    public List listGroupByQuestionarios() {
+        try {
+            Query query = getEntityManager().createQuery("SELECT Q.rotina FROM Questionario AS Q GROUP BY Q.rotina ORDER BY Q.rotina.rotina");
+            List list = query.getResultList();
+            if (!list.isEmpty()) {
+                return list;
+            }
+        } catch (Exception e) {
+        }
+        return new ArrayList();
+    }
 }

@@ -1,0 +1,131 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Resposta Fixa</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/imagens/favicon.ico"/>  
+        <style type="text/css">
+            .ui-widget-content .ui-inputfield{ padding: 8px!important;} 
+            .ui-button { padding: 3px!important; }
+        </style>
+
+        <script type="text/javascript">
+
+        </script>
+    </h:head>
+    <h:body>
+        <!-- INICIA DIV wrap e main -->
+        <div id="wrapx">
+            <div id="mainx">
+                <!-- INICIA DIV wrap e main -->  
+                <f:subview id="header">
+                    <ui:include src="templates/templatePrime.xhtml"/>
+                </f:subview>
+                <f:view>
+                    <p:panel styleClass="wrapper" style="border: 0px;">
+                        <h:outputText value="Resposta Fixa" styleClass="fonteHeader" />
+                        <div class="clear"></div>
+                        <h:form id="form_resposta_fixa">
+                            <c:set scope="request" var="object" value="${respostaFixaBean.respostaFixa}"/> 
+                            <p:messages id="i_msg" showDetail="true" closable="true" />                            
+                            <p:panel styleClass="fundoCinza margin-top-max">
+                                <h:panelGrid id="i_panel" columns="2">
+                                    <h:outputLabel value="Rotina" />
+                                    <p:column>
+                                        <p:selectOneMenu value="#{respostaFixaBean.idRotina}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
+                                            <p:ajax event="change" update="@this idQuestionarios idGrupo tbl i_add idSubgrupo idQuestao" listener="#{respostaFixaBean.listener(1)}" />
+                                            <f:selectItem itemValue="" itemLabel="Selecionar"/>
+                                            <f:selectItems value="#{respostaFixaBean.listRotinas}" />
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <h:outputLabel value="Questionário" />                                    
+                                    <p:column>
+                                        <p:selectOneMenu id="idQuestionarios" value="#{respostaFixaBean.idQuestionario}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
+                                            <p:ajax event="change" update="@this  idGrupo i_add tbl idSubgrupo idQuestao" listener="#{respostaFixaBean.listener(2)}" />
+                                            <f:selectItem itemValue="" itemLabel="Selecionar"/>
+                                            <f:selectItems value="#{respostaFixaBean.listQuestionarios}" />
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <h:outputLabel value="Grupo" />                                    
+                                    <p:column>
+                                        <p:selectOneMenu id="idGrupo" value="#{respostaFixaBean.idQuestionarioGrupo}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
+                                            <p:ajax event="change" update="@this idSubgrupo i_add tbl idQuestao" listener="#{respostaFixaBean.listener(3)}" />
+                                            <f:selectItem itemValue="" itemLabel="Selecionar"/>
+                                            <f:selectItems value="#{respostaFixaBean.listQuestionarioGrupo}" />
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <h:outputLabel value="Subgrupo" />                                    
+                                    <p:column>
+                                        <p:selectOneMenu id="idSubgrupo" value="#{respostaFixaBean.idQuestionarioSubgrupo}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
+                                            <p:ajax event="change" update="@this tbl i_add idQuestao" listener="#{respostaFixaBean.listener(4)}" />
+                                            <f:selectItem itemValue="" itemLabel="Selecionar"/>
+                                            <f:selectItems value="#{respostaFixaBean.listQuestionarioSubgrupo}" />
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <h:outputLabel value="Questão" />                                    
+                                    <p:column>
+                                        <p:selectOneMenu id="idQuestao" value="#{respostaFixaBean.idQuestao}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
+                                            <p:ajax event="change" update="@this tbl i_add" listener="#{respostaFixaBean.listener(5)}" />
+                                            <f:selectItem itemValue="" itemLabel="Selecionar"/>
+                                            <f:selectItems value="#{respostaFixaBean.listQuestao}" />
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <h:outputLabel value="Descrição" />                                    
+                                    <h:column>   
+                                        <h:panelGrid columns="2">
+                                            <p:column>
+                                                <p:selectOneMenu value="#{respostaFixaBean.opcao}" filter="true" filterMatchMode="startsWith" style="width: 190px">
+                                                    <p:ajax event="change" update="@this i_descricao" listener="#{respostaFixaBean.listener(6)}" />
+                                                    <f:selectItem itemValue="" itemLabel="Default"/>
+                                                    <f:selectItem itemValue="#text" itemLabel="Texto/Observação" itemDescription="Texto/Observação"/>
+                                                    <f:selectItem itemValue="#boolean" itemLabel="SIM/NÃO" itemDescription="SIM/NÃO"/>
+                                                    <f:selectItem itemValue="#int" itemLabel="Número/Quantidade/Idade" itemDescription="Número/Quantidade/Idade"/>
+                                                    <f:selectItem itemValue="#money" itemLabel="Dinheiro/Valor/Percentual" itemDescription="Dinheiro/Valor/Percentual"/>
+                                                </p:selectOneMenu>
+                                            </p:column>
+                                            <p:column>
+                                                <p:inputText value="#{respostaFixaBean.respostaFixa.descricao}" size="60" maxlength="255" id="i_descricao" readonly="#{not empty respostaFixaBean.opcao}">
+                                                    <p:ajax event="change" update="@this" />
+                                                </p:inputText>
+                                            </p:column>
+                                        </h:panelGrid>
+                                    </h:column>
+                                    <p:column />
+                                    <h:outputLabel value="Opções únicas: Texto = #text; SIM/NÃO = #boolean; Inteiro = #int; Dinheiro/Valores = #money; Demais são multiplas (combo)" />
+                                    <p:column />
+                                    <p:commandButton value="Adicionar" action="#{respostaFixaBean.save}" update="i_panel :form_resposta_fixa:tbl i_msg" disabled="#{(controleAcessoBean.save) or (empty respostaFixaBean.listQuestao)}" id="i_add"/>
+                                </h:panelGrid>
+                            </p:panel>                            
+                            <h:panelGrid id="tbl">
+                                <p:dataTable value="#{respostaFixaBean.listRespostaFixa}" var="respostaFixa" emptyMessage="Nenhum registro encontrado!" scrollable="true" scrollHeight="300" styleClass="margin-top-max">
+                                    <p:column styleClass="text-center" width="25">
+                                        <p:commandButton icon="ui-icon-trash" action="#{respostaFixaBean.delete(respostaFixa)}" update=":form_resposta_fixa:tbl :form_resposta_fixa:i_panel :form_resposta_fixa:i_msg" disabled="#{controleAcessoBean.delete}"/>
+                                    </p:column>
+                                    <p:column headerText="Grupo">
+                                        <h:outputText value="#{respostaFixa.questao.descricao}"/>
+                                    </p:column>
+                                    <p:column headerText="Descrição">
+                                        <h:outputText value="#{respostaFixa.descricao}"/>
+                                    </p:column>
+                                </p:dataTable>                                
+                            </h:panelGrid>
+                        </h:form>
+                    </p:panel>
+                </f:view>
+                <!-- FINALIZA div wrap main -->
+            </div>
+        </div>
+        <!-- FINALIZA div wrap main -->
+
+        <div id="footerx">
+            <f:subview id="footer">
+                <ui:include src="templates/templateFooter.xhtml"/>
+            </f:subview>
+        </div>                
+    </h:body>
+</ui:composition>

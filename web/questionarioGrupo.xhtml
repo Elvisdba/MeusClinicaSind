@@ -1,0 +1,94 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Questionário Grupo</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/imagens/favicon.ico"/>  
+        <style type="text/css">
+            .ui-widget-content .ui-inputfield{ padding: 8px!important;} 
+            .ui-button { padding: 3px!important; }
+        </style>
+
+        <script type="text/javascript">
+
+        </script>
+    </h:head>
+    <h:body>
+        <!-- INICIA DIV wrap e main -->
+        <div id="wrapx">
+            <div id="mainx">
+                <!-- INICIA DIV wrap e main -->  
+                <f:subview id="header">
+                    <ui:include src="templates/templatePrime.xhtml"/>
+                </f:subview>
+                <f:view>
+                    <p:panel styleClass="wrapper" style="border: 0px;">
+                        <h:outputText value="Questionário Grupo" styleClass="fonteHeader" />
+                        <div class="clear"></div>
+                        <h:form id="form_questionario_grupo">
+                            <c:set scope="request" var="object" value="${questionarioGrupoBean.questionarioGrupo}"/> 
+                            <p:messages id="i_msg" showDetail="true" closable="true" />                            
+                            <p:panel styleClass="fundoCinza margin-top-max">
+                                <h:panelGrid id="i_panel" columns="2">
+                                    <h:outputLabel value="Rotina" />
+                                    <p:column>
+                                        <p:selectOneMenu value="#{questionarioGrupoBean.idRotina}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
+                                            <p:ajax event="change" update="@this tbl i_add idQuestionarios" listener="#{questionarioGrupoBean.listener(1)}" />
+                                            <f:selectItem itemValue="" itemLabel="Selecionar"/>
+                                            <f:selectItems value="#{questionarioGrupoBean.listRotinas}" />
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <h:outputLabel value="Questionário" />                                    
+                                    <p:column>
+                                        <p:selectOneMenu id="idQuestionarios" value="#{questionarioGrupoBean.idQuestionario}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
+                                            <p:ajax event="change" update="@this tbl" listener="#{questionarioGrupoBean.listener(1)}" />
+                                            <f:selectItem itemValue="" itemLabel="Selecionar"/>
+                                            <f:selectItems value="#{questionarioGrupoBean.listQuestionarios}" />
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <h:outputLabel value="Descrição" />                                    
+                                    <p:column>
+                                        <p:inputText value="#{questionarioGrupoBean.questionarioGrupo.descricao}" size="60" maxlength="255" converter="#{toUpperCase}">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:inputText>
+                                    </p:column>
+                                    <p:column />
+                                    <p:commandButton value="Adicionar" action="#{questionarioGrupoBean.save}" update="i_panel :form_questionario_grupo:tbl i_msg" disabled="#{(controleAcessoBean.save) or (empty questionarioGrupoBean.listQuestionarios)}" id="i_add"/>
+                                </h:panelGrid>
+                            </p:panel>                            
+                            <h:panelGrid id="tbl">
+                                <p:dataTable value="#{questionarioGrupoBean.listQuestionarioGrupos}" var="questionarioGrupo" emptyMessage="Nenhum registro encontrado!" scrollable="true" scrollHeight="300" styleClass="margin-top-max">
+                                    <p:column styleClass="text-center" width="25">
+                                        <p:commandButton icon="ui-icon-trash" action="#{questionarioGrupoBean.delete(questionario)}" update=":form_questionario_grupo:tbl :form_questionario_grupo:i_panel :form_questionario_grupo:i_msg"/>
+                                    </p:column>
+                                    <p:column headerText="Rotinas">
+                                        <h:outputText value="#{questionarioGrupo.questionario.rotina.rotina}"/>
+                                    </p:column>
+                                    <p:column headerText="Questionário">
+                                        <h:outputText value="#{questionarioGrupo.questionario.descricao}"/>
+                                    </p:column>
+                                    <p:column headerText="Descrição">
+                                        <h:outputText value="#{questionarioGrupo.descricao}"/>
+                                    </p:column>
+                                </p:dataTable>                                
+                            </h:panelGrid>
+                        </h:form>
+                    </p:panel>
+                </f:view>
+                <!-- FINALIZA div wrap main -->
+            </div>
+        </div>
+        <!-- FINALIZA div wrap main -->
+
+        <div id="footerx">
+            <f:subview id="footer">
+                <ui:include src="templates/templateFooter.xhtml"/>
+            </f:subview>
+        </div>                
+    </h:body>
+</ui:composition>

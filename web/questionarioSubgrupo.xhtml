@@ -1,0 +1,99 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Questionário Grupo</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/imagens/favicon.ico"/>  
+        <style type="text/css">
+            .ui-widget-content .ui-inputfield{ padding: 8px!important;} 
+            .ui-button { padding: 3px!important; }
+        </style>
+
+        <script type="text/javascript">
+
+        </script>
+    </h:head>
+    <h:body>
+        <!-- INICIA DIV wrap e main -->
+        <div id="wrapx">
+            <div id="mainx">
+                <!-- INICIA DIV wrap e main -->  
+                <f:subview id="header">
+                    <ui:include src="templates/templatePrime.xhtml"/>
+                </f:subview>
+                <f:view>
+                    <p:panel styleClass="wrapper" style="border: 0px;">
+                        <h:outputText value="Questionário Grupo" styleClass="fonteHeader" />
+                        <div class="clear"></div>
+                        <h:form id="form_questionario_subgrupo">
+                            <c:set scope="request" var="object" value="${questionarioSubgrupoBean.questionarioSubgrupo}"/> 
+                            <p:messages id="i_msg" showDetail="true" closable="true" />                            
+                            <p:panel styleClass="fundoCinza margin-top-max">
+                                <h:panelGrid id="i_panel" columns="2">
+                                    <h:outputLabel value="Rotina" />
+                                    <p:column>
+                                        <p:selectOneMenu value="#{questionarioSubgrupoBean.idRotina}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
+                                            <p:ajax event="change" update="@this idQuestionarios idGrupo tbl i_add " listener="#{questionarioSubgrupoBean.listener(1)}" />
+                                            <f:selectItem itemValue="" itemLabel="Selecionar"/>
+                                            <f:selectItems value="#{questionarioSubgrupoBean.listRotinas}" />
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <h:outputLabel value="Questionário" />                                    
+                                    <p:column>
+                                        <p:selectOneMenu id="idQuestionarios" value="#{questionarioSubgrupoBean.idQuestionario}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
+                                            <p:ajax event="change" update="@this tbl idGrupo i_add" listener="#{questionarioSubgrupoBean.listener(2)}" />
+                                            <f:selectItem itemValue="" itemLabel="Selecionar"/>
+                                            <f:selectItems value="#{questionarioSubgrupoBean.listQuestionarios}" />
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <h:outputLabel value="Grupo" />                                    
+                                    <p:column>
+                                        <p:selectOneMenu id="idGrupo" value="#{questionarioSubgrupoBean.idQuestionarioGrupo}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
+                                            <p:ajax event="change" update="@this tbl i_add" listener="#{questionarioSubgrupoBean.listener(3)}" />
+                                            <f:selectItem itemValue="" itemLabel="Selecionar"/>
+                                            <f:selectItems value="#{questionarioSubgrupoBean.listQuestionarioGrupo}" />
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <h:outputLabel value="Descrição" />                                    
+                                    <p:column>
+                                        <p:inputText value="#{questionarioSubgrupoBean.questionarioSubgrupo.descricao}" size="60" maxlength="255" converter="#{toUpperCase}">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:inputText>
+                                    </p:column>
+                                    <p:column />
+                                    <p:commandButton value="Adicionar" action="#{questionarioSubgrupoBean.save}" update="i_panel :form_questionario_subgrupo:tbl i_msg" disabled="#{(controleAcessoBean.save) or (empty questionarioSubgrupoBean.listQuestionarioGrupo)}" id="i_add"/>
+                                </h:panelGrid>
+                            </p:panel>                            
+                            <h:panelGrid id="tbl">
+                                <p:dataTable value="#{questionarioSubgrupoBean.listQuestionarioSubgrupos}" var="questionarioSubgrupo" emptyMessage="Nenhum registro encontrado!" scrollable="true" scrollHeight="300" styleClass="margin-top-max">
+                                    <p:column styleClass="text-center" width="25">
+                                        <p:commandButton icon="ui-icon-trash" action="#{questionarioSubgrupoBean.delete(questionario)}" update=":form_questionario_subgrupo:tbl :form_questionario_subgrupo:i_panel :form_questionario_subgrupo:i_msg"/>
+                                    </p:column>
+                                    <p:column headerText="Grupo">
+                                        <h:outputText value="#{questionarioSubgrupo.grupo.descricao}"/>
+                                    </p:column>
+                                    <p:column headerText="Descrição">
+                                        <h:outputText value="#{questionarioSubgrupo.descricao}"/>
+                                    </p:column>
+                                </p:dataTable>                                
+                            </h:panelGrid>
+                        </h:form>
+                    </p:panel>
+                </f:view>
+                <!-- FINALIZA div wrap main -->
+            </div>
+        </div>
+        <!-- FINALIZA div wrap main -->
+
+        <div id="footerx">
+            <f:subview id="footer">
+                <ui:include src="templates/templateFooter.xhtml"/>
+            </f:subview>
+        </div>                
+    </h:body>
+</ui:composition>

@@ -1,0 +1,148 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Questionário #{questionarioRespostaBean.tituloRotina}</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/imagens/favicon.ico"/>  
+        <style type="text/css">
+            .ui-widget-content .ui-inputfield{ padding: 8px!important;} 
+            .ui-button { padding: 3px!important; }
+        </style>
+
+        <script type="text/javascript">
+
+        </script>
+    </h:head>
+    <h:body>
+        <!-- INICIA DIV wrap e main -->
+        <div id="wrapx">
+            <div id="mainx">
+                <!-- INICIA DIV wrap e main -->  
+                <f:subview id="header">
+                    <ui:include src="templates/templatePrime.xhtml"/>
+                </f:subview>
+                <f:view>
+                    <p:panel styleClass="wrapper" style="border: 0px;">
+                        <h:outputText value="Questionário" styleClass="fonteHeader" />
+                        <div class="clear"></div>
+                        <h:form id="form_resposta">
+                            <c:set scope="request" var="object" value="${questionarioRespostaBean.resposta}"/>
+                            <p:messages id="i_msg" showDetail="true" closable="true" />
+                            <p:growl showDetail="true" showSummary="true"/>
+                            <p style="font-size: 14pt!important"> 1 - #{questionarioRespostaBean.tituloQuestionario} </p>
+                            <div class="clear"></div>
+                            <p:panel header="Paciente">
+                                <h:panelGrid columns="2">
+                                    <p:commandButton value="Pesquisar" action="#{chamadaPaginaBean.pesquisa('pesquisaContrato', 'contratoBean')}" disabled="#{controleAcessoBean.save}" rendered="#{questionarioRespostaBean.pessoa.id == -1}"/>
+                                    <h:column>
+                                        <h:outputLabel value="#{questionarioRespostaBean.pessoa.nome}" />
+                                    </h:column>
+                                </h:panelGrid>
+                                <f:facet name="footer">
+                                    <p:commandButton value="Novo Paciente" action="#{chamadaPaginaBean.pesquisa('pesquisaContrato', 'contratoBean')}" actionListener="#{questionarioRespostaBean.clear()}" />
+                                </f:facet>
+                            </p:panel>
+                            <h:panelGrid rendered="#{questionarioRespostaBean.pessoa.id != -1}" style="width: 100%; ">
+                                <p:accordionPanel value="#{questionarioRespostaBean.listQuestionarioGrupo}" var="questionarioGrupo" multiple="true" id="i_g" activeIndex="#{questionarioRespostaBean.activeIndexGrupo}" >
+                                    <p:tab title="#{questionarioGrupo.questionario.id}.#{questionarioGrupo.id} - #{questionarioGrupo.descricao}" titleStyleClass="margin-top-max font-color-red">
+                                        <p:accordionPanel value="#{questionarioRespostaBean.getListQuestionarioSubgrupo(questionarioGrupo.id)}" var="questionarioSubGrupo" multiple="true" id="i_sg" activeIndex="#{questionarioRespostaBean.activeIndexSubgrupo}" >
+                                            <p:tab title="#{questionarioGrupo.questionario.id}.#{questionarioGrupo.id}.#{questionarioSubGrupo.id} - #{questionarioSubGrupo.descricao}" titleStyleClass="margin-top-max">
+                                                <p:dataGrid value="#{questionarioRespostaBean.getListQuestoes(questionarioSubGrupo.id)}" var="questao" style="border: 0" columns="1">
+                                                    <h:panelGrid columns="1" style="width: 100%">
+                                                        <h:column>
+                                                            #{questionarioGrupo.questionario.id}.#{questionarioGrupo.id}.#{questionarioSubGrupo.id}.#{questao.id} - <p:commandLink value="#{questao.descricao}" styleClass="underline-hover bold" style="color: #3333ff" action="#{questionarioRespostaBean.click(questao)}" update="form_resposta:i_questoes"/>
+                                                        </h:column>                                                    
+                                                        <h:column>
+                                                            <h:panelGrid columns="2">
+                                                                <h:column>
+                                                                    R:                                                                    
+                                                                </h:column>
+                                                                <h:column>
+                                                                    <p:inputText value="#{questionarioRespostaBean.getResultado(questao.id)}" readonly="true" style="border: 0; width: 100%!important; border-bottom: 1px solid #ECF3FE" styleClass="bold" />
+                                                                </h:column>
+                                                            </h:panelGrid>
+                                                        </h:column>
+                                                    </h:panelGrid>
+                                                </p:dataGrid>
+                                            </p:tab>
+                                        </p:accordionPanel>
+                                    </p:tab>                           
+                                </p:accordionPanel>
+                            </h:panelGrid>
+                            <h:panelGrid id="i_questoes">
+                                <p:dialog widgetVar="dlg_money" modal="true" header="#{questionarioRespostaBean.questao.descricao}" resizable="false">
+                                    <h:outputLabel value="Valor R$" /><br />
+                                    <h:panelGrid columns="2">
+                                        <p:inputText converter="#{toCurrency}" value="#{questionarioRespostaBean.valor}">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:inputText>
+                                    </h:panelGrid>
+                                    <f:facet name="footer">
+                                        <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveValor}" update=":form_resposta:" oncomplete="PF('dlg_option').hide()" />
+                                    </f:facet>
+                                </p:dialog>
+                                <p:dialog widgetVar="dlg_int" modal="true" header="#{questionarioRespostaBean.questao.descricao}" resizable="false">
+                                    <h:outputLabel value="Quantidade / Número" /><br />
+                                    <h:panelGrid columns="2">
+                                        <p:inputText converter="#{thisNumber}" value="#{questionarioRespostaBean.quantidade}">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:inputText>
+                                    </h:panelGrid>
+                                    <f:facet name="footer">
+                                        <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveQuantidade}" update=":form_resposta:" oncomplete="PF('dlg_option').hide()" />
+                                    </f:facet>
+                                </p:dialog>
+                                <p:dialog widgetVar="dlg_text" modal="true" header="#{questionarioRespostaBean.questao.descricao}" resizable="false">
+                                    <h:outputLabel value="Obs" /><br />
+                                    <h:panelGrid columns="2">
+                                        <p:inputText value="#{questionarioRespostaBean.texto}">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:inputText>
+                                    </h:panelGrid>
+                                    <f:facet name="footer">
+                                        <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveTexto}" update=":form_resposta:" oncomplete="PF('dlg_option').hide()" />
+                                    </f:facet>
+                                </p:dialog>
+                                <p:dialog widgetVar="dlg_boolean" modal="true" header="#{questionarioRespostaBean.questao.descricao}" resizable="false">
+                                    <h:outputLabel value="" /><br />
+                                    <p:selectOneRadio value="#{questionarioRespostaBean.opcao}">
+                                        <p:ajax event="change" update="@this" />
+                                        <f:selectItem itemLabel="SIM" itemValue="SIM" />
+                                        <f:selectItem itemLabel="NÃO" itemValue="NÃO" />
+                                    </p:selectOneRadio>
+                                    <f:facet name="footer">
+                                        <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveOpcao}" update=":form_resposta:" oncomplete="PF('dlg_option').hide()" />
+                                    </f:facet>
+                                </p:dialog>
+                                <p:dialog widgetVar="dlg_option" modal="true" header="#{questionarioRespostaBean.questao.descricao}" resizable="false">
+                                    <h:outputLabel value="Selecione a opção desejada" />
+                                    <br />
+                                    <p:selectOneMenu value="#{questionarioRespostaBean.indexString}">
+                                        <p:ajax event="change" update="@this" />
+                                        <f:selectItems value="#{questionarioRespostaBean.listOpcoes}"/>
+                                    </p:selectOneMenu>
+                                    <f:facet name="footer">
+                                        <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveIndexString}" update=":form_resposta:" oncomplete="PF('dlg_option').hide()" />
+                                    </f:facet>
+                                </p:dialog>
+                            </h:panelGrid>
+                        </h:form>
+                    </p:panel>
+                </f:view>
+                <!-- FINALIZA div wrap main -->
+            </div>
+        </div>
+        <!-- FINALIZA div wrap main -->
+
+        <div id="footerx">
+            <f:subview id="footer">
+                <ui:include src="templates/templateFooter.xhtml"/>
+            </f:subview>
+        </div>                
+    </h:body>
+</ui:composition>

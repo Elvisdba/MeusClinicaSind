@@ -1,0 +1,82 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Questionário</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/imagens/favicon.ico"/>  
+        <style type="text/css">
+            .ui-widget-content .ui-inputfield{ padding: 8px!important;} 
+            .ui-button { padding: 3px!important; }
+        </style>
+
+        <script type="text/javascript">
+
+        </script>
+    </h:head>
+    <h:body>
+        <!-- INICIA DIV wrap e main -->
+        <div id="wrapx">
+            <div id="mainx">
+                <!-- INICIA DIV wrap e main -->  
+                <f:subview id="header">
+                    <ui:include src="templates/templatePrime.xhtml"/>
+                </f:subview>
+                <f:view>
+                    <p:panel styleClass="wrapper" style="border: 0px;">
+                        <h:outputText value="Questionário" styleClass="fonteHeader" />
+                        <div class="clear"></div>
+                        <h:form id="form_questionario">
+                            <c:set scope="request" var="object" value="${questionarioBean.questionario}"/> 
+                            <p:messages id="i_msg" showDetail="true" closable="true" />                            
+                            <p:panel styleClass="fundoCinza margin-top-max">
+                                <h:panelGrid id="i_panel" columns="3">
+                                    <p:column>
+                                        <p:selectOneMenu id="idServicos" value="#{questionarioBean.idRotina}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
+                                            <p:ajax event="change" update="@this tbl" listener="#{questionarioBean.listener(1)}" />
+                                            <f:selectItem itemValue="" itemLabel="Selecionar"/>
+                                            <f:selectItems value="#{questionarioBean.listRotinas}" />
+                                        </p:selectOneMenu>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:inputText value="#{questionarioBean.questionario.descricao}" size="60" maxlength="255" converter="#{toUpperCase}">
+                                            <p:ajax event="change" update="@this" />
+                                        </p:inputText>
+                                    </p:column>
+
+                                    <p:commandButton value="Adicionar" action="#{questionarioBean.save}" update="i_panel :form_questionario:tbl i_msg"/>
+                                </h:panelGrid>
+                            </p:panel>                            
+                            <h:panelGrid id="tbl">
+                                <p:dataTable value="#{questionarioBean.listQuestionarios}" var="questionario" emptyMessage="Nenhum registro encontrado!" scrollable="true" scrollHeight="300" styleClass="margin-top-max">
+                                    <p:column styleClass="text-center" width="25">
+                                        <p:commandButton icon="ui-icon-trash" action="#{questionarioBean.delete(questionario)}" update=":form_questionario:tbl :form_questionario:i_panel :form_questionario:i_msg"/>
+                                    </p:column>
+                                    <p:column headerText="Rotinas">
+                                        <h:outputText value="#{questionario.rotina.rotina}"/>
+                                    </p:column>
+                                    <p:column headerText="Descrição">
+                                        <h:outputText value="#{questionario.descricao}"/>
+                                    </p:column>
+                                </p:dataTable>                                
+                            </h:panelGrid>
+                        </h:form>
+                    </p:panel>
+                </f:view>
+                <!-- FINALIZA div wrap main -->
+            </div>
+        </div>
+        <!-- FINALIZA div wrap main -->
+
+        <div id="footerx">
+            <f:subview id="footer">
+                <ui:include src="templates/templateFooter.xhtml"/>
+            </f:subview>
+        </div>                
+    </h:body>
+</ui:composition>

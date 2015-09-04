@@ -23,6 +23,7 @@ import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.dao.JuridicaDao;
 import br.com.clinicaintegrada.pessoa.dao.JuridicaReceitaDao;
 import br.com.clinicaintegrada.pessoa.dao.PessoaEnderecoDao;
+import br.com.clinicaintegrada.seguranca.Cliente;
 import br.com.clinicaintegrada.seguranca.Registro;
 import br.com.clinicaintegrada.seguranca.Rotina;
 import br.com.clinicaintegrada.seguranca.Usuario;
@@ -463,26 +464,25 @@ public class JuridicaBean implements Serializable {
     public String save() {
         Dao dao = new Dao();
         JuridicaDao juridicaDao = new JuridicaDao();
-        Pessoa pessoa = getJuridica().getPessoa();
         List listDocumento;
-        if (listEnd.isEmpty() || pessoa.getId() == -1) {
+        if (listEnd.isEmpty() || getJuridica().getPessoa().getId() == -1) {
             addPessoaEndereco();
         }
-        juridica.setPorte((Porte) dao.find(new Porte(), Integer.parseInt(getListPorte().get(idPorte).getDescription())));
         dao.openTransaction();
+        juridica.setPorte((Porte) dao.find(new Porte(), Integer.parseInt(getListPorte().get(idPorte).getDescription())));
         juridica.getPessoa().setTipoDocumento((TipoDocumento) dao.find(new TipoDocumento(), Integer.parseInt(((SelectItem) getListTipoDocumento().get(idTipoDocumento)).getDescription())));
-        if (pessoa.getTipoDocumento().getId() != 4 && pessoa.getDocumento().isEmpty()) {
+        if (getJuridica().getPessoa().getTipoDocumento().getId() != 4 && juridica.getPessoa().getDocumento().isEmpty()) {
             Messages.warn("Validação", "Informar o número do documento!");
             return null;
         }
-        if (juridica.getId() == null) {
+        if (juridica.getId() == null || juridica.getId() == -1) {
             if (juridica.getPessoa().getNome().isEmpty()) {
                 Messages.warn("Validação", "O campo nome não pode ser nulo!");
                 return null;
             }
 
             if (Integer.parseInt(((SelectItem) getListTipoDocumento().get(idTipoDocumento)).getDescription()) == 4) {
-                pessoa.setDocumento("0");
+                juridica.getPessoa().setDocumento("0");
             } else {
                 listDocumento = juridicaDao.pesquisaJuridicaPorDocumento(juridica.getPessoa().getDocumento());
                 for (int i = 0; i < listDocumento.size(); i++) {
@@ -503,23 +503,33 @@ public class JuridicaBean implements Serializable {
                 return null;
             }
 
-            if (juridica.getPessoa().getId() == -1) {
-                pessoa.setCliente(SessaoCliente.get());
-                dao.save(pessoa);
-                juridica.setPessoa(pessoa);
+            if (juridica.getPessoa().getId() == null || juridica.getPessoa().getId() == -1) {
+                juridica.getPessoa().setCliente((Cliente) dao.find(new Cliente(), SessaoCliente.get().getId()));
+                if (!dao.save(juridica.getPessoa())) {
+                    dao.rollback();
+                    Messages.warn("Erro", "Ao salvar pessoa!");
+                    return null;
+                }
                 if (juridica.getCnae().getId() == -1) {
                     juridica.setCnae(null);
                 }
 
                 if (juridicaReceita.getId() != -1) {
-                    juridicaReceita.setPessoa(pessoa);
+                    juridicaReceita.setPessoa(juridica.getPessoa());
                     dao.update(juridicaReceita);
                 }
 
-                gerarLoginSenhaPessoa(juridica.getPessoa(), dao);
                 if (dao.save(juridica)) {
                     Messages.info("Sucesso", "Cadastro salvo!");
                     dao.commit();
+                    try {
+                        dao.openTransaction();
+                        gerarLoginSenhaPessoa(juridica.getPessoa(), dao);
+                        dao.commit();
+                    } catch (Exception e) {
+                        dao.rollback();
+
+                    }
                     Logger Logger = new Logger();
                     Logger.save("ID: " + juridica.getId() + " - Pessoa: (" + juridica.getPessoa().getId() + ") " + juridica.getPessoa().getNome() + " - Abertura" + juridica.getAbertura() + " - Fechamento" + juridica.getAbertura() + " - I.E.: " + juridica.getInscricaoEstadual() + " - Insc. Mun.: " + juridica.getInscricaoMunicipal() + " - Responsável: " + juridica.getResponsavel());
                     Sessions.put("juridicaPesquisa", juridica);
@@ -540,7 +550,7 @@ public class JuridicaBean implements Serializable {
             } else {
                 listDocumento = juridicaDao.pesquisaJuridicaPorDocumento(juridica.getPessoa().getDocumento());
                 for (int i = 0; i < listDocumento.size(); i++) {
-                    if (!listDocumento.isEmpty() && ((Juridica) listDocumento.get(i)).getId() != juridica.getId()) {
+                    if (!listDocumento.isEmpty() && !((Juridica) listDocumento.get(i)).getId().equals(juridica.getId())) {
                         Messages.warn("Validação", "Empresa já existente no Sistema!");
                         return null;
                     }
@@ -1183,7 +1193,7 @@ public class JuridicaBean implements Serializable {
     }
 
     public boolean isRenEnviarEmail() {
-        if(juridica.getId() != null) {
+        if (juridica.getId() != null) {
             if (Objects.equals(juridica.getId(), SessaoCliente.get().getIdJuridica())) {
                 return false;
             } else {
