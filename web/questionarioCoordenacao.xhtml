@@ -34,45 +34,77 @@
                             <c:set scope="request" var="object" value="${questionarioRespostaBean.resposta}"/>
                             <p:messages id="i_msg" showDetail="true" closable="true" />
                             <p:growl showDetail="true" showSummary="true"/>
-                            <p style="font-size: 14pt!important"> 1 - #{questionarioRespostaBean.tituloQuestionario} </p>
                             <div class="clear"></div>
-                            <p:panel header="Paciente">
+                            <p:panel styleClass="fundoCinza">
                                 <h:panelGrid columns="2">
-                                    <p:commandButton value="Pesquisar" action="#{chamadaPaginaBean.pesquisa('pesquisaContrato', 'contratoBean')}" disabled="#{controleAcessoBean.save}" rendered="#{questionarioRespostaBean.pessoa.id == -1}"/>
+                                    <h:outputLabel value="Questionário:" />
+                                    <p:selectOneMenu value="#{questionarioRespostaBean.questionario_id}" style="width: 300px">
+                                        <p:ajax event="change" update=":form_resposta:" />
+                                        <f:selectItems value="#{questionarioRespostaBean.listQuestionario}"/>
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Data:" rendered="#{questionarioRespostaBean.respostaLote != null}"/>
+                                    <h:column>
+                                        <h:panelGrid columns="3" rendered="#{questionarioRespostaBean.respostaLote != null}">
+                                            <p:inputText value=" #{questionarioRespostaBean.respostaLote.lancamentoString}" readonly="true" size="8" styleClass="text-center"/>
+                                            <p:outputLabel value="Hora:" />
+                                            <p:inputText value="#{questionarioRespostaBean.respostaLote.hora}" readonly="true" size="1" styleClass="text-center"/>                                                                                    
+                                        </h:panelGrid>
+                                    </h:column>
+                                    <h:outputLabel value="Equipe: " rendered="#{questionarioRespostaBean.respostaLote != null}"/>
+                                    <h:outputLabel value=" #{questionarioRespostaBean.respostaLote.equipe.pessoa.nome}" styleClass="text-center" rendered="#{questionarioRespostaBean.respostaLote != null}"/>
+                                </h:panelGrid>                                
+                            </p:panel>
+                            <p:panel header="Paciente" styleClass="margin-top-max">
+                                <h:panelGrid columns="2">
+                                    <p:commandButton value="Pesquisar pessoa" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaFisica', 'fisicaBean')}" disabled="#{controleAcessoBean.save}" rendered="#{questionarioRespostaBean.pessoa.id == -1}"/>
                                     <h:column>
                                         <h:outputLabel value="#{questionarioRespostaBean.pessoa.nome}" />
                                     </h:column>
                                 </h:panelGrid>
                                 <f:facet name="footer">
-                                    <p:commandButton value="Novo Paciente" action="#{chamadaPaginaBean.pesquisa('pesquisaContrato', 'contratoBean')}" actionListener="#{questionarioRespostaBean.clear()}" />
+                                    <h:panelGrid columns="3">
+                                        <h:column>
+                                            <p:commandButton value="Novo Paciente" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaFisica', 'fisicaBean')}" actionListener="#{questionarioRespostaBean.clear()}" rendered="#{questionarioRespostaBean.pessoa.id != -1}"/>
+                                        </h:column>
+                                        <p:commandButton value="Pesquisar Questionário" action="#{chamadaPaginaBean.pesquisa('pesquisaQuestionarioCoordenacao')}" />                                        
+                                        <h:column>
+                                            <p:commandButton value="Imprimir" icon="ui-icon-print" title="Imprimir" action="#{relatorioQuestionatioBean.print(questionarioRespostaBean.respostaLote.id)}" ajax="false" rendered="#{questionarioRespostaBean.pessoa.id != -1}"/>
+                                        </h:column>
+                                    </h:panelGrid>
                                 </f:facet>
                             </p:panel>
-                            <h:panelGrid rendered="#{questionarioRespostaBean.pessoa.id != -1}" style="width: 100%; ">
-                                <p:accordionPanel value="#{questionarioRespostaBean.listQuestionarioGrupo}" var="questionarioGrupo" multiple="true" id="i_g" activeIndex="#{questionarioRespostaBean.activeIndexGrupo}" >
-                                    <p:tab title="#{questionarioGrupo.questionario.id}.#{questionarioGrupo.id} - #{questionarioGrupo.descricao}" titleStyleClass="margin-top-max font-color-red">
-                                        <p:accordionPanel value="#{questionarioRespostaBean.getListQuestionarioSubgrupo(questionarioGrupo.id)}" var="questionarioSubGrupo" multiple="true" id="i_sg" activeIndex="#{questionarioRespostaBean.activeIndexSubgrupo}" >
-                                            <p:tab title="#{questionarioGrupo.questionario.id}.#{questionarioGrupo.id}.#{questionarioSubGrupo.id} - #{questionarioSubGrupo.descricao}" titleStyleClass="margin-top-max">
-                                                <p:dataGrid value="#{questionarioRespostaBean.getListQuestoes(questionarioSubGrupo.id)}" var="questao" style="border: 0" columns="1">
-                                                    <h:panelGrid columns="1" style="width: 100%">
+                            <h:panelGrid rendered="#{questionarioRespostaBean.pessoa.id != -1}" style="width: 100%; border: 0px!important " styleClass="margin-top-max">
+                                <p:dataGrid value="#{questionarioRespostaBean.listQGrupo}" var="questionarioGrupo" id="i_g" rowIndexVar="indexqg" columns="1" emptyMessage="Nenhum grupo encontrado!" style="border: 1px solid white!important">
+                                    <p:dataGrid value="#{questionarioRespostaBean.getListQSubgrupo(indexqg)}" var="questionarioSubGrupo" id="i_sg" rowIndexVar="indexqsg" columns="1" style="margin: 5px"  emptyMessage="Nenhum subgrupo encontrado!">
+                                        <f:facet name="header">
+                                            <h:panelGrid style="text-align: left!important; font-weight: bold">
+                                                <h:outputLabel value="#{questionarioGrupo.questionario.id}.#{questionarioGrupo.id} - #{questionarioGrupo.descricao}" styleClass="margin-top-max font-color-red" style="font-size: 14pt!important;"/>                                                
+                                            </h:panelGrid>
+                                        </f:facet>
+                                        <p:dataGrid value="#{questionarioRespostaBean.getListQuestoes(questionarioSubGrupo.id)}" var="questao" style="border: 0!important" columns="1" emptyMessage="Nenhuma questão encontrada" styleClass="margin-top-max sbb">
+                                            <f:facet name="header">
+                                                <h:panelGrid style="text-align: left!important; font-weight: bold">
+                                                    <h:outputLabel value="#{questionarioGrupo.questionario.id}.#{questionarioGrupo.id}.#{questionarioSubGrupo.id} - #{questionarioSubGrupo.descricao}" styleClass="margin-top-max" style="color: black!important"/>
+                                                </h:panelGrid>
+                                            </f:facet>                                            
+                                            <h:panelGrid columns="1" style="width: 100%">
+                                                <h:column>
+                                                    #{questionarioGrupo.questionario.id}.#{questionarioGrupo.id}.#{questionarioSubGrupo.id}.#{questao.id} - <p:commandLink value="#{questao.descricao}" styleClass="underline-hover bold" style="color: #3333ff" action="#{questionarioRespostaBean.click(questao)}" update="form_resposta:i_questoes"/>
+                                                </h:column>                                                    
+                                                <h:column>
+                                                    <h:panelGrid columns="2">
                                                         <h:column>
-                                                            #{questionarioGrupo.questionario.id}.#{questionarioGrupo.id}.#{questionarioSubGrupo.id}.#{questao.id} - <p:commandLink value="#{questao.descricao}" styleClass="underline-hover bold" style="color: #3333ff" action="#{questionarioRespostaBean.click(questao)}" update="form_resposta:i_questoes"/>
-                                                        </h:column>                                                    
+                                                            R:                                                                    
+                                                        </h:column>
                                                         <h:column>
-                                                            <h:panelGrid columns="2">
-                                                                <h:column>
-                                                                    R:                                                                    
-                                                                </h:column>
-                                                                <h:column>
-                                                                    <p:inputText value="#{questionarioRespostaBean.getResultado(questao.id)}" readonly="true" style="border: 0; width: 100%!important; border-bottom: 1px solid #ECF3FE" styleClass="bold" />
-                                                                </h:column>
-                                                            </h:panelGrid>
+                                                            <p:inputText value="#{questionarioRespostaBean.getResultado(questao.id)}" readonly="true" style="border: 0; width: 100%!important; border-bottom: 1px solid #ECF3FE" styleClass="bold" />
                                                         </h:column>
                                                     </h:panelGrid>
-                                                </p:dataGrid>
-                                            </p:tab>
-                                        </p:accordionPanel>
-                                    </p:tab>                           
-                                </p:accordionPanel>
+                                                </h:column>
+                                            </h:panelGrid>
+                                        </p:dataGrid>
+                                    </p:dataGrid>
+                                </p:dataGrid>
                             </h:panelGrid>
                             <h:panelGrid id="i_questoes">
                                 <p:dialog widgetVar="dlg_money" modal="true" header="#{questionarioRespostaBean.questao.descricao}" resizable="false">

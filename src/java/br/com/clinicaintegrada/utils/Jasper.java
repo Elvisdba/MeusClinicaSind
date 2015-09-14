@@ -209,7 +209,7 @@ public class Jasper implements Serializable {
     }
 
     public static void printReports(String jasperName, String fileName, Collection listCollections, Map parameters, List jasperListExport) throws SecurityException, IllegalArgumentException {
-        Jasper.LIST_FILE_GENERATED = new ArrayList();
+            Jasper.LIST_FILE_GENERATED = new ArrayList();
         Dao dao = new Dao();
         Juridica juridica = (Juridica) dao.find(new Juridica(), SessaoCliente.get().getIdJuridica());
         byte[] bytesComparer = null;
@@ -231,7 +231,7 @@ public class Jasper implements Serializable {
         fileName = fileName.replace("/", "");
         fileName = fileName.toLowerCase();
         fileName = AnaliseString.removerAcentos(fileName);
-        if (!Dirs.create("Arquivos/" + PATH + "/" + fileName)) {
+        if (!Dirs.create("arquivos/" + PATH + "/" + fileName)) {
             Messages.info("Sistema", "Erro ao criar diretório!");
             return;
         }
@@ -240,10 +240,11 @@ public class Jasper implements Serializable {
         String subreport = "";
         switch (TYPE) {
             case "retrato":
-                subreport = ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/CABECALHO_RETRATO.jasper");
+                subreport = ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/CABECALHO_RETRATO.jasper");
                 break;
+            case "default":
             case "paisagem":
-                subreport = ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/CABECALHO_PAISAGEM.jasper");
+                subreport = ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/CABECALHO_PAISAGEM.jasper");
                 break;
             default:
                 IS_HEADER = false;
@@ -256,18 +257,18 @@ public class Jasper implements Serializable {
             parameters.put("relatorio_titulo", TITLE);
         }
         if (IS_HEADER) {
-            parameters.put("sindicato_nome", juridica.getPessoa().getNome());
-            parameters.put("sindicato_documento", juridica.getPessoa().getDocumento());
-            parameters.put("sindicato_site", juridica.getPessoa().getSite());
-            parameters.put("sindicato_logradouro", juridica.getPessoa().getPessoaEndereco().getEndereco().getLogradouro().getDescricao());
-            parameters.put("sindicato_endereco", juridica.getPessoa().getPessoaEndereco().getEndereco().getDescricaoEndereco().getDescricao());
-            parameters.put("sindicato_numero", juridica.getPessoa().getPessoaEndereco().getNumero());
-            parameters.put("sindicato_complemento", juridica.getPessoa().getPessoaEndereco().getComplemento());
-            parameters.put("sindicato_bairro", juridica.getPessoa().getPessoaEndereco().getEndereco().getBairro().getDescricao());
-            parameters.put("sindicato_cidade", juridica.getPessoa().getPessoaEndereco().getEndereco().getCidade().getCidade());
-            parameters.put("sindicato_uf", juridica.getPessoa().getPessoaEndereco().getEndereco().getCidade().getUf());
-            parameters.put("sindicato_cep", juridica.getPessoa().getPessoaEndereco().getEndereco().getCep());
-            parameters.put("sindicato_logo", ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Imagens/LogoCliente.png"));
+            parameters.put("companhia_nome", juridica.getPessoa().getNome());
+            parameters.put("companhia_documento", juridica.getPessoa().getDocumento());
+            parameters.put("companhia_site", juridica.getPessoa().getSite());
+            parameters.put("companhia_logradouro", juridica.getPessoa().getPessoaEndereco().getEndereco().getLogradouro().getDescricao());
+            parameters.put("companhia_endereco", juridica.getPessoa().getPessoaEndereco().getEndereco().getDescricaoEndereco().getDescricao());
+            parameters.put("companhia_numero", juridica.getPessoa().getPessoaEndereco().getNumero());
+            parameters.put("companhia_complemento", juridica.getPessoa().getPessoaEndereco().getComplemento());
+            parameters.put("companhia_bairro", juridica.getPessoa().getPessoaEndereco().getEndereco().getBairro().getDescricao());
+            parameters.put("companhia_cidade", juridica.getPessoa().getPessoaEndereco().getEndereco().getCidade().getCidade());
+            parameters.put("companhia_uf", juridica.getPessoa().getPessoaEndereco().getEndereco().getCidade().getUf());
+            parameters.put("companhia_cep", juridica.getPessoa().getPessoaEndereco().getEndereco().getCep());
+            parameters.put("companhia_logo", ((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/logo_cliente.png"));
             parameters.put("template_dir", subreport);
         }
 
@@ -292,9 +293,9 @@ public class Jasper implements Serializable {
         // -----------------------------------------------------------------------------------------------------
         // -----------------------------------------------------------------------------------------------------
         if (Jasper.PATH.isEmpty()) {
-            realPath = "/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/" + fileName + "/";
+            realPath = "/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/" + fileName + "/";
         } else {
-            realPath = "/Cliente/" + ControleUsuarioBean.getCliente() + "/Arquivos/" + PATH + "/" + fileName + "/";
+            realPath = "/Cliente/" + ControleUsuarioBean.getCliente() + "/arquivos/" + PATH + "/" + fileName + "/";
         }
 
         String dirPath = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(realPath);
@@ -318,10 +319,10 @@ public class Jasper implements Serializable {
                 byte[] bytes;
                 JasperReport subJasper;
                 if (!SUBREPORT_NAME.isEmpty()) {
-                    if (new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Relatorios/ " + SUBREPORT_NAME)).exists()) {
-                        subJasper = (JasperReport) JRLoader.loadObject(new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/Relatorios/ " + SUBREPORT_NAME)));
+                    if (new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/relatorios/ " + SUBREPORT_NAME)).exists()) {
+                        subJasper = (JasperReport) JRLoader.loadObject(new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/relatorios/ " + SUBREPORT_NAME)));
                     } else {
-                        subJasper = (JasperReport) JRLoader.loadObject(new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/Relatorios/" + SUBREPORT_NAME)));
+                        subJasper = (JasperReport) JRLoader.loadObject(new File(((ServletContext) faces.getExternalContext().getContext()).getRealPath("/relatorios/" + SUBREPORT_NAME)));
                     }
                 }
                 if (IS_REPORT_CONNECTION) {
@@ -330,10 +331,12 @@ public class Jasper implements Serializable {
                     } else {
                         con.setDatabase(SessaoCliente.get().getPersistence());
                     }
-                    if (new File(subreport).exists()) {
-                        parameters.put("REPORT_CONNECTION", con.getConnection());
+                    if(subreport != null) {
+                        if (new File(subreport).exists()) {
+                            parameters.put("REPORT_CONNECTION", con.getConnection());
+                        }
+                        dbe = null;                        
                     }
-                    dbe = null;
                 }
                 JasperReport jasper = null;
                 String jasper_path = "";

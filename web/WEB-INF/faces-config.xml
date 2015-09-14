@@ -663,6 +663,12 @@
             <to-view-id>/questionarioCoordenacao.jsf</to-view-id>
             <redirect/>
         </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>pesquisaQuestionarioCoordenacao</from-outcome>
+            <to-view-id>/pesquisaQuestionarioCoordenacao.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
 
                                     
         <!-- 

@@ -92,12 +92,21 @@ public class EquipeDao extends DB {
         return false;
     }
 
-    public Equipe findByPessoaAndFuncaoEquipe(Integer idPessoa, Integer idFuncaoEquipe) {
+    public Equipe findByPessoaAndFuncaoEquipe(Integer pessoa_id) {
+        return findByPessoaAndFuncaoEquipe(pessoa_id, null);
+    }
+
+    public Equipe findByPessoaAndFuncaoEquipe(Integer pessoa_id, Integer funcao_equipe_id) {
         try {
-            Query query = getEntityManager().createQuery("SELECT E FROM Equipe AS E WHERE E.funcaoEquipe.id = :funcaoEquipe AND E.pessoa.id = :pessoa ");
+            Query query;
+            if (funcao_equipe_id == null) {
+                query = getEntityManager().createQuery("SELECT E FROM Equipe AS E WHERE E.pessoa.id = :pessoa_id ");
+            } else {
+                query = getEntityManager().createQuery("SELECT E FROM Equipe AS E WHERE E.funcaoEquipe.id = :funcao_equipe_id AND E.pessoa.id = :pessoa_id ");
+                query.setParameter("funcao_equipe_id", funcao_equipe_id);
+            }
+            query.setParameter("pessoa_id", pessoa_id);
             query.setMaxResults(1);
-            query.setParameter("pessoa", idPessoa);
-            query.setParameter("funcaoEquipe", idFuncaoEquipe);
             List list = query.getResultList();
             if (!list.isEmpty() && list.size() == 1) {
                 return (Equipe) query.getSingleResult();

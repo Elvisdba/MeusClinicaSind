@@ -1,20 +1,26 @@
 package br.com.clinicaintegrada.questionario.beans;
 
-import br.com.clinicaintegrada.coordenacao.Contrato;
+import br.com.clinicaintegrada.pessoa.Equipe;
+import br.com.clinicaintegrada.pessoa.Fisica;
 import br.com.clinicaintegrada.pessoa.Pessoa;
+import br.com.clinicaintegrada.pessoa.dao.EquipeDao;
 import br.com.clinicaintegrada.questionario.Questao;
 import br.com.clinicaintegrada.questionario.Questionario;
 import br.com.clinicaintegrada.questionario.QuestionarioGrupo;
 import br.com.clinicaintegrada.questionario.QuestionarioSubgrupo;
 import br.com.clinicaintegrada.questionario.Resposta;
 import br.com.clinicaintegrada.questionario.RespostaFixa;
+import br.com.clinicaintegrada.questionario.RespostaLote;
 import br.com.clinicaintegrada.questionario.dao.QuestaoDao;
 import br.com.clinicaintegrada.questionario.dao.QuestionarioDao;
 import br.com.clinicaintegrada.questionario.dao.QuestionarioGrupoDao;
 import br.com.clinicaintegrada.questionario.dao.QuestionarioSubgrupoDao;
 import br.com.clinicaintegrada.questionario.dao.RespostaDao;
 import br.com.clinicaintegrada.questionario.dao.RespostaFixaDao;
+import br.com.clinicaintegrada.questionario.dao.RespostaLoteDao;
 import br.com.clinicaintegrada.seguranca.Rotina;
+import br.com.clinicaintegrada.seguranca.Usuario;
+import br.com.clinicaintegrada.seguranca.controleUsuario.ChamadaPaginaBean;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.DataHoje;
 import br.com.clinicaintegrada.utils.Messages;
@@ -23,6 +29,7 @@ import br.com.clinicaintegrada.utils.PF;
 import br.com.clinicaintegrada.utils.Sessions;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
@@ -39,9 +46,12 @@ public class QuestionarioRespostaBean {
     private String tituloRotina;
     private String tituloQuestionario;
     private List<QuestionarioGrupo> listQuestionarioGrupo;
+    private List<QuestionarioSubgrupo>[] listQuestionarioSubgrupo;
+    private List<Questao> listQuestoes;
     private List<RespostaFixa> listRespostaFixa;
     private Pessoa pessoa;
     private List<SelectItem> listOpcoes;
+    private List<SelectItem> listQuestionario;
     private String quantidade;
     private String valor;
     private String opcao;
@@ -51,17 +61,32 @@ public class QuestionarioRespostaBean {
     private String activeIndexGrupo;
     private String activeIndexSubgrupo;
     private Questao questao;
+    private RespostaLote respostaLote;
+    private String questionario_id;
+    private List<RespostaLote> listRespostaLote;
+    private String[] descricaoPesquisa;
+    private Integer comoPesquisa;
+    private String porPesquisa;
 
     @PostConstruct
     public void init() {
+        descricaoPesquisa = new String[2];
+        descricaoPesquisa[0] = "";
+        descricaoPesquisa[1] = "";
+        comoPesquisa = null;
+        porPesquisa = "nome";
         questao = null;
         rotina_id = null;
         resposta = new Resposta();
         tituloRotina = "";
         tituloQuestionario = "";
         listRespostaFixa = new ArrayList();
+        listQuestionario = new ArrayList();
+        listQuestionarioSubgrupo = null;
         listOpcoes = new ArrayList();
         listQuestionarioGrupo = new ArrayList();
+        listQuestoes = new ArrayList();
+        listRespostaLote = new ArrayList();
         pessoa = new Pessoa();
         quantidade = "0";
         valor = null;
@@ -71,27 +96,75 @@ public class QuestionarioRespostaBean {
         activeIndexSubgrupo = "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20";
         activeIndexGrupo = "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20";
         texto = "";
-        getTituloRotina();
+        questionario_id = "";
+        respostaLote = null;
+    }
+
+    public String edit(RespostaLote rl) {
+        respostaLote = rl;
+        pessoa = respostaLote.getPessoa();
+        ChamadaPaginaBean.link();
+        return "questionarioCoordenacao";
     }
 
     public void load(Integer rotina_id) {
         Dao dao = new Dao();
         tituloRotina = ((Rotina) dao.find(new Rotina(), rotina_id)).getRotina();
-        Questionario q = (Questionario) new QuestionarioDao().findByRotina(rotina_id).get(0);
-        tituloQuestionario = q.getDescricao();
+        List<Questionario> list = new QuestionarioDao().findByRotina(rotina_id);
+        for (int i = 0; i < list.size(); i++) {
+            if (i == 0) {
+                questionario_id = "" + list.get(i).getId();
+            }
+            listQuestionario.add(new SelectItem("" + list.get(i).getId(), list.get(i).getDescricao()));
+        }
+        loadQuestionarioGrupo();
+        loadQuestionarioSubgrupo();
+        loadQuestao();
+        listOpcoes.clear();
+
+    }
+
+    public void loadQuestionarioGrupo() {
         QuestionarioGrupoDao qgd = new QuestionarioGrupoDao();
         qgd.setOrder_by("QG.id");
-        listQuestionarioGrupo = qgd.findByQuestionario(q.getId());
+        listQuestionarioGrupo = new ArrayList();
+        listQuestionarioGrupo = qgd.findByQuestionario(Integer.parseInt(questionario_id));
 
+    }
+
+    public void loadQuestionarioSubgrupo() {
+        if (!listQuestionarioGrupo.isEmpty()) {
+            listQuestionarioSubgrupo = new ArrayList[listQuestionarioGrupo.size()];
+            QuestionarioSubgrupoDao qsgd = new QuestionarioSubgrupoDao();
+            qsgd.setOrder_by("QSG.id");
+            for (int i = 0; i < listQuestionarioGrupo.size(); i++) {
+                listQuestionarioSubgrupo[i] = new ArrayList();
+                listQuestionarioSubgrupo[i].addAll(qsgd.findByGrupo(listQuestionarioGrupo.get(i).getId()));
+            }
+        }
+
+    }
+
+    public void loadQuestao() {
+        if (listQuestionarioSubgrupo != null && listQuestionarioSubgrupo.length > 0) {
+            listQuestoes = new ArrayList();
+            QuestaoDao qd = new QuestaoDao();
+            qd.setOrder_by("Q.id");
+            for (int i = 0; i < listQuestionarioSubgrupo.length; i++) {
+                for (int y = 0; y < listQuestionarioSubgrupo[i].size(); y++) {
+                    listQuestoes.addAll(qd.findBySubgrupo(listQuestionarioSubgrupo[i].get(y).getId()));
+                }
+            }
+        }
     }
 
     @PreDestroy
     public void destroy() {
-        Sessions.put("rotina_id", rotina_id);
-        clear();
+        Sessions.remove("questionarioRespostaBean");
     }
 
     public void clear() {
+        Sessions.put("rotina_id", rotina_id);
         Sessions.remove("questionarioRespostaBean");
     }
 
@@ -99,7 +172,20 @@ public class QuestionarioRespostaBean {
         Sessions.put("rotina_id", rotina_id);
     }
 
+    public void listener(Integer tcase) {
+        if (tcase == 1) {
+            // listQuestionarioGrupo = qgd.findByQuestionario(Integer.parseInt(questionario_id));
+            listOpcoes.clear();
+        } else if (tcase == 2) {
+            listQuestionarioGrupo.size();
+            loadQuestionarioGrupo();
+            loadQuestionarioSubgrupo();
+            loadQuestao();
+        }
+    }
+
     public void click(Questao q) {
+        loadRespostaLote();
         questao = q;
         quantidade = "0";
         valor = null;
@@ -117,15 +203,19 @@ public class QuestionarioRespostaBean {
             switch (respostaFixa.getDescricao()) {
                 case "#int":
                     PF.openDialog("dlg_int");
+                    PF.update("i_pg_int");
                     break;
                 case "#money":
                     PF.openDialog("dlg_money");
+                    PF.update("i_pg_money");
                     break;
                 case "#boolean":
                     PF.openDialog("dlg_boolean");
+                    PF.update("i_pg_boolean");
                     break;
                 case "#text":
                     PF.openDialog("dlg_text");
+                    PF.update("i_pg_text");
                     break;
                 default:
                     Messages.warn("Sistema", "Nenhum tipo foi encontrado");
@@ -140,6 +230,7 @@ public class QuestionarioRespostaBean {
                 listOpcoes.add(new SelectItem("" + list.get(i).getId(), list.get(i).getDescricao()));
             }
             PF.openDialog("dlg_option");
+            PF.update("i_pg_option");
         }
     }
 
@@ -168,8 +259,10 @@ public class QuestionarioRespostaBean {
     }
 
     public Pessoa getPessoa() {
-        if (Sessions.exists("contratoPesquisa")) {
-            pessoa = ((Contrato) Sessions.getObject("contratoPesquisa", true)).getPaciente();
+        if (Sessions.exists("fisicaPesquisa")) {
+            pessoa = ((Fisica) Sessions.getObject("fisicaPesquisa", true)).getPessoa();
+            respostaLote = null;
+            respostaLote = new RespostaLoteDao().findBy(Integer.parseInt(questionario_id), pessoa.getId(), DataHoje.dataHoje());
         }
         return pessoa;
     }
@@ -196,36 +289,6 @@ public class QuestionarioRespostaBean {
 
     public void setTituloQuestionario(String tituloQuestionario) {
         this.tituloQuestionario = tituloQuestionario;
-    }
-
-    public List<QuestionarioGrupo> getListQuestionarioGrupo() {
-        return listQuestionarioGrupo;
-    }
-
-    public void setListQuestionarioGrupo(List<QuestionarioGrupo> listQuestionarioGrupo) {
-        this.listQuestionarioGrupo = listQuestionarioGrupo;
-    }
-
-    public List<QuestionarioSubgrupo> getListQuestionarioSubgrupo(Integer grupo_id) {
-        try {
-            QuestionarioSubgrupoDao qsgd = new QuestionarioSubgrupoDao();
-            qsgd.setOrder_by("QSG.id");
-            List list = qsgd.findByGrupo(grupo_id);
-            return list;
-        } catch (Exception e) {
-            return new ArrayList();
-        }
-    }
-
-    public List<QuestionarioSubgrupo> getListQuestoes(Integer subgrupo_id) {
-        try {
-            QuestaoDao qd = new QuestaoDao();
-            qd.setOrder_by("Q.id");
-            List list = qd.findBySubgrupo(subgrupo_id);
-            return list;
-        } catch (Exception e) {
-            return new ArrayList();
-        }
     }
 
     public String getActiveIndex(Object collection) {
@@ -321,7 +384,7 @@ public class QuestionarioRespostaBean {
 
     public void saveQuantidade() {
         Dao dao = new Dao();
-        resposta.setPessoa(pessoa);
+        RespostaLote rl = getRespostaLote();
         RespostaDao respostaDao = new RespostaDao();
         RespostaFixa rf = new RespostaFixaDao().findByQuestao(questao.getId(), true);
         if (rf == null) {
@@ -330,10 +393,9 @@ public class QuestionarioRespostaBean {
         }
         Resposta r = respostaDao.findByQuestao(pessoa.getId(), questao.getId());
         if (r.getId() == null) {
-            r.setPessoa(pessoa);
+            r.setRespostaLote(getRespostaLote());
             r.setRespostaFixa(rf);
             r.setDescricao(quantidade);
-            r.setLancamento(DataHoje.dataHoje());
             if (dao.save(r, true)) {
                 Messages.info("Sucesso", "Questão respondida");
             } else {
@@ -343,7 +405,6 @@ public class QuestionarioRespostaBean {
             if (quantidade != null && !quantidade.equals("#int")) {
                 r.setDescricao(quantidade);
             }
-            r.setPessoa(pessoa);
             r.setRespostaFixa(rf);
             if (dao.update(r, true)) {
                 Messages.info("Sucesso", "Questão atualizada");
@@ -355,7 +416,6 @@ public class QuestionarioRespostaBean {
 
     public void saveOpcao() {
         Dao dao = new Dao();
-        resposta.setPessoa(pessoa);
         RespostaDao respostaDao = new RespostaDao();
         RespostaFixa rf = new RespostaFixaDao().findByQuestao(questao.getId(), true);
         if (rf == null) {
@@ -364,10 +424,9 @@ public class QuestionarioRespostaBean {
         }
         Resposta r = respostaDao.findByQuestao(pessoa.getId(), questao.getId());
         if (r.getId() == null) {
-            r.setPessoa(pessoa);
+            r.setRespostaLote(getRespostaLote());
             r.setRespostaFixa(rf);
             r.setDescricao(opcao);
-            r.setLancamento(DataHoje.dataHoje());
             if (dao.save(r, true)) {
                 Messages.info("Sucesso", "Questão respondida");
             } else {
@@ -377,7 +436,6 @@ public class QuestionarioRespostaBean {
             if (opcao != null && !opcao.equals("#boolean")) {
                 r.setDescricao(opcao);
             }
-            r.setPessoa(pessoa);
             r.setRespostaFixa(rf);
             if (dao.update(r, true)) {
                 Messages.info("Sucesso", "Questão respondida");
@@ -389,7 +447,6 @@ public class QuestionarioRespostaBean {
 
     public void saveValor() {
         Dao dao = new Dao();
-        resposta.setPessoa(pessoa);
         RespostaDao respostaDao = new RespostaDao();
         RespostaFixa rf = new RespostaFixaDao().findByQuestao(questao.getId(), true);
         if (rf == null) {
@@ -398,10 +455,9 @@ public class QuestionarioRespostaBean {
         }
         Resposta r = respostaDao.findByQuestao(pessoa.getId(), questao.getId());
         if (r.getId() == null) {
-            r.setPessoa(pessoa);
+            r.setRespostaLote(getRespostaLote());
             r.setRespostaFixa(rf);
             r.setDescricao(valor);
-            r.setLancamento(DataHoje.dataHoje());
             if (dao.save(r, true)) {
                 Messages.info("Sucesso", "Questão respondida");
             } else {
@@ -412,7 +468,6 @@ public class QuestionarioRespostaBean {
                 r.setDescricao(valor);
             }
             r.setDescricao(valor);
-            r.setPessoa(pessoa);
             r.setRespostaFixa(rf);
             if (dao.update(r, true)) {
                 Messages.info("Sucesso", "Questão atualziada");
@@ -424,7 +479,6 @@ public class QuestionarioRespostaBean {
 
     public void saveTexto() {
         Dao dao = new Dao();
-        resposta.setPessoa(pessoa);
         RespostaDao respostaDao = new RespostaDao();
         RespostaFixa rf = new RespostaFixaDao().findByQuestao(questao.getId(), true);
         if (rf == null) {
@@ -433,10 +487,9 @@ public class QuestionarioRespostaBean {
         }
         Resposta r = respostaDao.findByQuestao(pessoa.getId(), questao.getId());
         if (r.getId() == null) {
-            r.setPessoa(pessoa);
+            r.setRespostaLote(getRespostaLote());
             r.setRespostaFixa(rf);
             r.setDescricao(texto);
-            r.setLancamento(DataHoje.dataHoje());
             if (dao.save(r, true)) {
                 Messages.info("Sucesso", "Questão respondida");
             } else {
@@ -446,7 +499,6 @@ public class QuestionarioRespostaBean {
             if (texto != null && !texto.equals("#text")) {
                 r.setDescricao(texto);
             }
-            r.setPessoa(pessoa);
             r.setRespostaFixa(rf);
             if (dao.update(r, true)) {
                 Messages.info("Sucesso", "Questão respondida");
@@ -458,21 +510,18 @@ public class QuestionarioRespostaBean {
 
     public void saveIndexString() {
         Dao dao = new Dao();
-        resposta.setPessoa(pessoa);
         RespostaDao respostaDao = new RespostaDao();
         RespostaFixa rf = (RespostaFixa) dao.find(new RespostaFixa(), Integer.parseInt(indexString));
         Resposta r = respostaDao.findByQuestao(pessoa.getId(), questao.getId());
         if (r.getId() == null) {
-            r.setPessoa(pessoa);
+            r.setRespostaLote(getRespostaLote());
             r.setRespostaFixa(rf);
-            r.setLancamento(DataHoje.dataHoje());
             if (dao.save(r, true)) {
                 Messages.info("Sucesso", "Questão respondida");
             } else {
                 Messages.warn("Erro", "Ao salvar registro!");
             }
         } else {
-            r.setPessoa(pessoa);
             r.setRespostaFixa(rf);
             if (dao.update(r, true)) {
                 Messages.info("Sucesso", "Questão respondida");
@@ -482,16 +531,49 @@ public class QuestionarioRespostaBean {
         }
     }
 
+    public void loadRespostaLote() {
+        if (respostaLote == null) {
+            Dao dao = new Dao();
+            respostaLote = new RespostaLoteDao().findBy(Integer.parseInt(questionario_id), pessoa.getId(), DataHoje.dataHoje());
+            if (respostaLote == null) {
+                respostaLote = new RespostaLote();
+                respostaLote.setPessoa(pessoa);
+                Equipe e = new EquipeDao().findByPessoaAndFuncaoEquipe(((Usuario) Sessions.getObject("sessaoUsuario")).getPessoa().getId());
+                if (e == null) {
+                    Messages.warn("Sistema", "Equipe não existe!");
+                    return;
+                }
+                respostaLote.setEquipe(e);
+                respostaLote.setLancamento(DataHoje.dataHoje());
+                respostaLote.setHora(DataHoje.hora());
+                respostaLote.setQuestionario((Questionario) dao.find(new Questionario(), Integer.parseInt(questionario_id)));
+                if (!dao.save(respostaLote, true)) {
+                    respostaLote = null;
+                }
+            }
+        }
+    }
+
+    public RespostaLote getRespostaLote() {
+        return respostaLote;
+    }
+
+    public void setRespostaLote(RespostaLote respostaLote) {
+        this.respostaLote = respostaLote;
+    }
+
     public String getResultado(Integer questao_id) {
         String respostaString = "";
         if (pessoa.getId() != -1) {
-            RespostaDao respostaDao = new RespostaDao();
-            Resposta r = respostaDao.findByQuestao(pessoa.getId(), questao_id);
-            if (r.getId() != null) {
-                if (r.getRespostaFixa() != null) {
-                    respostaString = r.getRespostaFixa().getDescricao();
-                    if (r.getDescricao() != null && !r.getDescricao().isEmpty()) {
-                        respostaString = r.getDescricao();
+            if (respostaLote != null && respostaLote.getId() != null) {
+                RespostaDao respostaDao = new RespostaDao();
+                Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao_id);
+                if (r.getId() != null) {
+                    if (r.getRespostaFixa() != null) {
+                        respostaString = r.getRespostaFixa().getDescricao();
+                        if (r.getDescricao() != null && !r.getDescricao().isEmpty()) {
+                            respostaString = r.getDescricao();
+                        }
                     }
                 }
             }
@@ -522,4 +604,119 @@ public class QuestionarioRespostaBean {
     public void setTexto(String texto) {
         this.texto = texto;
     }
+
+    public List<SelectItem> getListQuestionario() {
+        return listQuestionario;
+    }
+
+    public void setListQuestionario(List<SelectItem> listQuestionario) {
+        this.listQuestionario = listQuestionario;
+    }
+
+    public String getQuestionario_id() {
+        return questionario_id;
+    }
+
+    public void setQuestionario_id(String questionario_id) {
+        this.questionario_id = questionario_id;
+    }
+
+    public List<RespostaLote> getListRespostaLote() {
+        return listRespostaLote;
+    }
+
+    public void setListRespostaLote(List<RespostaLote> listRespostaLote) {
+        this.listRespostaLote = listRespostaLote;
+    }
+
+    public void loadListRespostaLote() {
+        listRespostaLote.clear();
+        listRespostaLote = (List<RespostaLote>) new RespostaLoteDao().findBy(porPesquisa, comoPesquisa, descricaoPesquisa);
+
+    }
+
+    public void acaoPesquisaInicial() {
+        setComoPesquisa(1);
+        loadListRespostaLote();
+    }
+
+    public void acaoPesquisaParcial() {
+        setComoPesquisa(2);
+        loadListRespostaLote();
+    }
+
+    public String[] getDescricaoPesquisa() {
+        return descricaoPesquisa;
+    }
+
+    public void setDescricaoPesquisa(String[] descricaoPesquisa) {
+        this.descricaoPesquisa = descricaoPesquisa;
+    }
+
+    public String getPorPesquisa() {
+        return porPesquisa;
+    }
+
+    public void setPorPesquisa(String porPesquisa) {
+        this.porPesquisa = porPesquisa;
+    }
+
+    public Integer getComoPesquisa() {
+        return comoPesquisa;
+    }
+
+    public void setComoPesquisa(Integer comoPesquisa) {
+        this.comoPesquisa = comoPesquisa;
+    }
+
+    /**
+     * Questionário grupo
+     *
+     * @return
+     */
+    public List<QuestionarioGrupo> getListQGrupo() {
+        try {
+            return listQuestionarioGrupo;
+        } catch (Exception e) {
+            return new ArrayList<>();
+
+        }
+    }
+
+    /**
+     * Questionário subgrupo
+     *
+     * @param index
+     * @return
+     */
+    public List<QuestionarioSubgrupo> getListQSubgrupo(Integer index) {
+        try {
+            return listQuestionarioSubgrupo[index];
+        } catch (Exception e) {
+            return new ArrayList<>();
+
+        }
+    }
+
+    /**
+     * .Retornar questões do Subgrupo
+     *
+     * @param questionario_subgrupo_id
+     * @return
+     */
+    public List<Questao> getListQuestoes(Integer questionario_subgrupo_id) {
+        try {
+            List<Questao> list = new ArrayList();
+            for (int i = 0; i < listQuestoes.size(); i++) {
+                if (Objects.equals(listQuestoes.get(i).getSubgrupo().getId(), questionario_subgrupo_id)) {
+                    list.add(listQuestoes.get(i));
+                }
+            }
+            return list;
+        } catch (Exception e) {
+            return new ArrayList<>();
+
+        }
+    }
+
 }

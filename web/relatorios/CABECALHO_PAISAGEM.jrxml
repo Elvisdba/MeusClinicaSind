@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="template_header" pageWidth="842" pageHeight="595" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b39bfb33-6477-4b03-87a0-d997b7d28b94">
+	<property name="ireport.zoom" value="1.100000000000005"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<parameter name="companhia_nome" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_documento" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_site" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_logradouro" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_endereco" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_logo" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_numero" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_complemento" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_bairro" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_cidade" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_uf" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="companhia_cep" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[select
+'' as companhia_logo,
+'' as companhia_nome,
+'' as companhia_documento,
+'' as companhia_site,
+'' as companhia_logradouro,
+'' as companhia_endereco,
+'' as companhia_numero,
+'' as companhia_complemento,
+'' as companhia_bairro,
+'' as companhia_cidade,
+'' as companhia_uf,
+'' as companhia_cep;]]>
+	</queryString>
+	<field name="companhia_logo" class="java.lang.String"/>
+	<field name="companhia_nome" class="java.lang.String"/>
+	<field name="companhia_documento" class="java.lang.String"/>
+	<field name="companhia_site" class="java.lang.String"/>
+	<field name="companhia_logradouro" class="java.lang.String"/>
+	<field name="companhia_endereco" class="java.lang.String"/>
+	<field name="companhia_numero" class="java.lang.String"/>
+	<field name="companhia_complemento" class="java.lang.String"/>
+	<field name="companhia_bairro" class="java.lang.String"/>
+	<field name="companhia_cidade" class="java.lang.String"/>
+	<field name="companhia_uf" class="java.lang.String"/>
+	<field name="companhia_cep" class="java.lang.String"/>
+	<columnHeader>
+		<band height="75">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-5" x="86" y="46" width="425" height="10" uuid="ef98cbbe-40f6-4147-b892-65fb6450c262"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CNPJ: "+$P{companhia_documento}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-3" x="86" y="33" width="425" height="10" uuid="00aaa98f-9203-49a1-bd70-19a58f16bd6e"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CEP: "+$P{companhia_cep}+"   Cidade/UF: "+$P{companhia_cidade}+"/"+$P{companhia_uf}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-2" x="86" y="21" width="717" height="10" uuid="f522328b-469d-45a9-8ed9-f98d10826f8f"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{companhia_logradouro}+" "+$P{companhia_endereco}+", " +$P{companhia_numero}+" "+$P{companhia_complemento}+" - "+$P{companhia_bairro}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-1" x="86" y="2" width="717" height="19" uuid="804a0107-2696-4d62-a3a0-8e76f77bd1db"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{companhia_nome}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-4" x="86" y="58" width="425" height="10" uuid="5ec37b16-dda7-40ab-a887-0e33bbb24ab7"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Site: "+$P{companhia_site}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement key="image-1" x="1" y="1" width="80" height="60" isRemoveLineWhenBlank="true" uuid="49f726b4-e757-476d-a3f8-cb3553ec2442"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$P{companhia_logo}]]></imageExpression>
+			</image>
+		</band>
+	</columnHeader>
+</jasperReport>

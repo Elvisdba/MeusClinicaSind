@@ -1,13 +1,11 @@
 package br.com.clinicaintegrada.questionario;
 
-import br.com.clinicaintegrada.pessoa.Pessoa;
 import java.io.Serializable;
-import java.util.Date;
 import javax.persistence.*;
 
 @Entity
 @Table(name = "que_resposta",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"dt_lancamento", "id_pessoa", "id_resposta_fixa"})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"id_lote", "id_resposta_fixa"})
 )
 public class Resposta implements Serializable {
 
@@ -15,12 +13,9 @@ public class Resposta implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    @Temporal(TemporalType.DATE)
-    @Column(name = "dt_lancamento", nullable = false)
-    private Date lancamento;
-    @JoinColumn(name = "id_pessoa", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "id_resposta_lote", referencedColumnName = "id", nullable = false)
     @OneToOne
-    private Pessoa pessoa;
+    private RespostaLote respostaLote;
     @JoinColumn(name = "id_resposta_fixa", referencedColumnName = "id", nullable = false)
     @OneToOne
     private RespostaFixa respostaFixa;
@@ -29,16 +24,14 @@ public class Resposta implements Serializable {
 
     public Resposta() {
         this.id = null;
-        this.lancamento = null;
-        this.pessoa = null;
+        this.respostaLote = null;
         this.respostaFixa = null;
-        this.descricao = null;
+        this.descricao = "";
     }
 
-    public Resposta(Integer id, Date lancamento, Pessoa pessoa, RespostaFixa respostaFixa, String descricao) {
+    public Resposta(Integer id, RespostaLote respostaLote, RespostaFixa respostaFixa, String descricao) {
         this.id = id;
-        this.lancamento = lancamento;
-        this.pessoa = pessoa;
+        this.respostaLote = respostaLote;
         this.respostaFixa = respostaFixa;
         this.descricao = descricao;
     }
@@ -51,20 +44,12 @@ public class Resposta implements Serializable {
         this.id = id;
     }
 
-    public Date getLancamento() {
-        return lancamento;
+    public RespostaLote getRespostaLote() {
+        return respostaLote;
     }
 
-    public void setLancamento(Date lancamento) {
-        this.lancamento = lancamento;
-    }
-
-    public Pessoa getPessoa() {
-        return pessoa;
-    }
-
-    public void setPessoa(Pessoa pessoa) {
-        this.pessoa = pessoa;
+    public void setRespostaLote(RespostaLote respostaLote) {
+        this.respostaLote = respostaLote;
     }
 
     public RespostaFixa getRespostaFixa() {
@@ -85,7 +70,7 @@ public class Resposta implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 7;
+        int hash = 3;
         return hash;
     }
 
@@ -103,7 +88,7 @@ public class Resposta implements Serializable {
 
     @Override
     public String toString() {
-        return "Resposta{" + "id=" + id + ", lancamento=" + lancamento + ", pessoa=" + pessoa + ", respostaFixa=" + respostaFixa + ", descricao=" + descricao + '}';
+        return "Resposta{" + "id=" + id + ", respostaLote=" + respostaLote + ", respostaFixa=" + respostaFixa + ", descricao=" + descricao + '}';
     }
 
 }

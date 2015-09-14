@@ -62,10 +62,10 @@
                                     </p:submenu>
                                     <p:submenu label="Resgate" icon="ui-icon-document" style="margin-right: 15px">
                                         <p:menuitem value="Manutenção"          action="#{chamadaPaginaBean.pagina('resgate')}" />
-                                        <p:menuitem value="Consulta resgate"    action="#{chamadaPaginaBean.pagina()}" />
+                                        <p:menuitem value="Consulta resgate"    action="#{chamadaPaginaBean.pagina('')}" />
                                     </p:submenu>
                                     <p:menuitem value="Transferência"           action="#{chamadaPaginaBean.pagina('transferencia')}" />
-                                    <p:menuitem value="Questionário"            action="#{chamadaPaginaBean.pagina('questionarioCoordenacao', 'qiestionarioRespostaBean')}" actionListener="#{questionarioRespostaBean.setRotina(121)}"/>
+                                    <p:menuitem value="Questionário"            action="#{chamadaPaginaBean.pagina('questionarioCoordenacao', 'questionarioRespostaBean')}" actionListener="#{questionarioRespostaBean.setRotina(121)}"/>
                                 </p:submenu>
                                 <p:submenu label="Relatório" icon="ui-icon-document" style="margin-right: 15px">
                                     <p:menuitem value="Frequência"     action="#{chamadaPaginaBean.pagina('relatorioFrequencia')}"/>

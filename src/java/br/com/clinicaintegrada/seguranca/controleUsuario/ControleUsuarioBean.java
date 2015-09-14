@@ -47,6 +47,7 @@ public class ControleUsuarioBean implements Serializable {
     private String msgErro = "";
     private List<ContadorAcessos> listaContador = new ArrayList();
     private List<String> images = new ArrayList<>();
+    private String cliente_identificador = null;
 
     public String validacao() throws Exception {
         if (macFilial != null && macFilial.getId() != null) {
@@ -73,7 +74,7 @@ public class ControleUsuarioBean implements Serializable {
         LiberaAcesso liberaAcesso = null;
         Cliente c;
         if (SessaoCliente.get().getIdentifica().equals("ClinicaIntegradaProducao")) {
-            c = new ClienteDao().findByIdentificador("ClinicaIntegrada");
+            c = new ClienteDao().findByIdentificador(cliente_identificador);
         } else {
             c = new ClienteDao().findByIdentificador(SessaoCliente.get().getIdentifica());
         }
@@ -169,6 +170,12 @@ public class ControleUsuarioBean implements Serializable {
                 requestCliente = request.getParameter("cliente");
                 c.setIdentifica(requestCliente);
             }
+        }
+        cliente_identificador = null;
+        if (request.getParameter("cliente_identificador") == null) {
+            cliente_identificador = "ClinicaIntegrada";
+        } else {
+            cliente_identificador = request.getParameter("cliente_identificador");
         }
         if (!requestCliente.equals("")) {
             if (Sessions.exists("sessaoCliente")) {
@@ -391,6 +398,14 @@ public class ControleUsuarioBean implements Serializable {
 
     public void setImages(List<String> images) {
         this.images = images;
+    }
+
+    public String getCliente_identificador() {
+        return cliente_identificador;
+    }
+
+    public void setCliente_identificador(String cliente_identificador) {
+        this.cliente_identificador = cliente_identificador;
     }
 
 }

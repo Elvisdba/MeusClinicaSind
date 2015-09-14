@@ -244,23 +244,7 @@ public class Pessoa implements BaseEntity, Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 89 * hash + this.id;
-        hash = 89 * hash + Objects.hashCode(this.cliente);
-        hash = 89 * hash + Objects.hashCode(this.nome);
-        hash = 89 * hash + Objects.hashCode(this.tipoDocumento);
-        hash = 89 * hash + Objects.hashCode(this.obs);
-        hash = 89 * hash + Objects.hashCode(this.site);
-        hash = 89 * hash + Objects.hashCode(this.telefone1);
-        hash = 89 * hash + Objects.hashCode(this.telefone2);
-        hash = 89 * hash + Objects.hashCode(this.telefone3);
-        hash = 89 * hash + Objects.hashCode(this.email1);
-        hash = 89 * hash + Objects.hashCode(this.email2);
-        hash = 89 * hash + Objects.hashCode(this.email3);
-        hash = 89 * hash + Objects.hashCode(this.documento);
-        hash = 89 * hash + Objects.hashCode(this.login);
-        hash = 89 * hash + Objects.hashCode(this.senha);
-        hash = 89 * hash + Objects.hashCode(this.criacao);
+        int hash = 3;
         return hash;
     }
 
@@ -273,54 +257,6 @@ public class Pessoa implements BaseEntity, Serializable {
             return false;
         }
         final Pessoa other = (Pessoa) obj;
-        if (this.id != other.id) {
-            return false;
-        }
-        if (!Objects.equals(this.cliente, other.cliente)) {
-            return false;
-        }
-        if (!Objects.equals(this.nome, other.nome)) {
-            return false;
-        }
-        if (!Objects.equals(this.tipoDocumento, other.tipoDocumento)) {
-            return false;
-        }
-        if (!Objects.equals(this.obs, other.obs)) {
-            return false;
-        }
-        if (!Objects.equals(this.site, other.site)) {
-            return false;
-        }
-        if (!Objects.equals(this.telefone1, other.telefone1)) {
-            return false;
-        }
-        if (!Objects.equals(this.telefone2, other.telefone2)) {
-            return false;
-        }
-        if (!Objects.equals(this.telefone3, other.telefone3)) {
-            return false;
-        }
-        if (!Objects.equals(this.email1, other.email1)) {
-            return false;
-        }
-        if (!Objects.equals(this.email2, other.email2)) {
-            return false;
-        }
-        if (!Objects.equals(this.email3, other.email3)) {
-            return false;
-        }
-        if (!Objects.equals(this.documento, other.documento)) {
-            return false;
-        }
-        if (!Objects.equals(this.login, other.login)) {
-            return false;
-        }
-        if (!Objects.equals(this.senha, other.senha)) {
-            return false;
-        }
-        if (!Objects.equals(this.criacao, other.criacao)) {
-            return false;
-        }
         return true;
     }
 
