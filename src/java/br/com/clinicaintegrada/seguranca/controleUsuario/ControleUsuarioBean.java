@@ -24,7 +24,9 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 @ManagedBean
@@ -48,6 +50,7 @@ public class ControleUsuarioBean implements Serializable {
     private List<ContadorAcessos> listaContador = new ArrayList();
     private List<String> images = new ArrayList<>();
     private String cliente_identificador = null;
+    private Boolean remember_me = false;
 
     public String validacao() throws Exception {
         if (macFilial != null && macFilial.getId() != null) {
@@ -149,6 +152,33 @@ public class ControleUsuarioBean implements Serializable {
         if (liberaAcesso != null) {
             new Dao().delete(liberaAcesso, true);
         }
+        // GERAR O COCKIE DA SESSÃO
+//        if (remember_me) {
+//            try {
+//                //FacesContext
+//                FacesContext facesContext = FacesContext.getCurrentInstance();
+//                //Cria cookie
+//                Cookie[] cookie = new Cookie[5];
+//                cookie[0] = new Cookie("us3r5l0g1ncl1n1c4", "" + usuario.getLogin());
+//                cookie[1] = new Cookie("us3r5p4ssw0rdcl1n1c4", "" + usuario.getSenha());
+//                cookie[2] = new Cookie("us3r51sr3m3mb3rcl1n1c4", "" + 1);
+//                cookie[3] = new Cookie("cl1ent3cl1n1c4", usuario.getCliente().getIdentifica());
+//                cookie[0].setMaxAge(-1);
+//                cookie[1].setMaxAge(-1);
+//                cookie[2].setMaxAge(-1);
+//                cookie[3].setMaxAge(-1);
+//                if (macFilial != null) {
+//                    cookie[4] = new Cookie("m4ccl1n1c4", macFilial.getMac());
+//                    cookie[4].setMaxAge(-1);
+//                }
+//                //Adiciona
+//                ((HttpServletResponse) facesContext.getExternalContext().getResponse()).addCookie(cookie[0]);
+//                ((HttpServletResponse) facesContext.getExternalContext().getResponse()).addCookie(cookie[1]);
+//                ((HttpServletResponse) facesContext.getExternalContext().getResponse()).addCookie(cookie[2]);
+//            } catch (Exception e) {
+//                e.getStackTrace();
+//            }
+//        }
         return pagina;
     }
 
@@ -295,7 +325,7 @@ public class ControleUsuarioBean implements Serializable {
         //  filialDep = request.getRequestURL().toString();
         // filialDep = requestFilial.getQueryString();
         filialDep = request.getParameter("filial");
-        if (filialDep == null && macFilial.getId() != null) {
+        if (filialDep == null && (macFilial == null || macFilial.getId() != null)) {
             return "";
         }
         if (filialDep != null) {
@@ -406,6 +436,14 @@ public class ControleUsuarioBean implements Serializable {
 
     public void setCliente_identificador(String cliente_identificador) {
         this.cliente_identificador = cliente_identificador;
+    }
+
+    public Boolean getRemember_me() {
+        return remember_me;
+    }
+
+    public void setRemember_me(Boolean remember_me) {
+        this.remember_me = remember_me;
     }
 
 }

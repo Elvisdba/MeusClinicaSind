@@ -31,6 +31,9 @@ public class RespostaLote implements Serializable {
     private Questionario questionario;
     @Column(name = "ds_hora", length = 255)
     private String hora;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "dt_atualizacao", nullable = true)
+    private Date atualizacao;
 
     public RespostaLote() {
         this.id = null;
@@ -39,15 +42,17 @@ public class RespostaLote implements Serializable {
         this.pessoa = null;
         this.questionario = null;
         this.hora = DataHoje.hora();
+        this.atualizacao = null;
     }
 
-    public RespostaLote(Integer id, Date lancamento, Equipe equipe, Pessoa pessoa, Questionario questionario, String hora) {
+    public RespostaLote(Integer id, Date lancamento, Equipe equipe, Pessoa pessoa, Questionario questionario, String hora, Date atualizacao) {
         this.id = id;
         this.lancamento = lancamento;
         this.equipe = equipe;
         this.pessoa = pessoa;
         this.questionario = questionario;
         this.hora = hora;
+        this.atualizacao = atualizacao;
     }
 
     public Integer getId() {
@@ -65,7 +70,7 @@ public class RespostaLote implements Serializable {
     public void setLancamento(Date lancamento) {
         this.lancamento = lancamento;
     }
-    
+
     public String getLancamentoString() {
         return DataHoje.converteData(lancamento);
     }
@@ -104,6 +109,45 @@ public class RespostaLote implements Serializable {
 
     public void setHora(String hora) {
         this.hora = hora;
+    }
+
+    public Date getAtualizacao() {
+        return atualizacao;
+    }
+
+    public void setAtualizacao(Date atualizacao) {
+        this.atualizacao = atualizacao;
+    }
+
+    public String getAtualizacaoString() {
+        return DataHoje.converteData(atualizacao);
+    }
+
+    public void setAtualizacaoString(String atualizacaoString) {
+        this.atualizacao = DataHoje.converte(atualizacaoString);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final RespostaLote other = (RespostaLote) obj;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "RespostaLote{" + "id=" + id + ", lancamento=" + lancamento + ", equipe=" + equipe + ", pessoa=" + pessoa + ", questionario=" + questionario + ", hora=" + hora + ", atualizacao=" + atualizacao + '}';
     }
 
 }

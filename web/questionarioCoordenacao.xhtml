@@ -35,6 +35,7 @@
                             <p:messages id="i_msg" showDetail="true" closable="true" />
                             <p:growl showDetail="true" showSummary="true"/>
                             <div class="clear"></div>
+                            <h:column rendered="#{questionarioRespostaBean.pessoa == null}"></h:column>
                             <p:panel styleClass="fundoCinza">
                                 <h:panelGrid columns="2">
                                     <h:outputLabel value="Questionário:" />
@@ -50,13 +51,15 @@
                                             <p:inputText value="#{questionarioRespostaBean.respostaLote.hora}" readonly="true" size="1" styleClass="text-center"/>                                                                                    
                                         </h:panelGrid>
                                     </h:column>
-                                    <h:outputLabel value="Equipe: " rendered="#{questionarioRespostaBean.respostaLote != null}"/>
-                                    <h:outputLabel value=" #{questionarioRespostaBean.respostaLote.equipe.pessoa.nome}" styleClass="text-center" rendered="#{questionarioRespostaBean.respostaLote != null}"/>
+                                    <p:outputLabel value="Atualizado em:" rendered="#{questionarioRespostaBean.respostaLote != null}"/>
+                                    <h:panelGrid columns="3" rendered="#{questionarioRespostaBean.respostaLote != null}">
+                                        <p:inputText value=" #{questionarioRespostaBean.respostaLote.atualizacaoString}" readonly="true" size="8" styleClass="text-center"/>
+                                    </h:panelGrid>
                                 </h:panelGrid>                                
                             </p:panel>
                             <p:panel header="Paciente" styleClass="margin-top-max">
                                 <h:panelGrid columns="2">
-                                    <p:commandButton value="Pesquisar pessoa" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaFisica', 'fisicaBean')}" disabled="#{controleAcessoBean.save}" rendered="#{questionarioRespostaBean.pessoa.id == -1}"/>
+                                    <p:commandButton value="Pesquisar pessoa" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaFisica', 'fisicaBean')}" disabled="#{controleAcessoBean.save || questionarioRespostaBean.respostaLote != null}" rendered="#{questionarioRespostaBean.pessoa.id == -1}"/>
                                     <h:column>
                                         <h:outputLabel value="#{questionarioRespostaBean.pessoa.nome}" />
                                     </h:column>
@@ -64,7 +67,7 @@
                                 <f:facet name="footer">
                                     <h:panelGrid columns="3">
                                         <h:column>
-                                            <p:commandButton value="Novo Paciente" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaFisica', 'fisicaBean')}" actionListener="#{questionarioRespostaBean.clear()}" rendered="#{questionarioRespostaBean.pessoa.id != -1}"/>
+                                            <p:commandButton value="Novo Paciente" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaFisica', 'fisicaBean')}" actionListener="#{questionarioRespostaBean.clear()}" rendered="#{questionarioRespostaBean.pessoa.id != -1}" />
                                         </h:column>
                                         <p:commandButton value="Pesquisar Questionário" action="#{chamadaPaginaBean.pesquisa('pesquisaQuestionarioCoordenacao')}" />                                        
                                         <h:column>
@@ -73,6 +76,10 @@
                                     </h:panelGrid>
                                 </f:facet>
                             </p:panel>
+                            <h:panelGrid columns="2" styleClass="margin-top-max">
+                                <h:outputLabel value="Resposnável pelo cadastro: " rendered="#{questionarioRespostaBean.respostaLote != null}"/>
+                                <h:outputLabel value=" #{questionarioRespostaBean.respostaLote.equipe.pessoa.nome}" styleClass="text-center" rendered="#{questionarioRespostaBean.respostaLote != null}"/>
+                            </h:panelGrid>
                             <h:panelGrid rendered="#{questionarioRespostaBean.pessoa.id != -1}" style="width: 100%; border: 0px!important " styleClass="margin-top-max">
                                 <p:dataGrid value="#{questionarioRespostaBean.listQGrupo}" var="questionarioGrupo" id="i_g" rowIndexVar="indexqg" columns="1" emptyMessage="Nenhum grupo encontrado!" style="border: 1px solid white!important">
                                     <p:dataGrid value="#{questionarioRespostaBean.getListQSubgrupo(indexqg)}" var="questionarioSubGrupo" id="i_sg" rowIndexVar="indexqsg" columns="1" style="margin: 5px"  emptyMessage="Nenhum subgrupo encontrado!">

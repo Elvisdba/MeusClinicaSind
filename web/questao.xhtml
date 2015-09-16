@@ -82,7 +82,7 @@
                                     <p:column styleClass="text-center" width="25">
                                         <p:commandButton icon="ui-icon-trash" action="#{questaoBean.delete(questao)}" update=":form_questao:tbl :form_questao:i_panel :form_questao:i_msg" disabled="#{controleAcessoBean.delete}"/>
                                     </p:column>
-                                    <p:column headerText="Grupo">
+                                    <p:column headerText="Subgrupo">
                                         <h:outputText value="#{questao.subgrupo.descricao}"/>
                                     </p:column>
                                     <p:column headerText="Descrição">

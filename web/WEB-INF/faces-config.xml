@@ -681,7 +681,7 @@
     </navigation-rule>
     
     <!-- <lifecycle>
-        <phase-listener>br.com.rtools.filters.AuthorizationListener</phase-listener>
+        <phase-listener>br.com.clinicaintegrada.filters.AuthorizationListener</phase-listener>
     </lifecycle> -->
     
 </faces-config>

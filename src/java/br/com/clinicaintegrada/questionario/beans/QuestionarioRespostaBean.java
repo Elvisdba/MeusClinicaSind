@@ -1,5 +1,6 @@
 package br.com.clinicaintegrada.questionario.beans;
 
+import br.com.clinicaintegrada.logSistema.Logger;
 import br.com.clinicaintegrada.pessoa.Equipe;
 import br.com.clinicaintegrada.pessoa.Fisica;
 import br.com.clinicaintegrada.pessoa.Pessoa;
@@ -28,6 +29,7 @@ import br.com.clinicaintegrada.utils.Moeda;
 import br.com.clinicaintegrada.utils.PF;
 import br.com.clinicaintegrada.utils.Sessions;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import javax.annotation.PostConstruct;
@@ -383,6 +385,15 @@ public class QuestionarioRespostaBean {
     }
 
     public void saveQuantidade() {
+        try {
+            if (quantidade == null || Integer.parseInt(quantidade) <= 0 || quantidade.equals("#int")) {
+                Messages.warn("Validação", "Informar uma quantidade válida!");
+                return;
+            }
+        } catch (Exception e) {
+            Messages.warn("Validação", "Informar uma quantidade válida!");
+            return;
+        }
         Dao dao = new Dao();
         RespostaLote rl = getRespostaLote();
         RespostaDao respostaDao = new RespostaDao();
@@ -391,7 +402,8 @@ public class QuestionarioRespostaBean {
             Messages.warn("Sistema", "Resposta não existe!");
             return;
         }
-        Resposta r = respostaDao.findByQuestao(pessoa.getId(), questao.getId());
+        updateRespostaLote();
+        Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
         if (r.getId() == null) {
             r.setRespostaLote(getRespostaLote());
             r.setRespostaFixa(rf);
@@ -415,6 +427,10 @@ public class QuestionarioRespostaBean {
     }
 
     public void saveOpcao() {
+        if (opcao == null || opcao.isEmpty() || opcao.equals("#boolean")) {
+            Messages.warn("Validação", "Selecionar uma opção!");
+            return;
+        }
         Dao dao = new Dao();
         RespostaDao respostaDao = new RespostaDao();
         RespostaFixa rf = new RespostaFixaDao().findByQuestao(questao.getId(), true);
@@ -422,7 +438,8 @@ public class QuestionarioRespostaBean {
             Messages.warn("Sistema", "Resposta não existe!");
             return;
         }
-        Resposta r = respostaDao.findByQuestao(pessoa.getId(), questao.getId());
+        updateRespostaLote();
+        Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
         if (r.getId() == null) {
             r.setRespostaLote(getRespostaLote());
             r.setRespostaFixa(rf);
@@ -446,6 +463,10 @@ public class QuestionarioRespostaBean {
     }
 
     public void saveValor() {
+        if (valor == null || valor.isEmpty() || valor.equals("#money")) {
+            Messages.warn("Validação", "Digitar um valor!");
+            return;
+        }
         Dao dao = new Dao();
         RespostaDao respostaDao = new RespostaDao();
         RespostaFixa rf = new RespostaFixaDao().findByQuestao(questao.getId(), true);
@@ -453,7 +474,18 @@ public class QuestionarioRespostaBean {
             Messages.warn("Sistema", "Resposta não existe!");
             return;
         }
-        Resposta r = respostaDao.findByQuestao(pessoa.getId(), questao.getId());
+        if (valor == null || valor.isEmpty()) {
+            Messages.warn("Sistema", "Nenhum valor espefíciado!");
+            return;
+
+        }
+        if (Moeda.converteUS$(valor) < 1) {
+            Messages.warn("Sistema", "Valor deve ser maior que 0!");
+            return;
+
+        }
+        updateRespostaLote();
+        Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
         if (r.getId() == null) {
             r.setRespostaLote(getRespostaLote());
             r.setRespostaFixa(rf);
@@ -478,6 +510,10 @@ public class QuestionarioRespostaBean {
     }
 
     public void saveTexto() {
+        if (texto == null || texto.isEmpty() || texto.equals("#text")) {
+            Messages.warn("Validação", "Digitar um valor!");
+            return;
+        }
         Dao dao = new Dao();
         RespostaDao respostaDao = new RespostaDao();
         RespostaFixa rf = new RespostaFixaDao().findByQuestao(questao.getId(), true);
@@ -485,7 +521,8 @@ public class QuestionarioRespostaBean {
             Messages.warn("Sistema", "Resposta não existe!");
             return;
         }
-        Resposta r = respostaDao.findByQuestao(pessoa.getId(), questao.getId());
+        updateRespostaLote();
+        Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
         if (r.getId() == null) {
             r.setRespostaLote(getRespostaLote());
             r.setRespostaFixa(rf);
@@ -509,10 +546,15 @@ public class QuestionarioRespostaBean {
     }
 
     public void saveIndexString() {
+        if (indexString == null || indexString.isEmpty()) {
+            Messages.warn("Validação", "Selecionar uma opção!");
+            return;
+        }
         Dao dao = new Dao();
         RespostaDao respostaDao = new RespostaDao();
         RespostaFixa rf = (RespostaFixa) dao.find(new RespostaFixa(), Integer.parseInt(indexString));
-        Resposta r = respostaDao.findByQuestao(pessoa.getId(), questao.getId());
+        updateRespostaLote();
+        Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
         if (r.getId() == null) {
             r.setRespostaLote(getRespostaLote());
             r.setRespostaFixa(rf);
@@ -549,7 +591,32 @@ public class QuestionarioRespostaBean {
                 respostaLote.setQuestionario((Questionario) dao.find(new Questionario(), Integer.parseInt(questionario_id)));
                 if (!dao.save(respostaLote, true)) {
                     respostaLote = null;
+                } else {
+                    Logger logger = new Logger();
+                    logger.save("ID: " + respostaLote.getId()
+                            + " - Lançamento: " + respostaLote.getLancamentoString()
+                            + " - Equipe: (" + respostaLote.getEquipe().getId() + ") " + respostaLote.getEquipe().getPessoa().getNome()
+                            + " - Pessoa: (" + respostaLote.getPessoa().getId() + ") " + respostaLote.getPessoa().getNome()
+                            + " - Quationário: (" + respostaLote.getQuestionario().getId() + ") " + respostaLote.getQuestionario().getDescricao()
+                    );
                 }
+            }
+        }
+    }
+
+    public void updateRespostaLote() {
+        RespostaLote rl = getRespostaLote();
+        Integer compare = DataHoje.dataHoje().compareTo(rl.getLancamento());
+        if (compare > 0) {
+            rl.setAtualizacao(new Date());
+            if (new Dao().update(rl, true)) {
+                Logger logger = new Logger();
+                logger.update("", "ID: " + rl.getId()
+                        + " - Lançamento: " + rl.getLancamentoString()
+                        + " - Atualização: " + rl.getAtualizacaoString()
+                        + " - Pessoa: (" + rl.getPessoa().getId() + ") " + rl.getPessoa().getNome()
+                        + " - Quationário: (" + rl.getQuestionario().getId() + ") " + rl.getQuestionario().getDescricao()
+                );
             }
         }
     }

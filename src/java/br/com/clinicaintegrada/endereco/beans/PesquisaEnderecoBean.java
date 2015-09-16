@@ -2,6 +2,7 @@ package br.com.clinicaintegrada.endereco.beans;
 
 import br.com.clinicaintegrada.endereco.Endereco;
 import br.com.clinicaintegrada.endereco.dao.EnderecoDao;
+import br.com.clinicaintegrada.utils.CEPService;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.PF;
 import br.com.clinicaintegrada.utils.Sessions;
@@ -74,6 +75,12 @@ public class PesquisaEnderecoBean implements Serializable {
             if (listEndereco.isEmpty()) {
                 EnderecoDao enderecoDao = new EnderecoDao();
                 listEndereco = enderecoDao.pesquisaEnderecoPorCep(cep);
+                if (listEndereco.isEmpty()) {
+                    CEPService cEPService = new CEPService();
+                    cEPService.setCep(cep);
+                    cEPService.procurar();
+                    listEndereco = enderecoDao.pesquisaEnderecoPorCep(cep);
+                }                
             }
         }
         return listEndereco;

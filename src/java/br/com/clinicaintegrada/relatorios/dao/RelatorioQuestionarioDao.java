@@ -70,7 +70,7 @@ public class RelatorioQuestionarioDao extends DB {
                     + " INNER JOIN pes_fisica        AS F   ON P.id   = F.id_pessoa         \n"
                     + " INNER JOIN pes_equipe        AS E   ON E.id   = RL.id_equipe        \n"
                     + " INNER JOIN pes_pessoa        AS PE  ON PE.id  = E.id_pessoa         \n"
-                    + " INNER JOIN pes_pessoa_endereco PENDE ON PENDE.id_pessoa = RL.id_pessoa         \n"
+                    + " INNER JOIN pes_pessoa_endereco PENDE ON PENDE.id_pessoa = RL.id_pessoa AND PENDE.id_tipo_endereco = 1 \n"
                     + " INNER JOIN end_endereco      AS ENDE ON ENDE.id = PENDE.id_endereco            \n"
                     + " INNER JOIN end_logradouro    AS L    ON L.id  = ENDE.id_logradouro             \n"
                     + " INNER JOIN end_descricao_endereco AS DE ON DE.id = ENDE.id_descricao_endereco  \n"

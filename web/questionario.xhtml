@@ -34,8 +34,9 @@
                             <c:set scope="request" var="object" value="${questionarioBean.questionario}"/> 
                             <p:messages id="i_msg" showDetail="true" closable="true" />                            
                             <p:panel styleClass="fundoCinza margin-top-max">
-                                <h:panelGrid id="i_panel" columns="3">
+                                <h:panelGrid id="i_panel" columns="3" columnClasses="ver verticalAlignTop">
                                     <p:column>
+                                        <p:outputLabel value="Rotina" /><br />
                                         <p:selectOneMenu id="idServicos" value="#{questionarioBean.idRotina}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
                                             <p:ajax event="change" update="@this tbl" listener="#{questionarioBean.listener(1)}" />
                                             <f:selectItem itemValue="" itemLabel="Selecionar"/>
@@ -44,12 +45,16 @@
                                     </p:column>
 
                                     <p:column>
+                                        <p:outputLabel value="Descrição" /><br />
                                         <p:inputText value="#{questionarioBean.questionario.descricao}" size="60" maxlength="255" converter="#{toUpperCase}">
                                             <p:ajax event="change" update="@this" />
                                         </p:inputText>
                                     </p:column>
 
-                                    <p:commandButton value="Adicionar" action="#{questionarioBean.save}" update="i_panel :form_questionario:tbl i_msg"/>
+                                    <p:column>
+                                        <br />
+                                        <p:commandButton value="Adicionar" action="#{questionarioBean.save}" update="i_panel :form_questionario:tbl i_msg"/>
+                                    </p:column>
                                 </h:panelGrid>
                             </p:panel>                            
                             <h:panelGrid id="tbl">

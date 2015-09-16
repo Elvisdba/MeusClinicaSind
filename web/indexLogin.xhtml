@@ -35,7 +35,7 @@
                     <h:inputHidden value="#{controleUsuarioBean.validacaoIndex}"/>
                 </h:form>
 
-                <p:panel styleClass="wrapper sb" style="border: 0px; background: #dbeaeb" rendered="#{controleUsuarioBean.filialDep != null}">
+                <p:panel styleClass="wrapper sb" style="border: 0px; background: #dbeaeb" rendered="#{controleUsuarioBean.filialDep != null and not empty controleUsuarioBean.filialDep}">
                     <h:outputLabel value="Filial Cadastrada: " />
                     <h:outputLabel value="#{controleUsuarioBean.filialDep}"/>
                 </p:panel>
@@ -63,6 +63,13 @@
                                             <h:outputLabel value="Senha " style="margin-bottom: 15px" for="i_sis_senha"/>
                                             <p:password id="i_sis_senha" style="width: 100%" value="#{controleUsuarioBean.usuario.senha}" required="true" requiredMessage="Digite uma Senha" autocomplete="off" maxlength="20" />
                                             <p:commandButton value="Entrar" action="#{controleUsuarioBean.validacao}" update="i_panel_login" style="float: right" />
+                                            <h:column>
+                                                <br />
+                                                <br />
+                                                <p:selectBooleanCheckbox itemLabel="Manter sessão"  value="#{controleUsuarioBean.remember_me}">
+                                                    <p:ajax event="change" update="@this" />
+                                                </p:selectBooleanCheckbox>
+                                            </h:column>
                                         </p:panelGrid>
 
                                         <p:watermark for="i_sis_login" value="Nome do Usuário" />
