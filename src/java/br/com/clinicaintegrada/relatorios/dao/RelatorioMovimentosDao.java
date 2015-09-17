@@ -169,6 +169,8 @@ public class RelatorioMovimentosDao extends DB {
 
     /**
      *
+     * Relatório resumido com totais
+     * 
      * @param cliente_id
      * @param contrato_numero
      * @param filtro_pessoa
