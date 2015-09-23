@@ -37,11 +37,15 @@
                                         <p:menuitem value="Grupo de Avaliação"  action="#{chamadaPaginaBean.paginaSimples('GrupoAvaliacao', 'Grupos de Avaliação')}" />
                                     </p:submenu>                                    
                                     <p:submenu label="Questionário" icon="ui-icon-document" style="margin-right: 15px" rendered="#{segurancaUtilitariosBean.sessaoUsuario.id == 1}">
-                                        <p:menuitem value="Manutenção"        action="#{chamadaPaginaBean.pagina('questionario')}" />
+                                        <p:menuitem value="Manutenção"          action="#{chamadaPaginaBean.pagina('questionario')}" />
                                         <p:menuitem value="Grupo"               action="#{chamadaPaginaBean.pagina('questionarioGrupo')}" />
                                         <p:menuitem value="Subgrupo"            action="#{chamadaPaginaBean.pagina('questionarioSubgrupo')}" />
                                         <p:menuitem value="Questão"             action="#{chamadaPaginaBean.pagina('questao')}" />
                                         <p:menuitem value="Resposta Fixa"       action="#{chamadaPaginaBean.pagina('respostaFixa')}" />
+                                    </p:submenu>
+                                    <p:submenu label="Suporte" icon="ui-icon-document" style="margin-right: 15px">
+                                        <p:menuitem value="Atendimento Família"       action="#{chamadaPaginaBean.pagina('atendimentoFamilia', 'ateFamiliaContratoBean')}" />
+                                        <p:menuitem value="Equipe Atendimento Família"       action="#{chamadaPaginaBean.pagina('equipeAtendimentoFamilia', 'ateFamiliaBean')}" />
                                     </p:submenu>
                                 </p:submenu>
                                 <p:submenu label="Movimento" icon="ui-icon-document" style="margin-right: 15px">

@@ -148,7 +148,7 @@ public class EscalaBean implements Serializable {
             }
             escala.setEquipe(equipe);
         } else {
-            if (contrato.getId() == -1) {
+            if (contrato.getId() == null) {
                 Messages.warn("Validação", "Pesquisar contrato!");
                 return;
             }

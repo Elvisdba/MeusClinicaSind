@@ -96,8 +96,8 @@ public class FotosEvolucaoBean implements Serializable {
      * @param c
      */
     public void execute(Contrato c) {
+        Dao dao = new Dao();
         try {
-            Dao dao = new Dao();
             String PATH_FILE = getId() + ".png";
             try {
                 if (c == null) {
@@ -152,6 +152,7 @@ public class FotosEvolucaoBean implements Serializable {
                 }
             }
         } catch (Exception e) {
+            dao.rollback();
             e.getMessage();
         }
     }

@@ -127,7 +127,7 @@ public class PertenceBean implements Serializable {
             Messages.warn("Validação", "Quantidade deve ser maior que zero!");
             return;
         }
-        if (contrato.getId() == -1) {
+        if (contrato.getId() == null) {
             Messages.warn("Validação", "Pesquisar um contrato válido!");
             return;
         }

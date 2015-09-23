@@ -669,6 +669,18 @@
             <to-view-id>/pesquisaQuestionarioCoordenacao.jsf</to-view-id>
             <redirect/>
         </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>equipeAtendimentoFamilia</from-outcome>
+            <to-view-id>/equipeAtendimentoFamilia.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>atendimentoFamilia</from-outcome>
+            <to-view-id>/atendimentoFamilia.jsf</to-view-id>
+            <redirect/>
+        </navigation-case>
 
                                     
         <!-- 

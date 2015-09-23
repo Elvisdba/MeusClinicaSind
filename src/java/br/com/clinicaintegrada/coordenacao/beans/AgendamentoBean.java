@@ -101,7 +101,6 @@ public class AgendamentoBean implements Serializable {
             Sessions.remove("agendamentoBean");
         }
     }
-    
 
     public void save() {
         ConfiguracaoCoordenacao cc = new ConfiguracaoCoordenacaoDao().findByCliente(SessaoCliente.get().getId());
@@ -138,7 +137,7 @@ public class AgendamentoBean implements Serializable {
             }
             agendamento.setFuncaoEquipe((FuncaoEquipe) dao.find(new FuncaoEquipe(), Integer.parseInt(listSelectItem[1].get(index[3]).getDescription())));
         }
-        if (contrato.getId() == -1) {
+        if (contrato.getId() == null) {
             Messages.warn("Validação", "Pesquisar contrato!");
             return;
         }

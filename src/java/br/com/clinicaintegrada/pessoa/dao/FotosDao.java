@@ -6,7 +6,6 @@ import br.com.clinicaintegrada.utils.DataHoje;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
-import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 public class FotosDao extends DB {

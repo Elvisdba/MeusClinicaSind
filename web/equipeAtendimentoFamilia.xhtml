@@ -1,0 +1,105 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Equipe Atendimento Família</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/imagens/favicon.ico"/>  
+        <style type="text/css">
+            .ui-widget-content .ui-inputfield{ padding: 8px!important;} 
+            .ui-button { padding: 3px!important; }
+        </style>
+
+        <script type="text/javascript">
+
+        </script>
+    </h:head>
+    <h:body>
+        <!-- INICIA DIV wrap e main -->
+        <div id="wrapx">
+            <div id="mainx">
+                <!-- INICIA DIV wrap e main -->  
+                <f:subview id="header">
+                    <ui:include src="templates/templatePrime.xhtml"/>
+                </f:subview>
+                <f:view>
+                    <p:panel styleClass="wrapper" style="border: 0px;">
+                        <h:outputText value="Equipe Atendimento Família" styleClass="fonteHeader" />
+                        <div class="clear"></div>
+                        <h:form id="form_eaf">
+                            <c:set scope="request" var="object" value="${ateFamiliaBean.ateFamilia}"/>
+                            <p:messages id="i_msg" showDetail="true" closable="true" />
+                            <p:growl showDetail="true" showSummary="true"/>
+                            <div class="clear"></div>
+                            <p:panel header="Equipe" styleClass="margin-top-max">
+                                <h:panelGrid columns="2">
+                                    <p:commandButton value="Pesquisar equipe" action="#{chamadaPaginaBean.pesquisa('pesquisaEquipe', 'equipeBean')}" />
+                                    <h:column rendered="#{ateFamiliaBean.ateFamilia.equipe != null}">
+                                        <h:panelGrid columns="2">
+                                            <h:outputLabel value="Nome" />
+                                            <h:outputLabel value="#{ateFamiliaBean.ateFamilia.equipe.pessoa.nome}" />
+                                            <h:outputLabel value="Profissão" />
+                                            <h:outputLabel value="#{ateFamiliaBean.ateFamilia.equipe.funcaoEquipe.profissao.profissao}" />
+                                        </h:panelGrid>
+                                    </h:column>
+                                </h:panelGrid>
+                                <f:facet name="footer">
+                                    <h:panelGrid columns="3">
+                                        <p:commandButton value="Adicionar" update="form_eaf" action="#{ateFamiliaBean.save}" disabled="#{controleAcessoBean.save}"/>
+                                        <p:commandButton value="Novo" update="form_eaf" action="#{ateFamiliaBean.clear}"/>
+                                    </h:panelGrid>
+                                </f:facet>
+                            </p:panel>
+                            <h:panelGrid rendered="#{ateFamiliaBean.listAteFamilia != null}" style="width: 100%; border: 0px!important " styleClass="margin-top-max" columnClasses="verticalAlignTop, verticalAlignTop" columns="2">
+                                <h:column>
+                                    <h:panelGrid style="width: 50%; border: 0px!important " styleClass="margin-top-max" id="ilosdsds">
+                                        <p:dataTable value="#{ateFamiliaBean.listAteFamilia}" var="ateFamilia" emptyMessage="Nenhum registro encontrado!">
+                                            <f:facet name="header">Remover</f:facet>
+                                            <p:column styleClass="text-center" width="50" headerText="Ordem" sortBy="#{ateFamilia.ordem}">
+                                                <h:outputText value="#{ateFamilia.ordem}" />
+                                            </p:column>
+                                            <p:column headerText="Nome" sortBy="#{ateFamilia.equipe.pessoa.nome}">
+                                                <h:outputText value="#{ateFamilia.equipe.pessoa.nome}" />
+                                            </p:column>
+                                            <p:column headerText="Atual" styleClass="text-center" width="30">
+                                                <p:selectBooleanCheckbox value="#{ateFamilia.ponteiro}" disabled="true"/>
+                                            </p:column>
+                                            <p:column width="30" filterBy="">
+                                                <p:commandButton icon="ui-icon-close" action="#{ateFamiliaBean.delete(ateFamilia)}" update=":form_eaf:" />
+                                            </p:column>                                    
+                                        </p:dataTable>
+                                    </h:panelGrid>                            
+                                </h:column>
+                                <h:column>
+                                    <h:panelGrid style="width: 50%; border: 0px!important " styleClass="margin-top-max">
+                                        <p:orderList value="#{ateFamiliaBean.listAteFamilia}" var="ateFamilia" itemValue="#{ateFamilia}" converter="#{entityConverter}" controlsLocation="right" >
+                                            <p:ajax event="select" listener="#{ateFamiliaBean.onSelect}"  update="form_eaf:ilosdsds"/>
+                                            <p:ajax event="unselect" listener="#{ateFamiliaBean.onUnselect}" update="form_eaf:ilosdsds"/>
+                                            <p:ajax event="reorder" listener="#{ateFamiliaBean.onReorder}" update="form_eaf:ilosdsds"/>                                    
+                                            <f:facet name="caption">Reordenar</f:facet>
+                                            <p:column>
+                                                <h:outputText value="#{ateFamilia.equipe.pessoa.nome}" />
+                                            </p:column>
+                                        </p:orderList>
+                                    </h:panelGrid>                            
+                                </h:column>
+                            </h:panelGrid>
+                        </h:form>
+                    </p:panel>
+                </f:view>
+                <!-- FINALIZA div wrap main -->
+            </div>
+        </div>
+        <!-- FINALIZA div wrap main -->
+
+        <div id="footerx">
+            <f:subview id="footer">
+                <ui:include src="templates/templateFooter.xhtml"/>
+            </f:subview>
+        </div>                
+    </h:body>
+</ui:composition>

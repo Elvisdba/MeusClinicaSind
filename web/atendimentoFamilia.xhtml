@@ -1,0 +1,78 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Atendimento Família</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/imagens/favicon.ico"/>  
+        <style type="text/css">
+            .ui-widget-content .ui-inputfield{ padding: 8px!important;} 
+            .ui-button { padding: 3px!important; }
+        </style>
+
+        <script type="text/javascript">
+
+        </script>
+    </h:head>
+    <h:body>
+        <!-- INICIA DIV wrap e main -->
+        <div id="wrapx">
+            <div id="mainx">
+                <!-- INICIA DIV wrap e main -->  
+                <f:subview id="header">
+                    <ui:include src="templates/templatePrime.xhtml"/>
+                </f:subview>
+                <f:view>
+                    <p:panel styleClass="wrapper" style="border: 0px;">
+                        <h:outputText value="Atendimento Família" styleClass="fonteHeader" />
+                        <div class="clear"></div>
+                        <h:form id="form_eaf">
+                            <c:set scope="request" var="object" value="${ateFamiliaContratoBean.ateFamilia}"/>
+                            <p:messages id="i_msg" showDetail="true" closable="true" />
+                            <p:growl showDetail="true" showSummary="true"/>
+                            <div class="clear"></div>
+                            <h:panelGrid rendered="#{ateFamiliaContratoBean.listAteFamiliaContrato != null}" styleClass="margin-top-max" columns="2">
+                                <p:outputLabel value="Próximo profissional: " />
+                                <p:inputText value="#{ateFamiliaContratoBean.ateFamilia.equipe.pessoa.nome}" readonly="true"/>
+                            </h:panelGrid>
+                            <h:panelGrid rendered="#{ateFamiliaContratoBean.listAteFamiliaContrato != null}" style="width: 100%; border: 0px!important " styleClass="margin-top-max">
+                                <p:dataTable value="#{ateFamiliaContratoBean.listAteFamiliaContrato}" var="ateFamiliaContrato" emptyMessage="Nenhum registro encontrado!" rows="10" paginator="true">
+                                    <p:column styleClass="text-center" width="50" headerText="Contrato" sortBy="#{ateFamiliaContrato.contrato.id}">
+                                        <h:outputText value="#{ateFamiliaContrato.contrato.id}" />
+                                    </p:column>
+                                    <p:column styleClass="text-center" headerText="Emissão" sortBy="#{ateFamiliaContrato.contrato.dataCadastroString}">
+                                        <h:outputText value="#{ateFamiliaContrato.contrato.dataCadastroString}" />
+                                    </p:column>
+                                    <p:column headerText="Responsável" sortBy="#{ateFamiliaContrato.contrato.responsavel.nome}">
+                                        <h:outputText value="#{ateFamiliaContrato.contrato.responsavel.nome}" />
+                                    </p:column>
+                                    <p:column headerText="Paciente" sortBy="#{ateFamiliaContrato.contrato.paciente.nome}">
+                                        <h:outputText value="#{ateFamiliaContrato.contrato.paciente.nome}" />
+                                    </p:column>
+                                    <p:column headerText="Profissional" sortBy="#{ateFamiliaContrato.equipe.pessoa.nome}">
+                                        <h:outputText value="#{ateFamiliaContrato.equipe.pessoa.nome}" />
+                                    </p:column>
+                                </p:dataTable>
+                                <f:facet name="footer">
+                                    <p:commandButton action="#{ateFamiliaContratoBean.relad()}" update="form_eaf" value="Atualizar" icon="ui-icon-refresh" styleClass="margin-top-max"/>                                    
+                                </f:facet>
+                            </h:panelGrid>
+                        </h:form>
+                    </p:panel>
+                </f:view>
+                <!-- FINALIZA div wrap main -->
+            </div>
+        </div>
+        <!-- FINALIZA div wrap main -->
+
+        <div id="footerx">
+            <f:subview id="footer">
+                <ui:include src="templates/templateFooter.xhtml"/>
+            </f:subview>
+        </div>                
+    </h:body>
+</ui:composition>

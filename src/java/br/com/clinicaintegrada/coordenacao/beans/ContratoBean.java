@@ -9,7 +9,11 @@ import br.com.clinicaintegrada.administrativo.TipoInternacao;
 import br.com.clinicaintegrada.administrativo.dao.ModeloContratoDao;
 import br.com.clinicaintegrada.administrativo.dao.ModeloDocumentosDao;
 import br.com.clinicaintegrada.administrativo.dao.TaxasDao;
+import br.com.clinicaintegrada.coordenacao.AteFamilia;
+import br.com.clinicaintegrada.coordenacao.AteFamiliaContrato;
 import br.com.clinicaintegrada.coordenacao.Contrato;
+import br.com.clinicaintegrada.coordenacao.dao.AteFamiliaContratoDao;
+import br.com.clinicaintegrada.coordenacao.dao.AteFamiliaDao;
 import br.com.clinicaintegrada.coordenacao.dao.ContratoDao;
 import br.com.clinicaintegrada.financeiro.Boleto;
 import br.com.clinicaintegrada.financeiro.CondicaoPagamento;
@@ -25,6 +29,7 @@ import br.com.clinicaintegrada.financeiro.dao.BoletoDao;
 import br.com.clinicaintegrada.financeiro.dao.LoteDao;
 import br.com.clinicaintegrada.financeiro.dao.MovimentoDao;
 import br.com.clinicaintegrada.logSistema.Logger;
+import br.com.clinicaintegrada.pessoa.Equipe;
 import br.com.clinicaintegrada.pessoa.Filial;
 import br.com.clinicaintegrada.pessoa.Fisica;
 import br.com.clinicaintegrada.pessoa.Fotos;
@@ -80,6 +85,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.naming.TimeLimitExceededException;
 import javax.servlet.ServletContext;
 import org.primefaces.event.SelectEvent;
 
@@ -409,6 +415,7 @@ public class ContratoBean implements Serializable {
                     listMovimentoTaxa.clear();
                     listMovimentoContrato.clear();
                     getListMovimentoContrato();
+                    updateAtePessoa();
                 } else {
                     dao.rollback();
                     Messages.warn("Erro", "Erro ao inserir registro!");
@@ -448,6 +455,7 @@ public class ContratoBean implements Serializable {
                     listMovimentoTaxa.clear();
                     listMovimentoContrato.clear();
                     getListMovimentoContrato();
+                    updateAtePessoa();
                 } else {
                     dao.rollback();
                     Messages.warn("Erro", "Erro ao atualizar registro!");
@@ -2569,6 +2577,54 @@ public class ContratoBean implements Serializable {
 
         } else {
             contrato.setDataCadastro(dataCadastro);
+        }
+    }
+
+    public void updateAtePessoa() {
+        Dao dao = new Dao();
+        try {
+            AteFamiliaContrato ateFamiliaContrato = new AteFamiliaContratoDao().findByContrato(contrato.getId());
+            dao.openTransaction();
+            if (ateFamiliaContrato == null) {
+                ateFamiliaContrato = new AteFamiliaContrato();
+                AteFamiliaDao ateFamiliaDao = new AteFamiliaDao();
+                List<AteFamilia> listAteFamilia = ateFamiliaDao.findByCliente(SessaoCliente.get().getId());
+                if (!listAteFamilia.isEmpty()) {
+                    AteFamilia atual = null;
+                    for (int i = 0; i < listAteFamilia.size(); i++) {
+                        if (listAteFamilia.get(i).getPonteiro()) {
+                            atual = listAteFamilia.get(i);
+                            break;
+                        }
+                    }
+                    if (atual == null) {
+                        atual = listAteFamilia.get(0);
+                    }
+                    ateFamiliaContrato.setEquipe(atual.getEquipe());
+                    ateFamiliaContrato.setContrato(contrato);
+                    if (dao.save(ateFamiliaContrato)) {
+                        AteFamilia af = ateFamiliaDao.nextOrdemByCliente(atual.getOrdem(), contrato.getCliente().getId());
+                        for (int i = 0; i < listAteFamilia.size(); i++) {
+                            if (listAteFamilia.get(i).getId().equals(af.getId())) {
+                                listAteFamilia.get(i).setPonteiro(true);
+                            } else {
+                                listAteFamilia.get(i).setPonteiro(false);
+                            }
+                            if (!dao.update(listAteFamilia.get(i))) {
+                                dao.rollback();
+                                break;
+                            }
+                        }
+                        dao.commit();
+                    } else {
+                        dao.rollback();
+                    }
+                }
+            } else {
+                dao.rollback();
+            }
+        } catch (Exception e) {
+            dao.rollback();
         }
     }
 }
