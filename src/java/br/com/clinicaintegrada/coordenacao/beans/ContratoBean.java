@@ -85,7 +85,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import javax.naming.TimeLimitExceededException;
 import javax.servlet.ServletContext;
 import org.primefaces.event.SelectEvent;
 
@@ -720,8 +719,15 @@ public class ContratoBean implements Serializable {
         }
         if (Sessions.exists("fisicaPesquisa")) {
             if (pesquisaResponsavel) {
-                contrato.setResponsavel(((Fisica) Sessions.getObject("fisicaPesquisa", true)).getPessoa());
-                pesquisaResponsavel = false;
+                if(contrato.getResponsavel().getId() != -1) {
+                    Pessoa r = ((Fisica) Sessions.getObject("fisicaPesquisa", true)).getPessoa();
+                    if(!Objects.equals(r.getId(), contrato.getPaciente().getId())) {
+                        contrato.setResponsavel(r);
+                        pesquisaResponsavel = false;                        
+                    } else {
+                        Messages.warn("Validação", "Responsável e paciente devem ser pessoas diferentes!");                        
+                    }
+                }
             } else {
                 contrato.setPaciente(((Fisica) Sessions.getObject("fisicaPesquisa", true)).getPessoa());
                 if (contrato.getPaciente().getId().equals(contrato.getResponsavel().getId())) {

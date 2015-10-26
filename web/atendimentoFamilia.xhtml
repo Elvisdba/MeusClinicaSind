@@ -47,13 +47,13 @@
                                     <p:column styleClass="text-center" headerText="Emissão" sortBy="#{ateFamiliaContrato.contrato.dataCadastroString}">
                                         <h:outputText value="#{ateFamiliaContrato.contrato.dataCadastroString}" />
                                     </p:column>
-                                    <p:column headerText="Responsável" sortBy="#{ateFamiliaContrato.contrato.responsavel.nome}">
+                                    <p:column headerText="Responsável" sortBy="#{ateFamiliaContrato.contrato.responsavel.nome}" filterBy="#{ateFamiliaContrato.contrato.responsavel.nome}" filterMatchMode="global">
                                         <h:outputText value="#{ateFamiliaContrato.contrato.responsavel.nome}" />
                                     </p:column>
-                                    <p:column headerText="Paciente" sortBy="#{ateFamiliaContrato.contrato.paciente.nome}">
+                                    <p:column headerText="Paciente" sortBy="#{ateFamiliaContrato.contrato.paciente.nome}"  filterBy="#{ateFamiliaContrato.contrato.paciente.nome}" filterMatchMode="global">
                                         <h:outputText value="#{ateFamiliaContrato.contrato.paciente.nome}" />
                                     </p:column>
-                                    <p:column headerText="Profissional" sortBy="#{ateFamiliaContrato.equipe.pessoa.nome}">
+                                    <p:column headerText="Profissional" sortBy="#{ateFamiliaContrato.equipe.pessoa.nome}"  filterBy="#{ateFamiliaContrato.equipe.pessoa.nome}" filterMatchMode="global">
                                         <h:outputText value="#{ateFamiliaContrato.equipe.pessoa.nome}" />
                                     </p:column>
                                 </p:dataTable>

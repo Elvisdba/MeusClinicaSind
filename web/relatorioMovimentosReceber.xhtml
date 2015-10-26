@@ -58,6 +58,9 @@
                                             <p:selectBooleanButton value="#{relatorioMovimentosReceberBean.filter[4]}" onLabel="Filial" offLabel="Filial" offIcon="ui-icon-circle-plus" onIcon="ui-icon-circle-minus" style="width: 180px; text-align: left;" >
                                                 <p:ajax event="change" update="@this :form_relatorio:id_panel_relatorio" listener="#{relatorioMovimentosReceberBean.clear}" />
                                             </p:selectBooleanButton>
+                                            <p:selectBooleanButton value="#{relatorioMovimentosReceberBean.filter[5]}" onLabel="Situação" offLabel="Situação" offIcon="ui-icon-circle-plus" onIcon="ui-icon-circle-minus" style="width: 180px; text-align: left;" >
+                                                <p:ajax event="change" update="@this :form_relatorio:id_panel_relatorio" listener="#{relatorioMovimentosReceberBean.clear}" />
+                                            </p:selectBooleanButton>
                                         </h:panelGrid>
                                     </h:panelGrid>
                                 </p:tab>
@@ -202,7 +205,18 @@
                                             <p:commandButton icon="ui-icon-close" action="#{relatorioMovimentosReceberBean.close('filial')}" title="Remover filtro"/>
                                         </h:panelGrid>                                                                                
                                     </p:panel>
-                                </p:column>                                
+                                </p:column>
+                                <p:column rendered="#{relatorioMovimentosReceberBean.filter[5]}">
+                                    <h:panelGrid columns="2" styleClass="margin-top">
+                                        <h:outputLabel value="Situação" />
+                                        <p:selectOneMenu value="#{relatorioMovimentosReceberBean.situacao}">
+                                            <p:ajax event="change" update="@this" global="false" />
+                                            <f:selectItem itemValue="abertos" itemLabel="Em aberto"/>
+                                            <f:selectItem itemValue="atrasados" itemLabel="Atrasados"/>
+                                            <f:selectItem itemValue="baixados" itemLabel="Baixado" />
+                                        </p:selectOneMenu>                                        
+                                    </h:panelGrid>
+                                </p:column>                                   
                                 <p:column rendered="#{relatorioMovimentosReceberBean.tipoRelatorio == 'Simples'}">
                                     * Todas matrículas
                                 </p:column>

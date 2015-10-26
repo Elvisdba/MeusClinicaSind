@@ -60,28 +60,30 @@ public class RelatorioMovimentosReceberBean implements Serializable {
     private Relatorios relatorios;
     private Map<String, Integer> listServicos;
     private List selectedServicos;
+    private String situacao;
 
     @PostConstruct
     public void init() {
-        filter = new Boolean[5];
+        filter = new Boolean[6];
         filter[0] = false; // CONTRATO NÚMERO
         filter[1] = false; // PESSOA
         filter[2] = false; // SERVIÇOS
         filter[3] = false; // DATA
         filter[4] = false; // FILIAL
+        filter[5] = false; // SITUAÇÃO
         listSelectItem = new ArrayList[3];
         listSelectItem[0] = new ArrayList<>();
         listSelectItem[1] = new ArrayList<>();
         listSelectItem[2] = new ArrayList<>();
         dataContrato = new Date[2];
-        dataContrato[0] = DataHoje.dataHoje();
-        dataContrato[1] = DataHoje.dataHoje();
+        dataContrato[0] = null;
+        dataContrato[1] = null;
         dataVencimento = new Date[2];
-        dataVencimento[0] = DataHoje.dataHoje();
-        dataVencimento[1] = DataHoje.dataHoje();
+        dataVencimento[0] = null;
+        dataVencimento[1] = null;
         dataBaixa = new Date[2];
-        dataBaixa[0] = DataHoje.dataHoje();
-        dataBaixa[1] = DataHoje.dataHoje();
+        dataBaixa[0] = null;
+        dataBaixa[1] = null;
         index = new Integer[3];
         index[0] = 0;
         index[1] = 0;
@@ -94,6 +96,7 @@ public class RelatorioMovimentosReceberBean implements Serializable {
         relatorios = new Relatorios();
         selectedServicos = null;
         listServicos = null;
+        situacao = "abertos";
     }
 
     @PreDestroy
@@ -149,6 +152,10 @@ public class RelatorioMovimentosReceberBean implements Serializable {
         if (filter[4]) {
             listDetalhePesquisa.add("Filial: " + ((Filial) new Dao().find(new Filial(), index[2])).getFilial().getPessoa().getNome());
         }
+        String str_situacao = null;
+        if (filter[5]) {
+            str_situacao = situacao;
+        }
         RelatorioMovimentosDao rmd = new RelatorioMovimentosDao();
         rmd.setRelatorios(r);
         rmd.setIS_QUERY(r.getMontaQuery());
@@ -162,10 +169,10 @@ public class RelatorioMovimentosReceberBean implements Serializable {
                 rmd.setOrder(ro.getQuery());
             }
         }
-        if(index[0] == 13) {
-            list = rmd.findResume(SessaoCliente.get().getId(), contrato_numero, tipo, pessoa_id, in_servicos, data_contrato_I, data_contrato_F, data_vencimento_I, data_vencimento_F, data_baixa_I, data_baixa_F, in_filial);
+        if (index[0] == 13) {
+            list = rmd.findResume(SessaoCliente.get().getId(), contrato_numero, tipo, pessoa_id, in_servicos, data_contrato_I, data_contrato_F, data_vencimento_I, data_vencimento_F, data_baixa_I, data_baixa_F, in_filial, str_situacao);
         } else {
-            list = rmd.find(SessaoCliente.get().getId(), contrato_numero, tipo, pessoa_id, in_servicos, data_contrato_I, data_contrato_F, data_vencimento_I, data_vencimento_F, data_baixa_I, data_baixa_F, in_filial);
+            list = rmd.find(SessaoCliente.get().getId(), contrato_numero, tipo, pessoa_id, in_servicos, data_contrato_I, data_contrato_F, data_vencimento_I, data_vencimento_F, data_baixa_I, data_baixa_F, in_filial, str_situacao);
         }
         DBExternal dBExternal = new DBExternal();
         if (!r.getMontaQuery() && rmd.getQUERY().isEmpty()) {
@@ -258,18 +265,21 @@ public class RelatorioMovimentosReceberBean implements Serializable {
         }
         if (!filter[3]) {
             dataContrato = new Date[2];
-            dataContrato[0] = DataHoje.dataHoje();
-            dataContrato[1] = DataHoje.dataHoje();
+            dataContrato[0] = null;
+            dataContrato[1] = null;
             dataVencimento = new Date[2];
-            dataVencimento[0] = DataHoje.dataHoje();
-            dataVencimento[1] = DataHoje.dataHoje();
+            dataVencimento[0] = null;
+            dataVencimento[1] = null;
             dataBaixa = new Date[2];
-            dataBaixa[0] = DataHoje.dataHoje();
-            dataBaixa[1] = DataHoje.dataHoje();
+            dataBaixa[0] = null;
+            dataBaixa[1] = null;
         }
         if (!filter[4]) {
             index[2] = null;
             listSelectItem[2].clear();
+        }
+        if (!filter[5]) {
+            situacao = "abertos";
         }
     }
 
@@ -302,18 +312,21 @@ public class RelatorioMovimentosReceberBean implements Serializable {
             case "data":
                 filter[3] = false;
                 dataContrato = new Date[2];
-                dataContrato[0] = DataHoje.dataHoje();
-                dataContrato[1] = DataHoje.dataHoje();
+                dataContrato[0] = null;
+                dataContrato[1] = null;
                 dataVencimento = new Date[2];
-                dataVencimento[0] = DataHoje.dataHoje();
-                dataVencimento[1] = DataHoje.dataHoje();
+                dataVencimento[0] = null;
+                dataVencimento[1] = null;
                 dataBaixa = new Date[2];
-                dataBaixa[0] = DataHoje.dataHoje();
-                dataBaixa[1] = DataHoje.dataHoje();
+                dataBaixa[0] = null;
+                dataBaixa[1] = null;
                 break;
             case "filial":
                 listSelectItem[2].clear();
                 index[2] = null;
+                break;
+            case "situacao":
+                situacao = "abertos";
                 break;
         }
         PF.update("form_relatorio:id_panel");
@@ -557,5 +570,13 @@ public class RelatorioMovimentosReceberBean implements Serializable {
 
     public void setSelectedServicos(List selectedServicos) {
         this.selectedServicos = selectedServicos;
+    }
+
+    public String getSituacao() {
+        return situacao;
+    }
+
+    public void setSituacao(String situacao) {
+        this.situacao = situacao;
     }
 }

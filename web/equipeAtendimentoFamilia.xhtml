@@ -56,7 +56,7 @@
                             </p:panel>
                             <h:panelGrid rendered="#{ateFamiliaBean.listAteFamilia != null}" style="width: 100%; border: 0px!important " styleClass="margin-top-max" columnClasses="verticalAlignTop, verticalAlignTop" columns="2">
                                 <h:column>
-                                    <h:panelGrid style="width: 50%; border: 0px!important " styleClass="margin-top-max" id="ilosdsds">
+                                    <h:panelGrid style="width: 70%; border: 0px!important " styleClass="margin-top-max" id="ilosdsds">
                                         <p:dataTable value="#{ateFamiliaBean.listAteFamilia}" var="ateFamilia" emptyMessage="Nenhum registro encontrado!">
                                             <f:facet name="header">Remover</f:facet>
                                             <p:column styleClass="text-center" width="50" headerText="Ordem" sortBy="#{ateFamilia.ordem}">
@@ -64,6 +64,9 @@
                                             </p:column>
                                             <p:column headerText="Nome" sortBy="#{ateFamilia.equipe.pessoa.nome}">
                                                 <h:outputText value="#{ateFamilia.equipe.pessoa.nome}" />
+                                            </p:column>
+                                            <p:column headerText="Profissão">
+                                                <h:outputText value="#{ateFamilia.equipe.funcaoEquipe.profissao.profissao}" />
                                             </p:column>
                                             <p:column headerText="Atual" styleClass="text-center" width="30">
                                                 <p:selectBooleanCheckbox value="#{ateFamilia.ponteiro}" disabled="true"/>
@@ -75,7 +78,7 @@
                                     </h:panelGrid>                            
                                 </h:column>
                                 <h:column>
-                                    <h:panelGrid style="width: 50%; border: 0px!important " styleClass="margin-top-max">
+                                    <h:panelGrid style="width: 30%; border: 0px!important " styleClass="margin-top-max">
                                         <p:orderList value="#{ateFamiliaBean.listAteFamilia}" var="ateFamilia" itemValue="#{ateFamilia}" converter="#{entityConverter}" controlsLocation="right" >
                                             <p:ajax event="select" listener="#{ateFamiliaBean.onSelect}"  update="form_eaf:ilosdsds"/>
                                             <p:ajax event="unselect" listener="#{ateFamiliaBean.onUnselect}" update="form_eaf:ilosdsds"/>

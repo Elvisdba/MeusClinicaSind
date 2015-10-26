@@ -28,9 +28,10 @@ public class RelatorioMovimentosDao extends DB {
      * @param data_baixa_F
      * @param data_baixa_I
      * @param in_filial
+     * @param situacao
      * @return
      */
-    public List find(Integer cliente_id, Integer contrato_numero, String filtro_pessoa, Integer pessoa_id, String in_servicos, String data_contrato_I, String data_contrato_F, String data_vencimento_I, String data_vencimento_F, String data_baixa_I, String data_baixa_F, String in_filial) {
+    public List find(Integer cliente_id, Integer contrato_numero, String filtro_pessoa, Integer pessoa_id, String in_servicos, String data_contrato_I, String data_contrato_F, String data_vencimento_I, String data_vencimento_F, String data_baixa_I, String data_baixa_F, String in_filial, String situacao) {
         List listWhere = new ArrayList();
         try {
             String queryString;
@@ -97,7 +98,7 @@ public class RelatorioMovimentosDao extends DB {
                     listWhere.add("C.dt_cadastro = " + data_contrato_I);
                     // MAIOR OU IGUAL A INICIAL
                 } else if (!data_contrato_I.isEmpty() && data_contrato_F.isEmpty()) {
-                    listWhere.add("C.dt_cadastro >= '" + data_contrato_I + "'");
+                    listWhere.add("C.dt_cadastro = '" + data_contrato_I + "'");
                     // MAIOR OU IGUAL A FINAL
                 } else if (data_contrato_I.isEmpty() && !data_contrato_F.isEmpty()) {
                     listWhere.add("C.dt_cadastro <= '" + data_contrato_F + "'");
@@ -107,35 +108,49 @@ public class RelatorioMovimentosDao extends DB {
                 }
             }
             // VENCIMENTO
-            if (!data_vencimento_I.isEmpty() || !data_baixa_F.isEmpty()) {
+            if (!data_vencimento_I.isEmpty() || !data_vencimento_F.isEmpty()) {
                 // IGUAIS
-                if (data_vencimento_I.equals(data_baixa_F)) {
-                    listWhere.add("M.dt_internacao = " + data_vencimento_I);
+                if (data_vencimento_I.equals(data_vencimento_F)) {
+                    listWhere.add("M.dt_vencimento = '" + data_vencimento_I + "'");
                     // MAIOR OU IGUAL A INICIAL
-                } else if (!data_vencimento_I.isEmpty() && data_baixa_F.isEmpty()) {
-                    listWhere.add("M.dt_internacao >= '" + data_baixa_F + "'");
+                } else if (!data_vencimento_I.isEmpty() && data_vencimento_F.isEmpty()) {
+                    listWhere.add("M.dt_vencimento = '" + data_vencimento_I + "'");
                     // MAIOR OU IGUAL A FINAL
-                } else if (data_vencimento_I.isEmpty() && !data_baixa_F.isEmpty()) {
-                    listWhere.add("M.dt_internacao <= '" + data_baixa_F + "'");
+                } else if (data_vencimento_I.isEmpty() && !data_vencimento_F.isEmpty()) {
+                    listWhere.add("M.dt_vencimento <= '" + data_vencimento_F + "'");
                     // DIFERENTES
-                } else if (!data_vencimento_I.isEmpty() && !data_baixa_F.isEmpty()) {
-                    listWhere.add("M.dt_internacao BETWEEN '" + data_vencimento_I + "' AND '" + data_baixa_F + "'");
+                } else if (!data_vencimento_I.isEmpty() && !data_vencimento_F.isEmpty()) {
+                    listWhere.add("M.dt_vencimento BETWEEN '" + data_vencimento_I + "' AND '" + data_vencimento_F + "'");
                 }
             }
             // BAIXA
             if (!data_baixa_I.isEmpty() || !data_baixa_F.isEmpty()) {
                 // IGUAIS
                 if (data_baixa_I.equals(data_baixa_F)) {
-                    listWhere.add("B.dt_baixa = " + data_baixa_I);
+                    listWhere.add("B.dt_baixa = '" + data_baixa_I + "'");
                     // MAIOR OU IGUAL A INICIAL
                 } else if (!data_baixa_I.isEmpty() && data_baixa_F.isEmpty()) {
-                    listWhere.add("B.dt_baixa >= '" + data_baixa_I + "'");
+                    listWhere.add("B.dt_baixa = '" + data_baixa_I + "'");
                     // MAIOR OU IGUAL A FINAL
                 } else if (data_baixa_I.isEmpty() && !data_baixa_F.isEmpty()) {
                     listWhere.add("B.dt_baixa <= '" + data_baixa_F + "'");
                     // DIFERENTES
                 } else if (!data_baixa_I.isEmpty() && !data_baixa_F.isEmpty()) {
                     listWhere.add("B.dt_baixa BETWEEN '" + data_baixa_I + "' AND '" + data_baixa_F + "'");
+                }
+            }
+            // SITUAÇÃO
+            if (situacao != null) {
+                switch (situacao) {
+                    case "abertos":
+                        listWhere.add("M.id_baixa IS NULL");
+                        break;
+                    case "atrasados":
+                        listWhere.add("M.id_baixa IS NULL AND M.dt_vencimeno < current_date");
+                        break;
+                    case "baixados":
+                        listWhere.add("M.id_baixa IS NOT NULL");
+                        break;
                 }
             }
             if (!relatorios.getQry().isEmpty()) {
@@ -170,7 +185,7 @@ public class RelatorioMovimentosDao extends DB {
     /**
      *
      * Relatório resumido com totais
-     * 
+     *
      * @param cliente_id
      * @param contrato_numero
      * @param filtro_pessoa
@@ -183,9 +198,10 @@ public class RelatorioMovimentosDao extends DB {
      * @param data_baixa_F
      * @param data_baixa_I
      * @param in_filial
+     * @param situacao
      * @return
      */
-    public List findResume(Integer cliente_id, Integer contrato_numero, String filtro_pessoa, Integer pessoa_id, String in_servicos, String data_contrato_I, String data_contrato_F, String data_vencimento_I, String data_vencimento_F, String data_baixa_I, String data_baixa_F, String in_filial) {
+    public List findResume(Integer cliente_id, Integer contrato_numero, String filtro_pessoa, Integer pessoa_id, String in_servicos, String data_contrato_I, String data_contrato_F, String data_vencimento_I, String data_vencimento_F, String data_baixa_I, String data_baixa_F, String in_filial, String situacao) {
         List listWhere = new ArrayList();
         try {
             String queryString;
@@ -258,7 +274,7 @@ public class RelatorioMovimentosDao extends DB {
                     listWhere.add("C.dt_cadastro = " + data_contrato_I);
                     // MAIOR OU IGUAL A INICIAL
                 } else if (!data_contrato_I.isEmpty() && data_contrato_F.isEmpty()) {
-                    listWhere.add("C.dt_cadastro >= '" + data_contrato_I + "'");
+                    listWhere.add("C.dt_cadastro = '" + data_contrato_I + "'");
                     // MAIOR OU IGUAL A FINAL
                 } else if (data_contrato_I.isEmpty() && !data_contrato_F.isEmpty()) {
                     listWhere.add("C.dt_cadastro <= '" + data_contrato_F + "'");
@@ -268,19 +284,19 @@ public class RelatorioMovimentosDao extends DB {
                 }
             }
             // VENCIMENTO
-            if (!data_vencimento_I.isEmpty() || !data_baixa_F.isEmpty()) {
+            if (!data_vencimento_I.isEmpty() || !data_vencimento_F.isEmpty()) {
                 // IGUAIS
-                if (data_vencimento_I.equals(data_baixa_F)) {
-                    listWhere.add("M.dt_internacao = " + data_vencimento_I);
+                if (data_vencimento_I.equals(data_vencimento_F)) {
+                    listWhere.add("M.dt_vencimento = '" + data_vencimento_I + "'");
                     // MAIOR OU IGUAL A INICIAL
-                } else if (!data_vencimento_I.isEmpty() && data_baixa_F.isEmpty()) {
-                    listWhere.add("M.dt_internacao >= '" + data_baixa_F + "'");
+                } else if (!data_vencimento_I.isEmpty() && data_vencimento_F.isEmpty()) {
+                    listWhere.add("M.dt_vencimento = '" + data_vencimento_I + "'");
                     // MAIOR OU IGUAL A FINAL
-                } else if (data_vencimento_I.isEmpty() && !data_baixa_F.isEmpty()) {
-                    listWhere.add("M.dt_internacao <= '" + data_baixa_F + "'");
+                } else if (data_vencimento_I.isEmpty() && !data_vencimento_F.isEmpty()) {
+                    listWhere.add("M.dt_vencimento <= '" + data_vencimento_F + "'");
                     // DIFERENTES
-                } else if (!data_vencimento_I.isEmpty() && !data_baixa_F.isEmpty()) {
-                    listWhere.add("M.dt_internacao BETWEEN '" + data_vencimento_I + "' AND '" + data_baixa_F + "'");
+                } else if (!data_vencimento_I.isEmpty() && !data_vencimento_F.isEmpty()) {
+                    listWhere.add("M.dt_vencimento BETWEEN '" + data_vencimento_I + "' AND '" + data_vencimento_F + "'");
                 }
             }
             // BAIXA
@@ -290,13 +306,27 @@ public class RelatorioMovimentosDao extends DB {
                     listWhere.add("B.dt_baixa = " + data_baixa_I);
                     // MAIOR OU IGUAL A INICIAL
                 } else if (!data_baixa_I.isEmpty() && data_baixa_F.isEmpty()) {
-                    listWhere.add("B.dt_baixa >= '" + data_baixa_I + "'");
+                    listWhere.add("B.dt_baixa = '" + data_baixa_I + "'");
                     // MAIOR OU IGUAL A FINAL
                 } else if (data_baixa_I.isEmpty() && !data_baixa_F.isEmpty()) {
                     listWhere.add("B.dt_baixa <= '" + data_baixa_F + "'");
                     // DIFERENTES
                 } else if (!data_baixa_I.isEmpty() && !data_baixa_F.isEmpty()) {
                     listWhere.add("B.dt_baixa BETWEEN '" + data_baixa_I + "' AND '" + data_baixa_F + "'");
+                }
+            }
+            // SITUAÇÃO
+            if (situacao != null) {
+                switch (situacao) {
+                    case "abertos":
+                        listWhere.add("M.id_baixa IS NULL");
+                        break;
+                    case "atrasados":
+                        listWhere.add("M.id_baixa IS NULL AND M.dt_vencimeno < current_date");
+                        break;
+                    case "baixados":
+                        listWhere.add("M.id_baixa IS NOT NULL");
+                        break;
                 }
             }
             if (!relatorios.getQry().isEmpty()) {
