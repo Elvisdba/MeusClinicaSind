@@ -423,9 +423,55 @@ public class ContratoBean implements Serializable {
                 if (contrato.getDataRescisao() != null) {
                     if (getListTipoDesligamento().isEmpty()) {
                         Messages.warn("Validação", "Cadastrar tipos de desligamento!");
+                        dao.rollback();
                         return;
                     }
                     contrato.setTipoDesligamento((TipoDesligamento) dao.find(new TipoDesligamento(), Integer.parseInt(listTipoDesligamento.get(idTipoDesligamento).getDescription())));
+                    for (int i = 0; i < listMovimentoContrato.size(); i++) {
+                        if (listMovimentoContrato.get(i).getBaixa() == null) {
+                            listMovimentoContrato.get(i).setAtivo(false);
+                            if (!dao.update(listMovimentoContrato.get(i))) {
+                                dao.rollback();
+                                Messages.warn("Erro", "Ao rescindir contrato (Inativação de movimentos)!");
+                                return;
+                            }
+                        }
+                    }
+                    for (int i = 0; i < listMovimentoTaxa.size(); i++) {
+                        if (listMovimentoTaxa.get(i).getBaixa() == null) {
+                            listMovimentoTaxa.get(i).setAtivo(false);
+                            if (!dao.update(listMovimentoTaxa.get(i))) {
+                                dao.rollback();
+                                Messages.warn("Erro", "Ao rescindir contrato (Inativação de movimentos taxas)!");
+                                return;
+                            }
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < listMovimentoContrato.size(); i++) {
+                        if (listMovimentoContrato.get(i).getBaixa() == null) {
+                            if(!listMovimentoContrato.get(i).isAtivo()) {
+                                listMovimentoContrato.get(i).setAtivo(true);
+                                if (!dao.update(listMovimentoContrato.get(i))) {
+                                    dao.rollback();
+                                    Messages.warn("Erro", "Ao rescindir contrato (Inativação de movimentos)!");
+                                    return;
+                                }                                
+                            }
+                        }
+                    }
+                    for (int i = 0; i < listMovimentoTaxa.size(); i++) {
+                        if (listMovimentoTaxa.get(i).getBaixa() == null) {
+                            if(!listMovimentoTaxa.get(i).isAtivo()) {
+                                listMovimentoTaxa.get(i).setAtivo(true);
+                                if (!dao.update(listMovimentoTaxa.get(i))) {
+                                    dao.rollback();
+                                    Messages.warn("Erro", "Ao rescindir contrato (Inativação de movimentos: Taxa)!");
+                                    return;
+                                }                                
+                            }
+                        }
+                    }
                 }
                 Contrato c = (Contrato) dao.find(new Contrato(), contrato.getId());
                 String beforeUpdate
@@ -719,14 +765,16 @@ public class ContratoBean implements Serializable {
         }
         if (Sessions.exists("fisicaPesquisa")) {
             if (pesquisaResponsavel) {
-                if(contrato.getResponsavel().getId() != -1) {
-                    Pessoa r = ((Fisica) Sessions.getObject("fisicaPesquisa", true)).getPessoa();
-                    if(!Objects.equals(r.getId(), contrato.getPaciente().getId())) {
+                Pessoa r = ((Fisica) Sessions.getObject("fisicaPesquisa", true)).getPessoa();
+                if (contrato.getResponsavel().getId() != -1 && contrato.getPaciente().getId() != -1) {
+                    if (!Objects.equals(r.getId(), contrato.getPaciente().getId())) {
                         contrato.setResponsavel(r);
-                        pesquisaResponsavel = false;                        
+                        pesquisaResponsavel = false;
                     } else {
-                        Messages.warn("Validação", "Responsável e paciente devem ser pessoas diferentes!");                        
+                        Messages.warn("Validação", "Responsável e paciente devem ser pessoas diferentes!");
                     }
+                } else {
+                    contrato.setResponsavel(r);
                 }
             } else {
                 contrato.setPaciente(((Fisica) Sessions.getObject("fisicaPesquisa", true)).getPessoa());

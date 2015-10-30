@@ -59,6 +59,8 @@ public class Fisica implements Serializable {
     @JoinColumn(name = "id_tipo_cadastro", referencedColumnName = "id", nullable = true)
     @OneToOne
     private TipoCadastro tipoCadastro;
+    @Column(name = "ds_foto", length = 1000)
+    private String foto;
 
     public Fisica() {
         this.id = -1;
@@ -80,7 +82,8 @@ public class Fisica implements Serializable {
         this.setAposentadoria("");
         this.setRecadastro(DataHoje.data());
         this.setDataFoto("");
-        tipoCadastro = new TipoCadastro();
+        this.tipoCadastro = new TipoCadastro();
+        this.foto = "";
     }
 
     public Fisica(Integer id, Pessoa pessoa, String rg, String carteira, String serie, String sexo, Date dtNascimento, String nacionalidade,
@@ -309,6 +312,14 @@ public class Fisica implements Serializable {
 
     public void setTipoCadastro(TipoCadastro tipoCadastro) {
         this.tipoCadastro = tipoCadastro;
+    }
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
     }
 
 }

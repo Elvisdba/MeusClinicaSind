@@ -1,6 +1,7 @@
 package br.com.clinicaintegrada.pessoa;
 
 import br.com.clinicaintegrada.pessoa.dao.FisicaDao;
+import br.com.clinicaintegrada.pessoa.dao.JuridicaDao;
 import br.com.clinicaintegrada.pessoa.dao.PessoaEnderecoDao;
 import br.com.clinicaintegrada.seguranca.Cliente;
 import br.com.clinicaintegrada.seguranca.controleUsuario.ControleUsuarioBean;
@@ -11,7 +12,6 @@ import java.io.File;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Objects;
 import javax.faces.context.FacesContext;
 import javax.persistence.*;
 import javax.servlet.ServletContext;
@@ -276,6 +276,58 @@ public class Pessoa implements BaseEntity, Serializable {
             fisica.setPessoa(null);
         }
         return fisica;
+    }
+
+    public String getFotoResource() {
+        if (this.id != -1) {
+            FisicaDao fisicaDao = new FisicaDao();
+            Fisica fisica = fisicaDao.pesquisaFisicaPorPessoa(this.id);
+            String foto = "";
+            if (fisica != null) {
+                foto = "cliente/" + ControleUsuarioBean.getCliente().toLowerCase() + "/imagens/pessoa/" + this.id + "/" + fisica.getFoto() + ".png";
+                File f = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("") + "resources/" + foto);
+
+                if (f.exists()) {
+                    return foto;
+                }
+
+                foto = "cliente/" + ControleUsuarioBean.getCliente().toLowerCase() + "/imagens/pessoa/" + this.id + "/" + fisica.getFoto() + ".jpg";
+                f = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("") + "resources/" + foto);
+
+                if (f.exists()) {
+                    return foto;
+                }
+
+                if (fisica.getSexo().equals("F")) {
+                    foto = "images/user_female.png";
+                } else {
+                    foto = "images/user_male.png";
+                }
+            } else {
+                JuridicaDao juridicaDao = new JuridicaDao();
+                Juridica juridica = juridicaDao.pesquisaJuridicaPorPessoa(this.id);
+
+                if (juridica != null) {
+                    foto = "cliente/" + ControleUsuarioBean.getCliente().toLowerCase() + "/imagens/pessoa/" + this.id + "/" + juridica.getFoto() + ".png";
+                    File f = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("") + "resources/" + foto);
+
+                    if (f.exists()) {
+                        return foto;
+                    }
+
+                    foto = "cliente/" + ControleUsuarioBean.getCliente().toLowerCase() + "/imagens/pessoa/" + this.id + "/" + juridica.getFoto() + ".jpg";
+                    f = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("") + "resources/" + foto);
+
+                    if (f.exists()) {
+                        return foto;
+                    }
+                }
+
+                foto = "images/user_male.png";
+            }
+            return foto;
+        }
+        return "images/user_male.png";
     }
 
     /**

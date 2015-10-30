@@ -37,10 +37,18 @@
                         <div class="clear"></div>
                         <c:set scope="request" var="object" value="${contratoBean.contrato}" id="idObject"/>
                         <h:form id="form_contrato">
+                            <p:panel rendered="#{contratoBean.contrato.dataRescisao != null}" style="border-color: red;">
+                                <h:panelGrid>
+                                    <h:outputLabel value="CONTRATO RESCINDIDO EM #{contratoBean.contrato.dataRescisaoString} - MOTIVO: #{contratoBean.contrato.tipoDesligamento.descricao}" style="border-color: red" styleClass="bold font-color-red"/>
+                                </h:panelGrid>
+                                <f:facet name="footer">
+                                    <p:commandButton value="Desfazer rescisão" rendered="#{contratoBean.contrato.dataRescisao != null}" disabled="#{controleAcessoBean.verificarPermissao('desfazer_rescisao', 2)}" onclick="PF('dlg_rescindir_2').show()"/>
+                                </f:facet>
+                            </p:panel>
                             <h:outputScript name="tradutor_primefaces.js" library="js" />
                             <h:outputScript name="script_primefaces.js" library="js" /> 
                             <p:messages showDetail="true" showIcon="true" autoUpdate="true" closable="true" />
-                            <p:panel styleClass="margin-top-med" id="id_focus_panel">
+                            <p:panel styleClass="margin-top-med" id="id_focus_panel">                                
                                 <f:facet name="header">
                                     <p:outputLabel value="Contrato nº #{contratoBean.contrato.id}" rendered="#{contratoBean.contrato.id != null}" styleClass="font-color-red font-size-12"/>
                                     <h:panelGrid columns="2" width="1010">

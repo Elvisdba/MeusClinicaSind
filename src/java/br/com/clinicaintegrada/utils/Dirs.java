@@ -13,7 +13,15 @@ public class Dirs {
     private final static String cliente = "";
 
     public static boolean create(String diretorio) {
-        diretorio = "/Cliente/" + getCliente() + "/" + diretorio;
+        return create(diretorio, true);
+    }
+
+    public static boolean create(String diretorio, boolean ignore) {
+        if (!ignore) {
+            diretorio = "/Cliente/" + getCliente() + "/" + diretorio;
+        } else {
+            diretorio = "/resources/cliente/" + getCliente().toLowerCase() + "/" + diretorio.toLowerCase();
+        }
         try {
             String s[] = diretorio.split("/");
             boolean err = false;
