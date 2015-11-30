@@ -215,10 +215,14 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
                 Sessions.remove("uploadBean");
                 Sessions.remove("photoCamBean");
                 FileUtils.deleteDirectory(new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("") + "/Cliente/" + getCliente() + "/temp/" + "foto/" + getUsuario().getId()));
-                File f = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/imagens/fotos/" + -1 + ".png"));
-                if (f.exists()) {
-                    f.delete();
+                try {
+                    File f = new File(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + getCliente() + "/imagens/fotos/" + -1 + ".png"));
+                    if (f.exists()) {
+                        f.delete();
+                    }
+                } catch (Exception e) {
                 }
+
             } catch (IOException ex) {
                 java.util.logging.Logger.getLogger(FisicaBean.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -719,8 +723,11 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
     public void alterarEndereco() {
         visibleEditarEndereco = false;
         enderecox = new Endereco();
-        for (PessoaEndereco pe : listPessoaEndereco) {
-
+        for (int i = 0; i < listPessoaEndereco.size(); i++) {
+            if (listPessoaEndereco.get(i).getEndereco().getId().equals(pessoaEndereco.getEndereco().getId())) {
+                listPessoaEndereco.get(i).setNumero(pessoaEndereco.getNumero());
+                listPessoaEndereco.get(i).setComplemento(pessoaEndereco.getComplemento());
+            }
         }
     }
 
@@ -1622,7 +1629,7 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
             if (enderecoCompleto.isEmpty()) {
                 for (int i = 0; i < listPessoaEndereco.size(); i++) {
                     if (!listPessoaEndereco.isEmpty()) {
-                        if(listPessoaEndereco.get(i).getTipoEndereco().getId() == 3) {
+                        if (listPessoaEndereco.get(i).getTipoEndereco().getId() == 3) {
                             PessoaEndereco pe = listPessoaEndereco.get(i);
                             enderecoCompleto = pe.getEndereco().getLogradouro().getDescricao() + " "
                                     + pe.getEndereco().getDescricaoEndereco().getDescricao() + ", "
