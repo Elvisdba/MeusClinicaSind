@@ -359,7 +359,7 @@
                                         </h:panelGrid>
 
                                         <p:panel id="i_tbl_empresa" header="Empresas anteriores" styleClass="margin-top-max">
-                                            <p:dataTable id="i_tbl_empresa_b" var="pessoaEmpresa" value="#{fisicaBean.listPessoaEmpresa}" styleClass="margin-top-max" scrollable="true" scrollHeight="100" emptyMessage="Nenhum registro encontrado!">
+                                            <p:dataTable id="i_tbl_empresa_b" var="pessoaEmpresa" value="#{fisicaBean.listPessoaEmpresa}" emptyMessage="Nenhum registro encontrado!">
                                                 <p:column width="150" headerText="Documento">
                                                     <p:outputLabel value="#{pessoaEmpresa.juridica.pessoa.documento}"/>
                                                 </p:column>
