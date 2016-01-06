@@ -133,10 +133,10 @@
                                         <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveQuantidade}" update=":form_resposta:" oncomplete="PF('dlg_option').hide()" />
                                     </f:facet>
                                 </p:dialog>
-                                <p:dialog widgetVar="dlg_text" modal="true" header="#{questionarioRespostaBean.questao.descricao}" resizable="false">
+                                <p:dialog widgetVar="dlg_text" modal="true" header="#{questionarioRespostaBean.questao.descricao}" resizable="false" width="600">
                                     <h:outputLabel value="Resposta" /><br />
                                     <h:panelGrid columns="2">
-                                        <p:inputTextarea value="#{questionarioRespostaBean.texto}" rows="5">
+                                        <p:inputTextarea value="#{questionarioRespostaBean.texto}" rows="5" cols="80">
                                             <p:ajax event="change" update="@this" />
                                         </p:inputTextarea>
                                     </h:panelGrid>
