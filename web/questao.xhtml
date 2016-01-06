@@ -13,10 +13,6 @@
             .ui-widget-content .ui-inputfield{ padding: 8px!important;} 
             .ui-button { padding: 3px!important; }
         </style>
-
-        <script type="text/javascript">
-
-        </script>
     </h:head>
     <h:body>
         <!-- INICIA DIV wrap e main -->
@@ -38,57 +34,82 @@
                                     <h:outputLabel value="Rotina" />
                                     <p:column>
                                         <p:selectOneMenu value="#{questaoBean.idRotina}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
-                                            <p:ajax event="change" update="@this idQuestionarios idGrupo idSubgrupo tbl i_add " listener="#{questaoBean.listener(1)}" />
+                                            <p:ajax event="change" update="@this :form_questao:" listener="#{questaoBean.listener(1)}" />
                                             <f:selectItem itemValue="" itemLabel="Selecionar"/>
                                             <f:selectItems value="#{questaoBean.listRotinas}" />
                                         </p:selectOneMenu>
                                     </p:column>
                                     <h:outputLabel value="Questionário" />                                    
                                     <p:column>
-                                        <p:selectOneMenu id="idQuestionarios" value="#{questaoBean.idQuestionario}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
-                                            <p:ajax event="change" update="@this  idGrupo idSubgrupo i_add tbl" listener="#{questaoBean.listener(2)}" />
+                                        <p:selectOneMenu id="idQuestionarios" value="#{questaoBean.idQuestionario}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith" disabled="#{questaoBean.idRotina == null or empty questaoBean.idRotina}">
+                                            <p:ajax event="change" update="@this :form_questao:" listener="#{questaoBean.listener(2)}" />
                                             <f:selectItem itemValue="" itemLabel="Selecionar"/>
                                             <f:selectItems value="#{questaoBean.listQuestionarios}" />
                                         </p:selectOneMenu>
                                     </p:column>
                                     <h:outputLabel value="Grupo" />                                    
                                     <p:column>
-                                        <p:selectOneMenu id="idGrupo" value="#{questaoBean.idQuestionarioGrupo}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
-                                            <p:ajax event="change" update="@this idSubgrupo i_add tbl" listener="#{questaoBean.listener(3)}" />
+                                        <p:selectOneMenu id="idGrupo" value="#{questaoBean.idQuestionarioGrupo}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith" disabled="#{questaoBean.idQuestionario == null or empty questaoBean.idQuestionario}">
+                                            <p:ajax event="change" update="@this :form_questao:" listener="#{questaoBean.listener(3)}" />
                                             <f:selectItem itemValue="" itemLabel="Selecionar"/>
                                             <f:selectItems value="#{questaoBean.listQuestionarioGrupo}" />
                                         </p:selectOneMenu>
                                     </p:column>
                                     <h:outputLabel value="Subgrupo" />                                    
                                     <p:column>
-                                        <p:selectOneMenu id="idSubgrupo" value="#{questaoBean.idQuestionarioSubgrupo}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
-                                            <p:ajax event="change" update="@this tbl i_add" listener="#{questaoBean.listener(4)}" />
+                                        <p:selectOneMenu id="idSubgrupo" value="#{questaoBean.idQuestionarioSubgrupo}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith" disabled="#{questaoBean.idQuestionarioGrupo == null or empty questaoBean.idQuestionarioGrupo}">
+                                            <p:ajax event="change" update="@this :form_questao:" listener="#{questaoBean.listener(4)}" />
                                             <f:selectItem itemValue="" itemLabel="Selecionar"/>
                                             <f:selectItems value="#{questaoBean.listQuestionarioSubgrupo}" />
                                         </p:selectOneMenu>
                                     </p:column>
                                     <h:outputLabel value="Descrição" />                                    
                                     <p:column>
-                                        <p:inputText value="#{questaoBean.questao.descricao}" size="60" maxlength="255" converter="#{toUpperCase}">
+                                        <p:inputText value="#{questaoBean.questao.descricao}" size="60" maxlength="255" converter="#{toUpperCase}" disabled="#{questaoBean.idQuestionarioSubgrupo == null or empty questaoBean.idQuestionarioSubgrupo}">
                                             <p:ajax event="change" update="@this" />
                                         </p:inputText>
                                     </p:column>
                                     <p:column />
-                                    <p:commandButton value="Adicionar" action="#{questaoBean.save}" update="i_panel :form_questao:tbl i_msg" disabled="#{(controleAcessoBean.save) or (empty questaoBean.listQuestionarioGrupo)}" id="i_add"/>
+                                    <h:column>
+                                        <h:panelGrid columns="2">
+                                            <p:commandButton value="Salvar" action="#{questaoBean.save}" update="i_panel :form_questao:tbl i_msg" disabled="#{(controleAcessoBean.save) or (questaoBean.idQuestionarioSubgrupo == null) or (empty questaoBean.idQuestionarioSubgrupo)}" id="i_add"/>
+                                            <p:commandButton value="Novo" action="#{questaoBean.listener(5)}" update=":form_questao:" />                                            
+                                        </h:panelGrid>
+                                    </h:column>
                                 </h:panelGrid>
-                            </p:panel>                            
+                            </p:panel>
+                            <h:panelGrid columns="2" styleClass="margin-top-max" id="i_order">
+                                <p:commandButton value="Ordenar" action="#{questaoBean.setOrder(true)}" update=":form_questao:" rendered="#{!questaoBean.order}" disabled="#{empty questaoBean.listQuestoes}"/>
+                                <p:commandButton value="Voltar" action="#{questaoBean.setOrder(false)}" update=":form_questao:" rendered="#{questaoBean.order}" actionListener="#{questaoBean.loadQuestoes()}"/>
+                            </h:panelGrid>
                             <h:panelGrid id="tbl">
-                                <p:dataTable value="#{questaoBean.listQuestoes}" var="questao" emptyMessage="Nenhum registro encontrado!" scrollable="true" scrollHeight="300" styleClass="margin-top-max">
-                                    <p:column styleClass="text-center" width="25">
-                                        <p:commandButton icon="ui-icon-trash" action="#{questaoBean.delete(questao)}" update=":form_questao:tbl :form_questao:i_panel :form_questao:i_msg" disabled="#{controleAcessoBean.delete}"/>
-                                    </p:column>
-                                    <p:column headerText="Subgrupo">
-                                        <h:outputText value="#{questao.subgrupo.descricao}"/>
-                                    </p:column>
-                                    <p:column headerText="Descrição">
-                                        <h:outputText value="#{questao.descricao}"/>
-                                    </p:column>
-                                </p:dataTable>                                
+                                <h:column>
+                                    <p:dataTable value="#{questaoBean.listQuestoes}" var="questao" emptyMessage="Nenhum registro encontrado!" scrollable="true" scrollHeight="300" styleClass="margin-top-max" rendered="#{!questaoBean.order}">
+                                        <p:column styleClass="text-center" width="25">
+                                            <p:commandButton icon="ui-icon-link" action="#{questaoBean.edit(questao)}" update=":form_questao:" />
+                                        </p:column>
+                                        <p:column headerText="Subgrupo">
+                                            <h:outputText value="#{questao.subgrupo.descricao}"/>
+                                        </p:column>
+                                        <p:column headerText="Descrição">
+                                            <h:outputText value="#{questao.descricao}"/>
+                                        </p:column>
+                                        <p:column styleClass="text-center" width="25">
+                                            <p:commandButton icon="ui-icon-trash" action="#{questaoBean.delete(questao)}" update=":form_questao:tbl :form_questao:i_panel :form_questao:i_msg" disabled="#{controleAcessoBean.delete}"/>
+                                        </p:column>
+                                    </p:dataTable>                                    
+                                </h:column>
+                                <h:column>
+                                    <p:orderList value="#{questaoBean.listQuestoes}" var="questao" itemValue="#{questao}" converter="#{entityConverter}" controlsLocation="left" rendered="#{questaoBean.order}">
+                                        <p:ajax event="select" listener="#{questaoBean.onSelect}" />
+                                        <p:ajax event="unselect" listener="#{questaoBean.onUnselect}" />
+                                        <p:ajax event="reorder" listener="#{questaoBean.onReorder}" />
+                                        <f:facet name="caption">Reordenar</f:facet>
+                                        <p:column>
+                                            <h:outputText value="#{questao.descricao}" />
+                                        </p:column>
+                                    </p:orderList>                                
+                                </h:column>
                             </h:panelGrid>
                         </h:form>
                     </p:panel>

@@ -28,6 +28,7 @@ import br.com.clinicaintegrada.utils.Messages;
 import br.com.clinicaintegrada.utils.Moeda;
 import br.com.clinicaintegrada.utils.PF;
 import br.com.clinicaintegrada.utils.Sessions;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,7 +41,7 @@ import javax.faces.model.SelectItem;
 
 @ManagedBean
 @SessionScoped
-public class QuestionarioRespostaBean {
+public class QuestionarioRespostaBean implements Serializable {
 // 121
 
     private Integer rotina_id;
@@ -128,7 +129,7 @@ public class QuestionarioRespostaBean {
 
     public void loadQuestionarioGrupo() {
         QuestionarioGrupoDao qgd = new QuestionarioGrupoDao();
-        qgd.setOrder_by("QG.id");
+        qgd.setOrder_by("QG.ordem");
         listQuestionarioGrupo = new ArrayList();
         listQuestionarioGrupo = qgd.findByQuestionario(Integer.parseInt(questionario_id));
 
@@ -138,7 +139,7 @@ public class QuestionarioRespostaBean {
         if (!listQuestionarioGrupo.isEmpty()) {
             listQuestionarioSubgrupo = new ArrayList[listQuestionarioGrupo.size()];
             QuestionarioSubgrupoDao qsgd = new QuestionarioSubgrupoDao();
-            qsgd.setOrder_by("QSG.id");
+            qsgd.setOrder_by("QSG.ordem");
             for (int i = 0; i < listQuestionarioGrupo.size(); i++) {
                 listQuestionarioSubgrupo[i] = new ArrayList();
                 listQuestionarioSubgrupo[i].addAll(qsgd.findByGrupo(listQuestionarioGrupo.get(i).getId()));
@@ -151,7 +152,7 @@ public class QuestionarioRespostaBean {
         if (listQuestionarioSubgrupo != null && listQuestionarioSubgrupo.length > 0) {
             listQuestoes = new ArrayList();
             QuestaoDao qd = new QuestaoDao();
-            qd.setOrder_by("Q.id");
+            qd.setOrder_by("Q.ordem");
             for (int i = 0; i < listQuestionarioSubgrupo.length; i++) {
                 for (int y = 0; y < listQuestionarioSubgrupo[i].size(); y++) {
                     listQuestoes.addAll(qd.findBySubgrupo(listQuestionarioSubgrupo[i].get(y).getId()));
@@ -195,9 +196,12 @@ public class QuestionarioRespostaBean {
         indexString = null;
         index = null;
         texto = null;
-        List<RespostaFixa> list = new RespostaFixaDao().findByQuestao(q.getId());
+        RespostaFixaDao respostaFixaDao = new RespostaFixaDao();
+        respostaFixaDao.setOrder_by("RF.ordem");
+        List<RespostaFixa> list = respostaFixaDao.findByQuestao(q.getId());
         if (list.isEmpty()) {
-            Messages.warn("Sistema", "Nenhuma pergunta encontrada!");
+            Messages.warn("Sistema", "Nenhuma pergunta encontrada! Cadastrar respostas fixas.");
+            PF.update("form_resposta");
             return;
         }
         if (list.size() == 1) {
@@ -606,6 +610,9 @@ public class QuestionarioRespostaBean {
 
     public void updateRespostaLote() {
         RespostaLote rl = getRespostaLote();
+        if(rl.getId() == null) {
+            return;
+        }
         Integer compare = DataHoje.dataHoje().compareTo(rl.getLancamento());
         if (compare > 0) {
             rl.setAtualizacao(new Date());

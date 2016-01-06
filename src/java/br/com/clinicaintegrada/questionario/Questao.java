@@ -1,14 +1,14 @@
 package br.com.clinicaintegrada.questionario;
 
+import br.com.clinicaintegrada.utils.BaseEntity;
 import java.io.Serializable;
-import java.util.Objects;
 import javax.persistence.*;
 
 @Entity
 @Table(name = "que_questao",
         uniqueConstraints = @UniqueConstraint(columnNames = {"id_subgrupo", "ds_descricao"})
 )
-public class Questao implements Serializable {
+public class Questao implements Serializable, BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,19 +19,24 @@ public class Questao implements Serializable {
     private QuestionarioSubgrupo subgrupo;
     @Column(name = "ds_descricao", length = 255, nullable = false)
     private String descricao;
+    @Column(name = "nr_ordem", nullable = false, columnDefinition = "integer default 0")
+    private Integer ordem;
 
     public Questao() {
         this.id = null;
         this.subgrupo = null;
         this.descricao = "";
+        this.ordem = 0;
     }
 
-    public Questao(Integer id, QuestionarioSubgrupo subgrupo, String descricao) {
+    public Questao(Integer id, QuestionarioSubgrupo subgrupo, String descricao, Integer ordem) {
         this.id = id;
         this.subgrupo = subgrupo;
         this.descricao = descricao;
+        this.ordem = ordem;
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
@@ -56,12 +61,17 @@ public class Questao implements Serializable {
         this.descricao = descricao;
     }
 
+    public Integer getOrdem() {
+        return ordem;
+    }
+
+    public void setOrdem(Integer ordem) {
+        this.ordem = ordem;
+    }
+
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 17 * hash + Objects.hashCode(this.id);
-        hash = 17 * hash + Objects.hashCode(this.subgrupo);
-        hash = 17 * hash + Objects.hashCode(this.descricao);
         return hash;
     }
 
@@ -74,21 +84,12 @@ public class Questao implements Serializable {
             return false;
         }
         final Questao other = (Questao) obj;
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        if (!Objects.equals(this.subgrupo, other.subgrupo)) {
-            return false;
-        }
-        if (!Objects.equals(this.descricao, other.descricao)) {
-            return false;
-        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "Questao{" + "id=" + id + ", subgrupo=" + subgrupo + ", descricao=" + descricao + '}';
+        return "Questao{" + "id=" + id + ", subgrupo=" + subgrupo + ", descricao=" + descricao + ", ordem=" + ordem + '}';
     }
 
 }

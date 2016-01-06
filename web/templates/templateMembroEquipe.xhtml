@@ -1,0 +1,21 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html">
+    <f:view>
+        <h:form id="form_membro_equipe">
+            <p:dialog widgetVar="dlg_block_equipe" modal="true" resizable="false" header="Importante!" width="400" draggable="false" closable="false" visible="#{!segurancaUtilitariosBean.existeEquipe}">
+                <p:outputLabel value="- Usuário não pertence a nenhuma equipe!" styleClass="font-color-red font-size-14" /><br /><br />
+                <p:outputLabel value="- Contate o administrador do sistema." styleClass="font-size-12"/><br /><br />
+                <p:outputLabel value="- Para cadastrar nova equipe acesse: Menu Principal > Menu Equipe Técnica > Equipe" styleClass="font-size-12"/><br /><br />
+                <f:facet name="footer">
+                    <h:panelGrid columns="2" width="710">
+                        <h:commandLink value="Voltar" action="#{chamadaPaginaBean.pagina(chamadaPaginaBean.penultimoLink)}" title="Voltar" immediate="true"/>
+                        <h:commandLink value="Equipe" action="#{chamadaPaginaBean.pesquisa('equipe')}" title="Equipe" immediate="true" rendered="#{segurancaUtilitariosBean.sessaoUsuario.administrador}"/>
+                    </h:panelGrid>
+                </f:facet>
+            </p:dialog>
+        </h:form>
+    </f:view>
+</ui:composition>

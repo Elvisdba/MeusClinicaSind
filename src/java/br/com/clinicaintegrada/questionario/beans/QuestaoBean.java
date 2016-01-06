@@ -13,6 +13,7 @@ import br.com.clinicaintegrada.seguranca.dao.RotinaDao;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.Messages;
 import br.com.clinicaintegrada.utils.Sessions;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -20,10 +21,12 @@ import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.model.SelectItem;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.UnselectEvent;
 
 @ManagedBean
 @SessionScoped
-public class QuestaoBean {
+public class QuestaoBean implements Serializable {
 
     private Questao questao;
     private List<SelectItem> listQuestionarios;
@@ -35,6 +38,7 @@ public class QuestaoBean {
     private List<SelectItem> listQuestionarioSubgrupo;
     private String idQuestionarioSubgrupo;
     private List<Questao> listQuestoes;
+    private Boolean order;
 
     @PostConstruct
     public void init() {
@@ -54,6 +58,7 @@ public class QuestaoBean {
         loadQuestionarioGrupo();
         loadQuestionarioSubgrupo();
         loadQuestoes();
+        order = false;
     }
 
     @PreDestroy
@@ -72,21 +77,56 @@ public class QuestaoBean {
      */
     public void listener(Integer tcase) {
         if (tcase == 1) {
-            loadQuestionarios();
-            loadQuestionarioGrupo();
-            loadQuestionarioSubgrupo();
-            loadQuestoes();
+            if (idRotina == null || idRotina.isEmpty()) {
+                listQuestionarios.clear();
+                listQuestionarioGrupo.clear();
+                listQuestionarioSubgrupo.clear();
+                listQuestoes.clear();
+                idQuestionario = null;
+                idQuestionarioGrupo = null;
+                idQuestionarioSubgrupo = null;                
+            } else {
+                loadQuestionarios();
+                loadQuestionarioGrupo();
+                loadQuestionarioSubgrupo();
+                loadQuestoes();
+            }
+            order = false;
         }
         if (tcase == 2) {
-            loadQuestionarioGrupo();
-            loadQuestionarioSubgrupo();
-            loadQuestoes();
+            if (idQuestionario == null || idQuestionario.isEmpty()) {
+                listQuestionarioGrupo.clear();
+                listQuestionarioSubgrupo.clear();
+                idQuestionarioGrupo = null;
+                idQuestionarioSubgrupo = null;
+                listQuestoes.clear();
+            } else {
+                loadQuestionarioGrupo();
+                loadQuestionarioSubgrupo();
+                loadQuestoes();
+            }
+            order = false;
         }
         if (tcase == 3) {
-            loadQuestionarioSubgrupo();
+            if (idQuestionarioGrupo == null || idQuestionarioGrupo.isEmpty()) {
+                listQuestionarioSubgrupo.clear();
+                idQuestionarioSubgrupo = null;
+                listQuestoes.clear();
+            } else {
+                loadQuestionarioSubgrupo();
+                loadQuestoes();
+            }
+            order = false;
         }
         if (tcase == 4) {
-            loadQuestoes();
+            if (idQuestionarioSubgrupo == null || idQuestionarioSubgrupo.isEmpty()) {
+                listQuestoes.clear();
+            } else {
+                loadQuestoes();                                
+            }
+        }
+        if (tcase == 5) {
+            questao = new Questao();
         }
     }
 
@@ -112,23 +152,44 @@ public class QuestaoBean {
             return;
         }
         questao.setSubgrupo((QuestionarioSubgrupo) new Dao().find(new QuestionarioSubgrupo(), Integer.parseInt(idQuestionarioSubgrupo)));
-        if (new Dao().save(questao, true)) {
-            questao = new Questao();
-            loadQuestoes();
+        if (questao.getId() == null) {
+            if (new Dao().save(questao, true)) {
+                questao = new Questao();
+                reorder();
+                loadQuestoes();
+                Messages.info("Sucesso", "Registro inserido");
+            } else {
+                Messages.warn("Erro", "Ao inserir registro!");
+            }
         } else {
-            Messages.warn("Erro", "Ao inserir registro!");
+            if (new Dao().update(questao, true)) {
+                questao = new Questao();
+                reorder();
+                loadQuestoes();
+                Messages.info("Sucesso", "Registro atualizado");
+            } else {
+                Messages.warn("Erro", "Ao atualizar registro!");
+            }
         }
+    }
+
+    public void edit(Questao q) {
+        idRotina = Integer.toString(q.getSubgrupo().getGrupo().getQuestionario().getRotina().getId());
+        idQuestionario = Integer.toString(q.getSubgrupo().getGrupo().getQuestionario().getId());
+        idQuestionarioGrupo = Integer.toString(q.getSubgrupo().getGrupo().getId());
+        idQuestionarioSubgrupo = Integer.toString(q.getSubgrupo().getId());
+        questao = q;
     }
 
     public void delete(Questao q) {
         if (new Dao().delete(q, true)) {
             Messages.info("Sucesso", "Registro excluído");
             questao = new Questao();
+            reorder();
             loadQuestoes();
         } else {
             Messages.warn("Erro", "Ao excluir registro!");
         }
-
     }
 
     public final void loadRotinas() {
@@ -195,7 +256,9 @@ public class QuestaoBean {
     public final void loadQuestoes() {
         if (idQuestionarioSubgrupo != null) {
             listQuestoes = new ArrayList<>();
-            listQuestoes = new QuestaoDao().findBySubgrupo(Integer.parseInt(idQuestionarioSubgrupo));
+            QuestaoDao questaoDao = new QuestaoDao();
+            questaoDao.setOrder_by("Q.ordem");
+            listQuestoes = questaoDao.findBySubgrupo(Integer.parseInt(idQuestionarioSubgrupo));
         } else {
             listQuestoes.clear();
 
@@ -282,4 +345,31 @@ public class QuestaoBean {
         this.idQuestionarioSubgrupo = idQuestionarioSubgrupo;
     }
 
+    public Boolean getOrder() {
+        return order;
+    }
+
+    public void setOrder(Boolean order) {
+        this.order = order;
+    }
+
+    public void onSelect(SelectEvent event) {
+        reorder();
+    }
+
+    public void onUnselect(UnselectEvent event) {
+        reorder();
+    }
+
+    public void onReorder() {
+        reorder();
+    }
+
+    public void reorder() {
+        for (int i = 0; i < listQuestoes.size(); i++) {
+            listQuestoes.get(i).setOrdem(i + 1);
+            new Dao().update(listQuestoes.get(i), true);
+        }
+        Messages.info("Sucesso", "Lista reordenada com sucesso");
+    }
 }

@@ -1,14 +1,14 @@
 package br.com.clinicaintegrada.questionario;
 
+import br.com.clinicaintegrada.utils.BaseEntity;
 import java.io.Serializable;
-import java.util.Objects;
 import javax.persistence.*;
 
 @Entity
 @Table(name = "que_subgrupo",
         uniqueConstraints = @UniqueConstraint(columnNames = {"id_grupo", "ds_descricao"})
 )
-public class QuestionarioSubgrupo implements Serializable {
+public class QuestionarioSubgrupo implements Serializable, BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,19 +19,24 @@ public class QuestionarioSubgrupo implements Serializable {
     private QuestionarioGrupo grupo;
     @Column(name = "ds_descricao", length = 255, nullable = false)
     private String descricao;
+    @Column(name = "nr_ordem", nullable = false, columnDefinition = "integer default 0")
+    private Integer ordem;
 
     public QuestionarioSubgrupo() {
         this.id = null;
         this.grupo = new QuestionarioGrupo();
         this.descricao = "";
+        this.ordem = 0;
     }
 
-    public QuestionarioSubgrupo(Integer id, QuestionarioGrupo grupo, String descricao) {
+    public QuestionarioSubgrupo(Integer id, QuestionarioGrupo grupo, String descricao, Integer ordem) {
         this.id = id;
         this.grupo = grupo;
         this.descricao = descricao;
+        this.ordem = ordem;
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
@@ -56,12 +61,17 @@ public class QuestionarioSubgrupo implements Serializable {
         this.descricao = descricao;
     }
 
+    public Integer getOrdem() {
+        return ordem;
+    }
+
+    public void setOrdem(Integer ordem) {
+        this.ordem = ordem;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 17 * hash + Objects.hashCode(this.id);
-        hash = 17 * hash + Objects.hashCode(this.grupo);
-        hash = 17 * hash + Objects.hashCode(this.descricao);
+        int hash = 7;
         return hash;
     }
 
@@ -74,21 +84,12 @@ public class QuestionarioSubgrupo implements Serializable {
             return false;
         }
         final QuestionarioSubgrupo other = (QuestionarioSubgrupo) obj;
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        if (!Objects.equals(this.grupo, other.grupo)) {
-            return false;
-        }
-        if (!Objects.equals(this.descricao, other.descricao)) {
-            return false;
-        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "QuestionarioSubgrupo{" + "id=" + id + ", grupo=" + grupo + ", descricao=" + descricao + '}';
+        return "QuestionarioSubgrupo{" + "id=" + id + ", grupo=" + grupo + ", descricao=" + descricao + ", ordem=" + ordem + '}';
     }
 
 }

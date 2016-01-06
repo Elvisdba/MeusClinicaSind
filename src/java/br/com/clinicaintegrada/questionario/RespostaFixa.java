@@ -1,5 +1,6 @@
 package br.com.clinicaintegrada.questionario;
 
+import br.com.clinicaintegrada.utils.BaseEntity;
 import java.io.Serializable;
 import javax.persistence.*;
 
@@ -7,7 +8,7 @@ import javax.persistence.*;
 @Table(name = "que_resposta_fixa",
         uniqueConstraints = @UniqueConstraint(columnNames = {"id_questao", "ds_descricao"})
 )
-public class RespostaFixa implements Serializable {
+public class RespostaFixa implements Serializable, BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,19 +19,24 @@ public class RespostaFixa implements Serializable {
     private Questao questao;
     @Column(name = "ds_descricao", length = 255, nullable = false)
     private String descricao;
+    @Column(name = "nr_ordem", columnDefinition = "integer default 0")
+    private Integer ordem;
 
     public RespostaFixa() {
         this.id = null;
         this.questao = null;
         this.descricao = "";
+        this.ordem = 0;
     }
 
-    public RespostaFixa(Integer id, Questao questao, String descricao) {
+    public RespostaFixa(Integer id, Questao questao, String descricao, Integer ordem) {
         this.id = id;
         this.questao = questao;
         this.descricao = descricao;
+        this.ordem = ordem;
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
@@ -55,9 +61,17 @@ public class RespostaFixa implements Serializable {
         this.descricao = descricao;
     }
 
+    public Integer getOrdem() {
+        return ordem;
+    }
+
+    public void setOrdem(Integer ordem) {
+        this.ordem = ordem;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 3;
+        int hash = 5;
         return hash;
     }
 
@@ -75,7 +89,6 @@ public class RespostaFixa implements Serializable {
 
     @Override
     public String toString() {
-        return "RespostaFixa{" + "id=" + id + ", questao=" + questao + ", descricao=" + descricao + '}';
+        return "RespostaFixa{" + "id=" + id + ", questao=" + questao + ", descricao=" + descricao + ", ordem=" + ordem + '}';
     }
-
 }

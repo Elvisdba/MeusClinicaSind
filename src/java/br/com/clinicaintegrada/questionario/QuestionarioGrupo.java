@@ -1,14 +1,14 @@
 package br.com.clinicaintegrada.questionario;
 
+import br.com.clinicaintegrada.utils.BaseEntity;
 import java.io.Serializable;
-import java.util.Objects;
 import javax.persistence.*;
 
 @Entity
 @Table(name = "que_grupo",
         uniqueConstraints = @UniqueConstraint(columnNames = {"id_questionario", "ds_descricao"})
 )
-public class QuestionarioGrupo implements Serializable {
+public class QuestionarioGrupo implements Serializable, BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,19 +19,24 @@ public class QuestionarioGrupo implements Serializable {
     private Questionario questionario;
     @Column(name = "ds_descricao", length = 255, nullable = false)
     private String descricao;
+    @Column(name = "nr_ordem", nullable = false, columnDefinition = "integer default 0")
+    private Integer ordem;
 
     public QuestionarioGrupo() {
         this.id = null;
         this.questionario = null;
         this.descricao = "";
+        this.ordem = 0;
     }
 
-    public QuestionarioGrupo(Integer id, Questionario questionario, String descricao) {
+    public QuestionarioGrupo(Integer id, Questionario questionario, String descricao, Integer ordem) {
         this.id = id;
         this.questionario = questionario;
         this.descricao = descricao;
+        this.ordem = ordem;
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
@@ -56,12 +61,17 @@ public class QuestionarioGrupo implements Serializable {
         this.descricao = descricao;
     }
 
+    public Integer getOrdem() {
+        return ordem;
+    }
+
+    public void setOrdem(Integer ordem) {
+        this.ordem = ordem;
+    }
+
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 17 * hash + Objects.hashCode(this.id);
-        hash = 17 * hash + Objects.hashCode(this.questionario);
-        hash = 17 * hash + Objects.hashCode(this.descricao);
         return hash;
     }
 
@@ -74,21 +84,12 @@ public class QuestionarioGrupo implements Serializable {
             return false;
         }
         final QuestionarioGrupo other = (QuestionarioGrupo) obj;
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        if (!Objects.equals(this.questionario, other.questionario)) {
-            return false;
-        }
-        if (!Objects.equals(this.descricao, other.descricao)) {
-            return false;
-        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "QuestionarioGrupo{" + "id=" + id + ", questionario=" + questionario + ", descricao=" + descricao + '}';
+        return "QuestionarioGrupo{" + "id=" + id + ", questionario=" + questionario + ", descricao=" + descricao + ", ordem=" + ordem + '}';
     }
 
 }

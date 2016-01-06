@@ -15,6 +15,7 @@ import br.com.clinicaintegrada.seguranca.dao.RotinaDao;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.Messages;
 import br.com.clinicaintegrada.utils.Sessions;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -22,11 +23,13 @@ import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.model.SelectItem;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.UnselectEvent;
 
 @ManagedBean
 @SessionScoped
-public class RespostaFixaBean {
-    
+public class RespostaFixaBean implements Serializable {
+
     private RespostaFixa respostaFixa;
     private List<SelectItem> listQuestionarios;
     private String idQuestionario;
@@ -40,7 +43,8 @@ public class RespostaFixaBean {
     private String idQuestao;
     private List<RespostaFixa> listRespostaFixa;
     private String opcao;
-    
+    private Boolean order;
+
     @PostConstruct
     public void init() {
         respostaFixa = new RespostaFixa();
@@ -63,13 +67,14 @@ public class RespostaFixaBean {
         loadQuestoes();
         loadRespostaFixa();
         opcao = "";
+        order = false;
     }
-    
+
     @PreDestroy
     public void destroy() {
         clear();
     }
-    
+
     public void clear() {
         Sessions.remove("respostaFixaBean");
     }
@@ -81,35 +86,80 @@ public class RespostaFixaBean {
      */
     public void listener(Integer tcase) {
         if (tcase == 1) {
-            loadQuestionarios();
-            loadQuestionarioGrupo();
-            loadQuestionarioSubgrupo();
-            loadQuestoes();
-            loadRespostaFixa();
+            if (idRotina == null || idRotina.isEmpty()) {
+                listQuestionarios.clear();
+                listQuestionarioGrupo.clear();
+                listQuestionarioSubgrupo.clear();
+                listQuestao.clear();
+                idQuestionario = null;
+                idQuestionarioGrupo = null;
+                idQuestionarioSubgrupo = null;
+                idQuestao = null;
+            } else {
+                loadQuestionarios();
+                loadQuestionarioGrupo();
+                loadQuestionarioSubgrupo();
+                loadQuestoes();
+                loadRespostaFixa();
+            }
+            order = false;
         }
         if (tcase == 2) {
-            loadQuestionarioGrupo();
-            loadQuestionarioSubgrupo();
-            loadQuestoes();
-            loadRespostaFixa();
+            if (idQuestionario == null || idQuestionario.isEmpty()) {
+                listQuestionarioGrupo.clear();
+                listQuestionarioSubgrupo.clear();
+                listQuestao.clear();
+                idQuestionarioGrupo = null;
+                idQuestionarioSubgrupo = null;
+                idQuestao = null;
+            } else {
+                loadQuestionarioGrupo();
+                loadQuestionarioSubgrupo();
+                loadQuestoes();
+                loadRespostaFixa();
+            }
+            order = false;
         }
         if (tcase == 3) {
-            loadQuestionarioSubgrupo();
-            loadQuestoes();
-            loadRespostaFixa();
+            if (idQuestionarioGrupo == null || idQuestionarioGrupo.isEmpty()) {
+                listQuestionarioSubgrupo.clear();
+                listQuestao.clear();
+                idQuestionarioSubgrupo = null;
+                idQuestao = null;
+            } else {
+                loadQuestionarioSubgrupo();
+                loadQuestoes();
+                loadRespostaFixa();
+            }
+            order = false;
         }
         if (tcase == 4) {
-            loadQuestoes();
-            loadRespostaFixa();
+            if (idQuestionarioSubgrupo == null || idQuestionarioSubgrupo.isEmpty()) {
+                listQuestao.clear();
+                listRespostaFixa.clear();
+                idQuestao = null;
+            } else {
+                loadQuestoes();
+                loadRespostaFixa();
+            }
+            order = false;
         }
         if (tcase == 5) {
-            loadRespostaFixa();
+            if (idQuestao == null || idQuestao.isEmpty()) {
+                listRespostaFixa.clear();
+            } else {
+                loadRespostaFixa();
+            }
         }
         if (tcase == 6) {
             respostaFixa.setDescricao(opcao);
         }
+        if (tcase == 7) {
+            respostaFixa = new RespostaFixa();
+            opcao = "";
+        }
     }
-    
+
     public void save() {
         opcao = "";
         if (respostaFixa.getDescricao().isEmpty()) {
@@ -136,37 +186,61 @@ public class RespostaFixaBean {
             Messages.warn("Validação", "Informar questão");
             return;
         }
-        respostaFixa.setQuestao((Questao) new Dao().find(new Questao(), Integer.parseInt(idQuestao)));
-        List<RespostaFixa> list = new RespostaFixaDao().findByQuestao(Integer.parseInt(idQuestao));
-        if (!list.isEmpty()) {
-            switch (list.get(0).getDescricao()) {
-                case "#money":
-                case "#int":
-                case "#boolean":
-                case "#text":
-                    Messages.warn("Validação", "Tipo já pré definido para esta questão (Só pode haver um tipo)!");
-                    return;
+        if (respostaFixa.getId() == null) {
+            respostaFixa.setQuestao((Questao) new Dao().find(new Questao(), Integer.parseInt(idQuestao)));
+            List<RespostaFixa> list = new RespostaFixaDao().findByQuestao(Integer.parseInt(idQuestao));
+            if (!list.isEmpty()) {
+                switch (list.get(0).getDescricao()) {
+                    case "#money":
+                    case "#int":
+                    case "#boolean":
+                    case "#text":
+                        Messages.warn("Validação", "Tipo já pré definido para esta questão (Só pode haver um tipo)!");
+                        return;
+                }
+            }
+            if (new Dao().save(respostaFixa, true)) {
+                respostaFixa = new RespostaFixa();
+                reorder();
+                loadRespostaFixa();
+                Messages.info("Sucesso", "Registro inserido");
+            } else {
+                Messages.warn("Erro", "Ao inserir registro!");
+            }
+        } else {
+            if (new Dao().update(respostaFixa, true)) {
+                respostaFixa = new RespostaFixa();
+                reorder();
+                loadRespostaFixa();
+                Messages.info("Sucesso", "Registro atualizado");
+            } else {
+                Messages.warn("Erro", "Ao inserir registro!");
             }
         }
-        if (new Dao().save(respostaFixa, true)) {
-            respostaFixa = new RespostaFixa();
-            loadRespostaFixa();
-        } else {
-            Messages.warn("Erro", "Ao inserir registro!");
-        }
     }
-    
+
+    public void edit(RespostaFixa rf) {
+        idRotina = Integer.toString(rf.getQuestao().getSubgrupo().getGrupo().getQuestionario().getRotina().getId());
+        idQuestionario = Integer.toString(rf.getQuestao().getSubgrupo().getGrupo().getQuestionario().getId());
+        idQuestionarioGrupo = Integer.toString(rf.getQuestao().getSubgrupo().getGrupo().getId());
+        idQuestionarioSubgrupo = Integer.toString(rf.getQuestao().getSubgrupo().getId());
+        idQuestao = Integer.toString(rf.getQuestao().getId());
+        opcao = rf.getDescricao();
+        respostaFixa = rf;
+    }
+
     public void delete(RespostaFixa rf) {
         if (new Dao().delete(rf, true)) {
             Messages.info("Sucesso", "Registro excluído");
             respostaFixa = new RespostaFixa();
+            reorder();
             loadRespostaFixa();
         } else {
             Messages.warn("Erro", "Ao excluir registro!");
         }
-        
+
     }
-    
+
     public final void loadRotinas() {
         idRotina = null;
         List<Rotina> list = new RotinaDao().listGroupByQuestionarios();
@@ -179,7 +253,7 @@ public class RespostaFixaBean {
             }
         }
     }
-    
+
     public final void loadQuestionarios() {
         idQuestionario = null;
         listQuestionarios = new ArrayList<>();
@@ -195,7 +269,7 @@ public class RespostaFixaBean {
             listQuestionarios.clear();
         }
     }
-    
+
     public final void loadQuestionarioGrupo() {
         idQuestionarioGrupo = null;
         listQuestionarioGrupo = new ArrayList<>();
@@ -211,7 +285,7 @@ public class RespostaFixaBean {
             listQuestionarioGrupo.clear();
         }
     }
-    
+
     public final void loadQuestionarioSubgrupo() {
         idQuestionarioSubgrupo = null;
         listQuestionarioSubgrupo = new ArrayList<>();
@@ -227,7 +301,7 @@ public class RespostaFixaBean {
             listQuestionarioSubgrupo.clear();
         }
     }
-    
+
     public final void loadQuestoes() {
         idQuestao = null;
         listQuestao = new ArrayList<>();
@@ -243,119 +317,155 @@ public class RespostaFixaBean {
             listQuestao.clear();
         }
     }
-    
+
     public final void loadRespostaFixa() {
         if (idQuestao != null) {
             listRespostaFixa = new ArrayList<>();
-            listRespostaFixa = new RespostaFixaDao().findByQuestao(Integer.parseInt(idQuestao));
+            RespostaFixaDao respostaFixaDao = new RespostaFixaDao();
+            respostaFixaDao.setOrder_by("RF.ordem");
+            listRespostaFixa = respostaFixaDao.findByQuestao(Integer.parseInt(idQuestao));
         } else {
             listRespostaFixa.clear();
-            
+
         }
     }
-    
+
     public List<SelectItem> getListQuestionarios() {
         return listQuestionarios;
     }
-    
+
     public void setListQuestionarios(List<SelectItem> listQuestionarios) {
         this.listQuestionarios = listQuestionarios;
     }
-    
+
     public String getIdQuestionario() {
         return idQuestionario;
     }
-    
+
     public void setIdQuestionario(String idQuestionario) {
         this.idQuestionario = idQuestionario;
     }
-    
+
     public List<RespostaFixa> getListRespostaFixa() {
+        if (listRespostaFixa.isEmpty()) {
+            order = false;
+        }
         return listRespostaFixa;
     }
-    
+
     public void setListRespostaFixa(List<RespostaFixa> listRespostaFixa) {
         this.listRespostaFixa = listRespostaFixa;
     }
-    
+
     public List<SelectItem> getListRotinas() {
         return listRotinas;
     }
-    
+
     public void setListRotinas(List<SelectItem> listRotinas) {
         this.listRotinas = listRotinas;
     }
-    
+
     public String getIdRotina() {
         return idRotina;
     }
-    
+
     public void setIdRotina(String idRotina) {
         this.idRotina = idRotina;
     }
-    
+
     public List<SelectItem> getListQuestionarioGrupo() {
         return listQuestionarioGrupo;
     }
-    
+
     public void setListQuestionarioGrupo(List<SelectItem> listQuestionarioGrupo) {
         this.listQuestionarioGrupo = listQuestionarioGrupo;
     }
-    
+
     public String getIdQuestionarioGrupo() {
         return idQuestionarioGrupo;
     }
-    
+
     public void setIdQuestionarioGrupo(String idQuestionarioGrupo) {
         this.idQuestionarioGrupo = idQuestionarioGrupo;
     }
-    
+
     public RespostaFixa getRespostaFixa() {
         return respostaFixa;
     }
-    
+
     public void setRespostaFixa(RespostaFixa respostaFixa) {
         this.respostaFixa = respostaFixa;
     }
-    
+
     public List<SelectItem> getListQuestionarioSubgrupo() {
         return listQuestionarioSubgrupo;
     }
-    
+
     public void setListQuestionarioSubgrupo(List<SelectItem> listQuestionarioSubgrupo) {
         this.listQuestionarioSubgrupo = listQuestionarioSubgrupo;
     }
-    
+
     public String getIdQuestionarioSubgrupo() {
         return idQuestionarioSubgrupo;
     }
-    
+
     public void setIdQuestionarioSubgrupo(String idQuestionarioSubgrupo) {
         this.idQuestionarioSubgrupo = idQuestionarioSubgrupo;
     }
-    
+
     public List<SelectItem> getListQuestao() {
         return listQuestao;
     }
-    
+
     public void setListQuestao(List<SelectItem> listQuestao) {
         this.listQuestao = listQuestao;
     }
-    
+
     public String getIdQuestao() {
         return idQuestao;
     }
-    
+
     public void setIdQuestao(String idQuestao) {
         this.idQuestao = idQuestao;
     }
-    
+
     public String getOpcao() {
         return opcao;
     }
-    
+
     public void setOpcao(String opcao) {
         this.opcao = opcao;
     }
-    
+
+    public Boolean getOrder() {
+        return order;
+    }
+
+    public void setOrder(Boolean order) {
+        this.order = order;
+    }
+
+    public void onSelect(SelectEvent event) {
+        reorder();
+    }
+
+    public void onUnselect(UnselectEvent event) {
+        reorder();
+    }
+
+    public void onReorder() {
+        reorder();
+    }
+
+    public void reorder() {
+        if (listRespostaFixa.size() == 1) {
+            return;
+        }
+        for (int i = 0; i < listRespostaFixa.size(); i++) {
+            listRespostaFixa.get(i).setOrdem(i + 1);
+            new Dao().update(listRespostaFixa.get(i), true);
+        }
+        Messages.info("Sucesso", "Lista reordenada com sucesso");
+    }
+
 }

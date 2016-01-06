@@ -12,6 +12,7 @@
         <style type="text/css">
             .ui-widget-content .ui-inputfield{ padding: 8px!important;} 
             .ui-button { padding: 3px!important; }
+            .ui-orderlist-list {width:100%!important;}
         </style>
 
         <script type="text/javascript">
@@ -38,48 +39,48 @@
                                     <h:outputLabel value="Rotina" />
                                     <p:column>
                                         <p:selectOneMenu value="#{respostaFixaBean.idRotina}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
-                                            <p:ajax event="change" update="@this idQuestionarios idGrupo tbl i_add idSubgrupo idQuestao" listener="#{respostaFixaBean.listener(1)}" />
+                                            <p:ajax event="change" update="@this idQuestionarios idGrupo tbl i_add idSubgrupo idQuestao i_order i_dados" listener="#{respostaFixaBean.listener(1)}" />
                                             <f:selectItem itemValue="" itemLabel="Selecionar"/>
                                             <f:selectItems value="#{respostaFixaBean.listRotinas}" />
                                         </p:selectOneMenu>
                                     </p:column>
                                     <h:outputLabel value="Questionário" />                                    
                                     <p:column>
-                                        <p:selectOneMenu id="idQuestionarios" value="#{respostaFixaBean.idQuestionario}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
-                                            <p:ajax event="change" update="@this  idGrupo i_add tbl idSubgrupo idQuestao" listener="#{respostaFixaBean.listener(2)}" />
+                                        <p:selectOneMenu id="idQuestionarios" value="#{respostaFixaBean.idQuestionario}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith" disabled="#{respostaFixaBean.idRotina == null or empty respostaFixaBean.idRotina}">
+                                            <p:ajax event="change" update="@this  idGrupo i_add tbl idSubgrupo idQuestao i_order i_dados" listener="#{respostaFixaBean.listener(2)}" />
                                             <f:selectItem itemValue="" itemLabel="Selecionar"/>
                                             <f:selectItems value="#{respostaFixaBean.listQuestionarios}" />
                                         </p:selectOneMenu>
                                     </p:column>
                                     <h:outputLabel value="Grupo" />                                    
                                     <p:column>
-                                        <p:selectOneMenu id="idGrupo" value="#{respostaFixaBean.idQuestionarioGrupo}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
-                                            <p:ajax event="change" update="@this idSubgrupo i_add tbl idQuestao" listener="#{respostaFixaBean.listener(3)}" />
+                                        <p:selectOneMenu id="idGrupo" value="#{respostaFixaBean.idQuestionarioGrupo}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith" disabled="#{respostaFixaBean.idQuestionario == null or empty respostaFixaBean.idQuestionario}">
+                                            <p:ajax event="change" update="@this idSubgrupo i_add tbl idQuestao i_order i_dados" listener="#{respostaFixaBean.listener(3)}" />
                                             <f:selectItem itemValue="" itemLabel="Selecionar"/>
                                             <f:selectItems value="#{respostaFixaBean.listQuestionarioGrupo}" />
                                         </p:selectOneMenu>
                                     </p:column>
                                     <h:outputLabel value="Subgrupo" />                                    
                                     <p:column>
-                                        <p:selectOneMenu id="idSubgrupo" value="#{respostaFixaBean.idQuestionarioSubgrupo}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
-                                            <p:ajax event="change" update="@this tbl i_add idQuestao" listener="#{respostaFixaBean.listener(4)}" />
+                                        <p:selectOneMenu id="idSubgrupo" value="#{respostaFixaBean.idQuestionarioSubgrupo}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith" disabled="#{respostaFixaBean.idQuestionarioGrupo == null or empty respostaFixaBean.idQuestionarioGrupo}">
+                                            <p:ajax event="change" update="@this tbl i_add idQuestao i_order i_dados" listener="#{respostaFixaBean.listener(4)}" />
                                             <f:selectItem itemValue="" itemLabel="Selecionar"/>
                                             <f:selectItems value="#{respostaFixaBean.listQuestionarioSubgrupo}" />
                                         </p:selectOneMenu>
                                     </p:column>
                                     <h:outputLabel value="Questão" />                                    
                                     <p:column>
-                                        <p:selectOneMenu id="idQuestao" value="#{respostaFixaBean.idQuestao}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
-                                            <p:ajax event="change" update="@this tbl i_add" listener="#{respostaFixaBean.listener(5)}" />
+                                        <p:selectOneMenu id="idQuestao" value="#{respostaFixaBean.idQuestao}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith" disabled="#{respostaFixaBean.idQuestionarioSubgrupo == null or empty respostaFixaBean.idQuestionarioSubgrupo}">
+                                            <p:ajax event="change" update="@this tbl i_add i_order i_dados" listener="#{respostaFixaBean.listener(5)}" />
                                             <f:selectItem itemValue="" itemLabel="Selecionar"/>
                                             <f:selectItems value="#{respostaFixaBean.listQuestao}" />
                                         </p:selectOneMenu>
                                     </p:column>
                                     <h:outputLabel value="Descrição" />                                    
                                     <h:column>   
-                                        <h:panelGrid columns="2">
+                                        <h:panelGrid columns="2" id="i_dados">
                                             <p:column>
-                                                <p:selectOneMenu value="#{respostaFixaBean.opcao}" filter="true" filterMatchMode="startsWith" style="width: 190px">
+                                                <p:selectOneMenu value="#{respostaFixaBean.opcao}" filter="true" filterMatchMode="startsWith" style="width: 190px" disabled="#{respostaFixaBean.idQuestao == null or empty respostaFixaBean.idQuestao}">
                                                     <p:ajax event="change" update="@this i_descricao" listener="#{respostaFixaBean.listener(6)}" />
                                                     <f:selectItem itemValue="" itemLabel="Default"/>
                                                     <f:selectItem itemValue="#text" itemLabel="Texto/Observação" itemDescription="Texto/Observação"/>
@@ -89,7 +90,7 @@
                                                 </p:selectOneMenu>
                                             </p:column>
                                             <p:column>
-                                                <p:inputText value="#{respostaFixaBean.respostaFixa.descricao}" size="60" maxlength="255" id="i_descricao" readonly="#{not empty respostaFixaBean.opcao}">
+                                                <p:inputText value="#{respostaFixaBean.respostaFixa.descricao}" size="60" maxlength="255" id="i_descricao" readonly="#{not empty respostaFixaBean.opcao}" disabled="#{respostaFixaBean.idQuestao == null or empty respostaFixaBean.idQuestao}">
                                                     <p:ajax event="change" update="@this" />
                                                 </p:inputText>
                                             </p:column>
@@ -98,21 +99,55 @@
                                     <p:column />
                                     <h:outputLabel value="Opções únicas: Texto = #text; SIM/NÃO = #boolean; Inteiro = #int; Dinheiro/Valores = #money; Demais são multiplas (combo)" />
                                     <p:column />
-                                    <p:commandButton value="Adicionar" action="#{respostaFixaBean.save}" update="i_panel :form_resposta_fixa:tbl i_msg" disabled="#{(controleAcessoBean.save) or (empty respostaFixaBean.listQuestao)}" id="i_add"/>
+                                    <h:column>
+                                        <h:panelGrid columns="2">
+                                            <p:commandButton value="Salvar" action="#{respostaFixaBean.save}" update="i_panel :form_resposta_fixa:tbl i_msg" disabled="#{(controleAcessoBean.save) or (respostaFixaBean.idQuestao == null) or (empty respostaFixaBean.idQuestao)}" id="i_add"/>
+                                            <p:commandButton value="Novo" action="#{respostaFixaBean.listener(7)}" update=":form_resposta_fixa:" />
+                                        </h:panelGrid>                                        
+                                    </h:column>
                                 </h:panelGrid>
-                            </p:panel>                            
+                            </p:panel>
+                            <h:panelGrid columns="2" styleClass="margin-top-max" id="i_order">
+                                <p:commandButton value="Ordenar" action="#{respostaFixaBean.setOrder(true)}" update=":form_resposta_fixa:" rendered="#{!respostaFixaBean.order}" disabled="#{empty respostaFixaBean.listRespostaFixa}"/>
+                                <p:commandButton value="Voltar" action="#{respostaFixaBean.setOrder(false)}" update=":form_resposta_fixa:" rendered="#{respostaFixaBean.order}" actionListener="#{respostaFixaBean.loadRespostaFixa()}"/>
+                            </h:panelGrid>                            
                             <h:panelGrid id="tbl">
-                                <p:dataTable value="#{respostaFixaBean.listRespostaFixa}" var="respostaFixa" emptyMessage="Nenhum registro encontrado!" scrollable="true" scrollHeight="300" styleClass="margin-top-max">
-                                    <p:column styleClass="text-center" width="25">
-                                        <p:commandButton icon="ui-icon-trash" action="#{respostaFixaBean.delete(respostaFixa)}" update=":form_resposta_fixa:tbl :form_resposta_fixa:i_panel :form_resposta_fixa:i_msg" disabled="#{controleAcessoBean.delete}"/>
-                                    </p:column>
-                                    <p:column headerText="Grupo">
-                                        <h:outputText value="#{respostaFixa.questao.descricao}"/>
-                                    </p:column>
-                                    <p:column headerText="Descrição">
-                                        <h:outputText value="#{respostaFixa.descricao}"/>
-                                    </p:column>
-                                </p:dataTable>                                
+                                <h:column>
+                                    <p:dataTable value="#{respostaFixaBean.listRespostaFixa}" var="respostaFixa" emptyMessage="Nenhum registro encontrado!" scrollable="true" scrollHeight="300" styleClass="margin-top-max" rendered="#{!respostaFixaBean.order}">
+                                        <p:column styleClass="text-center" width="25">
+                                            <p:commandButton icon="ui-icon-link" action="#{respostaFixaBean.edit(respostaFixa)}" update=":form_resposta_fixa:"/>
+                                        </p:column>
+                                        <p:column headerText="Grupo">
+                                            <h:outputText value="#{respostaFixa.questao.descricao}"/>
+                                        </p:column>
+                                        <p:column headerText="Descrição">
+                                            <h:outputText value="#{respostaFixa.descricao}"/>
+                                        </p:column>
+                                        <p:column styleClass="text-center" width="25">
+                                            <p:commandButton icon="ui-icon-trash" action="#{respostaFixaBean.delete(respostaFixa)}" update=":form_resposta_fixa:tbl :form_resposta_fixa:i_panel :form_resposta_fixa:i_msg" disabled="#{controleAcessoBean.delete}"/>
+                                        </p:column>
+                                    </p:dataTable>                                    
+                                </h:column>
+                                <h:column rendered="#{not empty respostaFixaBean.listRespostaFixa}">
+                                    <p:orderList value="#{respostaFixaBean.listRespostaFixa}" var="respostaFixa" itemValue="#{respostaFixa}" converter="#{entityConverter}" controlsLocation="left" rendered="#{respostaFixaBean.order}">
+                                        <p:ajax event="select" listener="#{respostaFixaBean.onSelect}" />
+                                        <p:ajax event="unselect" listener="#{respostaFixaBean.onUnselect}" />
+                                        <p:ajax event="reorder" listener="#{respostaFixaBean.onReorder}" />                                        
+                                        <f:facet name="caption">Reordenar</f:facet>
+                                        <p:column style="width: 300px">
+                                            <h:outputText value="#{respostaFixa.descricao}" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:selectOneMenu value="#{respostaFixa.descricao}" disabled="true" style="width: 250px">
+                                                <f:selectItem itemValue="" itemLabel="Default"/>
+                                                <f:selectItem itemValue="#text" itemLabel="Texto/Observação" itemDescription="Texto/Observação"/>
+                                                <f:selectItem itemValue="#boolean" itemLabel="SIM/NÃO" itemDescription="SIM/NÃO"/>
+                                                <f:selectItem itemValue="#int" itemLabel="Número/Quantidade/Idade" itemDescription="Número/Quantidade/Idade"/>
+                                                <f:selectItem itemValue="#money" itemLabel="Dinheiro/Valor/Percentual" itemDescription="Dinheiro/Valor/Percentual"/>
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:orderList>                                    
+                                </h:column>
                             </h:panelGrid>
                         </h:form>
                     </p:panel>

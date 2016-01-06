@@ -38,49 +38,74 @@
                                     <h:outputLabel value="Rotina" />
                                     <p:column>
                                         <p:selectOneMenu value="#{questionarioSubgrupoBean.idRotina}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
-                                            <p:ajax event="change" update="@this idQuestionarios idGrupo tbl i_add " listener="#{questionarioSubgrupoBean.listener(1)}" />
+                                            <p:ajax event="change" update="@this :form_questionario_subgrupo:" listener="#{questionarioSubgrupoBean.listener(1)}" />
                                             <f:selectItem itemValue="" itemLabel="Selecionar"/>
                                             <f:selectItems value="#{questionarioSubgrupoBean.listRotinas}" />
                                         </p:selectOneMenu>
                                     </p:column>
                                     <h:outputLabel value="Questionário" />                                    
                                     <p:column>
-                                        <p:selectOneMenu id="idQuestionarios" value="#{questionarioSubgrupoBean.idQuestionario}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
-                                            <p:ajax event="change" update="@this tbl idGrupo i_add" listener="#{questionarioSubgrupoBean.listener(2)}" />
+                                        <p:selectOneMenu id="idQuestionarios" value="#{questionarioSubgrupoBean.idQuestionario}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith" disabled="#{questionarioSubgrupoBean.idRotina == null or empty questionarioSubgrupoBean.idRotina}">
+                                            <p:ajax event="change" update="@this :form_questionario_subgrupo:" listener="#{questionarioSubgrupoBean.listener(2)}" />
                                             <f:selectItem itemValue="" itemLabel="Selecionar"/>
                                             <f:selectItems value="#{questionarioSubgrupoBean.listQuestionarios}" />
                                         </p:selectOneMenu>
                                     </p:column>
                                     <h:outputLabel value="Grupo" />                                    
                                     <p:column>
-                                        <p:selectOneMenu id="idGrupo" value="#{questionarioSubgrupoBean.idQuestionarioGrupo}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith">
-                                            <p:ajax event="change" update="@this tbl i_add" listener="#{questionarioSubgrupoBean.listener(3)}" />
+                                        <p:selectOneMenu id="idGrupo" value="#{questionarioSubgrupoBean.idQuestionarioGrupo}" style="width: 430px" panelStyle="width:430px" filter="true" filterMatchMode="startsWith" disabled="#{questionarioSubgrupoBean.idQuestionario == null or empty questionarioSubgrupoBean.idQuestionario}">
+                                            <p:ajax event="change" update="@this :form_questionario_subgrupo:" listener="#{questionarioSubgrupoBean.listener(3)}" />
                                             <f:selectItem itemValue="" itemLabel="Selecionar"/>
                                             <f:selectItems value="#{questionarioSubgrupoBean.listQuestionarioGrupo}" />
                                         </p:selectOneMenu>
                                     </p:column>
                                     <h:outputLabel value="Descrição" />                                    
                                     <p:column>
-                                        <p:inputText value="#{questionarioSubgrupoBean.questionarioSubgrupo.descricao}" size="60" maxlength="255" converter="#{toUpperCase}">
+                                        <p:inputText value="#{questionarioSubgrupoBean.questionarioSubgrupo.descricao}" size="60" maxlength="255" converter="#{toUpperCase}" disabled="#{questionarioSubgrupoBean.idQuestionarioGrupo == null or empty questionarioSubgrupoBean.idQuestionarioGrupo}">
                                             <p:ajax event="change" update="@this" />
                                         </p:inputText>
                                     </p:column>
                                     <p:column />
-                                    <p:commandButton value="Adicionar" action="#{questionarioSubgrupoBean.save}" update="i_panel :form_questionario_subgrupo:tbl i_msg" disabled="#{(controleAcessoBean.save) or (empty questionarioSubgrupoBean.listQuestionarioGrupo)}" id="i_add"/>
+                                    <h:column>
+                                        <h:panelGrid columns="2">
+                                            <p:commandButton value="Salvar" action="#{questionarioSubgrupoBean.save}" update="i_panel :form_questionario_subgrupo:tbl i_msg" disabled="#{(controleAcessoBean.save) or (questionarioSubgrupoBean.idQuestionarioGrupo == null) or (empty questionarioSubgrupoBean.idQuestionarioGrupo)}" id="i_add"/>
+                                            <p:commandButton value="Novo" action="#{questionarioSubgrupoBean.listener(4)}" update=":form_questionario_subgrupo:" />
+                                        </h:panelGrid>
+                                    </h:column>
                                 </h:panelGrid>
-                            </p:panel>                            
+                            </p:panel>
+                            <h:panelGrid columns="2" styleClass="margin-top-max" id="i_order">
+                                <p:commandButton value="Ordenar" action="#{questionarioSubgrupoBean.setOrder(true)}" update=":form_questionario_subgrupo:" rendered="#{!questionarioSubgrupoBean.order}" disabled="#{empty questionarioSubgrupoBean.listQuestionarioSubgrupos}"/>
+                                <p:commandButton value="Voltar" action="#{questionarioSubgrupoBean.setOrder(false)}" update=":form_questionario_subgrupo:" rendered="#{questionarioSubgrupoBean.order}" actionListener="#{questionarioSubgrupoBean.loadQuestionarioSubgrupos()}"/>
+                            </h:panelGrid>                            
                             <h:panelGrid id="tbl">
-                                <p:dataTable value="#{questionarioSubgrupoBean.listQuestionarioSubgrupos}" var="questionarioSubgrupo" emptyMessage="Nenhum registro encontrado!" scrollable="true" scrollHeight="300" styleClass="margin-top-max">
-                                    <p:column styleClass="text-center" width="25">
-                                        <p:commandButton icon="ui-icon-trash" action="#{questionarioSubgrupoBean.delete(questionario)}" update=":form_questionario_subgrupo:tbl :form_questionario_subgrupo:i_panel :form_questionario_subgrupo:i_msg"/>
-                                    </p:column>
-                                    <p:column headerText="Grupo">
-                                        <h:outputText value="#{questionarioSubgrupo.grupo.descricao}"/>
-                                    </p:column>
-                                    <p:column headerText="Descrição">
-                                        <h:outputText value="#{questionarioSubgrupo.descricao}"/>
-                                    </p:column>
-                                </p:dataTable>                                
+                                <h:column>
+                                    <p:dataTable value="#{questionarioSubgrupoBean.listQuestionarioSubgrupos}" var="questionarioSubgrupo" emptyMessage="Nenhum registro encontrado!" scrollable="true" scrollHeight="300" styleClass="margin-top-max" rendered="#{!questionarioSubgrupoBean.order}">
+                                        <p:column styleClass="text-center" width="25">
+                                            <p:commandButton icon="ui-icon-link" action="#{questionarioSubgrupoBean.edit(questionarioSubgrupo)}" update=":form_questionario_subgrupo:"/>
+                                        </p:column>                                    
+                                        <p:column headerText="Grupo">
+                                            <h:outputText value="#{questionarioSubgrupo.grupo.descricao}"/>
+                                        </p:column>
+                                        <p:column headerText="Descrição">
+                                            <h:outputText value="#{questionarioSubgrupo.descricao}"/>
+                                        </p:column>
+                                        <p:column styleClass="text-center" width="25">
+                                            <p:commandButton icon="ui-icon-trash" action="#{questionarioSubgrupoBean.delete(questionarioSubgrupo)}" update=":form_questionario_subgrupo:tbl :form_questionario_subgrupo:i_panel :form_questionario_subgrupo:i_msg"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </h:column>
+                                <h:column>
+                                    <p:orderList value="#{questionarioSubgrupoBean.listQuestionarioSubgrupos}" var="questionarioSubgrupo" itemValue="#{questionarioSubgrupo}" converter="#{entityConverter}" controlsLocation="left" rendered="#{questionarioSubgrupoBean.order}">
+                                        <p:ajax event="select" listener="#{questionarioSubgrupoBean.onSelect}"  />
+                                        <p:ajax event="unselect" listener="#{questionarioSubgrupoBean.onUnselect}" />
+                                        <p:ajax event="reorder" listener="#{questionarioSubgrupoBean.onReorder}" />
+                                        <f:facet name="caption">Reordenar</f:facet>
+                                        <p:column>
+                                            <h:outputText value="#{questionarioSubgrupo.descricao}" />
+                                        </p:column>
+                                    </p:orderList>
+                                </h:column>
                             </h:panelGrid>
                         </h:form>
                     </p:panel>

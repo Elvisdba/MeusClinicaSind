@@ -11,6 +11,7 @@ import br.com.clinicaintegrada.seguranca.dao.RotinaDao;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.Messages;
 import br.com.clinicaintegrada.utils.Sessions;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -18,10 +19,12 @@ import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.model.SelectItem;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.UnselectEvent;
 
 @ManagedBean
 @SessionScoped
-public class QuestionarioSubgrupoBean {
+public class QuestionarioSubgrupoBean implements Serializable {
 
     private QuestionarioSubgrupo questionarioSubgrupo;
     private List<SelectItem> listQuestionarios;
@@ -31,6 +34,7 @@ public class QuestionarioSubgrupoBean {
     private List<SelectItem> listQuestionarioGrupo;
     private String idQuestionarioGrupo;
     private List<QuestionarioSubgrupo> listQuestionarioSubgrupos;
+    private Boolean order;
 
     @PostConstruct
     public void init() {
@@ -47,6 +51,7 @@ public class QuestionarioSubgrupoBean {
         loadQuestionarios();
         loadQuestionarioGrupo();
         loadQuestionarioSubgrupos();
+        order = false;
     }
 
     @PreDestroy
@@ -65,16 +70,40 @@ public class QuestionarioSubgrupoBean {
      */
     public void listener(Integer tcase) {
         if (tcase == 1) {
-            loadQuestionarios();
-            loadQuestionarioGrupo();
-            loadQuestionarioSubgrupos();
+            if (idRotina == null || idRotina.isEmpty()) {
+                listQuestionarios.clear();
+                listQuestionarioGrupo.clear();
+                listQuestionarioSubgrupos.clear();
+                idQuestionario = null;
+                idQuestionarioGrupo = null;
+            } else {
+                loadQuestionarios();
+                loadQuestionarioGrupo();
+                loadQuestionarioSubgrupos();
+            }
+            order = false;
         }
         if (tcase == 2) {
-            loadQuestionarioGrupo();
-            loadQuestionarioSubgrupos();
+            if (idQuestionario == null || idQuestionario.isEmpty()) {
+                listQuestionarioGrupo.clear();
+                listQuestionarioSubgrupos.clear();
+                idQuestionarioGrupo = null;
+            } else {
+                loadQuestionarioGrupo();
+                loadQuestionarioSubgrupos();
+            }
+            order = false;
         }
         if (tcase == 3) {
-            loadQuestionarioSubgrupos();
+            if(idQuestionarioGrupo == null || idQuestionarioGrupo.isEmpty()) {
+                listQuestionarioSubgrupos.clear();
+            } else {
+                loadQuestionarioSubgrupos();                
+            }
+            order = false;
+        }
+        if (tcase == 4) {
+            questionarioSubgrupo = new QuestionarioSubgrupo();
         }
     }
 
@@ -96,23 +125,43 @@ public class QuestionarioSubgrupoBean {
             return;
         }
         questionarioSubgrupo.setGrupo((QuestionarioGrupo) new Dao().find(new QuestionarioGrupo(), Integer.parseInt(idQuestionarioGrupo)));
-        if (new Dao().save(questionarioSubgrupo, true)) {
-            questionarioSubgrupo = new QuestionarioSubgrupo();
-            loadQuestionarioSubgrupos();
+        if (questionarioSubgrupo.getId() == null) {
+            if (new Dao().save(questionarioSubgrupo, true)) {
+                questionarioSubgrupo = new QuestionarioSubgrupo();
+                reorder();
+                loadQuestionarioSubgrupos();
+                Messages.info("Sucesso", "Registro inserido");
+            } else {
+                Messages.warn("Erro", "Ao inserir registro!");
+            }
         } else {
-            Messages.warn("Erro", "Ao inserir registro!");
+            if (new Dao().update(questionarioSubgrupo, true)) {
+                questionarioSubgrupo = new QuestionarioSubgrupo();
+                reorder();
+                loadQuestionarioSubgrupos();
+                Messages.info("Sucesso", "Registro atualizado");
+            } else {
+                Messages.warn("Erro", "Ao atualizar registro!");
+            }
         }
     }
 
-    public void delete(QuestionarioGrupo q) {
-        if (new Dao().delete(q, true)) {
+    public void edit(QuestionarioSubgrupo qs) {
+        idRotina = Integer.toString(qs.getGrupo().getQuestionario().getRotina().getId());
+        idQuestionario = Integer.toString(qs.getGrupo().getQuestionario().getId());
+        idQuestionarioGrupo = Integer.toString(qs.getGrupo().getId());
+        questionarioSubgrupo = qs;
+    }
+
+    public void delete(QuestionarioSubgrupo qs) {
+        if (new Dao().delete(qs, true)) {
             Messages.info("Sucesso", "Registro excluído");
             questionarioSubgrupo = new QuestionarioSubgrupo();
+            reorder();
             loadQuestionarioSubgrupos();
         } else {
             Messages.warn("Erro", "Ao excluir registro!");
         }
-
     }
 
     public final void loadRotinas() {
@@ -161,7 +210,9 @@ public class QuestionarioSubgrupoBean {
     public final void loadQuestionarioSubgrupos() {
         if (idQuestionarioGrupo != null) {
             listQuestionarioSubgrupos = new ArrayList<>();
-            listQuestionarioSubgrupos = new QuestionarioSubgrupoDao().findByGrupo(Integer.parseInt(idQuestionarioGrupo));
+            QuestionarioSubgrupoDao questionarioSubgrupoDao = new QuestionarioSubgrupoDao();
+            questionarioSubgrupoDao.setOrder_by("QSG.ordem");
+            listQuestionarioSubgrupos = questionarioSubgrupoDao.findByGrupo(Integer.parseInt(idQuestionarioGrupo));
         } else {
             listQuestionarioSubgrupos.clear();
 
@@ -232,4 +283,31 @@ public class QuestionarioSubgrupoBean {
         this.questionarioSubgrupo = questionarioSubgrupo;
     }
 
+    public Boolean getOrder() {
+        return order;
+    }
+
+    public void setOrder(Boolean order) {
+        this.order = order;
+    }
+
+    public void onSelect(SelectEvent event) {
+        reorder();
+    }
+
+    public void onUnselect(UnselectEvent event) {
+        reorder();
+    }
+
+    public void onReorder() {
+        reorder();
+    }
+
+    public void reorder() {
+        for (int i = 0; i < listQuestionarioSubgrupos.size(); i++) {
+            listQuestionarioSubgrupos.get(i).setOrdem(i + 1);
+            new Dao().update(listQuestionarioSubgrupos.get(i), true);
+        }
+        Messages.info("Sucesso", "Lista reordenada com sucesso");
+    }
 }

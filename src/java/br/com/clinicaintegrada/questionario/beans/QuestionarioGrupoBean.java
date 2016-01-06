@@ -9,6 +9,7 @@ import br.com.clinicaintegrada.seguranca.dao.RotinaDao;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.Messages;
 import br.com.clinicaintegrada.utils.Sessions;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -16,10 +17,12 @@ import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.model.SelectItem;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.UnselectEvent;
 
 @ManagedBean
 @SessionScoped
-public class QuestionarioGrupoBean {
+public class QuestionarioGrupoBean implements Serializable {
 
     private QuestionarioGrupo questionarioGrupo;
     private List<SelectItem> listQuestionarios;
@@ -27,6 +30,7 @@ public class QuestionarioGrupoBean {
     private List<SelectItem> listRotinas;
     private String idRotina;
     private List<QuestionarioGrupo> listQuestionarioGrupos;
+    private Boolean order;
 
     @PostConstruct
     public void init() {
@@ -40,6 +44,7 @@ public class QuestionarioGrupoBean {
         loadRotinas();
         loadQuestionarios();
         loadQuestionarioGrupos();
+        order = false;
     }
 
     @PreDestroy
@@ -58,8 +63,28 @@ public class QuestionarioGrupoBean {
      */
     public void listener(Integer tcase) {
         if (tcase == 1) {
-            loadQuestionarios();
-            loadQuestionarioGrupos();
+            if (idRotina == null || idRotina.isEmpty()) {
+                listQuestionarios.clear();
+                listQuestionarioGrupos.clear();
+                idRotina = null;
+                idQuestionario = null;
+            } else {
+                loadQuestionarios();
+                loadQuestionarioGrupos();
+            }
+            order = false;
+        }
+        if (tcase == 2) {
+            if (idQuestionario == null || idQuestionario.isEmpty()) {
+                listQuestionarioGrupos.clear();
+                idQuestionario = null;
+            } else {
+                loadQuestionarioGrupos();
+            }
+            order = false;
+        }
+        if (tcase == 3) {
+            questionarioGrupo = new QuestionarioGrupo();
         }
     }
 
@@ -69,19 +94,38 @@ public class QuestionarioGrupoBean {
             return;
         }
         questionarioGrupo.setQuestionario((Questionario) new Dao().find(new Questionario(), Integer.parseInt(idQuestionario)));
-        if (new Dao().save(questionarioGrupo, true)) {
-            Messages.info("Sucesso", "Registro inserido");
-            questionarioGrupo = new QuestionarioGrupo();
-            loadQuestionarioGrupos();
+        if (questionarioGrupo.getId() == null) {
+            if (new Dao().save(questionarioGrupo, true)) {
+                Messages.info("Sucesso", "Registro inserido");
+                questionarioGrupo = new QuestionarioGrupo();
+                reorder();
+                loadQuestionarioGrupos();
+            } else {
+                Messages.warn("Erro", "Ao inserir registro!");
+            }
         } else {
-            Messages.warn("Erro", "Ao inserir registro!");
+            if (new Dao().update(questionarioGrupo, true)) {
+                Messages.info("Sucesso", "Registro atualizado");
+                questionarioGrupo = new QuestionarioGrupo();
+                reorder();
+                loadQuestionarioGrupos();
+            } else {
+                Messages.warn("Erro", "Ao atualizar registro!");
+            }
         }
+    }
+
+    public void edit(QuestionarioGrupo q) {
+        idQuestionario = Integer.toString(q.getQuestionario().getId());
+        idRotina = Integer.toString(q.getQuestionario().getRotina().getId());
+        questionarioGrupo = q;
     }
 
     public void delete(QuestionarioGrupo q) {
         if (new Dao().delete(q, true)) {
             Messages.info("Sucesso", "Registro excluído");
             questionarioGrupo = new QuestionarioGrupo();
+            reorder();
             loadQuestionarioGrupos();
         } else {
             Messages.warn("Erro", "Ao excluir registro!");
@@ -128,7 +172,9 @@ public class QuestionarioGrupoBean {
     public final void loadQuestionarioGrupos() {
         if (idQuestionario != null) {
             listQuestionarioGrupos = new ArrayList<>();
-            listQuestionarioGrupos = new QuestionarioGrupoDao().findByQuestionario(Integer.parseInt(idQuestionario));
+            QuestionarioGrupoDao questionarioGrupoDao = new QuestionarioGrupoDao();
+            questionarioGrupoDao.setOrder_by("QG.ordem");
+            listQuestionarioGrupos = questionarioGrupoDao.findByQuestionario(Integer.parseInt(idQuestionario));
         }
     }
 
@@ -172,4 +218,31 @@ public class QuestionarioGrupoBean {
         this.idRotina = idRotina;
     }
 
+    public Boolean getOrder() {
+        return order;
+    }
+
+    public void setOrder(Boolean order) {
+        this.order = order;
+    }
+
+    public void onSelect(SelectEvent event) {
+        reorder();
+    }
+
+    public void onUnselect(UnselectEvent event) {
+        reorder();
+    }
+
+    public void onReorder() {
+        reorder();
+    }
+
+    public void reorder() {
+        for (int i = 0; i < listQuestionarioGrupos.size(); i++) {
+            listQuestionarioGrupos.get(i).setOrdem(i + 1);
+            new Dao().update(listQuestionarioGrupos.get(i), true);
+        }
+        Messages.info("Sucesso", "Lista reordenada com sucesso");
+    }
 }
