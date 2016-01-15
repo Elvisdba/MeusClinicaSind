@@ -574,6 +574,9 @@ public class FisicaBean extends PesquisarProfissaoBean implements Serializable {
         Sessions.remove("remove_ids");
         String url = (String) Sessions.getString("urlRetorno");
         Fisica f = (Fisica) o;
+        if(f.getPessoa() == null) {
+            f = (Fisica) new Dao().find(new Fisica(), f.getId());
+        }
         if (!validate(url, f)) {
             return null;
         }

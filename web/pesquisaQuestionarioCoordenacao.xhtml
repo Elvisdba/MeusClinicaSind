@@ -18,7 +18,8 @@
                 <h:form id="form_pesquisa_qc">
                     <h:outputText value="Pesquisa Respostas" styleClass="fonteHeader" />
                     <div class="clear"></div>
-                    <p:panel id="i_panel_pesquisa" styleClass="fundoCinza">
+                    <p:commandButton value="Voltar ao cadastro" action="#{chamadaPaginaBean.back()}" rendered="#{questionarioRespostaBean.disabledPesquisaFisica}" />
+                    <p:panel id="i_panel_pesquisa" styleClass="fundoCinza" rendered="#{!questionarioRespostaBean.disabledPesquisaFisica}">
                         <h:panelGrid columns="5">
                             <p:outputLabel value="Por: " />
                             <h:selectOneMenu value="#{questionarioRespostaBean.porPesquisa}">
@@ -63,7 +64,7 @@
                                 <p:commandButton icon="ui-icon-print" title="Imprimir" action="#{relatorioQuestionatioBean.print(respostaLote.id)}" ajax="false" />
                             </p:column>
                         </p:dataTable>
-                    </h:panelGrid>
+                    </h:panelGrid>                    
                 </h:form>
             </p:panel>
         </f:view>        

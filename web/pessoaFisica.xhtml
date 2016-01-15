@@ -536,6 +536,7 @@
                                     <p:commandButton value="Novo" action="#{fisicaBean.clear}" update=":form_pessoa_fisica:"/>
                                     <p:commandButton value="Excluir" disabled="#{controleAcessoBean.delete}" onclick="PF('dlg_delete').show();" rendered="#{fisicaBean.fisica.id != -1}" />
                                     <p:commandButton value="Pesquisar"  action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaFisica')}"/>
+                                    <p:commandButton value="Anamnese" action="#{chamadaPaginaBean.pesquisa('questionarioCoordenacao', 'questionarioRespostaBean')}" actionListener="#{questionarioRespostaBean.setRotina(fisicaBean.fisica, 121)}" rendered="#{fisicaBean.fisica.id != -1}"/>
                                 </h:panelGrid>              
 
                                 <!-- PESQUISAR PROFISSAO -->

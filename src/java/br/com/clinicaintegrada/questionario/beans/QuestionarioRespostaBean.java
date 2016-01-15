@@ -70,6 +70,7 @@ public class QuestionarioRespostaBean implements Serializable {
     private String[] descricaoPesquisa;
     private Integer comoPesquisa;
     private String porPesquisa;
+    private Boolean disabledPesquisaFisica;
 
     @PostConstruct
     public void init() {
@@ -101,6 +102,7 @@ public class QuestionarioRespostaBean implements Serializable {
         texto = "";
         questionario_id = "";
         respostaLote = null;
+        disabledPesquisaFisica = false;
     }
 
     public String edit(RespostaLote rl) {
@@ -172,7 +174,16 @@ public class QuestionarioRespostaBean implements Serializable {
     }
 
     public void setRotina(Integer rotina_id) {
+        setRotina(null, rotina_id);
+    }
+
+    public void setRotina(Fisica fisica, Integer rotina_id) {
         Sessions.put("rotina_id", rotina_id);
+        if (fisica != null) {
+            // ChamadaPaginaBean.link();
+            Sessions.put("fisicaPesquisa", fisica);
+            Sessions.put("disabledPesquisaFisica", true);
+        }
     }
 
     public void listener(Integer tcase) {
@@ -610,7 +621,7 @@ public class QuestionarioRespostaBean implements Serializable {
 
     public void updateRespostaLote() {
         RespostaLote rl = getRespostaLote();
-        if(rl.getId() == null) {
+        if (rl.getId() == null) {
             return;
         }
         Integer compare = DataHoje.dataHoje().compareTo(rl.getLancamento());
@@ -705,8 +716,12 @@ public class QuestionarioRespostaBean implements Serializable {
 
     public void loadListRespostaLote() {
         listRespostaLote.clear();
-        listRespostaLote = (List<RespostaLote>) new RespostaLoteDao().findBy(porPesquisa, comoPesquisa, descricaoPesquisa);
-
+        if (disabledPesquisaFisica) {
+            descricaoPesquisa[0] = "" + pessoa.getId();
+            listRespostaLote = (List<RespostaLote>) new RespostaLoteDao().findBy("id", 0, descricaoPesquisa);
+        } else {
+            listRespostaLote = (List<RespostaLote>) new RespostaLoteDao().findBy(porPesquisa, comoPesquisa, descricaoPesquisa);
+        }
     }
 
     public void acaoPesquisaInicial() {
@@ -772,6 +787,15 @@ public class QuestionarioRespostaBean implements Serializable {
         }
     }
 
+    public Integer getSequence(Integer index) {
+        try {
+            return index;
+        } catch (Exception e) {
+            return null;
+
+        }
+    }
+
     /**
      * .Retornar questões do Subgrupo
      *
@@ -791,6 +815,18 @@ public class QuestionarioRespostaBean implements Serializable {
             return new ArrayList<>();
 
         }
+    }
+
+    public Boolean getDisabledPesquisaFisica() {
+        if (Sessions.exists("disabledPesquisaFisica")) {
+            loadListRespostaLote();
+            disabledPesquisaFisica = Sessions.getBoolean("disabledPesquisaFisica");
+        }
+        return disabledPesquisaFisica;
+    }
+
+    public void setDisabledPesquisaFisica(Boolean disabledPesquisaFisica) {
+        this.disabledPesquisaFisica = disabledPesquisaFisica;
     }
 
 }

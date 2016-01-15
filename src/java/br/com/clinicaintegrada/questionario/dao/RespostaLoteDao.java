@@ -36,6 +36,9 @@ public class RespostaLoteDao extends DB {
                     + " INNER JOIN pes_pessoa AS P ON P.id = RL.id_pessoa       \n"
                     + "      WHERE ";
             switch (by) {
+                case "id":
+                    query_string += " P.id = " + description[0];
+                    break;
                 case "nome":
                     query_string += " TRIM(UPPER(FUNC_TRANSLATE(P.ds_nome))) " + QueryString.typeSearch(description[0], type);
                     break;

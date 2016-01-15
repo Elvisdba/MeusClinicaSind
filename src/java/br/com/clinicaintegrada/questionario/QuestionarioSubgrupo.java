@@ -69,6 +69,14 @@ public class QuestionarioSubgrupo implements Serializable, BaseEntity {
         this.ordem = ordem;
     }
 
+    public String getIdString() {
+        try {
+            return Integer.toString(id);
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
