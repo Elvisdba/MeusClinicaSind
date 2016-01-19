@@ -21,13 +21,11 @@ public class RelatorioQuestionatioBean implements Serializable {
         RelatorioQuestionarioDao rqd = new RelatorioQuestionarioDao();
         rqd.setIS_QUERY(true);
         List list = rqd.find(resposta_lote_id);
-        DBExternal dBExternal = new DBExternal();
-        dBExternal.setDatabase(SessaoCliente.get().getPersistence());
+        // dBExternal.setDatabase(SessaoCliente.get().getIdentifica());
         // dBExternal.setDatabase("ClinicaIntegradaProducao");
-        dBExternal.setPassword("989899");
-        dBExternal.setUrl("192.168.1.60");
+        // dBExternal.setPassword("989899");
+        // dBExternal.setUrl("192.168.1.160");
         Jasper.IS_REPORT_CONNECTION = true;
-        Jasper.dbe = dBExternal;
         Jasper.IS_QUERY_STRING = true;
         Jasper.QUERY_STRING = rqd.getQUERY();
         RespostaLote respostaLote = (RespostaLote) new Dao().find(new RespostaLote(), resposta_lote_id);

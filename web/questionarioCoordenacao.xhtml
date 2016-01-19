@@ -13,6 +13,11 @@
             .ui-widget-content .ui-inputfield{ padding: 8px!important;} 
             .ui-button { padding: 3px!important; }
         </style>
+        <script type="text/javascript">
+            function ScrollPage(location) {
+                window.location.hash = location;
+            }
+        </script>        
     </h:head>
     <h:body>
         <!-- INICIA DIV wrap e main -->
@@ -27,7 +32,7 @@
                     <p:panel styleClass="wrapper" style="border: 0px;">
                         <h:outputText value="Questionário" styleClass="fonteHeader" />
                         <div class="clear"></div>
-                        <h:form id="form_resposta">
+                        <h:form id="form_resposta">                           
                             <c:set scope="request" var="object" value="${questionarioRespostaBean.resposta}"/>
                             <p:messages id="i_msg" showDetail="true" closable="true" />
                             <p:growl showDetail="true" showSummary="true"/>
@@ -55,14 +60,21 @@
                                 </h:panelGrid>                                
                             </p:panel>
                             <p:panel header="Paciente" styleClass="margin-top-max">
-                                <h:panelGrid columns="2">
-                                    <p:commandButton value="Pesquisar pessoa" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaFisica', 'fisicaBean')}" disabled="#{controleAcessoBean.save or questionarioRespostaBean.respostaLote != null}" rendered="#{questionarioRespostaBean.pessoa.id == -1}"/>
+                                <h:panelGrid columns="2" columnClasses="verticalAlignTop, verticalAlignTop" style="width: 100%!important">
                                     <h:column>
-                                        <h:outputLabel value="#{questionarioRespostaBean.pessoa.nome}" />
+                                        <h:panelGrid columns="2"  style="width: 100%;">
+                                            <p:commandButton value="Pesquisar pessoa" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaFisica', 'fisicaBean')}" disabled="#{controleAcessoBean.save or questionarioRespostaBean.respostaLote != null}" rendered="#{questionarioRespostaBean.pessoa.id == -1}"/>
+                                            <h:column>
+                                                <h:outputLabel value="#{questionarioRespostaBean.pessoa.nome}" />
+                                            </h:column>
+                                        </h:panelGrid>                                        
+                                    </h:column>
+                                    <h:column rendered="#{questionarioRespostaBean.pessoa.id != null}">
+                                        <p:graphicImage value="#{questionarioRespostaBean.pessoa.foto}" cache="false" style="max-width: 100px; max-height: 195px; border: 1px solid gray; float: right"/>
                                     </h:column>
                                 </h:panelGrid>
                                 <f:facet name="footer">
-                                    <h:panelGrid columns="4">
+                                    <h:panelGrid columns="5">
                                         <h:column>
                                             <p:commandButton value="Novo Paciente" action="#{chamadaPaginaBean.pesquisa('pesquisaPessoaFisica', 'fisicaBean')}" actionListener="#{questionarioRespostaBean.clear()}" rendered="#{questionarioRespostaBean.pessoa.id != -1}" disabled="#{questionarioRespostaBean.disabledPesquisaFisica}"/>
                                         </h:column>
@@ -94,17 +106,18 @@
                                                     <h:outputLabel value="#{questionarioGrupo.questionario.id}.#{questionarioGrupo.id}.#{questionarioSubGrupo.id} - #{questionarioSubGrupo.descricao}" styleClass="margin-top-max" style="color: black!important"/>
                                                 </h:panelGrid>
                                             </f:facet>                                            
-                                            <h:panelGrid columns="1" style="width: 100%">
+                                            <h:panelGrid columns="1" style="width: 100%!important; #{questionarioRespostaBean.getStyleClassQuestao(questao)}">
+                                                <a id="#{questionarioGrupo.questionario.id}#{questionarioGrupo.id}#{questionarioSubGrupo.id}#{questao.id}"></a>
                                                 <h:column>
                                                     #{questionarioGrupo.questionario.id}.#{questionarioGrupo.id}.#{questionarioSubGrupo.id}.#{questao.id} - <p:commandLink value="#{questao.descricao}" styleClass="underline-hover bold" style="color: #3333ff" action="#{questionarioRespostaBean.click(questao)}" update="form_resposta:i_questoes"/>
                                                 </h:column>                                                    
                                                 <h:column>
-                                                    <h:panelGrid columns="2">
+                                                    <h:panelGrid columns="2" columnClasses="verticalAlignTop verticalAlignTop">
                                                         <h:column>
                                                             R:                                                                    
                                                         </h:column>
                                                         <h:column>
-                                                            <p:inputText value="#{questionarioRespostaBean.getResultado(questao.id)}" readonly="true" style="border: 0; width: 100%!important; border-bottom: 1px solid #ECF3FE" styleClass="bold" />
+                                                            <p:outputLabel value="#{questionarioRespostaBean.getResultado(questao.id)}" style="border: 0; width: 100%!important; border-bottom: 1px solid #ECF3FE" styleClass="bold" />
                                                         </h:column>
                                                     </h:panelGrid>
                                                 </h:column>
@@ -122,7 +135,7 @@
                                         </p:inputText>
                                     </h:panelGrid>
                                     <f:facet name="footer">
-                                        <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveValor}" update=":form_resposta:" oncomplete="PF('dlg_option').hide()" />
+                                        <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveValor}" update=":form_resposta: i_notification" oncomplete="PF('dlg_option').hide()" />
                                     </f:facet>
                                 </p:dialog>
                                 <p:dialog widgetVar="dlg_int" modal="true" header="#{questionarioRespostaBean.questao.descricao}" resizable="false">
@@ -133,18 +146,18 @@
                                         </p:inputText>
                                     </h:panelGrid>
                                     <f:facet name="footer">
-                                        <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveQuantidade}" update=":form_resposta:" oncomplete="PF('dlg_option').hide()" />
+                                        <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveQuantidade}" update=":form_resposta: i_notification" oncomplete="PF('dlg_option').hide()" />
                                     </f:facet>
                                 </p:dialog>
                                 <p:dialog widgetVar="dlg_text" modal="true" header="#{questionarioRespostaBean.questao.descricao}" resizable="false" width="600">
                                     <h:outputLabel value="Resposta" /><br />
                                     <h:panelGrid columns="2">
-                                        <p:inputTextarea value="#{questionarioRespostaBean.texto}" rows="5" cols="80">
+                                        <p:inputTextarea value="#{questionarioRespostaBean.texto}" rows="5" cols="80" converter="#{toUpperCase}">
                                             <p:ajax event="change" update="@this" />
                                         </p:inputTextarea>
                                     </h:panelGrid>
                                     <f:facet name="footer">
-                                        <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveTexto}" update=":form_resposta:" oncomplete="PF('dlg_option').hide()" />
+                                        <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveTexto}" update=":form_resposta: i_notification" oncomplete="PF('dlg_option').hide()" />
                                     </f:facet>
                                 </p:dialog>
                                 <p:dialog widgetVar="dlg_boolean" modal="true" header="#{questionarioRespostaBean.questao.descricao}" resizable="false">
@@ -155,7 +168,7 @@
                                         <f:selectItem itemLabel="NÃO" itemValue="NÃO" />
                                     </p:selectOneRadio>
                                     <f:facet name="footer">
-                                        <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveOpcao}" update=":form_resposta:" oncomplete="PF('dlg_option').hide()" />
+                                        <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveOpcao}" update=":form_resposta: i_notification" oncomplete="PF('dlg_option').hide(); ScrollPage(#{questionarioRespostaBean.questao.subgrupo.grupo.questionario.id}#{questionarioRespostaBean.questao.subgrupo.grupo.id}#{questionarioRespostaBean.questao.subgrupo.id}#{questionarioRespostaBean.questao.id})"/>
                                     </f:facet>
                                 </p:dialog>
                                 <p:dialog widgetVar="dlg_option" modal="true" header="#{questionarioRespostaBean.questao.descricao}" resizable="false">
@@ -166,10 +179,15 @@
                                         <f:selectItems value="#{questionarioRespostaBean.listOpcoes}"/>
                                     </p:selectOneMenu>
                                     <f:facet name="footer">
-                                        <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveIndexString}" update=":form_resposta:" oncomplete="PF('dlg_option').hide()" />
+                                        <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveIndexString}" update=":form_resposta: i_notification" oncomplete="PF('dlg_option').hide()" />
                                     </f:facet>
                                 </p:dialog>
                             </h:panelGrid>
+                            <p:notificationBar position="bottom" effect="slide" styleClass="top" widgetVar="bar"  autoDisplay="true" style="height: 15px; text-align: center" rendered="#{questionarioRespostaBean.questaoMemoria != null}" id="i_notification">
+                                <h:column>
+                                    
+                                </h:column>
+                            </p:notificationBar>                             
                         </h:form>
                     </p:panel>
                 </f:view>

@@ -182,9 +182,9 @@ public class RelatorioMovimentosReceberBean implements Serializable {
             }
         } else {
             if (r.getMontaQuery()) {
-                dBExternal.setDatabase(SessaoCliente.get().getPersistence());
-                dBExternal.setPassword("989899");
-                dBExternal.setUrl("192.168.1.60");
+//                dBExternal.setDatabase(SessaoCliente.get().getPersistence());
+//                dBExternal.setPassword("989899");
+//                dBExternal.setUrl("192.168.1.160");
                 Jasper.IS_REPORT_CONNECTION = true;
                 Jasper.dbe = dBExternal;
                 Jasper.IS_QUERY_STRING = r.getMontaQuery();

@@ -1,5 +1,6 @@
 package br.com.clinicaintegrada.principal;
 
+import br.com.clinicaintegrada.seguranca.controleUsuario.SessaoCliente;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -9,16 +10,23 @@ import java.util.Properties;
 public class DBExternal {
 
     private Statement statment;
-    private String url = "192.168.1.60";
+    private String url = "192.168.1.160";
     private String port = "5434";
-    private String database = "ClinicaIntegrada";
+    private String database = "";
     private String user = "postgres";
     private String password = "989899";
 
     public Connection getConnection() {
         try {
-            //String url = "jdbc:postgresql://200.158.101.9:5432/Rtools";
-            String uri = "jdbc:postgresql://" + this.url + ":" + port + "/" + database;
+            String dataBase = "";
+            if(database.isEmpty()) {
+                if (SessaoCliente.get().getIdentifica().equals("ClinicaIntegradaProducao")) {
+                    dataBase = "ClinicaIntegradaProducao";
+                } else {
+                    dataBase = SessaoCliente.get().getPersistence();
+                }                
+            }
+            String uri = "jdbc:postgresql://" + this.url + ":" + port + "/" + dataBase;
             Properties props = new Properties();
             props.setProperty("user", user);
             props.setProperty("password", password);

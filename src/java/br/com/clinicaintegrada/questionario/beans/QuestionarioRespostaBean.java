@@ -71,6 +71,7 @@ public class QuestionarioRespostaBean implements Serializable {
     private Integer comoPesquisa;
     private String porPesquisa;
     private Boolean disabledPesquisaFisica;
+    private Questao questaoMemoria;
 
     @PostConstruct
     public void init() {
@@ -103,6 +104,7 @@ public class QuestionarioRespostaBean implements Serializable {
         questionario_id = "";
         respostaLote = null;
         disabledPesquisaFisica = false;
+        questaoMemoria = null;
     }
 
     public String edit(RespostaLote rl) {
@@ -215,22 +217,39 @@ public class QuestionarioRespostaBean implements Serializable {
             PF.update("form_resposta");
             return;
         }
+        Resposta resposta = null;
+        RespostaDao respostaDao = new RespostaDao();
         if (list.size() == 1) {
             RespostaFixa respostaFixa = list.get(0);
+            if (respostaLote.getId() != null) {
+                resposta = respostaDao.findByPessoaAndRespostaFixa(respostaLote.getId(), respostaFixa.getId());
+            }
             switch (respostaFixa.getDescricao()) {
                 case "#int":
+                    if (resposta != null && resposta.getId() != null) {
+                        quantidade = resposta.getDescricao();
+                    }
                     PF.openDialog("dlg_int");
                     PF.update("i_pg_int");
                     break;
                 case "#money":
+                    if (resposta != null && resposta.getId() != null) {
+                        valor = resposta.getDescricao();
+                    }
                     PF.openDialog("dlg_money");
                     PF.update("i_pg_money");
                     break;
                 case "#boolean":
+                    if (resposta != null && resposta.getId() != null) {
+                        opcao = resposta.getDescricao();
+                    }
                     PF.openDialog("dlg_boolean");
                     PF.update("i_pg_boolean");
                     break;
                 case "#text":
+                    if (resposta != null && resposta.getId() != null) {
+                        texto = resposta.getDescricao();
+                    }
                     PF.openDialog("dlg_text");
                     PF.update("i_pg_text");
                     break;
@@ -245,6 +264,14 @@ public class QuestionarioRespostaBean implements Serializable {
                     indexString = "" + list.get(i).getId();
                 }
                 listOpcoes.add(new SelectItem("" + list.get(i).getId(), list.get(i).getDescricao()));
+            }
+            for (int i = 0; i < list.size(); i++) {
+                if (respostaLote.getId() != null) {
+                    resposta = respostaDao.findByPessoaAndRespostaFixa(respostaLote.getId(), list.get(i).getId());
+                    if (resposta != null && resposta.getId() != null) {
+                        indexString = "" + list.get(i).getId();
+                    }
+                }
             }
             PF.openDialog("dlg_option");
             PF.update("i_pg_option");
@@ -419,11 +446,13 @@ public class QuestionarioRespostaBean implements Serializable {
         }
         updateRespostaLote();
         Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
+        questaoMemoria = null;
         if (r.getId() == null) {
             r.setRespostaLote(getRespostaLote());
             r.setRespostaFixa(rf);
             r.setDescricao(quantidade);
             if (dao.save(r, true)) {
+                questaoMemoria = r.getRespostaFixa().getQuestao();
                 Messages.info("Sucesso", "Questão respondida");
             } else {
                 Messages.warn("Erro", "Ao salvar registro!");
@@ -434,6 +463,7 @@ public class QuestionarioRespostaBean implements Serializable {
             }
             r.setRespostaFixa(rf);
             if (dao.update(r, true)) {
+                questaoMemoria = r.getRespostaFixa().getQuestao();
                 Messages.info("Sucesso", "Questão atualizada");
             } else {
                 Messages.warn("Erro", "Ao atualizar questão!");
@@ -455,11 +485,13 @@ public class QuestionarioRespostaBean implements Serializable {
         }
         updateRespostaLote();
         Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
+        questaoMemoria = null;
         if (r.getId() == null) {
             r.setRespostaLote(getRespostaLote());
             r.setRespostaFixa(rf);
             r.setDescricao(opcao);
             if (dao.save(r, true)) {
+                questaoMemoria = r.getRespostaFixa().getQuestao();
                 Messages.info("Sucesso", "Questão respondida");
             } else {
                 Messages.warn("Erro", "Ao salvar registro!");
@@ -470,6 +502,7 @@ public class QuestionarioRespostaBean implements Serializable {
             }
             r.setRespostaFixa(rf);
             if (dao.update(r, true)) {
+                questaoMemoria = r.getRespostaFixa().getQuestao();
                 Messages.info("Sucesso", "Questão respondida");
             } else {
                 Messages.warn("Erro", "Ao atualizar questão!");
@@ -501,11 +534,13 @@ public class QuestionarioRespostaBean implements Serializable {
         }
         updateRespostaLote();
         Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
+        questaoMemoria = null;
         if (r.getId() == null) {
             r.setRespostaLote(getRespostaLote());
             r.setRespostaFixa(rf);
             r.setDescricao(valor);
             if (dao.save(r, true)) {
+                questaoMemoria = r.getRespostaFixa().getQuestao();
                 Messages.info("Sucesso", "Questão respondida");
             } else {
                 Messages.warn("Erro", "Ao salvar registro!");
@@ -517,7 +552,8 @@ public class QuestionarioRespostaBean implements Serializable {
             r.setDescricao(valor);
             r.setRespostaFixa(rf);
             if (dao.update(r, true)) {
-                Messages.info("Sucesso", "Questão atualziada");
+                questaoMemoria = r.getRespostaFixa().getQuestao();
+                Messages.info("Sucesso", "Questão atualizada");
             } else {
                 Messages.warn("Erro", "Ao atualizar questão!");
             }
@@ -538,11 +574,13 @@ public class QuestionarioRespostaBean implements Serializable {
         }
         updateRespostaLote();
         Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
+        questaoMemoria = null;
         if (r.getId() == null) {
             r.setRespostaLote(getRespostaLote());
             r.setRespostaFixa(rf);
             r.setDescricao(texto);
             if (dao.save(r, true)) {
+                questaoMemoria = r.getRespostaFixa().getQuestao();
                 Messages.info("Sucesso", "Questão respondida");
             } else {
                 Messages.warn("Erro", "Ao salvar registro!");
@@ -553,6 +591,7 @@ public class QuestionarioRespostaBean implements Serializable {
             }
             r.setRespostaFixa(rf);
             if (dao.update(r, true)) {
+                questaoMemoria = r.getRespostaFixa().getQuestao();
                 Messages.info("Sucesso", "Questão respondida");
             } else {
                 Messages.warn("Erro", "Ao atualizar questão!");
@@ -570,10 +609,12 @@ public class QuestionarioRespostaBean implements Serializable {
         RespostaFixa rf = (RespostaFixa) dao.find(new RespostaFixa(), Integer.parseInt(indexString));
         updateRespostaLote();
         Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
+        questaoMemoria = null;
         if (r.getId() == null) {
             r.setRespostaLote(getRespostaLote());
             r.setRespostaFixa(rf);
             if (dao.save(r, true)) {
+                questaoMemoria = r.getRespostaFixa().getQuestao();
                 Messages.info("Sucesso", "Questão respondida");
             } else {
                 Messages.warn("Erro", "Ao salvar registro!");
@@ -581,6 +622,7 @@ public class QuestionarioRespostaBean implements Serializable {
         } else {
             r.setRespostaFixa(rf);
             if (dao.update(r, true)) {
+                questaoMemoria = r.getRespostaFixa().getQuestao();
                 Messages.info("Sucesso", "Questão respondida");
             } else {
                 Messages.warn("Erro", "Ao atualizar questão!");
@@ -829,4 +871,36 @@ public class QuestionarioRespostaBean implements Serializable {
         this.disabledPesquisaFisica = disabledPesquisaFisica;
     }
 
+    public String getStyleClassQuestao(Questao questao) {
+        try {
+            if (questaoMemoria != null && questao != null) {
+                if (Objects.equals(questaoMemoria.getId(), questao.getId())) {
+                    return "border: 1px solid red;";
+                }
+            }
+        } catch (Exception e) {
+            return "";
+        }
+        return "";
+    }
+
+    public String getAnchor() {
+        if (questaoMemoria != null) {
+            String anchor = "";
+            anchor += questaoMemoria.getSubgrupo().getGrupo().getQuestionario().getId();
+            anchor += questaoMemoria.getSubgrupo().getGrupo().getId();
+            anchor += questaoMemoria.getSubgrupo().getId();
+            anchor += questaoMemoria.getId();
+            return anchor;
+        }
+        return "";
+    }
+
+    public Questao getQuestaoMemoria() {
+        return questaoMemoria;
+    }
+
+    public void setQuestaoMemoria(Questao questaoMemoria) {
+        this.questaoMemoria = questaoMemoria;
+    }
 }

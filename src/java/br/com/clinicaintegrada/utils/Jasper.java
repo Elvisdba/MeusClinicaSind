@@ -231,7 +231,7 @@ public class Jasper implements Serializable {
         fileName = fileName.replace("/", "");
         fileName = fileName.toLowerCase();
         fileName = AnaliseString.removerAcentos(fileName);
-        if (!Dirs.create("arquivos/" + PATH + "/" + fileName)) {
+        if (!Dirs.create("arquivos/" + PATH + "/" + fileName, false)) {
             Messages.info("Sistema", "Erro ao criar diretório!");
             return;
         }
@@ -326,6 +326,9 @@ public class Jasper implements Serializable {
                     }
                 }
                 if (IS_REPORT_CONNECTION) {
+                    if(dbe == null) {
+                        dbe = new DBExternal();
+                    }
                     if (dbe != null) {
                         con = dbe;
                     } else {

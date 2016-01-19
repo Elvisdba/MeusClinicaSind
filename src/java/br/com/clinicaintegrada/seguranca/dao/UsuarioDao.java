@@ -3,6 +3,7 @@ package br.com.clinicaintegrada.seguranca.dao;
 import br.com.clinicaintegrada.pessoa.Pessoa;
 import br.com.clinicaintegrada.principal.DB;
 import br.com.clinicaintegrada.seguranca.Usuario;
+import br.com.clinicaintegrada.utils.Sessions;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
@@ -25,7 +26,12 @@ public class UsuarioDao extends DB {
 
     public List<Usuario> pesquisaTodosPorDescricao(String descricaoPesquisa, int idCliente) {
         try {
-            Query query = getEntityManager().createQuery("SELECT U FROM Usuario AS U WHERE U.cliente.id = :cliente AND (U.pessoa.nome) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' OR UPPER(U.login) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' ORDER BY U.pessoa.nome ASC ");
+            Query query;
+            if(((Usuario) Sessions.getObject("sessaoUsuario")).getId() != 1) { 
+                query = getEntityManager().createQuery("SELECT U FROM Usuario AS U WHERE U.cliente.id = :cliente AND U.id <> 1 AND (U.pessoa.nome) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' OR UPPER(U.login) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' ORDER BY U.pessoa.nome ASC ");
+            } else {
+                query = getEntityManager().createQuery("SELECT U FROM Usuario AS U WHERE U.cliente.id = :cliente AND (U.pessoa.nome) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' OR UPPER(U.login) LIKE '%" + descricaoPesquisa.toUpperCase() + "%' ORDER BY U.pessoa.nome ASC ");                
+            }
             query.setParameter("cliente", idCliente);
             List list = query.getResultList();
             if (!list.isEmpty()) {
