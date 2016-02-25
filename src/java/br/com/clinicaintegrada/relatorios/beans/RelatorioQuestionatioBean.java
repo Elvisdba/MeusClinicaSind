@@ -2,8 +2,10 @@ package br.com.clinicaintegrada.relatorios.beans;
 
 import br.com.clinicaintegrada.questionario.RespostaLote;
 import br.com.clinicaintegrada.relatorios.dao.RelatorioQuestionarioDao;
+import br.com.clinicaintegrada.seguranca.controleUsuario.ControleUsuarioBean;
 import br.com.clinicaintegrada.utils.Dao;
 import br.com.clinicaintegrada.utils.Jasper;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 
 @ManagedBean
 @SessionScoped
@@ -32,9 +36,13 @@ public class RelatorioQuestionatioBean implements Serializable {
         Jasper.IS_HEADER = true;
         Jasper.TYPE = "default";
         Map map = new HashMap();
+        String path_foto = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath("/Cliente/" + ControleUsuarioBean.getCliente() + "/imagens/fotos/");
         map.put("equipe_nome", respostaLote.getEquipe().getPessoa().getNome());
         map.put("lancamento", respostaLote.getLancamento());
         map.put("lote_id", respostaLote.getId());
+        File file = new File(path_foto);
+        path_foto = file.getPath().replace("\\", "\\\\");
+        map.put("path_foto", path_foto);
         Jasper.printReports("FICHA_QUESTIONARIO.jasper", respostaLote.getQuestionario().getDescricao(), new ArrayList<>(), map);
     }
 }

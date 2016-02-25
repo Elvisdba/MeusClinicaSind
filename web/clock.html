@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Socket</title>
+        <meta charset="UTF-8" />
+    </head>
+    <body>
+        <span id="messageGoesHere"></span>
+        
+        aaa
+
+        <script type="text/javascript">
+            var ws = new WebSocket("ws://192.168.1.160:8080/ClinicaIntegrada/clock");
+
+            ws.onmessage = function (event) {
+                var mySpan = document.getElementById("messageGoesHere");
+                mySpan.innerHTML = event.data;
+            };
+
+            ws.onerror = function (event) {
+                console.log("Error ", event);
+            };
+        </script>
+    </body>
+</html>

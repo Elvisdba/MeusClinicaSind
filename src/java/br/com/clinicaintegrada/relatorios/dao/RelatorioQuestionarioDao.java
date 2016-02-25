@@ -96,7 +96,7 @@ public class RelatorioQuestionarioDao extends DB {
                     + "            P.id             AS pessoa_id,               \n"
                     + "            P.ds_nome        AS pessoa_nome,             \n"
                     + "            P.ds_telefone1   AS pessoa_telefone1,        \n"
-                    + "            P.ds_telefone2   AS pessoa_telefone2,        \n"
+                    + "            P.ds_telefone3   AS pessoa_telefone2,        \n"
                     + "            P.ds_documento   AS pessoa_documento,        \n"
                     + "            F.dt_nascimento  AS fisica_nascimento,       \n"
                     + "            F.ds_sexo        AS fisica_sexo,             \n"
