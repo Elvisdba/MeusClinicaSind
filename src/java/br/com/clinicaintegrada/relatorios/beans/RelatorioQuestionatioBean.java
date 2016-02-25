@@ -1,3 +1,4 @@
+
 package br.com.clinicaintegrada.relatorios.beans;
 
 import br.com.clinicaintegrada.questionario.RespostaLote;

@@ -2,53 +2,47 @@
 <Scene Scope="Project" version="2">
     <Scope Scope="Faces Configuration Only"/>
     <Scope Scope="Project">
-        <Node id="cliente.xhtml" x="400" y="450" zoom="true"/>
-        <Node id="pessoaJuridica.xhtml" x="1650" y="150" zoom="true"/>
-        <Node id="pessoaJuridicaCard.xhtml" x="900" y="900" zoom="true"/>
-        <Node id="macFilial.xhtml" x="150" y="300" zoom="true"/>
-        <Node id="pesquisaRotina.xhtml" x="900" y="300" zoom="true"/>
-        <Node id="templatePrime.xhtml" x="1900" y="150" zoom="true"/>
-        <Node id="index.jsf" x="150" y="900" zoom="true"/>
-        <Node id="pesquisaCliente.xhtml" x="1150" y="750" zoom="true"/>
         <Node id="generica.xhtml" x="1650" y="450" zoom="true"/>
-        <Node id="indiceMensal.xhtml" x="900" y="450" zoom="true"/>
-        <Node id="sessaoExpirou.xhtml" x="650" y="900" zoom="true"/>
-        <Node id="acessoNegado.xhtml" x="1400" y="300" zoom="true"/>
         <Node id="pesquisaCnae.xhtml" x="1150" y="300" zoom="true"/>
-        <Node id="pessoaFisicaCard.xhtml" x="650" y="600" zoom="true"/>
-        <Node id="agendaTelefone.xhtml" x="400" y="300" zoom="true"/>
-        <Node id="pesquisaPessoaFisica.xhtml" x="900" y="750" zoom="true"/>
-        <Node id="indexLoginExpirou.xhtml" x="400" y="1200" zoom="true"/>
-        <Node id="pessoaFisica.xhtml" x="400" y="150" zoom="true"/>
-        <Node id="registroEmpresarial.xhtml" x="900" y="150" zoom="true"/>
-        <Node id="indexLoginExpirou.jsf" x="150" y="1050" zoom="true"/>
-        <Node id="template Footer.xhtml" x="650" y="450" zoom="true"/>
-        <Node id="templateFooter.xhtml" x="650" y="750" zoom="true"/>
-        <Node id="pesquisaUsuario.xhtml" x="650" y="150" zoom="true"/>
+        <Node id="macFilial.xhtml" x="150" y="300" zoom="true"/>
+        <Node id="cnae.xhtml" x="1400" y="600" zoom="true"/>
+        <Node id="pesquisaRotina.xhtml" x="900" y="300" zoom="true"/>
+        <Node id="modeloContrato.xhtml" x="150" y="150" zoom="true"/>
         <Node id="usuarioPerfil.xhtml" x="150" y="1350" zoom="true"/>
-        <Node id="indexLogin.xhtml" x="1400" y="150" zoom="true"/>
-        <Node id="pesquisaAgendaTelefone.xhtml" x="400" y="600" zoom="true"/>
-        <Node id="simples.xhtml" x="650" y="300" zoom="true"/>
-        <Node id="indexLogin.jsf" x="1650" y="300" zoom="true"/>
-        <Node id="profissao.xhtml" x="400" y="1050" zoom="true"/>
         <Node id="pesquisaLog.xhtml" x="1150" y="600" zoom="true"/>
+        <Node id="permissao.xhtml" x="1900" y="300" zoom="true"/>
         <Node id="pesquisaEndereco.xhtml" x="150" y="450" zoom="true"/>
-        <Node id="menuPrincipal.xhtml" x="1150" y="450" zoom="true"/>
+        <Node id="simples.xhtml" x="650" y="300" zoom="true"/>
+        <Node id="indexLoginExpirou.jsf" x="150" y="1050" zoom="true"/>
+        <Node id="pesquisaAgendaTelefone.xhtml" x="400" y="600" zoom="true"/>
+        <Node id="cliente.xhtml" x="400" y="450" zoom="true"/>
         <Node id="usuario.xhtml" x="2400" y="150" zoom="true"/>
-        <Node id="cidade.xhtml" x="150" y="600" zoom="true"/>
-        <Node id="rotina.xhtml" x="400" y="900" zoom="true"/>
+        <Node id="indiceMensal.xhtml" x="900" y="450" zoom="true"/>
+        <Node id="profissao.xhtml" x="400" y="1050" zoom="true"/>
+        <Node id="pesquisaModeloContrato.xhtml" x="400" y="750" zoom="true"/>
+        <Node id="pesquisaCliente.xhtml" x="1150" y="750" zoom="true"/>
+        <Node id="index.xhtml" x="900" y="600" zoom="true"/>
+        <Node id="indexLogin.xhtml" x="1400" y="150" zoom="true"/>
+        <Node id="email.xhtml" x="150" y="1200" zoom="true"/>
+        <Node id="pessoaJuridica.xhtml" x="1650" y="150" zoom="true"/>
+        <Node id="permissaoDepartamento.xhtml" x="2150" y="300" zoom="true"/>
+        <Node id="menuPrincipal.xhtml" x="1150" y="450" zoom="true"/>
         <Node id="pesquisaPessoa.xhtml" x="2150" y="150" zoom="true"/>
         <Node id="endereco.xhtml" x="1150" y="150" zoom="true"/>
+        <Node id="index.jsf" x="150" y="900" zoom="true"/>
+        <Node id="cidade.xhtml" x="150" y="600" zoom="true"/>
+        <Node id="pesquisaPessoaFisica.xhtml" x="900" y="750" zoom="true"/>
+        <Node id="pesquisaUsuario.xhtml" x="650" y="150" zoom="true"/>
+        <Node id="indexLoginExpirou.xhtml" x="400" y="1200" zoom="true"/>
+        <Node id="indexLogin.jsf" x="1650" y="300" zoom="true"/>
+        <Node id="acessoNegado.xhtml" x="1400" y="300" zoom="true"/>
+        <Node id="agendaTelefone.xhtml" x="400" y="300" zoom="true"/>
         <Node id="pesquisaPessoaJuridica.xhtml" x="150" y="750" zoom="true"/>
-        <Node id="cnae.xhtml" x="1400" y="600" zoom="true"/>
-        <Node id="permissaoDepartamento.xhtml" x="2150" y="300" zoom="true"/>
-        <Node id="permissao.xhtml" x="1900" y="300" zoom="true"/>
-        <Node id="index.xhtml" x="900" y="600" zoom="true"/>
-        <Node id="modeloContrato.xhtml" x="150" y="150" zoom="true"/>
         <Node id="modeloContratoCampos.xhtml" x="1400" y="450" zoom="true"/>
+        <Node id="pessoaFisica.xhtml" x="400" y="150" zoom="true"/>
+        <Node id="rotina.xhtml" x="400" y="900" zoom="true"/>
+        <Node id="sessaoExpirou.xhtml" x="650" y="900" zoom="true"/>
         <Node id="agendaGrupoUsuario.xhtml" x="650" y="1050" zoom="true"/>
-        <Node id="email.xhtml" x="150" y="1200" zoom="true"/>
-        <Node id="pesquisaModeloContrato.xhtml" x="400" y="750" zoom="true"/>
     </Scope>
     <Scope Scope="All Faces Configurations"/>
 </Scene>
