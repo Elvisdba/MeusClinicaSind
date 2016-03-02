@@ -427,6 +427,31 @@ public class QuestionarioRespostaBean implements Serializable {
     }
 
     public void saveQuantidade() {
+        listenerQuantidade(true);
+    }
+
+    public void deleteQuantidade() {
+        listenerQuantidade(false);
+    }
+
+    public void listenerQuantidade(Boolean save) {
+        Dao dao = new Dao();
+        RespostaDao respostaDao = new RespostaDao();
+        Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
+        if (!save) {
+            if (r != null && r.getId() != null) {
+                if (dao.delete(r, true)) {
+                    Messages.info("Sucesso", "Resposta removida!");
+                    return;
+                } else {
+                    Messages.warn("Validação", "Ao remover resposta!");
+                    return;
+                }
+            } else {
+                Messages.info("Sucesso", "Resposta removida!");
+                return;
+            }
+        }
         try {
             if (quantidade == null || Integer.parseInt(quantidade) <= 0 || quantidade.equals("#int")) {
                 Messages.warn("Validação", "Informar uma quantidade válida!");
@@ -436,16 +461,13 @@ public class QuestionarioRespostaBean implements Serializable {
             Messages.warn("Validação", "Informar uma quantidade válida!");
             return;
         }
-        Dao dao = new Dao();
         RespostaLote rl = getRespostaLote();
-        RespostaDao respostaDao = new RespostaDao();
         RespostaFixa rf = new RespostaFixaDao().findByQuestao(questao.getId(), true);
         if (rf == null) {
             Messages.warn("Sistema", "Resposta não existe!");
             return;
         }
         updateRespostaLote();
-        Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
         questaoMemoria = null;
         if (r.getId() == null) {
             r.setRespostaLote(getRespostaLote());
@@ -472,19 +494,41 @@ public class QuestionarioRespostaBean implements Serializable {
     }
 
     public void saveOpcao() {
+        listenerOpcao(true);
+    }
+
+    public void deleteOpcao() {
+        listenerOpcao(false);
+    }
+
+    public void listenerOpcao(Boolean save) {
+        Dao dao = new Dao();
+        RespostaDao respostaDao = new RespostaDao();
+        Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
+        if (!save) {
+            if (r != null && r.getId() != null) {
+                if (dao.delete(r, true)) {
+                    Messages.info("Sucesso", "Resposta removida!");
+                    return;
+                } else {
+                    Messages.warn("Validação", "Ao remover resposta!");
+                    return;
+                }
+            } else {
+                Messages.info("Sucesso", "Resposta removida!");
+                return;
+            }
+        }
         if (opcao == null || opcao.isEmpty() || opcao.equals("#boolean")) {
             Messages.warn("Validação", "Selecionar uma opção!");
             return;
         }
-        Dao dao = new Dao();
-        RespostaDao respostaDao = new RespostaDao();
         RespostaFixa rf = new RespostaFixaDao().findByQuestao(questao.getId(), true);
         if (rf == null) {
             Messages.warn("Sistema", "Resposta não existe!");
             return;
         }
         updateRespostaLote();
-        Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
         questaoMemoria = null;
         if (r.getId() == null) {
             r.setRespostaLote(getRespostaLote());
@@ -511,12 +555,35 @@ public class QuestionarioRespostaBean implements Serializable {
     }
 
     public void saveValor() {
+        listenerValor(true);
+    }
+
+    public void deleteValor() {
+        listenerValor(false);
+    }
+
+    public void listenerValor(Boolean save) {
+        Dao dao = new Dao();
+        RespostaDao respostaDao = new RespostaDao();
+        Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
+        if (!save) {
+            if (r != null && r.getId() != null) {
+                if (dao.delete(r, true)) {
+                    Messages.info("Sucesso", "Resposta removida!");
+                    return;
+                } else {
+                    Messages.warn("Validação", "Ao remover resposta!");
+                    return;
+                }
+            } else {
+                Messages.info("Sucesso", "Resposta removida!");
+                return;
+            }
+        }
         if (valor == null || valor.isEmpty() || valor.equals("#money")) {
             Messages.warn("Validação", "Digitar um valor!");
             return;
         }
-        Dao dao = new Dao();
-        RespostaDao respostaDao = new RespostaDao();
         RespostaFixa rf = new RespostaFixaDao().findByQuestao(questao.getId(), true);
         if (rf == null) {
             Messages.warn("Sistema", "Resposta não existe!");
@@ -527,13 +594,12 @@ public class QuestionarioRespostaBean implements Serializable {
             return;
 
         }
-        if (Moeda.converteUS$(valor) < 1) {
-            Messages.warn("Sistema", "Valor deve ser maior que 0!");
+        if (Moeda.converteUS$(valor) < 0) {
+            Messages.warn("Sistema", "Valor deve ser maior ou igual à 0!");
             return;
 
         }
         updateRespostaLote();
-        Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
         questaoMemoria = null;
         if (r.getId() == null) {
             r.setRespostaLote(getRespostaLote());
@@ -561,19 +627,41 @@ public class QuestionarioRespostaBean implements Serializable {
     }
 
     public void saveTexto() {
+        listenerValor(true);
+    }
+
+    public void deleteTexto() {
+        listenerValor(false);
+    }
+
+    public void listenerTexto(Boolean save) {
+        Dao dao = new Dao();
+        RespostaDao respostaDao = new RespostaDao();
+        Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
+        if (!save) {
+            if (r != null && r.getId() != null) {
+                if (dao.delete(r, true)) {
+                    Messages.info("Sucesso", "Resposta removida!");
+                    return;
+                } else {
+                    Messages.warn("Validação", "Ao remover resposta!");
+                    return;
+                }
+            } else {
+                Messages.info("Sucesso", "Resposta removida!");
+                return;
+            }
+        }
         if (texto == null || texto.isEmpty() || texto.equals("#text")) {
             Messages.warn("Validação", "Digitar um valor!");
             return;
         }
-        Dao dao = new Dao();
-        RespostaDao respostaDao = new RespostaDao();
         RespostaFixa rf = new RespostaFixaDao().findByQuestao(questao.getId(), true);
         if (rf == null) {
             Messages.warn("Sistema", "Resposta não existe!");
             return;
         }
         updateRespostaLote();
-        Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
         questaoMemoria = null;
         if (r.getId() == null) {
             r.setRespostaLote(getRespostaLote());
@@ -600,15 +688,37 @@ public class QuestionarioRespostaBean implements Serializable {
     }
 
     public void saveIndexString() {
+        listenerIndexString(true);
+    }
+
+    public void deleteIndexString() {
+        listenerIndexString(false);
+    }
+
+    public void listenerIndexString(Boolean save) {
+        Dao dao = new Dao();
+        RespostaDao respostaDao = new RespostaDao();
+        Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
+        if (!save) {
+            if (r != null && r.getId() != null) {
+                if (dao.delete(r, true)) {
+                    Messages.info("Sucesso", "Resposta removida!");
+                    return;
+                } else {
+                    Messages.warn("Validação", "Ao remover resposta!");
+                    return;
+                }
+            } else {
+                Messages.info("Sucesso", "Resposta removida!");
+                return;
+            }
+        }
         if (indexString == null || indexString.isEmpty()) {
             Messages.warn("Validação", "Selecionar uma opção!");
             return;
         }
-        Dao dao = new Dao();
-        RespostaDao respostaDao = new RespostaDao();
         RespostaFixa rf = (RespostaFixa) dao.find(new RespostaFixa(), Integer.parseInt(indexString));
         updateRespostaLote();
-        Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
         questaoMemoria = null;
         if (r.getId() == null) {
             r.setRespostaLote(getRespostaLote());
