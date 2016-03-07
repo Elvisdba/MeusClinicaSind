@@ -129,75 +129,77 @@
                             <h:panelGrid id="i_questoes">
                                 <p:dialog widgetVar="dlg_money" modal="true" header="#{questionarioRespostaBean.questao.descricao}" resizable="false">
                                     <h:outputLabel value="Valor R$" /><br />
-                                    <h:panelGrid columns="2">
+                                    <h:panelGrid columns="2" id="i_pg_money">
                                         <p:inputText converter="#{toCurrency}" value="#{questionarioRespostaBean.valor}">
                                             <p:ajax event="change" update="@this" />
                                         </p:inputText>
                                     </h:panelGrid>
                                     <f:facet name="footer">
-                                        <h:panelGrid columns="2" cellpadding="5">
-                                            <h:panelGrid columns="2" cellpadding="5">
-                                                <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveValor}" update=":form_resposta: i_notification" oncomplete="PF('dlg_money').hide(); ScrollPage(#{questionarioRespostaBean.questao.subgrupo.grupo.questionario.id}#{questionarioRespostaBean.questao.subgrupo.grupo.id}#{questionarioRespostaBean.questao.subgrupo.id}#{questionarioRespostaBean.questao.id})"/>
-                                                <p:commandButton value="Excluir resposta" action="#{questionarioRespostaBean.deleteValor}" update=":form_resposta: i_notification" oncomplete="PF('dlg_money').hide()" />
-                                            </h:panelGrid>
+                                        <h:panelGrid columns="2" cellpadding="5" id="i_a_m">
+                                            <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveValor}" update=":form_resposta: i_notification" oncomplete="PF('dlg_money').hide(); ScrollPage(#{questionarioRespostaBean.questao.subgrupo.grupo.questionario.id}#{questionarioRespostaBean.questao.subgrupo.grupo.id}#{questionarioRespostaBean.questao.subgrupo.id}#{questionarioRespostaBean.questao.id})"/>
+                                            <p:commandButton value="Excluir resposta" action="#{questionarioRespostaBean.deleteValor}" update=":form_resposta: i_notification" oncomplete="PF('dlg_money').hide()" rendered="#{questionarioRespostaBean.deleteView}"/>
                                         </h:panelGrid>
                                     </f:facet>
                                 </p:dialog>
                                 <p:dialog widgetVar="dlg_int" modal="true" header="#{questionarioRespostaBean.questao.descricao}" resizable="false">
                                     <h:outputLabel value="Quantidade / Número" /><br />
-                                    <h:panelGrid columns="2">
+                                    <h:panelGrid columns="2" id="i_pg_int">
                                         <p:inputText converter="#{thisNumber}" value="#{questionarioRespostaBean.quantidade}">
                                             <p:ajax event="change" update="@this" />
                                         </p:inputText>
                                     </h:panelGrid>
                                     <f:facet name="footer">
-                                        <h:panelGrid columns="2" cellpadding="5">
-                                            <h:panelGrid columns="2" cellpadding="5">
-                                                <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveQuantidade}" update=":form_resposta: i_notification" oncomplete="PF('dlg_int').hide(); ScrollPage(#{questionarioRespostaBean.questao.subgrupo.grupo.questionario.id}#{questionarioRespostaBean.questao.subgrupo.grupo.id}#{questionarioRespostaBean.questao.subgrupo.id}#{questionarioRespostaBean.questao.id})"/>
-                                                <p:commandButton value="Excluir resposta" action="#{questionarioRespostaBean.deleteQuantidade}" update=":form_resposta: i_notification" oncomplete="PF('dlg_int').hide()" />
-                                            </h:panelGrid>
+                                        <h:panelGrid columns="2" cellpadding="5" id="i_a_i">
+                                            <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveQuantidade}" update=":form_resposta: i_notification" oncomplete="PF('dlg_int').hide(); ScrollPage(#{questionarioRespostaBean.questao.subgrupo.grupo.questionario.id}#{questionarioRespostaBean.questao.subgrupo.grupo.id}#{questionarioRespostaBean.questao.subgrupo.id}#{questionarioRespostaBean.questao.id})"/>
+                                            <p:commandButton value="Excluir resposta" action="#{questionarioRespostaBean.deleteQuantidade}" update=":form_resposta: i_notification" oncomplete="PF('dlg_int').hide()" rendered="#{questionarioRespostaBean.deleteView}"/>
                                         </h:panelGrid>
                                     </f:facet>
                                 </p:dialog>
                                 <p:dialog widgetVar="dlg_text" modal="true" header="#{questionarioRespostaBean.questao.descricao}" resizable="false" width="600">
-                                    <h:outputLabel value="Resposta" /><br />
-                                    <h:panelGrid columns="2">
-                                        <p:inputTextarea value="#{questionarioRespostaBean.texto}" rows="5" cols="80" converter="#{toUpperCase}">
-                                            <p:ajax event="change" update="@this" />
-                                        </p:inputTextarea>
-                                    </h:panelGrid>
+                                    <h:panelGroup id="i_pg_text">
+                                        <h:outputLabel value="Resposta" /><br />
+                                        <h:panelGrid columns="2">
+                                            <p:inputTextarea value="#{questionarioRespostaBean.texto}" rows="5" cols="80" converter="#{toUpperCase}">
+                                                <p:ajax event="change" update="@this" />
+                                            </p:inputTextarea>
+                                        </h:panelGrid>
+                                    </h:panelGroup>
                                     <f:facet name="footer">
-                                        <h:panelGrid columns="2" cellpadding="5">
+                                        <h:panelGrid columns="2" cellpadding="5" id="i_a_t">
                                             <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveTexto}" update=":form_resposta: i_notification" oncomplete="PF('dlg_text').hide(); ScrollPage(#{questionarioRespostaBean.questao.subgrupo.grupo.questionario.id}#{questionarioRespostaBean.questao.subgrupo.grupo.id}#{questionarioRespostaBean.questao.subgrupo.id}#{questionarioRespostaBean.questao.id})"/>
-                                            <p:commandButton value="Excluir resposta" action="#{questionarioRespostaBean.deleteTexto}" update=":form_resposta: i_notification" oncomplete="PF('dlg_text').hide()" />
+                                            <p:commandButton value="Excluir resposta" action="#{questionarioRespostaBean.deleteTexto}" update=":form_resposta: i_notification" oncomplete="PF('dlg_text').hide()" rendered="#{questionarioRespostaBean.deleteView}"/>
                                         </h:panelGrid>
                                     </f:facet>
                                 </p:dialog>
                                 <p:dialog widgetVar="dlg_boolean" modal="true" header="#{questionarioRespostaBean.questao.descricao}" resizable="false">
-                                    <h:outputLabel value="" /><br />
-                                    <p:selectOneRadio value="#{questionarioRespostaBean.opcao}">
-                                        <p:ajax event="change" update="@this" />
-                                        <f:selectItem itemLabel="SIM" itemValue="SIM" />
-                                        <f:selectItem itemLabel="NÃO" itemValue="NÃO" />
-                                    </p:selectOneRadio>
+                                    <h:panelGroup id="i_pg_boolean">
+                                        <h:outputLabel value="" /><br />
+                                        <p:selectOneRadio value="#{questionarioRespostaBean.opcao}">
+                                            <p:ajax event="change" update="@this" />
+                                            <f:selectItem itemLabel="SIM" itemValue="SIM" />
+                                            <f:selectItem itemLabel="NÃO" itemValue="NÃO" />
+                                        </p:selectOneRadio>
+                                    </h:panelGroup>
                                     <f:facet name="footer">                                        
-                                        <h:panelGrid columns="2" cellpadding="5">
+                                        <h:panelGrid columns="2" cellpadding="5" id="i_a_b">
                                             <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveOpcao}" update=":form_resposta: i_notification" oncomplete="PF('dlg_boolean').hide(); ScrollPage(#{questionarioRespostaBean.questao.subgrupo.grupo.questionario.id}#{questionarioRespostaBean.questao.subgrupo.grupo.id}#{questionarioRespostaBean.questao.subgrupo.id}#{questionarioRespostaBean.questao.id})"/>
-                                            <p:commandButton value="Excluir resposta" action="#{questionarioRespostaBean.deleteOpcao}" update=":form_resposta: i_notification" oncomplete="PF('dlg_boolean').hide()" />
+                                            <p:commandButton value="Excluir resposta" action="#{questionarioRespostaBean.deleteOpcao}" update=":form_resposta: i_notification" oncomplete="PF('dlg_boolean').hide()"  rendered="#{questionarioRespostaBean.deleteView}"/>
                                         </h:panelGrid>                                        
                                     </f:facet>
                                 </p:dialog>
                                 <p:dialog widgetVar="dlg_option" modal="true" header="#{questionarioRespostaBean.questao.descricao}" resizable="false">
-                                    <h:outputLabel value="Selecione a opção desejada" />
-                                    <br />
-                                    <p:selectOneMenu value="#{questionarioRespostaBean.indexString}">
-                                        <p:ajax event="change" update="@this" />
-                                        <f:selectItems value="#{questionarioRespostaBean.listOpcoes}"/>
-                                    </p:selectOneMenu>
+                                    <h:panelGroup id="i_pg_option">
+                                        <h:outputLabel value="Selecione a opção desejada" />
+                                        <br />
+                                        <p:selectOneMenu value="#{questionarioRespostaBean.indexString}">
+                                            <p:ajax event="change" update="@this" />
+                                            <f:selectItems value="#{questionarioRespostaBean.listOpcoes}"/>
+                                        </p:selectOneMenu>
+                                    </h:panelGroup>
                                     <f:facet name="footer">                                        
-                                        <h:panelGrid columns="2" cellpadding="5">
+                                        <h:panelGrid columns="2" cellpadding="5" id="i_a_o">
                                             <p:commandButton value="Ok" action="#{questionarioRespostaBean.saveIndexString}" update=":form_resposta: i_notification" oncomplete="PF('dlg_option').hide(); ScrollPage(#{questionarioRespostaBean.questao.subgrupo.grupo.questionario.id}#{questionarioRespostaBean.questao.subgrupo.grupo.id}#{questionarioRespostaBean.questao.subgrupo.id}#{questionarioRespostaBean.questao.id})"/>
-                                            <p:commandButton value="Excluir resposta" action="#{questionarioRespostaBean.deleteIndexString}" update=":form_resposta: i_notification" oncomplete="PF('dlg_option').hide()" />
+                                            <p:commandButton value="Excluir resposta" action="#{questionarioRespostaBean.deleteIndexString}" update=":form_resposta: i_notification" oncomplete="PF('dlg_option').hide()" rendered="#{questionarioRespostaBean.deleteView}"/>
                                         </h:panelGrid>
                                     </f:facet>
                                 </p:dialog>

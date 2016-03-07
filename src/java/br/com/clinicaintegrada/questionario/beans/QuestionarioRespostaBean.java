@@ -231,6 +231,7 @@ public class QuestionarioRespostaBean implements Serializable {
                     }
                     PF.openDialog("dlg_int");
                     PF.update("i_pg_int");
+                    PF.update("i_a_i");
                     break;
                 case "#money":
                     if (resposta != null && resposta.getId() != null) {
@@ -238,6 +239,7 @@ public class QuestionarioRespostaBean implements Serializable {
                     }
                     PF.openDialog("dlg_money");
                     PF.update("i_pg_money");
+                    PF.update("i_a_m");
                     break;
                 case "#boolean":
                     if (resposta != null && resposta.getId() != null) {
@@ -245,6 +247,7 @@ public class QuestionarioRespostaBean implements Serializable {
                     }
                     PF.openDialog("dlg_boolean");
                     PF.update("i_pg_boolean");
+                    PF.update("i_a_b");
                     break;
                 case "#text":
                     if (resposta != null && resposta.getId() != null) {
@@ -252,6 +255,7 @@ public class QuestionarioRespostaBean implements Serializable {
                     }
                     PF.openDialog("dlg_text");
                     PF.update("i_pg_text");
+                    PF.update("i_a_t");
                     break;
                 default:
                     Messages.warn("Sistema", "Nenhum tipo foi encontrado");
@@ -275,6 +279,7 @@ public class QuestionarioRespostaBean implements Serializable {
             }
             PF.openDialog("dlg_option");
             PF.update("i_pg_option");
+            PF.update("i_a_o");
         }
     }
 
@@ -627,11 +632,11 @@ public class QuestionarioRespostaBean implements Serializable {
     }
 
     public void saveTexto() {
-        listenerValor(true);
+        listenerTexto(true);
     }
 
     public void deleteTexto() {
-        listenerValor(false);
+        listenerTexto(false);
     }
 
     public void listenerTexto(Boolean save) {
@@ -653,7 +658,7 @@ public class QuestionarioRespostaBean implements Serializable {
             }
         }
         if (texto == null || texto.isEmpty() || texto.equals("#text")) {
-            Messages.warn("Validação", "Digitar um valor!");
+            Messages.warn("Validação", "Digitar o texto!");
             return;
         }
         RespostaFixa rf = new RespostaFixaDao().findByQuestao(questao.getId(), true);
@@ -1012,5 +1017,16 @@ public class QuestionarioRespostaBean implements Serializable {
 
     public void setQuestaoMemoria(Questao questaoMemoria) {
         this.questaoMemoria = questaoMemoria;
+    }
+
+    public Boolean getDeleteView() {
+        if (questao != null && questao.getId() != null) {
+            RespostaDao respostaDao = new RespostaDao();
+            Resposta r = respostaDao.findByQuestao(getRespostaLote().getId(), questao.getId());
+            if (r != null && r.getId() != null) {
+                return true;
+            }
+        }
+        return false;
     }
 }
