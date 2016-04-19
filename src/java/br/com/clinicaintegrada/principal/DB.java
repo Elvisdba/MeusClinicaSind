@@ -33,7 +33,7 @@ public class DB {
                     properties.put(TopLinkProperties.TRANSACTION_TYPE, "RESOURCE_LOCAL");
                     properties.put(TopLinkProperties.JDBC_DRIVER, "org.postgresql.Driver");
                     properties.put(TopLinkProperties.JDBC_PASSWORD, cliente.getSenha());
-                    properties.put(TopLinkProperties.JDBC_URL, "jdbc:postgresql://" + cliente.getHost() + ":5434/" + cliente.getPersistence());
+                    properties.put(TopLinkProperties.JDBC_URL, "jdbc:postgresql://" + cliente.getHost() + ":5432/" + cliente.getPersistence());
                     EntityManagerFactory emf = Persistence.createEntityManagerFactory(cliente.getPersistence(), properties);
                     String createTable = Strings.converterNullToString(Request.getParam("createTable"));
                     if (!createTable.equals("criar")) {
@@ -75,8 +75,8 @@ public class DB {
             cliente.setPersistence("ClinicaIntegrada");
         }
         cliente.setCaminhoSistema(clienteString);
-        cliente.setHost("192.168.1.160");
         cliente.setSenha("989899");
+        cliente.setHost("192.168.1.102");
         /**
          *
          * BASE OFICIAL
